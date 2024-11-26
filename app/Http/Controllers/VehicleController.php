@@ -27,46 +27,64 @@ class VehicleController extends Controller
             'license_plate' => 'required|string|max:20|unique:vehicles,license_plate',
             'engine_code' => 'nullable|string|max:255',
             'color' => 'nullable|string|max:255',
-            'year' => 'nullable|integer|min:1900|max:'.date('Y'),
+            'year' => 'nullable|integer|min:1900|max:' . date('Y'),
             'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
+            'customer_id' => 'required|exists:customers,id', // Ensure customer ID exists
+            'complaint' => 'nullable|string|max:255', // Add any necessary validations for service fields
+            'current_mileage' => 'nullable|integer|min:0',
+            'service_fee' => 'nullable|numeric|min:0',
+            'total_cost' => 'nullable|numeric|min:0',
+            'payment_received' => 'nullable|numeric|min:0',
+            'change' => 'nullable|numeric|min:0',
+            'service_type' => 'nullable|string|max:255',
+            'spareparts' => 'nullable|array', // Ensure spare parts are passed as an array
+            'spareparts.*' => 'exists:spareparts,id|numeric|min:1', // Ensure spare parts IDs are valid
         ]);
 
         // Handle image upload if exists
+        $imagePath = null;
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('vehicle_images', 'public');
-        } else {
-            $imagePath = null;
         }
 
-        // Create the vehicle record
+        // Create the vehicle and associate it with the customer
         $vehicle = Vehicle::create([
             'license_plate' => $validated['license_plate'],
             'type' => $validated['vehicle_type'],
             'color' => $validated['color'],
             'production_year' => $validated['year'],
             'engine_code' => $validated['engine_code'],
-            'customer_id' => $request->customer_id, // Get customer_id from hidden input
+            'customer_id' => $validated['customer_id'], // Use the validated customer ID
             'image' => $imagePath,
         ]);
 
         // Create the service associated with this vehicle
         $service = Service::create([
             'vehicle_id' => $vehicle->id,
-            'complaint' => $request->complaint, // You may need to include this field in the form
-            'current_mileage' => $request->current_mileage, // Similarly for this field
-            'service_fee' => $request->service_fee,
-            'service_date' => now(), // You can set this to now or from the form input
-            'total_cost' => $request->total_cost,
-            'payment_received' => $request->payment_received,
-            'change' => $request->change,
-            'service_type' => $request->service_type,
+            'complaint' => $validated['complaint'],
+            'current_mileage' => $validated['current_mileage'],
+            'service_fee' => $validated['service_fee'],
+            'service_date' => now(), // Set the current time for service date
+            'total_cost' => $validated['total_cost'],
+            'payment_received' => $validated['payment_received'],
+            'change' => $validated['change'],
+            'service_type' => $validated['service_type'],
         ]);
 
         // Handle the spareparts for this service (if any)
-        if ($request->has('spareparts')) {
-            foreach ($request->spareparts as $sparepartId => $quantity) {
+        if (!empty($validated['spareparts'])) {
+            foreach ($validated['spareparts'] as $sparepartId => $quantity) {
                 $sparepart = Sparepart::findOrFail($sparepartId);
 
+                // Check if enough stock is available
+                if ($sparepart->jumlah < $quantity) {
+                    return back()->with('error', 'Not enough stock for sparepart: ' . $sparepart->name);
+                }
+
+                // Update spare part stock
+                $sparepart->decrement('jumlah', $quantity);
+
+                // Record the spare part usage
                 ServiceSparepart::create([
                     'service_id' => $service->id,
                     'sparepart_id' => $sparepart->id,
@@ -78,7 +96,6 @@ class VehicleController extends Controller
         // Redirect or return success response
         return redirect()->route('vehicles.index')->with('success', 'Vehicle and service added successfully!');
     }
-    
 
     public function show($id)
     {

@@ -13,6 +13,15 @@
                 </a>
             </div>
 
+                        <!-- Alert Sukses -->
+                        @if(session('success'))
+                        <div class="alert alert-success alert-dismissible fade show">
+                            <i class="bi bi-check-circle-fill me-2"></i>
+                            {{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+
         <!-- Search Form -->
         <form class="d-flex" method="GET" action="{{ route('customer.index') }}">
             <input type="text" name="search" class="form-control form-control-sm" value="{{ $searchTerm ?? '' }}" placeholder="Cari pelanggan..." />
@@ -26,15 +35,6 @@
             </a>
             @endif
         </form>
-
-            <!-- Alert Sukses -->
-            @if(session('success'))
-                <div class="alert alert-success alert-dismissible fade show">
-                    <i class="bi bi-check-circle-fill me-2"></i>
-                    {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            @endif
 
             <!-- Tabel atau Pesan Jika Tidak Ada Data -->
             @if ($noData)
