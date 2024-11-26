@@ -2,19 +2,28 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class ServiceSparepart extends Model
 {
-    protected $table =  'servis_sparepart';
-    protected $fillable = ['sparepart_id','servis_id','jumlah'];
-    public $timestamps = false;
+    use HasFactory;
 
-    public function sparepart(){
-        return $this->belongsTo(Sparepart::class,'sparepart_id');
+    protected $fillable = [
+        'service_id',
+        'sparepart_id',
+        'quantity',
+    ];
+
+    // Relasi ke Service
+    public function service()
+    {
+        return $this->belongsTo(Service::class);
     }
 
-    public function servis(){
-        return $this->belongsTo(Servis::class,'servis_id');
+    // Relasi ke Sparepart
+    public function sparepart()
+    {
+        return $this->belongsTo(Sparepart::class, 'sparepart_id');
     }
 }

@@ -9,17 +9,20 @@ class Sparepart extends Model
 {
     use HasFactory;
 
-    protected $table = 'spareparts';
-    protected $primaryKey = 'id_sparepart';
-
     protected $fillable = [
-        'nama_sparepart', 'jumlah', 'harga_beli', 'harga_jual', 'keuntungan', 'tanggal_masuk', 'tanggal_keluar', 'deskripsi'
+        'nama_sparepart',
+        'jumlah',
+        'harga_beli',
+        'harga_jual',
+        'keuntungan',
+        'tanggal_masuk',
+        'tanggal_keluar',
+        'deskripsi',
     ];
 
-    protected $guarded = ['id_sparepart'];
-
-    public function servisSparepart()
+    // Relasi ke ServiceSparepart
+    public function serviceSpareparts()
     {
-        return $this->hasMany(ServisSparepart::class, 'sparepart_id','is_sparepart');
-    }   
+        return $this->hasMany(ServiceSparepart::class, 'sparepart_id');
+    }
 }

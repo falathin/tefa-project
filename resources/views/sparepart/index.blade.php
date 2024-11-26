@@ -25,7 +25,7 @@
     <form method="GET" action="{{ route('sparepart.index') }}" class="mb-3">
         <div class="input-group input-group-sm">
             <input type="text" name="search" class="form-control" placeholder="Cari sparepart..." value="{{ request()->search }}">
-            <button class="btn btn-outline-secondary hover-effect" type="submit">
+            <button class="btn btn-outline-primary btn-sm ms-2 hover-effect" type="submit">
                 <i class="bi bi-search"></i>
             </button>
         </div>

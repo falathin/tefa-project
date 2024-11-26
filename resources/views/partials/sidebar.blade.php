@@ -12,7 +12,7 @@
 
         <!-- Program Service Menu Item -->
         <li class="nav-item">
-            <a class="nav-link {{ Request::is('servis*') ? 'active' : '' }}" href="{{ route('servis.index') }}">
+            <a class="nav-link {{ Request::is('customer*') ? 'active' : '' }}" href="{{ route('customer.index') }}">
                 <i class="mdi mdi-cog-outline menu-icon"></i>
                 <span class="menu-title">Program Service</span>
             </a>
