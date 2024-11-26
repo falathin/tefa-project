@@ -39,7 +39,9 @@ Route::prefix('vehicle')->name('vehicle.')->group(function() {
     Route::put('update/{id}', [VehicleController::class, 'update'])->name('update');
     Route::delete('destroy/{id}', [VehicleController::class, 'destroy'])->name('destroy');
     // Add the show route
-    Route::get('{id}', [VehicleController::class, 'show'])->name('show'); // Show specific vehicle
+    Route::get('{id}', [VehicleController::class, 'show'])->name('show');
+    Route::get('/vehicles/create/{customer}', [VehicleController::class, 'createWithService'])->name('create_with_service');
+    Route::post('/vehicles/store_with_service', [VehicleController::class, 'storeWithService'])->name('store_with_service');    
 });
 
 // Routes for Service

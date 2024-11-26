@@ -47,9 +47,9 @@
                 <!-- Vehicle Section -->
                 <div class="d-flex justify-content-between align-items-center mb-4 animate__animated animate__fadeIn" style="animation-delay: 2.5s;">
                     <h6 class="mb-0 text-success">Kendaraan Terdaftar</h6>
-                    <a href="{{ route('vehicle.create', $customer->id) }}" class="btn btn-success rounded-pill px-4 py-2 animate__animated animate__fadeIn" style="animation-delay: 2.8s;">
-                        <i class="bi bi-plus-circle"></i> Tambah Kendaraan
-                    </a>
+                    <a href="{{ route('vehicle.create_with_service', $customer->id) }}" class="btn btn-success rounded-pill px-4 py-2 animate__animated animate__fadeIn" style="animation-delay: 3.3s;">
+                        <i class="bi bi-wrench"></i> Tambah Kendaraan Dan Servis
+                    </a>                    
                 </div>
 
                 <div class="table-responsive mt-3">
@@ -65,7 +65,7 @@
                             @foreach ($customer->vehicles as $vehicle)
                                 <tr class="text-center animate__animated animate__fadeIn" style="transition: transform 0.3s ease-in-out; animation-delay: {{ 3 + $loop->index * 0.3 }}s;">
                                     <td>{{ $vehicle->license_plate }}</td>
-                                    <td>{{ $vehicle->type }}</td>
+                                    <td>{{ $vehicle->vehicle_type }}</td>
                                     <td>
                                         <a href="{{ route('service.create', $vehicle->id) }}" class="btn btn-primary rounded-pill px-4 py-2 animate__animated animate__fadeIn" style="animation-delay: {{ 3.3 + $loop->index * 0.3 }}s;">
                                             <i class="bi bi-wrench"></i> Tambah Service
