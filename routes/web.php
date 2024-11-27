@@ -7,12 +7,10 @@ use App\Http\Controllers\{
     CustomerController
 };
 
-// Rute untuk halaman utama
 Route::get('/', function () {
     return view('home');
 });
 
-// Rute untuk halaman Sparepart
 Route::get('/sparepart', [SparepartController::class, 'index'])->name('sparepart.index');
 Route::get('/sparepart/create', [SparepartController::class, 'create'])->name('sparepart.create');
 Route::post('/sparepart', [SparepartController::class, 'store'])->name('sparepart.store');
@@ -21,7 +19,6 @@ Route::get('/sparepart/{id}/edit', [SparepartController::class, 'edit'])->name('
 Route::put('/sparepart/{id}', [SparepartController::class, 'update'])->name('sparepart.update');
 Route::delete('/sparepart/{id}', [SparepartController::class, 'destroy'])->name('sparepart.destroy');
 
-// Routes for Customer
 Route::get('/customer', [CustomerController::class, 'index'])->name('customer.index');
 Route::get('/customer/create', [CustomerController::class, 'create'])->name('customer.create');
 Route::post('/customer', [CustomerController::class, 'store'])->name('customer.store');
@@ -38,13 +35,11 @@ Route::prefix('vehicle')->name('vehicle.')->group(function() {
     Route::get('edit/{id}', [VehicleController::class, 'edit'])->name('edit');
     Route::put('update/{id}', [VehicleController::class, 'update'])->name('update');
     Route::delete('destroy/{id}', [VehicleController::class, 'destroy'])->name('destroy');
-    // Add the show route
     Route::get('{id}', [VehicleController::class, 'show'])->name('show');
     Route::get('/vehicles/create/{customer}', [VehicleController::class, 'createWithService'])->name('create_with_service');
     Route::post('/vehicles/store_with_service', [VehicleController::class, 'storeWithService'])->name('store_with_service');    
 });
 
-// Routes for Service
 Route::get('/service', [ServiceController::class, 'index'])->name('service.index');
 Route::get('/service/create/{vehicle_id}', [ServiceController::class, 'create'])->name('service.create');
 Route::post('/service', [ServiceController::class, 'store'])->name('service.store');

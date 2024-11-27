@@ -3,8 +3,7 @@
 @section('content')
 
     <div class="container">
-        <!-- Add Vehicle Section -->
-        <div class="card shadow-sm mb-4 animate__animated animate__slideInUp animate__delay-0.5s">
+        <div class="card shadow-sm mb-4 animate__animated animate__fadeInUp animate__delay-0.5s">
             <div class="card-body">
                 <h5 class="card-title text-center mb-4">Tambah Kendaraan untuk {{ $customer->name }}</h5>
                 <form action="{{ route('vehicle.store_with_service') }}" method="POST" enctype="multipart/form-data">
@@ -54,9 +53,7 @@
                 </form>
             </div>
         </div>
-
-        <!-- Add Sparepart Section -->
-        <div class="card shadow-sm mb-4 animate__animated animate__slideInUp animate__delay-1s">
+        <div class="card shadow-sm mb-4 animate__animated animate__fadeInUp animate__delay-4s">
             <div class="card-body">
                 <h5 class="card-title text-center mb-4">Informasi Sparepart untuk {{ $customer->name }}</h5>
                 <form action="{{ route('vehicle.store_with_service') }}" method="POST" enctype="multipart/form-data">
@@ -81,7 +78,43 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <!-- Dynamic Rows Will Be Inserted Here -->
+                                    @if (old('spareparts'))
+                                        @foreach (old('spareparts') as $index => $sparepart)
+                                            <tr>
+                                                <td>
+                                                    <input type="text" name="spareparts[{{ $index }}][name]" 
+                                                        class="form-control @error("spareparts.$index.name") is-invalid @enderror"
+                                                        value="{{ old("spareparts.$index.name") }}" required>
+                                                    @error("spareparts.$index.name")
+                                                        <div class="invalid-feedback">{{ $message }}</div>
+                                                    @enderror
+                                                </td>
+                                                <td>
+                                                    <input type="number" name="spareparts[{{ $index }}][unit_price]" 
+                                                        class="form-control @error("spareparts.$index.unit_price") is-invalid @enderror" 
+                                                        value="{{ old("spareparts.$index.unit_price") }}" required>
+                                                    @error("spareparts.$index.unit_price")
+                                                        <div class="invalid-feedback">{{ $message }}</div>
+                                                    @enderror
+                                                </td>
+                                                <td>
+                                                    <input type="number" name="spareparts[{{ $index }}][quantity]" 
+                                                        class="form-control @error("spareparts.$index.quantity") is-invalid @enderror" 
+                                                        value="{{ old("spareparts.$index.quantity") }}" required>
+                                                    @error("spareparts.$index.quantity")
+                                                        <div class="invalid-feedback">{{ $message }}</div>
+                                                    @enderror
+                                                </td>
+                                                <td>
+                                                    <input type="number" name="spareparts[{{ $index }}][subtotal]" 
+                                                        class="form-control" value="{{ old("spareparts.$index.subtotal") }}" readonly>
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-danger removeRow">Hapus</button>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    @endif
                                 </tbody>
                             </table>
                         </div><br>
@@ -90,8 +123,7 @@
                 </form>
             </div>
         </div>
-        <!-- Add Service Section -->
-        <div class="card shadow-sm mb-4 animate__animated animate__slideInUp animate__delay-1.5s">
+        <div class="card shadow-sm mb-4 animate__animated animate__fadeInUp animate__delay-7s">
             <div class="card-body">
                 <h5 class="card-title text-center mb-4">Tambah Servis untuk {{ $customer->name }}</h5>
                 <form action="{{ route('vehicle.store_with_service') }}" method="POST" enctype="multipart/form-data">
@@ -163,8 +195,6 @@
                 </form>
             </div>
         </div>
-
-
     </div>
 
     <script>

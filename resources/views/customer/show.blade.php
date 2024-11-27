@@ -53,29 +53,36 @@
                 </div>
 
                 <div class="table-responsive mt-3">
-                    <table class="table table-striped table-hover table-bordered">
-                        <thead class="table-dark text-center">
-                            <tr>
-                                <th scope="col">NO POL</th>
-                                <th scope="col">Jenis Kendaraan</th>
-                                <th scope="col">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($customer->vehicles as $vehicle)
-                                <tr class="text-center animate__animated animate__fadeIn" style="transition: transform 0.3s ease-in-out; animation-delay: {{ 3 + $loop->index * 0.3 }}s;">
-                                    <td>{{ $vehicle->license_plate }}</td>
-                                    <td>{{ $vehicle->vehicle_type }}</td>
-                                    <td>
-                                        <a href="{{ route('service.create', $vehicle->id) }}" class="btn btn-primary rounded-pill px-4 py-2 animate__animated animate__fadeIn" style="animation-delay: {{ 3.3 + $loop->index * 0.3 }}s;">
-                                            <i class="bi bi-wrench"></i> Tambah Service
-                                        </a>
-                                    </td>
+                    @if ($customer->vehicles->isEmpty())
+                        <div class="alert alert-warning text-center animate__animated animate__fadeIn" style="animation-delay: 3s;">
+                            <strong>Belum ada kendaraan yang dimasukkan!</strong>
+                        </div>
+                    @else
+                        <table class="table table-striped table-hover table-bordered">
+                            <thead class="table-dark text-center">
+                                <tr>
+                                    <th scope="col">NO POL</th>
+                                    <th scope="col">Jenis Kendaraan</th>
+                                    <th scope="col">Aksi</th>
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                @foreach ($customer->vehicles as $vehicle)
+                                    <tr class="text-center animate__animated animate__fadeIn" style="transition: transform 0.3s ease-in-out; animation-delay: {{ 3 + $loop->index * 0.3 }}s;">
+                                        <td>{{ $vehicle->license_plate }}</td>
+                                        <td>{{ $vehicle->vehicle_type }}</td>
+                                        <td>
+                                            <a href="{{ route('service.create', $vehicle->id) }}" class="btn btn-primary rounded-pill px-4 py-2 animate__animated animate__fadeIn" style="animation-delay: {{ 3.3 + $loop->index * 0.3 }}s;">
+                                                <i class="bi bi-wrench"></i> Tambah Service
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    @endif
                 </div>
+                
             </div>
         </div>
     </div>

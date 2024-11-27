@@ -13,8 +13,8 @@
                 </a>
             </div>
 
-                        <!-- Alert Sukses -->
-                        @if(session('success'))
+                    <!-- Alert Sukses -->
+                    @if(session('success'))
                         <div class="alert alert-success alert-dismissible fade show">
                             <i class="bi bi-check-circle-fill me-2"></i>
                             {{ session('success') }}
@@ -22,19 +22,19 @@
                         </div>
                     @endif
 
-        <!-- Search Form -->
-        <form class="d-flex" method="GET" action="{{ route('customer.index') }}">
-            <input type="text" name="search" class="form-control form-control-sm" value="{{ $searchTerm ?? '' }}" placeholder="Cari pelanggan..." />
-            <button type="submit" class="btn hover-effect btn-outline-primary btn-sm ms-2 hover-effect">
-                <i class="bi bi-search"></i> Cari
-            </button>
-            <!-- Close Button -->
-            @if(!empty($searchTerm))
-            <a href="{{ route('customer.index') }}" class="btn btn-outline-danger btn-sm ms-2">
-                <i class="bi bi-x-circle"></i> Tutup
-            </a>
-            @endif
-        </form>
+            <!-- Search Form -->
+            <form class="d-flex" method="GET" action="{{ route('customer.index') }}">
+                <input type="text" name="search" class="form-control form-control-sm" value="{{ $searchTerm ?? '' }}" placeholder="Cari pelanggan..." />
+                <button type="submit" class="btn hover-effect btn-outline-primary btn-sm ms-2 hover-effect">
+                    <i class="bi bi-search"></i> Cari
+                </button>
+                <!-- Close Button -->
+                @if(!empty($searchTerm))
+                <a href="{{ route('customer.index') }}" class="btn btn-outline-danger btn-sm ms-2">
+                    <i class="bi bi-x-circle"></i> Tutup
+                </a>
+                @endif
+            </form>
 
             <!-- Tabel atau Pesan Jika Tidak Ada Data -->
             @if ($noData)
