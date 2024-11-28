@@ -10,20 +10,28 @@ class CustomerController extends Controller
     public function index(Request $request)
     {
         $searchTerm = $request->input('search');
+        $deletedSearch = $request->input('deletedSearch');
     
+        // Paginate pelanggan aktif
         $customers = Customer::when($searchTerm, function ($query, $searchTerm) {
             return $query->where('name', 'like', '%' . $searchTerm . '%')
                          ->orWhere('contact', 'like', '%' . $searchTerm . '%')
                          ->orWhere('address', 'like', '%' . $searchTerm . '%');
-        })->get(); // Pelanggan aktif
+        })->paginate(5);
     
-        $deletedCustomers = Customer::onlyTrashed()->get(); // Pelanggan yang dihapus
+        // Paginate pelanggan yang dihapus
+        $deletedCustomers = Customer::onlyTrashed()
+            ->when($deletedSearch, function ($query, $deletedSearch) {
+                return $query->where('name', 'like', '%' . $deletedSearch . '%')
+                             ->orWhere('contact', 'like', '%' . $deletedSearch . '%')
+                             ->orWhere('address', 'like', '%' . $deletedSearch . '%');
+            })
+            ->paginate(5);
     
         $noData = $customers->isEmpty() && $deletedCustomers->isEmpty();
     
-        return view('customer.index', compact('customers', 'deletedCustomers', 'noData', 'searchTerm'));
-    }
-    
+        return view('customer.index', compact('customers', 'deletedCustomers', 'noData', 'searchTerm', 'deletedSearch'));
+    }    
 
     // Menampilkan halaman create (form input customer)
     public function create()
@@ -71,16 +79,28 @@ class CustomerController extends Controller
                          ->with('success', 'Customer updated successfully');
     }
     
-    public function show($id)
+    public function show(Request $request, $id)
     {
         $customer = Customer::findOrFail($id);
     
-        // Fallback values for contact and address fields
+        // Fallback values for contact and address fields   
         $customer->contact = $customer->contact ?: 'Tidak ada data kontak';
         $customer->address = $customer->address ?: 'Tidak ada data alamat';
     
-        return view('customer.show', compact('customer'));
+        // Retrieve the search term from the request
+        $searchTerm = $request->input('search');
+        
+        // Filter the vehicles based on the search term
+        $vehicles = $customer->vehicles()
+                             ->when($searchTerm, function ($query, $searchTerm) {
+                                 return $query->where('license_plate', 'like', '%' . $searchTerm . '%')
+                                              ->orWhere('vehicle_type', 'like', '%' . $searchTerm . '%');
+                             })
+                             ->paginate(3);
+    
+        return view('customer.show', compact('customer', 'vehicles', 'searchTerm'));
     }
+        
 
     public function destroy($id)
     {
@@ -113,5 +133,16 @@ class CustomerController extends Controller
         }
         return redirect()->route('customer.index')->with('error', 'Customer not found.');
     }    
+
+    public function forceDeleteAll()
+    {
+        $deletedCustomers = Customer::onlyTrashed()->get();
+        if ($deletedCustomers->isEmpty()) {
+            return redirect()->route('customer.index')->with('error', 'Tidak ada pelanggan yang dapat dihapus secara permanen.');
+        }
+
+        Customer::onlyTrashed()->forceDelete(); // Hapus semua data pelanggan yang dihapus
+        return redirect()->route('customer.index')->with('success', 'Semua pelanggan yang dihapus berhasil dihapus secara permanen.');
+    }
 
 }

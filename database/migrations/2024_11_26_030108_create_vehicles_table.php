@@ -9,16 +9,14 @@ class CreateVehiclesTable extends Migration
     public function up()
     {
         Schema::create('vehicles', function (Blueprint $table) {
-            $table->id(); // Primary key
+            $table->id();
             $table->string('license_plate');
-            $table->string('type'); // Ensure 'type' is required
-            $table->string('color')->nullable();
-            $table->string('production_year')->nullable();
+            $table->string('vehicle_type')->nullable(); // Changed column name to 'vehicle_type'
             $table->string('engine_code')->nullable();
-            $table->foreignId('customer_id')
-                ->constrained('customers')
-                ->onDelete('cascade'); // Foreign key to customers
-            $table->string('image')->nullable(); // New column for vehicle image
+            $table->string('color')->nullable();
+            $table->integer('production_year')->nullable();
+            $table->string('image')->nullable();
+            $table->foreignId('customer_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

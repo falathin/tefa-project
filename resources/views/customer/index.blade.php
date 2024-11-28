@@ -90,7 +90,13 @@
                         </table>
                     @endif
                 </div>
-
+                <div class="mt-4 d-flex justify-content-center">
+                    <nav aria-label="Pagination">
+                        <ul class="pagination pagination-lg">
+                            {{ $customers->links('vendor.pagination.bootstrap-5') }}
+                        </ul>
+                    </nav>
+                </div>
                 <br>
                 <!-- Dropdown untuk Pelanggan yang Dihapus -->
                 @if ($deletedCustomers->isNotEmpty())
@@ -99,9 +105,37 @@
                         <i class="bi bi-arrow-bar-down me-2"></i> Pelanggan yang Dihapus
                     </button>
 
+
+
                     <br><br>
 
                     <div class="collapse mt-3" id="deletedCustomers">
+                                            <div class="mt-3">
+                                                <form action="{{ route('customer.index') }}" method="GET" class="d-flex position-relative w-100">
+                                                    <input type="text" name="deletedSearch" class="form-control me-2 w-75" placeholder="Cari pelanggan yang dihapus..." value="{{ request('deletedSearch') }}">
+                                            
+                                                    <button type="submit" class="btn btn-outline-primary">
+                                                        <i class="bi bi-search"></i> Cari
+                                                    </button>
+                                            
+                                                    @if(request('deletedSearch'))
+                                                    <a href="{{ route('customer.index') }}" class="btn btn-outline-danger btn-sm position-absolute top-50 end-0 translate-middle-y">
+                                                        <i class="bi bi-x-circle"></i> Tutup
+                                                    </a>
+                                                    @endif
+                                                </form>
+                                            </div>
+                        <div class="mt-3">
+                            <form action="{{ route('customer.forceDeleteAll') }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus semua pelanggan yang telah dihapus secara permanen?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-sm">
+                                    <i class="bi bi-trash-fill me-1"></i> Hapus Semua
+                                </button>
+                            </form>
+                        </div>
+
+                    <br><br>
                         <div class="table-responsive">
                             <table class="table table-hover table-striped table-bordered shadow-sm">
                                 <thead class="table-light">
@@ -202,6 +236,13 @@
                 @endif
             @endif
         </div>
+        <div class="mt-4 d-flex justify-content-center">
+            <nav aria-label="Pagination">
+                <ul class="pagination pagination-lg">
+                    {{ $deletedCustomers->links('vendor.pagination.bootstrap-5') }}
+                </ul>
+            </nav>
+        </div>       
     </div>
 </div>
 @endsection

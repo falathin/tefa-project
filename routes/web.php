@@ -28,6 +28,7 @@ Route::put('/customer/{id}', [CustomerController::class, 'update'])->name('custo
 Route::delete('/customer/{id}', [CustomerController::class, 'destroy'])->name('customer.destroy');
 Route::post('customer/{id}/restore', [CustomerController::class, 'restore'])->name('customer.restore');
 Route::delete('customer/{id}/force-delete', [CustomerController::class, 'forceDelete'])->name('customer.forceDelete');
+Route::delete('/customers/deleted/force-delete-all', [CustomerController::class, 'forceDeleteAll'])->name('customer.forceDeleteAll');
 
 Route::prefix('vehicle')->name('vehicle.')->group(function() {
     Route::get('create/{customerId}', [VehicleController::class, 'create'])->name('create');
@@ -36,8 +37,6 @@ Route::prefix('vehicle')->name('vehicle.')->group(function() {
     Route::put('update/{id}', [VehicleController::class, 'update'])->name('update');
     Route::delete('destroy/{id}', [VehicleController::class, 'destroy'])->name('destroy');
     Route::get('{id}', [VehicleController::class, 'show'])->name('show');
-    Route::get('/vehicles/create/{customer}', [VehicleController::class, 'createWithService'])->name('create_with_service');
-    Route::post('/vehicles/store_with_service', [VehicleController::class, 'storeWithService'])->name('store_with_service');    
 });
 
 Route::get('/service', [ServiceController::class, 'index'])->name('service.index');

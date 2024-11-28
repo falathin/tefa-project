@@ -11,7 +11,7 @@ class Vehicle extends Model
 
     protected $fillable = [
         'license_plate',
-        'type',
+        'vehicle_type',
         'color',
         'production_year',
         'engine_code',
@@ -19,13 +19,11 @@ class Vehicle extends Model
         'image',
     ];
 
-    // Relasi ke Customer
     public function customer()
     {
         return $this->belongsTo(Customer::class);
     }
 
-    // Relasi ke Services
     public function services()
     {
         return $this->hasMany(Service::class, 'vehicle_id');
