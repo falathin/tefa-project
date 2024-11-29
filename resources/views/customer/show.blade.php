@@ -103,18 +103,16 @@
                                                 </button>
                                             </form>
 
-                                            <!-- Add Service -->
                                             <a href="{{ route('service.create', ['vehicle_id' => $vehicle->id]) }}" class="btn btn-primary rounded-pill px-4 py-2 animate__animated animate__slideInUp" style="animation-delay: {{ 4.2 + $loop->index * 0.3 }}s;">
                                                 <i class="bi bi-gear"></i> Tambah Service
-                                            </a>
+                                            </a>                                            
                                         </td>
                                     </tr>
                                 @endforeach
                             </tbody>
                         </table>
-
                         <!-- Pagination Links -->
-                        <div class="d-flex justify-content-center mt-3">
+                        <div class="d-flex justify-content-center mt-3 animate__animated animate__slideInUp" style="animation-delay: 3.9s;">
                             {{ $vehicles->links('pagination::bootstrap-4') }}
                         </div>
                     @endif

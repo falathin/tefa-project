@@ -11,6 +11,7 @@ Route::get('/', function () {
     return view('home');
 });
 
+// Rute untuk Sparepart
 Route::get('/sparepart', [SparepartController::class, 'index'])->name('sparepart.index');
 Route::get('/sparepart/create', [SparepartController::class, 'create'])->name('sparepart.create');
 Route::post('/sparepart', [SparepartController::class, 'store'])->name('sparepart.store');
@@ -38,9 +39,8 @@ Route::prefix('vehicle')->name('vehicle.')->group(function() {
     Route::delete('destroy/{id}', [VehicleController::class, 'destroy'])->name('destroy');
     Route::get('{id}', [VehicleController::class, 'show'])->name('show');
 });
-
 Route::get('/service', [ServiceController::class, 'index'])->name('service.index');
-Route::get('/service/create/{vehicle_id}', [ServiceController::class, 'create'])->name('service.create');
+Route::get('service/create/{vehicle_id}', [ServiceController::class, 'create'])->name('service.create');
 Route::post('/service', [ServiceController::class, 'store'])->name('service.store');
 Route::get('/service/{id}', [ServiceController::class, 'show'])->name('service.show');
 Route::get('/service/{id}/edit', [ServiceController::class, 'edit'])->name('service.edit');

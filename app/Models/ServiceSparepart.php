@@ -25,5 +25,5 @@ class ServiceSparepart extends Model
     public function sparepart()
     {
         return $this->belongsTo(Sparepart::class, 'sparepart_id');
-    }
+    }   
 }

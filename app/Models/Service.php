@@ -21,15 +21,18 @@ class Service extends Model
         'service_type',
     ];
 
-    // Relasi ke Vehicle
     public function vehicle()
     {
         return $this->belongsTo(Vehicle::class);
     }
 
-    // Relasi ke ServiceSparepart
     public function serviceSpareparts()
     {
-        return $this->hasMany(ServiceSparepart::class, 'service_id');
+        return $this->hasMany(ServiceSparepart::class);
+    }
+
+    public function spareparts()
+    {
+        return $this->belongsToMany(Sparepart::class, 'service_spareparts')->withPivot('quantity');
     }
 }

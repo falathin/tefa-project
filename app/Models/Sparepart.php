@@ -9,6 +9,8 @@ class Sparepart extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'id_sparepart'; // Custom primary key
+
     protected $fillable = [
         'nama_sparepart',
         'jumlah',
@@ -20,9 +22,14 @@ class Sparepart extends Model
         'deskripsi',
     ];
 
-    // Relasi ke ServiceSparepart
     public function serviceSpareparts()
     {
         return $this->hasMany(ServiceSparepart::class, 'sparepart_id');
+    }
+
+    // Calculate profit for a sparepart
+    public function calculateProfit()
+    {
+        return $this->harga_jual - $this->harga_beli;
     }
 }

@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Vehicle;
 use App\Models\Customer;
+// At the top of your VehicleController.php (or any relevant controller)
+use App\Models\Service;
+
 use Illuminate\Support\Facades\Storage;
 
 class VehicleController extends Controller
@@ -51,12 +54,20 @@ class VehicleController extends Controller
             ->with('success', 'Data kendaraan berhasil ditambahkan!');
     }
 
-    // Show the vehicle data
-    public function show($id)
+    public function show($id, Request $request)
     {
         $vehicle = Vehicle::findOrFail($id);
-        return view('vehicle.show', compact('vehicle'));
+        
+        // Apply search if a query is provided
+        $services = Service::where('vehicle_id', $id)
+                            ->when($request->search, function($query) use ($request) {
+                                return $query->where('service_type', 'like', '%' . $request->search . '%');
+                            })
+                            ->paginate(4);
+    
+        return view('vehicle.show', compact('vehicle', 'services'));
     }
+    
 
     // Show the form to edit the vehicle data
     public function edit($id)

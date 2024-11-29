@@ -6,9 +6,14 @@
             <h4 class="text-center mb-4">
                 <i class="bi bi-card-list"></i> Detail Kendaraan
             </h4>
+        
+            <div class="text-start">
+                <a href="{{ route('customer.show', $vehicle->customer_id) }}" class="btn-sm btn btn-dark">
+                    <i class="bi bi-arrow-left-circle"></i> Kembali ke Customer
+                </a>
+            </div>
 
-            <!-- Vehicle Info -->
-            <div class="row g-3">
+            <div class="row g-3 mt-3">
                 <div class="col-md-6 animate__animated animate__slideInUp">
                     <label for="jenisKendaraan" class="form-label">
                         <i class="bi bi-car-front"></i> Jenis Kendaraan
@@ -44,66 +49,185 @@
                         <i class="bi bi-image"></i> Gambar Kendaraan
                     </label>
                     @if($vehicle->image)
-                        <!-- Trigger Button for Image Modal -->
-                        <button class="btn btn-info animate__animated animate__slideInUp" data-bs-toggle="modal" data-bs-target="#imageModal">
-                            Lihat Gambar
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#vehicleImageModal">
+                            <i class="bi bi-image"></i> Lihat Gambar
                         </button>
                     @else
-                        <p class="text-muted">No image available</p>
+                        <p>No image available.</p>
                     @endif
                 </div>
             </div>
 
-            <hr class="my-4">
-
             <!-- Service History Section -->
-            <h5 class="text-center mb-4">
-                <i class="bi bi-clock-history"></i> Riwayat Service
-            </h5>
-
-            <div class="row text-center">
-                <!-- Example of a service history card -->
-                <div class="col-md-6 mb-3">
-                    <div class="card bg-light shadow-sm p-3 hover-effect animate__animated animate__slideInUp">
-                        <h6 class="text-muted"><i class="bi bi-tools"></i> Berkala</h6>
-                        <p class="text-muted">Total biaya</p>
-                        <p class="fw-bold"><i class="bi bi-calendar-check"></i> Date: 24-10-24</p>
-                    </div>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <div class="card bg-light shadow-sm p-3 hover-effect animate__animated animate__slideInUp">
-                        <h6 class="text-muted"><i class="bi bi-tools"></i> Berkala</h6>
-                        <p class="text-muted">Total biaya</p>
-                        <p class="fw-bold"><i class="bi bi-calendar-check"></i> Date: 24-11-24</p>
-                    </div>
+            <h5 class="mt-5 animate__animated animate__slideInUp">Riwayat Service</h5>                <!-- Search Form -->
+            <div class="row mb-3">
+                <div class="col-12 d-flex justify-content-center">
+                    <form action="{{ route('vehicle.show', $vehicle->id) }}" method="GET" class="d-flex align-items-center">
+                        <!-- Search Input -->
+                        <input type="text" name="search" value="{{ request('search') }}" class="form-control form-control-sm" placeholder="Search services..." aria-label="Search services">
+                        
+                        <!-- Search Button -->
+                        <button type="submit" class="btn btn-outline-primary btn-sm ms-2">
+                            <i class="bi bi-search"></i> Search
+                        </button>
+        
+                        <!-- Close Button (Resets Search) -->
+                        @if(request('search'))
+                            <a href="{{ route('vehicle.show', $vehicle->id) }}" class="btn btn-outline-danger btn-sm ms-2" aria-label="Close">
+                                <i class="bi bi-x-circle"></i> Close
+                            </a>
+                        @endif
+                    </form>
                 </div>
             </div>
 
-            <!-- Back Button -->
-            <div class="text-center mt-4">
-                <a href="{{ route('customer.show', $vehicle->customer_id) }}" class="btn btn-dark animate__animated animate__slideInUp">
-                    <i class="bi bi-arrow-left-circle"></i> Kembali
+            @if(session('success'))
+                <div class="alert alert-success alert-dismissible fade show text-center mb-4" role="alert">
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+
+            <div class="container mt-3">
+                <!-- Services List -->
+                <div class="row text-center">
+                    @forelse($services as $service)
+                        <div class="col-md-6 mb-3 animate__animated animate__slideInUp">
+                            <div class="card bg-light shadow-sm p-3 hover-effect"
+                                style="background-image: url('{{ asset('storage/'.$vehicle->image ?? '') }}'); background-size: cover; background-position: center;">
+                                <!-- Service Type (e.g., Berkala) -->
+                                <div class="card-body text-white">
+                                    <h6 class="text-muted text-light">
+                                        <i class="bi bi-tools"></i> {{ $service->service_type }}
+                                    </h6>
+                    
+                                    <!-- Service Info -->
+                                    <p class="text-muted text-light">Total Biaya</p>
+                                    <p class="fw-bold">Rp. {{ number_format($service->total_cost, 0, ',', '.') }}</p>
+                    
+                                    <!-- Service Date -->
+                                    <p class="fw-bold">
+                                        <i class="bi bi-calendar-check"></i> Tanggal: {{ \Carbon\Carbon::parse($service->service_date)->format('d-m-Y') }}
+                                    </p>
+                    
+                                    <!-- Actions (Detail, Edit, Delete) -->
+                                    <div class="d-flex justify-content-between mt-3">
+                                        <a href="{{ route('service.show', $service->id) }}" class="btn btn-outline-info btn-sm">
+                                            <i class="bi bi-info-circle"></i> Detail
+                                        </a>
+                                        <a href="{{ route('service.edit', $service->id) }}" class="btn btn-outline-warning btn-sm">
+                                            <i class="bi bi-pencil-square"></i> Edit
+                                        </a>
+                                        <form action="{{ route('service.destroy', $service->id) }}" method="POST" class="d-inline-block">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                                                <i class="bi bi-trash"></i> Hapus
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="col-12 animate__animated animate__slideInUp">
+                            <p class="text-center text-danger font-weight-bold bounce-animation fs-6 mt-3">Tidak ada riwayat service untuk kendaraan ini.</p>
+                        </div>
+                    @endforelse
+                </div>
+            
+                <!-- Pagination links -->
+                <div class="d-flex justify-content-center mt-4">
+                    <nav aria-label="Service Pagination">
+                        <ul class="pagination">
+                            <!-- Previous Page Link -->
+                            @if ($services->onFirstPage())
+                                <li class="page-item disabled">
+                                    <span class="page-link" aria-hidden="true">&laquo;</span>
+                                </li>
+                            @else
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ $services->previousPageUrl() }}" rel="prev">&laquo;</a>
+                                </li>
+                            @endif
+            
+                            <!-- Page Number Links -->
+                            @foreach ($services->getUrlRange(1, $services->lastPage()) as $page => $url)
+                                <li class="page-item {{ $page == $services->currentPage() ? 'active' : '' }}">
+                                    <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                                </li>
+                            @endforeach
+            
+                            <!-- Next Page Link -->
+                            @if ($services->hasMorePages())
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ $services->nextPageUrl() }}" rel="next">&raquo;</a>
+                                </li>
+                            @else
+                                <li class="page-item disabled">
+                                    <span class="page-link" aria-hidden="true">&raquo;</span>
+                                </li>
+                            @endif
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            
+            <div class="text-center mt-3">
+                <a href="{{ route('service.create', $vehicle->id) }}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Tambah Service
                 </a>
             </div>
         </div>
     </div>
 
-    <!-- Image Modal -->
-    <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content animate__animated animate__slideInUp">
-                <div class="modal-header text-dark">
-                    <h5 class="modal-title" id="imageModalLabel">Gambar Kendaraan</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body d-flex justify-content-center align-items-center">
-                    @if($vehicle->image)
-                        <img src="{{ asset('storage/' . $vehicle->image) }}" class="img-fluid rounded shadow-lg" alt="Vehicle Image" style="max-height: 80vh; object-fit: contain;">
-                    @else
-                        <p class="text-muted fs-5">No image available</p>
-                    @endif
+    <!-- Vehicle Image Modal -->
+    @if($vehicle->image)
+        <div class="modal fade" id="vehicleImageModal" tabindex="-1" aria-labelledby="vehicleImageModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="vehicleImageModalLabel">Gambar Kendaraan</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <img src="{{ asset('storage/'.$vehicle->image) }}" class="img-fluid" alt="Vehicle Image">
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    @endif
+
+    <!-- Internal CSS -->
+    <style>
+        /* Bounce Animation */
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-15px);
+            }
+        }
+
+        .bounce-animation {
+            display: inline-block;
+            animation: bounce 1s ease infinite;
+            color: red; /* Color to make it pop */
+            font-weight: bold; /* Make text bold */
+            font-size: 1rem; /* Increase font size */
+        }
+
+        /* Hover effect */
+        .hover-effect:hover {
+            transform: scale(1.05);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .card-body {
+            background-color: rgba(0, 0, 0, 0.5) !important;
+            border-radius: 0.5rem;
+        }
+    </style>
+
 @endsection

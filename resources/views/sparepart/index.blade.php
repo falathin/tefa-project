@@ -7,8 +7,8 @@
     
     <!-- Sejajarkan tombol "Tambah Sparepart" dengan judul -->
     <div class="d-flex flex-wrap justify-content-between mb-3">
-        <h2 class="mb-2 mb-md-0"><i class="bi bi-list hover-effect"></i> Daftar Sparepart</h2>
-        <a href="{{ route('sparepart.create') }}" class="btn btn-primary">
+        <h2 class="mb-2 mb-md-0"><i class="bi bi-list"></i> Daftar Sparepart</h2>
+        <a href="{{ route('sparepart.create') }}" class="btn btn-primary  hover-effect">
             <i class="bi bi-plus-circle"></i>&nbsp;&nbsp; Tambah Sparepart
         </a>
     </div>
