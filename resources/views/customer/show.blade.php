@@ -112,8 +112,8 @@
                             </tbody>
                         </table>
                         <!-- Pagination Links -->
-                        <div class="d-flex justify-content-center mt-3 animate__animated animate__slideInUp" style="animation-delay: 3.9s;">
-                            {{ $vehicles->links('pagination::bootstrap-4') }}
+                        <div class="d-flex justify-content-center mt-3 animate__animated animate__slideInUp" style="animation-delay: 4.0s;">
+                            {{ $vehicles->appends(request()->query())->links('pagination::bootstrap-4') }}
                         </div>
                     @endif
                 </div>

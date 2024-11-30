@@ -19,7 +19,13 @@
                     @foreach($services as $service)
                         <tr>
                             <td>{{ $service->id }}</td>
-                            <td>{{ $service->vehicle->customer->name }}</td>
+                            <td>
+                                @if($service->vehicle && $service->vehicle->customer)
+                                    {{ $service->vehicle->customer->name }}
+                                @else
+                                    No Customer Assigned
+                                @endif
+                            </td>
                             <td>{{ $service->vehicle->vehicle_type }}</td>
                             <td>
                                 <a href="{{ route('service.show', $service->id) }}" class="btn btn-info btn-sm">Lihat</a>
@@ -27,7 +33,7 @@
                                 <form action="{{ route('service.destroy', $service->id) }}" method="POST" style="display:inline;">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this service?')">Hapus</button>
                                 </form>
                             </td>
                         </tr>
@@ -37,4 +43,4 @@
         </div>
     </div>
 </div>
-@endsection
+@endsection 

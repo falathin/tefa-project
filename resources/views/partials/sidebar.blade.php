@@ -28,7 +28,7 @@
 
         <!-- Riwayat Service Menu Item -->
         <li class="nav-item">
-            <a class="nav-link {{ Request::is('riwayat-service') ? 'active' : '' }}" href="#">
+            <a class="nav-link {{ Request::is('service*') ? 'active' : '' }}" href="{{ route('service.index') }}">
                 <i class="mdi mdi-history menu-icon"></i>
                 <span class="menu-title">Riwayat Service</span>
             </a>
@@ -36,7 +36,7 @@
 
         <!-- Documentation Menu Item -->
         <li class="nav-item">
-            <a class="nav-link {{ Request::is('dokumentasi') ? 'active' : '' }}" href="#">
+            <a class="nav-link {{ Request::is('dokumentasi*') ? 'active' : '' }}" href="#">
                 <i class="mdi mdi-file-document menu-icon"></i>
                 <span class="menu-title">Dokumentasi</span>
             </a>
