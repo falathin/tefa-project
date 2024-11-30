@@ -11,14 +11,12 @@ use Illuminate\Http\Request;
 
 class ServiceController extends Controller
 {
-    // Display all services with pagination
     public function index()
     {
-        $services = Service::paginate(4); // Paginate services, 4 per page
+        $services = Service::paginate(4);
         return view('service.index', compact('services'));
     }    
 
-    // Display create page for a new service based on vehicle_id
     public function create($vehicle_id)
     {
         $vehicle = Vehicle::findOrFail($vehicle_id);
@@ -26,7 +24,6 @@ class ServiceController extends Controller
         return view('service.create', compact('vehicle', 'spareparts'));
     }    
 
-    // Display edit page for the existing service
     public function edit($id)
     {
         $service = Service::findOrFail($id);
@@ -34,7 +31,6 @@ class ServiceController extends Controller
         return view('service.edit', compact('service', 'spareparts'));
     }
 
-    // Store a new service record
     public function store(Request $request)
     {
         $request->validate([
@@ -56,35 +52,28 @@ class ServiceController extends Controller
         // Save service data
         $service = Service::create($request->except('spareparts', 'quantities'));
 
-        // Calculate total profit from spareparts
         $total_keuntungan = 0;
         if ($request->spareparts) {
             foreach ($request->spareparts as $index => $sparepart_id) {
                 $sparepart = Sparepart::findOrFail($sparepart_id);
 
-                // Check if sparepart stock is sufficient
                 if ($sparepart->jumlah >= $request->quantities[$index]) {
-                    // Decrement sparepart stock
                     $sparepart->decrement('jumlah', $request->quantities[$index]);
 
-                    // Calculate profit
                     $keuntungan_per_sparepart = $sparepart->harga_jual - $sparepart->harga_beli;
                     $total_keuntungan += $keuntungan_per_sparepart * $request->quantities[$index];
 
-                    // Save service sparepart data
                     ServiceSparepart::create([
                         'service_id' => $service->id,
                         'sparepart_id' => $sparepart_id,
                         'quantity' => $request->quantities[$index],
                     ]);
                 } else {
-                    // If sparepart stock is insufficient
                     return redirect()->back()->withErrors(['spareparts' => 'Insufficient sparepart stock for this service.']);
                 }
             }
         }
 
-        // Redirect to vehicle/show page
         return redirect()->route('vehicle.show', $service->vehicle_id)
                          ->with('success', 'Service created successfully!');
     }
@@ -110,26 +99,21 @@ class ServiceController extends Controller
         $service = Service::findOrFail($id);
         $service->update($request->except('spareparts', 'quantities'));
     
-        // Remove old spareparts and save the new ones
         $service->serviceSpareparts()->delete();
     
         if ($request->has('spareparts') && $request->has('quantities')) {
             foreach ($request->spareparts as $index => $sparepart_id) {
                 $sparepart = Sparepart::findOrFail($sparepart_id);
     
-                // Check if sparepart stock is sufficient
                 if ($sparepart->jumlah >= $request->quantities[$index]) {
-                    // Decrement sparepart stock
                     $sparepart->decrement('jumlah', $request->quantities[$index]);
     
-                    // Save service sparepart data
                     ServiceSparepart::create([
                         'service_id' => $service->id,
                         'sparepart_id' => $sparepart_id,
                         'quantity' => $request->quantities[$index],
                     ]);
                 } else {
-                    // If sparepart stock is insufficient
                     return redirect()->back()->withErrors(['spareparts' => 'Insufficient sparepart stock for this service.']);
                 }
             }
@@ -143,18 +127,15 @@ class ServiceController extends Controller
     public function destroy($id)
     {
         $service = Service::findOrFail($id);
-        $vehicle_id = $service->vehicle_id;  // Save vehicle_id to redirect later
+        $vehicle_id = $service->vehicle_id;
     
-        // Optionally, handle deletion of related spareparts or serviceSparepart entries
         $service->delete();
     
-        // Redirect to vehicle/show page after deletion
         return redirect()->route('vehicle.show', $vehicle_id)
                          ->with('success', 'Service deleted successfully');
     }
     
 
-    // Display the service details
     public function show($id)
     {
         $service = Service::with('serviceSpareparts.sparepart')->findOrFail($id);

@@ -12,7 +12,7 @@ class SparepartController extends Controller
         $search = $request->search;
         $spareparts = Sparepart::when($search, function($query, $search) {
             return $query->where('nama_sparepart', 'like', '%' . $search . '%');
-        })->paginate(4); // Adjust the number to control items per page
+        })->paginate(4);
 
         return view('sparepart.index', compact('spareparts'));
     }
