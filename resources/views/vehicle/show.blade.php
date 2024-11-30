@@ -107,7 +107,7 @@
                     
                                     <!-- Service Date -->
                                     <p class="fw-bold">
-                                        <i class="bi bi-calendar-check"></i> Tanggal: {{ \Carbon\Carbon::parse($service->service_date)->format('d-m-Y') }}
+                                        <i class="bi bi-calendar-check"></i> Tanggal: {{ \Carbon\Carbon::parse($service->service_date)->format('d-m-Y') }}  -  {{ $service->created_at}}
                                     </p>
                     
                                     <!-- Actions (Detail, Edit, Delete) -->
