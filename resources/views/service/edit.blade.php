@@ -1,94 +1,285 @@
-<!-- resources/views/service/edit.blade.php -->
 @extends('layouts.app')
 
 @section('content')
 <div class="container mt-5">
-    <div class="card">
-        <div class="card-header">
-            <h4>Edit Service for Vehicle: {{ $service->vehicle->name }}</h4>
-        </div>
+    <div class="card shadow-lg border-0 rounded-3">
         <div class="card-body">
-            <form action="{{ route('service.update', $service->id) }}" method="POST">
+            <h4 class="text-center mb-4">Tambah Service untuk Kendaraan: {{ $service->vehicle->license_plate }}</h4>            
+            <form method="POST" action="{{ route('service.update', $service->id) }}">
                 @csrf
                 @method('PUT')
+            
+                <input type="hidden" name="vehicle_id" value="{{  $service->vehicle->id }}">
+                
+                <div class="row">
+                    <!-- Kolom pertama -->
+                    <div class="col-md-6 mb-3">
+                        <label for="complaint" class="form-label">Keluhan</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-comment"></i></span>
+                            <input type="text" name="complaint" class="form-control" placeholder="Masukkan keluhan kendaraan" required value="{{ old('complaint', $service->complaint) }}">
+                        </div>
+                    </div>
 
-                <!-- Vehicle ID (hidden) -->
-                <input type="hidden" name="vehicle_id" value="{{ $service->vehicle->id }}">
+                    <div class="col-md-6 mb-3">
+                        <label for="current_mileage" class="form-label">Kilometer Saat Ini</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-tachometer-alt"></i></span>
+                            <input type="number" name="current_mileage" class="form-control" placeholder="Masukkan kilometer kendaraan" required value="{{ old('current_mileage', $service->current_mileage) }}">
+                        </div>
+                    </div>
 
-                <!-- Complaint -->
-                <div class="mb-3">
-                    <label for="complaint" class="form-label">Complaint</label>
-                    <input type="text" class="form-control" id="complaint" name="complaint" value="{{ old('complaint', $service->complaint) }}" required>
+                    <div class="col-md-6 mb-3">
+                        <label for="service_fee" class="form-label">Biaya Service</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
+                            <input type="number" name="service_fee" class="form-control" id="service_fee" placeholder="Masukkan biaya service" required value="{{ old('service_fee', $service->service_fee) }}">
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="service_date" class="form-label">Tanggal Service</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                            <input type="date" name="service_date" id="service_date" class="form-control" required value="{{ old('service_date', \Carbon\Carbon::parse($service->service_date)->format('Y-m-d')) }}">
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="total_cost" class="form-label">Total Biaya</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-calculator"></i></span>
+                            <input type="number" name="total_cost" id="total_cost" class="form-control" readonly placeholder="Total biaya" required value="{{ old('total_cost', $service->total_cost) }}">
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="payment_received" class="form-label">Pembayaran Diterima</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-credit-card"></i></span>
+                            <input type="number" name="payment_received" id="payment_received" class="form-control" placeholder="Jumlah pembayaran diterima" required value="{{ old('payment_received', $service->payment_received) }}">
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="change" class="form-label">Kembalian</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
+                            <input type="number" name="change" id="change" class="form-control" readonly placeholder="Kembalian" required value="{{ old('change', $service->change) }}">
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="service_type" class="form-label">Jenis Service</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-tools"></i></span>
+                            <select class="form-control" id="service_type" name="service_type" required>
+                                <option value="light" {{ old('service_type', $service->service_type) == 'light' ? 'selected' : '' }}>Light</option>
+                                <option value="medium" {{ old('service_type', $service->service_type) == 'medium' ? 'selected' : '' }}>Medium</option>
+                                <option value="heavy" {{ old('service_type', $service->service_type) == 'heavy' ? 'selected' : '' }}>Heavy</option>
+                            </select>
+                        </div>
+                    </div>                                        
                 </div>
 
-                <!-- Current Mileage -->
-                <div class="mb-3">
-                    <label for="current_mileage" class="form-label">Current Mileage</label>
-                    <input type="number" class="form-control" id="current_mileage" name="current_mileage" value="{{ old('current_mileage', $service->current_mileage) }}" required>
+                <!-- Informasi Sparepart -->
+                <div class="card-header rounded bg-danger text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-wrench"></i> &nbsp; Tambah Informasi Sparepart</h5>
+                    <small class="text-right"><b>*</b> Hapus jika tidak diperlukan</small>
                 </div>
-
-                <!-- Service Fee -->
-                <div class="mb-3">
-                    <label for="service_fee" class="form-label">Service Fee</label>
-                    <input type="number" class="form-control" id="service_fee" name="service_fee" value="{{ old('service_fee', $service->service_fee) }}" required>
-                </div>
-
-                <!-- Service Date -->
-                <div class="mb-3">
-                    <label for="service_date" class="form-label">Service Date</label>
-                    <input type="date" class="form-control" id="service_date" name="service_date" value="{{ old('service_date', \Carbon\Carbon::parse($service->service_date)->format('Y-m-d')) }}" required>
-                </div>
-
-                <!-- Total Cost -->
-                <div class="mb-3">
-                    <label for="total_cost" class="form-label">Total Cost</label>
-                    <input type="number" class="form-control" id="total_cost" name="total_cost" value="{{ old('total_cost', $service->total_cost) }}" required>
-                </div>
-
-                <!-- Payment Received -->
-                <div class="mb-3">
-                    <label for="payment_received" class="form-label">Payment Received</label>
-                    <input type="number" class="form-control" id="payment_received" name="payment_received" value="{{ old('payment_received', $service->payment_received) }}" required>
-                </div>
-
-                <!-- Change -->
-                <div class="mb-3">
-                    <label for="change" class="form-label">Change</label>
-                    <input type="number" class="form-control" id="change" name="change" value="{{ old('change', $service->change) }}" required>
-                </div>
-
-                <!-- Service Type -->
-                <div class="mb-3">
-                    <label for="service_type" class="form-label">Service Type</label>
-                    <select class="form-control" id="service_type" name="service_type" required>
-                        <option value="light" {{ old('service_type', $service->service_type) == 'light' ? 'selected' : '' }}>Light</option>
-                        <option value="medium" {{ old('service_type', $service->service_type) == 'medium' ? 'selected' : '' }}>Medium</option>
-                        <option value="heavy" {{ old('service_type', $service->service_type) == 'heavy' ? 'selected' : '' }}>Heavy</option>
-                    </select>
-                </div>
-
-                <!-- Spareparts Used -->
-                <div class="mb-3">
-                    <label for="spareparts" class="form-label">Spareparts</label>
-                    <select class="form-control" id="spareparts" name="spareparts[]" multiple>
-                        @foreach($spareparts as $sparepart)
-                            <option value="{{ $sparepart->id }}" 
-                                @foreach($service->serviceSpareparts as $serviceSparepart)
-                                    @if($serviceSparepart->sparepart_id == $sparepart->id)
-                                        selected
-                                    @endif
-                                @endforeach
-                            >
-                                {{ $sparepart->name }} - Rp. {{ number_format($sparepart->harga_jual, 0, ',', '.') }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
+                <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="sparepartTable">
+                                <thead>
+                                    <tr>
+                                        <th><i class="fas fa-wrench"></i> Nama Sparepart</th>
+                                        <th><i class="fas fa-tag"></i> Harga Satuan</th>
+                                        <th><i class="fas fa-plus-circle"></i> Jumlah yang Diambil</th>
+                                        <th><i class="fas fa-calculator"></i> Subtotal</th>
+                                        <th><i class="fas fa-trash-alt"></i> Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Existing spare parts will go here -->
+                                    {{-- {{ dd($service->spareparts) }} --}}
+                                    @foreach($service->spareparts as $index => $sparepart)
+                            <tr>
+                                <td>
+                                    <select name="sparepart_id[]" class="form-control sparepart_id" required>
+                                        <option value="">Pilih Sparepart</option>
+                                        @foreach($spareparts as $spare)
+                                            <option value="{{ $spare->id_sparepart }}" 
+                                                @if($spare->id_sparepart == $sparepart->id_sparepart) selected @endif
+                                                data-harga="{{ $spare->harga_jual }}">
+                                                {{ $spare->nama_sparepart }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control harga" readonly value="{{ $sparepart->harga_jual }}">
+                                </td>
+                                <td>
+                                    <input type="number" name="jumlah[]" class="form-control jumlah" value="{{ $sparepart->jumlah }}">
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control subtotal" readonly value="{{ $sparepart->harga_jual * $sparepart->jumlah }}">
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-danger remove-row hover-effect">Hapus</button>
+                                </td>
+                            </tr>
+                            @endforeach
+                                </tbody>
+                            </table>
+                    </div>
+                        <br>
+                        <button type="button" class="btn btn-primary" id="addRow">+ Tambah Sparepart</button>
+                    </div>
                 <!-- Submit Button -->
-                <button type="submit" class="btn btn-primary">Update Service</button>
-            </form>
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-success btn-lg"><i class="fas fa-save"></i> Update Service</button>
+                </div>
+            </form>            
         </div>
     </div>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Automatically set today's date for service date input
+        const serviceDateInput = document.getElementById('service_date');
+        if (!serviceDateInput.value) {
+            const today = new Date().toISOString().split('T')[0];
+            serviceDateInput.value = today;
+        }
+
+        // Function to calculate subtotal when spare part or quantity changes
+        function calculateSubtotal(row) {
+            const price = parseFloat(row.querySelector('.harga').value) || 0;
+            const quantity = parseFloat(row.querySelector('.jumlah').value) || 0;
+            const subtotal = price * quantity;
+            row.querySelector('.subtotal').value = subtotal.toFixed(2);
+        }
+
+        // Show modal with custom message
+        function showModalMessage(message) {
+            const validationMessage = document.getElementById('validationMessage');
+            validationMessage.textContent = message;
+            const validationModal = new bootstrap.Modal(document.getElementById('validationModal'));
+            validationModal.show();
+        }
+
+        // Validate sparepart and jumlah fields
+        function validateSparepartFields(row) {
+            const sparepartSelect = row.querySelector('.sparepart_id');
+            const quantityInput = row.querySelector('.jumlah');
+
+            sparepartSelect.addEventListener('change', function () {
+                if (sparepartSelect.value && !quantityInput.value) {
+                    showModalMessage('Silakan masukkan jumlah jika Anda memilih spare part!');
+                }
+            });
+
+            quantityInput.addEventListener('input', function () {
+                if (quantityInput.value && !sparepartSelect.value) {
+                    showModalMessage('Silakan pilih spare part jika Anda memasukkan jumlah!');
+                }
+            });
+        }
+
+        // Update total biaya based on harga jasa and spare part subtotal
+        function updateTotalBiaya() {
+            const hargaJasa = parseFloat(document.getElementById('service_fee').value) || 0;
+            let totalSparepart = 0;
+
+            // Calculate total spare part cost
+            document.querySelectorAll('#sparepartTable tbody tr').forEach(row => {
+                const harga = parseFloat(row.querySelector('.harga').value.replace(/[^0-9.-]+/g, "")) || 0;
+                const jumlah = parseInt(row.querySelector('.jumlah').value) || 0;
+                const subtotal = harga * jumlah;
+                row.querySelector('.subtotal').value = subtotal.toFixed(2);
+                totalSparepart += subtotal;
+            });
+
+            // Update total biaya
+            const totalBiaya = hargaJasa + totalSparepart;
+            document.getElementById('total_cost').value = totalBiaya.toFixed(2);
+        }
+
+        // Update kembalian
+        function updateKembalian() {
+            const uangMasuk = parseFloat(document.getElementById('payment_received').value) || 0;
+            const totalBiaya = parseFloat(document.getElementById('total_cost').value) || 0;
+            const kembalian = uangMasuk - totalBiaya;
+            document.getElementById('change').value = kembalian.toFixed(2);
+        }
+
+        // Add new row
+        document.getElementById('addRow').addEventListener('click', function () {
+            const tableBody = document.querySelector('#sparepartTable tbody');
+            const row = tableBody.insertRow();
+            row.innerHTML = `
+                <td>
+                    <select name="sparepart_id[]" class="form-control sparepart_id">
+                        <option value="">Pilih Sparepart</option>
+                        @foreach($spareparts as $sparepart)
+                            <option value="{{ $sparepart->id_sparepart }}" data-harga="{{ $sparepart->harga_jual }}">
+                                {{ $sparepart->nama_sparepart }}
+                            </option>                                      
+                        @endforeach
+                    </select>
+                </td>
+                <td><input type="text" class="form-control harga" readonly></td>
+                <td><input type="number" name="jumlah[]" class="form-control jumlah" min="1"></td>
+                <td><input type="text" class="form-control subtotal" readonly></td>
+                <td><button type="button" class="btn btn-danger remove-row">Hapus</button></td>
+            `;
+            updateTotalBiaya();
+        });
+
+        // Handle remove row
+        document.querySelector('#sparepartTable').addEventListener('click', function (event) {
+            if (event.target.classList.contains('remove-row')) {
+                event.target.closest('tr').remove();
+                updateTotalBiaya();
+            }
+        });
+
+        // Handle sparepart change
+        document.querySelector('#sparepartTable').addEventListener('change', function (event) {
+            if (event.target.classList.contains('sparepart_id')) {
+                const harga = parseFloat(event.target.selectedOptions[0].dataset.harga) || 0;
+                event.target.closest('tr').querySelector('.harga').value = harga.toFixed(2);
+                calculateSubtotal(event.target.closest('tr'));
+                updateTotalBiaya();
+            }
+        });
+
+        // Handle quantity change
+        document.querySelector('#sparepartTable').addEventListener('input', function (event) {
+            if (event.target.classList.contains('jumlah') || event.target.classList.contains('harga')) {
+                calculateSubtotal(event.target.closest('tr'));
+                updateTotalBiaya();
+            }
+        });
+
+        // Initial calculation and validation
+        document.querySelectorAll('#sparepartTable tbody tr').forEach(function (row) {
+            validateSparepartFields(row);
+            row.querySelector('.sparepart_id').addEventListener('change', function () {
+                const price = this.options[this.selectedIndex].getAttribute('data-harga') || 0;
+                row.querySelector('.harga').value = parseFloat(price).toFixed(2);
+                calculateSubtotal(row);
+            });
+            row.querySelector('.jumlah').addEventListener('input', function () {
+                calculateSubtotal(row);
+            });
+        });
+
+        // Initial calculation of total biaya
+        updateTotalBiaya();
+        document.getElementById('service_fee').addEventListener('input', updateTotalBiaya);
+        document.getElementById('payment_received').addEventListener('input', updateKembalian);
+    });
+</script>
+    
 @endsection

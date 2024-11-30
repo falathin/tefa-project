@@ -5,7 +5,7 @@
     <div class="card shadow-sm">
         <div class="card-body">
             <h5 class="card-title">Daftar Servis</h5>
-            <a href="{{ route('service.create') }}" class="btn btn-primary mb-3">Tambah Servis</a>
+            <a href="{{ route('customer.index') }}" class="btn btn-primary mb-3">Customer List</a>
             <table class="table table-bordered">
                 <thead>
                     <tr>

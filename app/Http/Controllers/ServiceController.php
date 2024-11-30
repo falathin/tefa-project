@@ -13,7 +13,7 @@ class ServiceController extends Controller
 {
     public function index()
     {
-        $services = Service::paginate(4);
+        $services = Service::paginate(2);
         return view('service.index', compact('services'));
     }    
 
@@ -43,33 +43,35 @@ class ServiceController extends Controller
             'payment_received' => 'required|numeric',
             'change' => 'required|numeric',
             'service_type' => 'required|string|in:light,medium,heavy',
-            'spareparts' => 'nullable|array',
-            'spareparts.*' => 'exists:spareparts,id',
-            'quantities' => 'nullable|array',
-            'quantities.*' => 'required|numeric|min:1',
+            'sparepart_id' => 'nullable|array',
+            'sparepart_id.*' => 'exists:spareparts,id',
+            'jumlah' => 'nullable|array',
+            'jumlah.*' => 'required|numeric|min:1',
         ]);
 
+        
         // Save service data
-        $service = Service::create($request->except('spareparts', 'quantities'));
+        // dd($request);
+        $service = Service::create($request->except('sparepart_id', 'jumlah'));
 
         $total_keuntungan = 0;
-        if ($request->spareparts) {
-            foreach ($request->spareparts as $index => $sparepart_id) {
+        if ($request->sparepart_id) {
+            foreach ($request->sparepart_id as $index => $sparepart_id) {
                 $sparepart = Sparepart::findOrFail($sparepart_id);
 
-                if ($sparepart->jumlah >= $request->quantities[$index]) {
-                    $sparepart->decrement('jumlah', $request->quantities[$index]);
+                if ($sparepart->jumlah >= $request->jumlah[$index]) {
+                    $sparepart->decrement('jumlah', $request->jumlah[$index]);
 
                     $keuntungan_per_sparepart = $sparepart->harga_jual - $sparepart->harga_beli;
-                    $total_keuntungan += $keuntungan_per_sparepart * $request->quantities[$index];
+                    $total_keuntungan += $keuntungan_per_sparepart * $request->jumlah[$index];
 
                     ServiceSparepart::create([
                         'service_id' => $service->id,
                         'sparepart_id' => $sparepart_id,
-                        'quantity' => $request->quantities[$index],
+                        'quantity' => $request->jumlah[$index],
                     ]);
                 } else {
-                    return redirect()->back()->withErrors(['spareparts' => 'Insufficient sparepart stock for this service.']);
+                    return redirect()->back()->withErrors(['sparepart_id' => 'Insufficient sparepart stock for this service.']);
                 }
             }
         }
@@ -90,28 +92,28 @@ class ServiceController extends Controller
             'payment_received' => 'required|numeric',
             'change' => 'required|numeric',
             'service_type' => 'required|string|max:255',
-            'spareparts' => 'nullable|array',
-            'spareparts.*' => 'exists:spareparts,id',
-            'quantities' => 'nullable|array',
-            'quantities.*' => 'required|numeric|min:1',
+            'sparepart_id' => 'nullable|array',
+            'sparepart_id.*' => 'exists:spareparts,id',
+            'jumlah' => 'nullable|array',
+            'jumlah.*' => 'required|numeric|min:1',
         ]);
     
         $service = Service::findOrFail($id);
-        $service->update($request->except('spareparts', 'quantities'));
+        $service->update($request->except('sparepart_id', 'jumlah'));
     
         $service->serviceSpareparts()->delete();
     
-        if ($request->has('spareparts') && $request->has('quantities')) {
+        if ($request->has('sparepart_id') && $request->has('jumlah')) {
             foreach ($request->spareparts as $index => $sparepart_id) {
                 $sparepart = Sparepart::findOrFail($sparepart_id);
     
-                if ($sparepart->jumlah >= $request->quantities[$index]) {
-                    $sparepart->decrement('jumlah', $request->quantities[$index]);
+                if ($sparepart->jumlah >= $request->jumlah[$index]) {
+                    $sparepart->decrement('jumlah', $request->jumlah[$index]);
     
                     ServiceSparepart::create([
                         'service_id' => $service->id,
                         'sparepart_id' => $sparepart_id,
-                        'quantity' => $request->quantities[$index],
+                        'quantity' => $request->jumlah[$index],
                     ]);
                 } else {
                     return redirect()->back()->withErrors(['spareparts' => 'Insufficient sparepart stock for this service.']);

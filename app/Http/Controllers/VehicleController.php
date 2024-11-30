@@ -63,7 +63,7 @@ class VehicleController extends Controller
                             ->when($request->search, function($query) use ($request) {
                                 return $query->where('service_type', 'like', '%' . $request->search . '%');
                             })
-                            ->paginate(4);
+                            ->paginate(2);
     
         return view('vehicle.show', compact('vehicle', 'services'));
     }

@@ -33,6 +33,7 @@ class Service extends Model
 
     public function spareparts()
     {
+        // return $this->belongsToMany(Sparepart::class, 'service_spareparts', 'sparepart_id')->withPivot('quantity');
         return $this->belongsToMany(Sparepart::class, 'service_spareparts')->withPivot('quantity');
     }
 }
