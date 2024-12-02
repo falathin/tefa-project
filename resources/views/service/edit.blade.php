@@ -10,7 +10,6 @@
                 @method('PUT')
             
                 <input type="hidden" name="vehicle_id" value="{{ $service->vehicle_id }}">
-            
                 <div class="row">
                     <!-- Kolom pertama -->
                     <div class="col-md-6 mb-3">
@@ -19,56 +18,77 @@
                             <span class="input-group-text"><i class="fas fa-comment"></i></span>
                             <input type="text" name="complaint" class="form-control" placeholder="Masukkan keluhan kendaraan" value="{{ old('complaint', $service->complaint) }}" required>
                         </div>
+                        @error('complaint')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
                     </div>
-            
+                
                     <div class="col-md-6 mb-3">
                         <label for="current_mileage" class="form-label">Kilometer Saat Ini</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-tachometer-alt"></i></span>
                             <input type="number" name="current_mileage" class="form-control" placeholder="Masukkan kilometer kendaraan" value="{{ old('current_mileage', $service->current_mileage) }}" required>
                         </div>
+                        @error('current_mileage')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
                     </div>
-            
+                
                     <div class="col-md-6 mb-3">
                         <label for="service_fee" class="form-label">Biaya Service</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
                             <input type="number" name="service_fee" class="form-control" id="service_fee" placeholder="Masukkan biaya service" value="{{ old('service_fee', $service->service_fee) }}" required>
                         </div>
+                        @error('service_fee')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
                     </div>
-            
+                
                     <div class="col-md-6 mb-3">
                         <label for="service_date" class="form-label">Tanggal Service</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
                             <input type="date" name="service_date" id="service_date" class="form-control" value="{{ old('service_date', $service->service_date) }}" required>
                         </div>
+                        @error('service_date')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
                     </div>
-            
+                
                     <div class="col-md-6 mb-3">
                         <label for="total_cost" class="form-label">Total Biaya</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-calculator"></i></span>
                             <input type="number" name="total_cost" id="total_cost" class="form-control" readonly placeholder="Total biaya" value="{{ old('total_cost', $service->total_cost) }}" required>
                         </div>
+                        @error('total_cost')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
                     </div>
-            
+                
                     <div class="col-md-6 mb-3">
                         <label for="payment_received" class="form-label">Pembayaran Diterima</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-credit-card"></i></span>
                             <input type="number" name="payment_received" id="payment_received" class="form-control" placeholder="Jumlah pembayaran diterima" value="{{ old('payment_received', $service->payment_received) }}" required>
                         </div>
+                        @error('payment_received')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
                     </div>
-            
+                
                     <div class="col-md-6 mb-3">
                         <label for="change" class="form-label">Kembalian</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
                             <input type="number" name="change" id="change" class="form-control" readonly placeholder="Kembalian" value="{{ old('change', $service->change) }}" required>
                         </div>
+                        @error('change')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
                     </div>
-            
+                
                     <div class="col-md-6 mb-3">
                         <label for="service_type" class="form-label">Jenis Service</label>
                         <div class="input-group">
@@ -79,114 +99,134 @@
                                 <option value="heavy" {{ old('service_type', $service->service_type) == 'heavy' ? 'selected' : '' }}>Berat</option>
                             </select>
                         </div>
+                        @error('service_type')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
                     </div>
                 </div>
-
-            <!-- Informasi Sparepart -->
-            <div class="card-header rounded bg-danger text-white d-flex justify-content-between align-items-center">
-                <h5 class="mb-0"><i class="fas fa-wrench"></i> &nbsp; Tambah Informasi Sparepart</h5>
-                <small class="text-right"><b>*</b> Hapus jika tidak diperlukan</small>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-bordered" id="sparepartTable">
-                        <thead>
-                            <tr>
-                                <th><i class="fas fa-wrench"></i> Nama Sparepart</th>
-                                <th><i class="fas fa-tag"></i> Harga Satuan</th>
-                                <th><i class="fas fa-plus-circle"></i> Jumlah yang Diambil</th>
-                                <th><i class="fas fa-calculator"></i> Subtotal</th>
-                                <th><i class="fas fa-trash-alt"></i> Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if (old('sparepart_id') && old('jumlah'))
-                                @foreach (old('sparepart_id') as $index => $sparepart_id)
-                                    <tr>
-                                        <td>
-                                            <select name="sparepart_id[]" class="form-control">
-                                                @foreach ($spareparts as $sparepart)
-                                                    <option value="{{ $sparepart->id_sparepart }}"
-                                                        {{ $sparepart->id_sparepart == $sparepart_id ? 'selected' : '' }}>
-                                                        {{ $sparepart->nama_sparepart }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control harga" 
-                                                value="{{ $spareparts->where('id_sparepart', $sparepart_id)->first()->harga_jual ?? 0 }}" 
-                                                readonly>
-                                        </td>
-                                        <td>
-                                            <input type="number" name="jumlah[]" class="form-control jumlah" 
-                                                value="{{ old('jumlah')[$index] }}">
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control subtotal" value="0" readonly>
-                                        </td>
-                                        <td>
-                                            <button type="button" class="btn btn-danger removeRow"><i class="fas fa-trash-alt"></i></button>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            @elseif (isset($service->serviceSpareparts))
-                                @foreach ($service->serviceSpareparts as $serviceSparepart)
-                                    <tr>
-                                        <td>
-                                            <select name="sparepart_id[]" class="form-control">
-                                                @foreach ($spareparts as $sparepart)
-                                                    <option value="{{ $sparepart->id_sparepart }}"
-                                                        {{ $sparepart->id_sparepart == $serviceSparepart->sparepart_id ? 'selected' : '' }}>
-                                                        {{ $sparepart->nama_sparepart }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control harga" 
-                                                value="{{ $serviceSparepart->sparepart->harga_jual }}" 
-                                                readonly>
-                                        </td>
-                                        <td>
-                                            <input type="number" name="jumlah[]" class="form-control jumlah" 
-                                                value="{{ $serviceSparepart->quantity }}">
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control subtotal" 
-                                                value="{{ $serviceSparepart->sparepart->harga_jual * $serviceSparepart->quantity }}" 
-                                                readonly>
-                                        </td>
-                                        <td>
-                                            <button type="button" class="btn btn-danger removeRow"><i class="fas fa-trash-alt"></i></button>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            @endif
-                        </tbody>
-                    </table>
+                
+                <!-- Informasi Sparepart -->
+                <div class="card-header rounded bg-danger text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-wrench"></i> &nbsp; Tambah Informasi Sparepart</h5>
+                    <small class="text-right"><b>*</b> Hapus jika tidak diperlukan</small>
                 </div>
-                <br>
-                <button type="button" class="btn btn-primary" id="addRow">+ Tambah Sparepart</button>
-            </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="sparepartTable">
+                            <thead>
+                                <tr>
+                                    <th><i class="fas fa-wrench"></i> Nama Sparepart</th>
+                                    <th><i class="fas fa-tag"></i> Harga Satuan</th>
+                                    <th><i class="fas fa-plus-circle"></i> Jumlah yang Diambil</th>
+                                    <th><i class="fas fa-calculator"></i> Subtotal</th>
+                                    <th><i class="fas fa-trash-alt"></i> Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (old('sparepart_id') && old('jumlah'))
+                                    @foreach (old('sparepart_id') as $index => $sparepart_id)
+                                        <tr>
+                                            <td>
+                                                <select name="sparepart_id[]" class="form-control">
+                                                    @foreach ($spareparts as $sparepart)
+                                                        <option value="{{ $sparepart->id_sparepart }}"
+                                                            {{ $sparepart->id_sparepart == $sparepart_id ? 'selected' : '' }}>
+                                                            {{ $sparepart->nama_sparepart }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                @error('sparepart_id.' . $index)
+                                                    <div class="text-danger">{{ $message }}</div>
+                                                @enderror
+                                            </td>
+                                            <td>
+                                                <input type="text" class="form-control harga" 
+                                                    value="{{ $spareparts->where('id_sparepart', $sparepart_id)->first()->harga_jual ?? 0 }}" 
+                                                    readonly>
+                                            </td>
+                                            <td>
+                                                <input type="number" name="jumlah[]" class="form-control jumlah" 
+                                                    value="{{ old('jumlah')[$index] }}">
+                                                @error('jumlah.' . $index)
+                                                    <div class="text-danger">{{ $message }}</div>
+                                                @enderror
+                                            </td>
+                                            <td>
+                                                <input type="text" class="form-control subtotal" value="0" readonly>
+                                            </td>
+                                            <td>
+                                                <button type="button" class="btn btn-danger removeRow"><i class="fas fa-trash-alt"></i></button>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @elseif (isset($service->serviceSpareparts))
+                                    @foreach ($service->serviceSpareparts as $serviceSparepart)
+                                        <tr>
+                                            <td>
+                                                <select name="sparepart_id[]" class="form-control">
+                                                    @foreach ($spareparts as $sparepart)
+                                                        <option value="{{ $sparepart->id_sparepart }}"
+                                                            {{ $sparepart->id_sparepart == $serviceSparepart->sparepart_id ? 'selected' : '' }}>
+                                                            {{ $sparepart->nama_sparepart }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                @error('sparepart_id.' . $loop->index)
+                                                    <div class="text-danger">{{ $message }}</div>
+                                                @enderror
+                                            </td>
+                                            <td>
+                                                <input type="text" class="form-control harga" 
+                                                    value="{{ $serviceSparepart->sparepart->harga_jual }}" 
+                                                    readonly>
+                                            </td>
+                                            <td>
+                                                <input type="number" name="jumlah[]" class="form-control jumlah" 
+                                                    value="{{ $serviceSparepart->quantity }}">
+                                                @error('jumlah.' . $loop->index)
+                                                    <div class="text-danger">{{ $message }}</div>
+                                                @enderror
+                                            </td>
+                                            <td>
+                                                <input type="text" class="form-control subtotal" 
+                                                    value="{{ $serviceSparepart->sparepart->harga_jual * $serviceSparepart->quantity }}" 
+                                                    readonly>
+                                            </td>
+                                            <td>
+                                                <button type="button" class="btn btn-danger removeRow"><i class="fas fa-trash-alt"></i></button>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @endif
+                            </tbody>
+                        </table>
+                    </div>
+                    <br>
+                    <button type="button" class="btn btn-primary" id="addRow">+ Tambah Sparepart</button>
+                </div>
+
                 <div class="text-center mt-4">
-                    <button type="submit" class="btn btn-success btn-lg"><i class="fas fa-save"></i> Simpan Perubahan</button>
+                    @if($service->vehicle)
+                    <a href="{{ route('vehicle.show', $service->vehicle->id) }}" class="btn btn-dark btn-md me-3">
+                        <i class="mdi mdi-car me-2"></i> Kembali
+                    </a>
+                    @endif
+                    <button type="submit" class="btn btn-success btn-md">
+                        <i class="fas fa-save"></i> Simpan Perubahan
+                    </button>
                 </div>
             </form>
-                      
         </div>
     </div>
 </div>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Automatically set today's date for service date input
         const serviceDateInput = document.getElementById('service_date');
         if (!serviceDateInput.value) {
             const today = new Date().toISOString().split('T')[0];
             serviceDateInput.value = today;
         }
 
-        // Function to calculate subtotal when spare part or quantity changes
         function calculateSubtotal(row) {
             const price = parseFloat(row.querySelector('.harga').value) || 0;
             const quantity = parseFloat(row.querySelector('.jumlah').value) || 0;
@@ -258,7 +298,7 @@
                         @foreach($spareparts as $sparepart)
                             <option value="{{ $sparepart->id_sparepart }}" data-harga="{{ $sparepart->harga_jual }}">
                                 {{ $sparepart->nama_sparepart }}
-                            </option>                                      
+                            </option>                                 
                         @endforeach
                     </select>
                 </td>

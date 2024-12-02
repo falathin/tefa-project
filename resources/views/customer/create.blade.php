@@ -40,10 +40,9 @@
                     @enderror
                 </div>
 
-                <!-- Vehicle Data Section -->
                 <h4 class="mt-4 mb-4"><i class="fas fa-car"></i> Data Kendaraan</h4>
                 <div id="vehicle-fields">
-                    <div class="vehicle-group mb-3 card shadow-sm p-3" id="vehicle-0">
+                    <div class="vehicle-group mb-3" id="vehicle-0">
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label>Jenis Kendaraan</label>
@@ -99,6 +98,7 @@
                         <button type="button" class="btn btn-danger btn-sm mt-2" onclick="deleteVehicle(0)"><i class="fas fa-trash"></i> Hapus Kendaraan</button>
                     </div>
                 </div>
+                
                 <div class="d-flex justify-content-between mt-3">
                     <button type="button" id="add-vehicle" class="btn btn-secondary"><i class="fas fa-plus-circle"></i> Tambah Kendaraan</button>
                     <div>
@@ -180,18 +180,15 @@
         
         vehicleFields.appendChild(newVehicleGroup);
         
-        // Slide-up animation
         newVehicleGroup.classList.add('animate__animated', 'animate__fadeInUp');
         
         vehicleIndex++;
     });
     
-    // Delete vehicle function
     function deleteVehicle(index) {
         const vehicleGroup = document.getElementById(`vehicle-${index}`);
         vehicleGroup.classList.add('animate__animated', 'animate__fadeOutDown');
         
-        // Remove after animation
         setTimeout(() => {
             vehicleGroup.remove();
         }, 500); // Duration of animation

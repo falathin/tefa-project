@@ -285,7 +285,5 @@
 
     
 });
-
-
 </script>
 @endsection

@@ -93,7 +93,7 @@
                 <div class="mt-4 d-flex justify-content-center">
                     <nav aria-label="Pagination">
                         <ul class="pagination pagination-lg">
-                            {{ $customers->links('vendor.pagination.bootstrap-5') }}
+                            {{ $customers->links('vendor.pagination.simple-bootstrap-5') }}
                         </ul>
                     </nav>
                 </div>
@@ -224,6 +224,8 @@
                                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                                                         </form>
                                                     </div>
+
+
                                                 </div>
                                             </div>
                                         </div>
@@ -232,17 +234,17 @@
                             </table>
                         </div>
                     </div>
+                    <div class="mt-4 d-flex justify-content-center">
+                        <nav aria-label="Pagination">
+                            <ul class="pagination pagination-lg">
+                                {{ $deletedCustomers->links('vendor.pagination.simple-bootstrap-5') }}
+                            </ul>
+                        </nav>
+                    </div>  
                 </div>
                 @endif
             @endif
-        </div>
-        <div class="mt-4 d-flex justify-content-center">
-            <nav aria-label="Pagination">
-                <ul class="pagination pagination-lg">
-                    {{ $deletedCustomers->links('vendor.pagination.bootstrap-5') }}
-                </ul>
-            </nav>
-        </div>       
+        </div>     
     </div>
 </div>
 @endsection

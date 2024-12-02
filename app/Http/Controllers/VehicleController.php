@@ -19,10 +19,8 @@ class VehicleController extends Controller
         return view('vehicle.create', compact('customer'));
     }
 
-    // Store vehicle data
     public function store(Request $request)
     {
-        // Validate incoming data
         $request->validate([
             'license_plate' => 'required|string|max:255|unique:vehicles',
             'vehicle_type' => 'required|string|max:255',
@@ -33,13 +31,11 @@ class VehicleController extends Controller
             'customer_id' => 'required|exists:customers,id',
         ]);
 
-        // Handle image upload (if any)
         $imagePath = null;
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('vehicle_images', 'public');
         }
 
-        // Save vehicle data
         Vehicle::create([
             'license_plate' => $request->license_plate,
             'vehicle_type' => $request->vehicle_type,
@@ -58,12 +54,11 @@ class VehicleController extends Controller
     {
         $vehicle = Vehicle::findOrFail($id);
         
-        // Apply search if a query is provided
         $services = Service::where('vehicle_id', $id)
                             ->when($request->search, function($query) use ($request) {
                                 return $query->where('service_type', 'like', '%' . $request->search . '%');
                             })
-                            ->paginate(4);
+                            ->paginate(2);
     
         return view('vehicle.show', compact('vehicle', 'services'));
     }

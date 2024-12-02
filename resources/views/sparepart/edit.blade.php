@@ -66,8 +66,6 @@
                     </label>
                     <textarea name="deskripsi" id="deskripsi" class="form-control">{{ $sparepart->deskripsi }}</textarea>
                 </div>
-
-                <!-- Buttons -->
                 <div class="d-flex justify-content-between">
                     <a href="{{ route('sparepart.index') }}" class="btn btn-secondary mt-3">
                         <i class="bi bi-arrow-left-circle"></i> Kembali

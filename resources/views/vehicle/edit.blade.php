@@ -68,8 +68,6 @@
                         @endif
                     </div>
                 </div>
-
-                <!-- Submit Button Section -->
                 <div class="d-flex justify-content-end animate__animated animate__fadeIn animate__delay-4s">
                     <button type="submit" class="btn btn-primary">Update</button>
                     <a href="{{ route('customer.show', $vehicle->customer_id) }}" class="btn btn-outline-secondary ms-2">Kembali</a>

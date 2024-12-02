@@ -47,6 +47,32 @@ class ServiceController extends Controller
             'sparepart_id.*' => 'exists:spareparts,id_sparepart',
             'jumlah' => 'nullable|array',
             'jumlah.*' => 'required|numeric|min:1',
+        ], [
+            'vehicle_id.required' => 'ID kendaraan harus dipilih.',
+            'vehicle_id.exists' => 'Kendaraan tidak ditemukan.',
+            'complaint.required' => 'Keluhan harus diisi.',
+            'complaint.string' => 'Keluhan harus berupa teks.',
+            'complaint.max' => 'Keluhan maksimal 255 karakter.',
+            'current_mileage.required' => 'Kilometer kendaraan harus diisi.',
+            'current_mileage.numeric' => 'Kilometer kendaraan harus berupa angka.',
+            'service_fee.required' => 'Biaya layanan harus diisi.',
+            'service_fee.numeric' => 'Biaya layanan harus berupa angka.',
+            'service_date.required' => 'Tanggal layanan harus diisi.',
+            'service_date.date' => 'Tanggal layanan tidak valid.',
+            'total_cost.required' => 'Biaya total harus diisi.',
+            'total_cost.numeric' => 'Biaya total harus berupa angka.',
+            'payment_received.required' => 'Pembayaran yang diterima harus diisi.',
+            'payment_received.numeric' => 'Pembayaran yang diterima harus berupa angka.',
+            'change.required' => 'Kembalian harus diisi.',
+            'change.numeric' => 'Kembalian harus berupa angka.',
+            'service_type.required' => 'Jenis layanan harus dipilih.',
+            'service_type.in' => 'Jenis layanan tidak valid.',
+            'sparepart_id.array' => 'ID sparepart harus berupa array.',
+            'sparepart_id.*.exists' => 'Salah satu sparepart tidak ditemukan.',
+            'jumlah.array' => 'Jumlah sparepart harus berupa array.',
+            'jumlah.*.required' => 'Jumlah sparepart harus diisi.',
+            'jumlah.*.numeric' => 'Jumlah sparepart harus berupa angka.',
+            'jumlah.*.min' => 'Jumlah sparepart minimal 1.',
         ]);
 
         $service = Service::create($request->except('sparepart_id', 'jumlah'));
@@ -68,13 +94,13 @@ class ServiceController extends Controller
                         'quantity' => $request->jumlah[$index],
                     ]);
                 } else {
-                    return redirect()->back()->withErrors(['sparepart_id' => 'Insufficient sparepart stock for this service.']);
+                    return redirect()->back()->withErrors(['sparepart_id' => 'Stok sparepart tidak cukup untuk layanan ini.']);
                 }
             }
         }
 
         return redirect()->route('vehicle.show', $service->vehicle_id)
-                         ->with('success', 'Service created successfully!');
+                         ->with('success', 'Layanan berhasil dibuat!');
     }
 
     public function update(Request $request, $id)
@@ -93,6 +119,32 @@ class ServiceController extends Controller
             'sparepart_id.*' => 'exists:spareparts,id_sparepart',
             'jumlah' => 'nullable|array',
             'jumlah.*' => 'required|numeric|min:1',
+        ], [
+            'vehicle_id.required' => 'ID kendaraan harus dipilih.',
+            'vehicle_id.exists' => 'Kendaraan tidak ditemukan.',
+            'complaint.required' => 'Keluhan harus diisi.',
+            'complaint.string' => 'Keluhan harus berupa teks.',
+            'complaint.max' => 'Keluhan maksimal 255 karakter.',
+            'current_mileage.required' => 'Kilometer kendaraan harus diisi.',
+            'current_mileage.numeric' => 'Kilometer kendaraan harus berupa angka.',
+            'service_fee.required' => 'Biaya layanan harus diisi.',
+            'service_fee.numeric' => 'Biaya layanan harus berupa angka.',
+            'service_date.required' => 'Tanggal layanan harus diisi.',
+            'service_date.date' => 'Tanggal layanan tidak valid.',
+            'total_cost.required' => 'Biaya total harus diisi.',
+            'total_cost.numeric' => 'Biaya total harus berupa angka.',
+            'payment_received.required' => 'Pembayaran yang diterima harus diisi.',
+            'payment_received.numeric' => 'Pembayaran yang diterima harus berupa angka.',
+            'change.required' => 'Kembalian harus diisi.',
+            'change.numeric' => 'Kembalian harus berupa angka.',
+            'service_type.required' => 'Jenis layanan harus dipilih.',
+            'service_type.in' => 'Jenis layanan tidak valid.',
+            'sparepart_id.array' => 'ID sparepart harus berupa array.',
+            'sparepart_id.*.exists' => 'Salah satu sparepart tidak ditemukan.',
+            'jumlah.array' => 'Jumlah sparepart harus berupa array.',
+            'jumlah.*.required' => 'Jumlah sparepart harus diisi.',
+            'jumlah.*.numeric' => 'Jumlah sparepart harus berupa angka.',
+            'jumlah.*.min' => 'Jumlah sparepart minimal 1.',
         ]);
     
         $service = Service::findOrFail($id);
@@ -123,32 +175,21 @@ class ServiceController extends Controller
                         'quantity' => $request->jumlah[$index],
                     ]);
                 } else {
-                    return redirect()->back()->withErrors(['sparepart_id' => 'Insufficient sparepart stock for this service.']);
+                    return redirect()->back()->withErrors(['sparepart_id' => 'Stok sparepart tidak cukup untuk layanan ini.']);
                 }
             }
         }
     
         return redirect()->route('vehicle.show', $service->vehicle_id)
-                         ->with('success', 'Service updated successfully!');
+                         ->with('success', 'Layanan berhasil diperbarui!');
     }
-    
     
     public function destroy($id)
     {
         $service = Service::findOrFail($id);
         $vehicle_id = $service->vehicle_id;
-    
         $service->delete();
-    
         return redirect()->route('vehicle.show', $vehicle_id)
-                         ->with('success', 'Service deleted successfully');
+                         ->with('success', 'Layanan berhasil dihapus!');
     }
-    
-
-    public function show($id)
-    {
-        $service = Service::with('serviceSpareparts.sparepart')->findOrFail($id);
-        return view('service.show', compact('service'));
-    }
-
 }
