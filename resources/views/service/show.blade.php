@@ -87,16 +87,21 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($service->serviceSpareparts as $serviceSparepart)
+                        @forelse($service->serviceSpareparts as $serviceSparepart)
                         <tr class="animate__animated animate__flipInX">
                             <td>{{ $serviceSparepart->sparepart->nama_sparepart }}</td>
                             <td>{{ $serviceSparepart->quantity }}</td>
                             <td>Rp. {{ number_format($serviceSparepart->sparepart->harga_jual, 0, ',', '.') }}</td>
                         </tr>
-                        @endforeach
+                        @empty
+                        <tr>
+                            <td colspan="3" class="text-center">Tidak ada sparepart yang digunakan.</td>
+                        </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
+                
 
             <!-- Action Buttons -->
             <div class="mt-3 d-flex flex-wrap gap-2 align-items-center animate__animated animate__fadeInUp" 

@@ -128,6 +128,7 @@
             const quantity = parseFloat(row.querySelector('.jumlah').value) || 0;
             const subtotal = price * quantity;
             row.querySelector('.subtotal').value = subtotal.toFixed(2);
+            updateTotalBiaya();
         }
 
         // Show modal with custom message
@@ -203,6 +204,18 @@
                 <td><input type="text" class="form-control subtotal" readonly></td>
                 <td><button type="button" class="btn btn-danger remove-row">Hapus</button></td>
             `;
+            // Re-add event listeners for the new row
+            const newRow = tableBody.lastElementChild;
+            validateSparepartFields(newRow);
+            newRow.querySelector('.sparepart_id').addEventListener('change', function () {
+                const price = this.options[this.selectedIndex].getAttribute('data-harga') || 0;
+                newRow.querySelector('.harga').value = parseFloat(price).toFixed(2);
+                calculateSubtotal(newRow);
+            });
+            newRow.querySelector('.jumlah').addEventListener('input', function () {
+                calculateSubtotal(newRow);
+            });
+
             updateTotalBiaya();
         });
 

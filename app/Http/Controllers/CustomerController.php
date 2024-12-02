@@ -10,20 +10,17 @@ use Carbon\Carbon;
 
 class CustomerController extends Controller
 {
-    // Menampilkan daftar pelanggan dengan paginasi dan pencarian
     public function index(Request $request)
     {
         $searchTerm = $request->input('search');
         $deletedSearch = $request->input('deletedSearch');
     
-        // Paginate pelanggan aktif
         $customers = Customer::when($searchTerm, function ($query, $searchTerm) {
             return $query->where('name', 'like', '%' . $searchTerm . '%')
                          ->orWhere('contact', 'like', '%' . $searchTerm . '%')
                          ->orWhere('address', 'like', '%' . $searchTerm . '%');
         })->paginate(5);
     
-        // Paginate pelanggan yang dihapus
         $deletedCustomers = Customer::onlyTrashed()
             ->when($deletedSearch, function ($query, $deletedSearch) {
                 return $query->where('name', 'like', '%' . $deletedSearch . '%')
@@ -37,82 +34,73 @@ class CustomerController extends Controller
         return view('customer.index', compact('customers', 'deletedCustomers', 'noData', 'searchTerm', 'deletedSearch'));
     }
 
-    // Menampilkan halaman create (form input customer)
     public function create()
     {
         return view('customer.create');
     }
 
-    // Menyimpan data pelanggan
     public function store(Request $request)
     {
-        // Validate incoming data
         $request->validate([
             'name' => 'required|string|max:255',
-            'contact' => 'nullable|regex:/^[0-9+\-()\s]*$/|max:255', // Updated regex to allow numbers and basic symbols
+            'contact' => 'nullable|regex:/^[0-9+\-()\s]*$/|max:255',
             'address' => 'nullable|string',
-            'vehicles.*.vehicle_type' => 'required|string|max:255',
-            'vehicles.*.license_plate' => 'required|string|max:255|unique:vehicles,license_plate',
+            'vehicles.*.vehicle_type' => 'nullable|string|max:255',
+            'vehicles.*.license_plate' => 'nullable|string|max:255|unique:vehicles,license_plate',
             'vehicles.*.color' => 'nullable|string|max:255',
-            'vehicles.*.production_year' => 'nullable|integer|lte:' . Carbon::now()->year, // Validate production year to not exceed current year
+            'vehicles.*.production_year' => 'nullable|integer|lte:' . Carbon::now()->year,
             'vehicles.*.engine_code' => 'nullable|string|max:255',
             'vehicles.*.image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        // Simpan data pelanggan
         $customer = Customer::create($request->only(['name', 'contact', 'address']));
 
-        // Simpan data kendaraan
-        foreach ($request->vehicles as $vehicle) {
-            $vehicle['customer_id'] = $customer->id;
-            if (isset($vehicle['image'])) {
-                $vehicle['image'] = $vehicle['image']->store('vehicle_images', 'public');
+        if ($request->has('vehicles')) {
+            foreach ($request->vehicles as $vehicle) {
+                if (!empty($vehicle['vehicle_type']) || !empty($vehicle['license_plate'])) {
+                    $vehicle['customer_id'] = $customer->id;
+                    if (isset($vehicle['image'])) {
+                        $vehicle['image'] = $vehicle['image']->store('vehicle_images', 'public');
+                    }
+                    Vehicle::create($vehicle);
+                }
             }
-            Vehicle::create($vehicle);
         }
 
         return redirect()->route('customer.show', $customer->id)
-                         ->with('success', 'Customer and vehicles created successfully!');
+                        ->with('success', 'Customer and vehicles created successfully!');
     }
 
-    // Menampilkan halaman edit customer
     public function edit($id)
     {
         $customer = Customer::with('vehicles')->findOrFail($id);
         return view('customer.edit', compact('customer'));
     }
 
-    // Update data pelanggan
     public function update(Request $request, $id)
     {
-        // Validate incoming data
         $request->validate([
             'name' => 'required|string|max:255',
-            'contact' => 'nullable|regex:/^[0-9+\-()\s]*$/|max:255', // Updated regex to allow numbers and basic symbols
+            'contact' => 'nullable|regex:/^[0-9+\-()\s]*$/|max:255',
             'address' => 'nullable|string',
         ]);
 
         $customer = Customer::findOrFail($id);
-        $customer->update($request->only(['name', 'contact', 'address']));  // Only update customer fields
+        $customer->update($request->only(['name', 'contact', 'address']));
 
-        // Return back to the customer details page
         return redirect()->route('customer.show', $customer->id)
                         ->with('success', 'Customer updated successfully!');
     }
-    
-    // Menampilkan detail customer dan kendaraan
+
     public function show(Request $request, $id)
     {
         $customer = Customer::findOrFail($id);
 
-        // Fallback values for contact and address fields   
         $customer->contact = $customer->contact ?: 'Tidak ada data kontak';
         $customer->address = $customer->address ?: 'Tidak ada data alamat';
 
-        // Retrieve the search term from the request
         $searchTerm = $request->input('search');
         
-        // Filter the vehicles based on the search term
         $vehicles = $customer->vehicles()
                              ->when($searchTerm, function ($query, $searchTerm) {
                                  return $query->where('license_plate', 'like', '%' . $searchTerm . '%')
@@ -123,19 +111,17 @@ class CustomerController extends Controller
         return view('customer.show', compact('customer', 'vehicles', 'searchTerm'));
     }
 
-    // Menghapus customer secara soft delete
     public function destroy($id)
     {
         $customer = Customer::find($id);
         if ($customer) {
-            $customer->delete(); // Soft delete the customer
-            session(['deleted_customer' => $customer]); // Store the deleted customer for undo
+            $customer->delete();
+            session(['deleted_customer' => $customer]);
             return redirect()->route('customer.index')->with('success', 'Customer deleted successfully.');
         }
         return redirect()->route('customer.index')->with('error', 'Customer not found.');
     }
 
-    // Merestore customer yang dihapus
     public function restore($id)
     {
         $customer = Customer::withTrashed()->find($id);
@@ -147,18 +133,16 @@ class CustomerController extends Controller
         }
     }
 
-    // Menghapus customer secara permanen
     public function forceDelete($id)
     {
-        $customer = Customer::withTrashed()->find($id);  // Make sure to get the trashed customer
+        $customer = Customer::withTrashed()->find($id);
         if ($customer) {
-            $customer->forceDelete(); // Permanently delete the customer
+            $customer->forceDelete();
             return redirect()->route('customer.index')->with('success', 'Customer deleted permanently.');
         }
         return redirect()->route('customer.index')->with('error', 'Customer not found.');
     }
 
-    // Menghapus semua customer yang dihapus secara permanen
     public function forceDeleteAll()
     {
         $deletedCustomers = Customer::onlyTrashed()->get();
@@ -166,7 +150,7 @@ class CustomerController extends Controller
             return redirect()->route('customer.index')->with('error', 'Tidak ada pelanggan yang dapat dihapus secara permanen.');
         }
 
-        Customer::onlyTrashed()->forceDelete(); // Hapus semua data pelanggan yang dihapus
+        Customer::onlyTrashed()->forceDelete();
         return redirect()->route('customer.index')->with('success', 'Semua pelanggan yang dihapus berhasil dihapus secara permanen.');
     }
 }

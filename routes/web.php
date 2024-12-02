@@ -17,6 +17,7 @@ Route::get('/sparepart/create', [SparepartController::class, 'create'])->name('s
 Route::post('/sparepart', [SparepartController::class, 'store'])->name('sparepart.store');
 Route::get('/sparepart/{id}', [SparepartController::class, 'show'])->name('sparepart.show');
 Route::get('/sparepart/{id}/edit', [SparepartController::class, 'edit'])->name('sparepart.edit');
+Route::get('/sparepart-notifications', [SparepartController::class, 'getSparepartNotifications']);
 Route::put('/sparepart/{id}', [SparepartController::class, 'update'])->name('sparepart.update');
 Route::delete('/sparepart/{id}', [SparepartController::class, 'destroy'])->name('sparepart.destroy');
 
