@@ -27,7 +27,6 @@ class Sparepart extends Model
         return $this->hasMany(ServiceSparepart::class, 'sparepart_id');
     }
 
-    // Calculate profit for a sparepart
     public function calculateProfit()
     {
         return $this->harga_jual - $this->harga_beli;

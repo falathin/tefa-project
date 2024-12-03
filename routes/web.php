@@ -4,12 +4,14 @@ use App\Http\Controllers\{
     SparepartController,
     ServiceController,
     VehicleController,
-    CustomerController
+    CustomerController,
+    NotificationController
 };
 
 Route::get('/', function () {
     return view('home');
 });
+
 
 // Rute untuk Sparepart
 Route::get('/sparepart', [SparepartController::class, 'index'])->name('sparepart.index');
@@ -17,9 +19,14 @@ Route::get('/sparepart/create', [SparepartController::class, 'create'])->name('s
 Route::post('/sparepart', [SparepartController::class, 'store'])->name('sparepart.store');
 Route::get('/sparepart/{id}', [SparepartController::class, 'show'])->name('sparepart.show');
 Route::get('/sparepart/{id}/edit', [SparepartController::class, 'edit'])->name('sparepart.edit');
-Route::get('/sparepart-notifications', [SparepartController::class, 'getSparepartNotifications']);
 Route::put('/sparepart/{id}', [SparepartController::class, 'update'])->name('sparepart.update');
 Route::delete('/sparepart/{id}', [SparepartController::class, 'destroy'])->name('sparepart.destroy');
+
+// Rute untuk Notifications
+Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+Route::get('notifications/{id}/edit', [NotificationController::class, 'edit'])->name('notifications.edit');
+Route::put('notifications/{id}', [NotificationController::class, 'update'])->name('notifications.update');
 
 Route::get('/customer', [CustomerController::class, 'index'])->name('customer.index');
 Route::get('/customer/create', [CustomerController::class, 'create'])->name('customer.create');
