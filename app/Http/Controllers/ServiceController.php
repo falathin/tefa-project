@@ -16,10 +16,10 @@ class ServiceController extends Controller
     {
         $paymentStatus = $request->get('payment_status', 'all');
         $request->session()->put('payment_status', $paymentStatus);
-    
+        
         // Start with the base query
         $servicesQuery = Service::query();
-    
+        
         // Apply payment status filter
         if ($paymentStatus !== 'all') {
             $servicesQuery = $servicesQuery->when($paymentStatus === 'paid', function ($query) {
@@ -28,44 +28,43 @@ class ServiceController extends Controller
                 return $query->where('payment_received', '<', DB::raw('total_cost'));
             });
         }
-    
+        
+        // Apply search filter across multiple related tables
+        if ($search = $request->get('search')) {
+            $servicesQuery = $servicesQuery->where(function ($query) use ($search) {
+                // Search in 'vehicle' table's 'license_plate' and 'customer' table's 'name'
+                $query->whereHas('vehicle', function ($query) use ($search) {
+                    $query->where('license_plate', 'like', "%{$search}%");
+                })
+                ->orWhereHas('vehicle.customer', function ($query) use ($search) {
+                    $query->where('name', 'like', "%{$search}%");
+                })
+                ->orWhere('complaint', 'like', "%{$search}%")
+                ->orWhere('service_type', 'like', "%{$search}%");
+            });
+        }
+        
         // Apply date filter
         if ($date = $request->get('date')) {
             $servicesQuery = $servicesQuery->whereDate('created_at', $date);
         }
-    
+        
         // Apply year filter
         if ($year = $request->get('year')) {
             $servicesQuery = $servicesQuery->whereYear('created_at', $year);
         }
-    
-        // Apply time of day filter
-        if ($timeOfDay = $request->get('time_of_day')) {
-            $servicesQuery = $servicesQuery->whereBetween('created_at', function ($query) use ($timeOfDay) {
-                switch ($timeOfDay) {
-                    case 'morning':
-                        return $query->whereTime('created_at', '>=', '06:00:00')->whereTime('created_at', '<', '12:00:00');
-                    case 'afternoon':
-                        return $query->whereTime('created_at', '>=', '12:00:00')->whereTime('created_at', '<', '18:00:00');
-                    case 'evening':
-                        return $query->whereTime('created_at', '>=', '18:00:00')->whereTime('created_at', '<', '23:59:59');
-                    default:
-                        return $query;
-                }
-            });
-        }
-    
+        
         // Apply day of the week filter
         if ($dayOfWeek = $request->get('day_of_week')) {
             $servicesQuery = $servicesQuery->whereRaw('DAYOFWEEK(created_at) = ?', [$dayOfWeek]);
         }
-    
+        
         // Paginate the results
         $services = $servicesQuery->paginate(10);
-    
+        
         return view('service.index', compact('services'));
     }
-     
+    
     public function create($vehicle_id)
     {
         $vehicle = Vehicle::findOrFail($vehicle_id);
@@ -237,16 +236,13 @@ class ServiceController extends Controller
     {
         $service = Service::findOrFail($id);
         
-        // Update spareparts yang diambil dari service
         $service->spareparts()->detach(); // Hapus semua sparepart yang terkait
         
-        // Add back the removed spareparts to stock
         foreach ($request->input('sparepart_id') as $key => $sparepart_id) {
             $sparepart = Sparepart::find($sparepart_id);
             $sparepart->increment('stok', $request->input('jumlah')[$key]); // Menambahkan kembali ke stok
         }
         
-        // Update layanan lainnya...
         $service->update($validatedData);
 
         return redirect()->route('services.index');

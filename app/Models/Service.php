@@ -35,4 +35,10 @@ class Service extends Model
     {
         return $this->belongsToMany(Sparepart::class, 'service_spareparts')->withPivot('quantity');
     }
+
+    public function isPaid()
+    {
+        return $this->payment_received >= $this->total_cost;
+    }
+
 }

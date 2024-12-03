@@ -5,26 +5,28 @@
     <div class="card shadow-lg">
         <div class="card-body">
             <h5 class="card-title mb-4">Riwayat Servis</h5>
-
+        
             <!-- Tombol untuk menuju ke Daftar Pelanggan -->
             <a href="{{ route('customer.index') }}" class="btn btn-primary mb-3">
                 <i class="fas fa-users"></i> Daftar Pelanggan
             </a>
-
-            <!-- Filter Status Pembayaran -->
-            <form method="GET" action="{{ route('service.index') }}" class="mb-3">
-                <div class="row">
-                    <!-- Filter Pembayaran -->
-                    <div class="col-12 col-md-3 mb-2 mb-md-0">
+            <form method="GET" action="{{ route('service.index') }}" class="mb-3 row g-3">
+                <div class="col-12 col-md-3">
+                    <!-- Filter Pembayaran with Icon -->
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-credit-card"></i></span>
                         <select name="payment_status" class="form-select" onchange="this.form.submit()">
                             <option value="all" {{ session('payment_status') === 'all' ? 'selected' : '' }}>Semua</option>
                             <option value="paid" {{ session('payment_status') === 'paid' ? 'selected' : '' }}>Lunas</option>
                             <option value="unpaid" {{ session('payment_status') === 'unpaid' ? 'selected' : '' }}>Belum Lunas</option>
                         </select>
                     </div>
-                    
-                    <!-- Filter Hari -->
-                    <div class="col-12 col-md-3 mb-2 mb-md-0">
+                </div>
+                
+                <div class="col-12 col-md-3">
+                    <!-- Filter Hari with Icon -->
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-calendar-day"></i></span>
                         <select name="day_of_week" class="form-select" onchange="this.form.submit()">
                             <option value="">Pilih Hari</option>
                             <option value="1" {{ request('day_of_week') == '1' ? 'selected' : '' }}>Minggu</option>
@@ -36,12 +38,20 @@
                             <option value="7" {{ request('day_of_week') == '7' ? 'selected' : '' }}>Sabtu</option>
                         </select>
                     </div>
-
-                    <!-- Filter lainnya (tanggal, tahun, waktu) -->
-                    <div class="col-12 col-md-3 mb-2 mb-md-0">
+                </div>
+                
+                <div class="col-12 col-md-3">
+                    <!-- Filter Tanggal with Icon -->
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
                         <input type="date" name="date" class="form-control" value="{{ request('date') }}" onchange="this.form.submit()">
                     </div>
-                    <div class="col-12 col-md-3">
+                </div>
+            
+                <div class="col-12 col-md-3">
+                    <!-- Filter Tahun with Icon -->
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
                         <select name="year" class="form-select" onchange="this.form.submit()">
                             <option value="">Pilih Tahun</option>
                             @foreach(range(date('Y'), 2000) as $year)
@@ -50,21 +60,33 @@
                         </select>
                     </div>
                 </div>
+            
+                <div class="col-12 col-md-6 d-flex justify-content-center"> <!-- Centered the search box -->
+                    <!-- Search Box with Icon -->
+                    <div class="input-group w-100">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" name="search" class="form-control" placeholder="Cari berdasarkan Kendaraan, Pelanggan, Keluhan, atau Layanan" value="{{ request('search') }}" onchange="this.form.submit()">
+                        @if(request('search'))
+                            <button class="btn btn-outline-secondary" type="button" onclick="window.location.href='{{ route('service.index') }}'">
+                                <i class="fas fa-times"></i> Reset
+                            </button>
+                        @endif
+                    </div>
+                </div>
             </form>
-
-            <!-- Riwayat Servis -->
+            
             @php
                 $groupedByDay = $services->groupBy(function($service) {
                     return \Carbon\Carbon::parse($service->created_at)->locale('id')->dayName; // Menggunakan nama hari dalam bahasa Indonesia
                 });
             @endphp
-
+        
             @foreach($groupedByDay as $day => $dayServices)
                 <h6 class="mt-4 mb-3">{{ $day }}</h6>
-
+        
                 <div class="row">
                     @foreach($dayServices as $index => $service)
-                    <div class="col-12 col-sm-12 col-md-6 col-lg-6 mb-3">
+                    <div class="col-12 col-sm-12 col-md-6 col-lg-6 mb-3 animate__animated animate__fadeIn animate__delay-{{ ($index + 1) * 5 }}00ms">
                         <div class="card shadow-sm h-100">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between">
@@ -80,7 +102,7 @@
                                         <span class="badge bg-warning">Belum Lunas</span>
                                     @endif
                                 </p>                        
-                    
+        
                                 <div class="d-flex justify-content-between mt-3">
                                     <a href="{{ route('service.show', $service->id) }}" class="btn btn-info btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Lihat">
                                         <i class="fas fa-eye"></i> Lihat
@@ -99,11 +121,10 @@
                             </div>
                         </div>
                     </div>
-                    
                     @endforeach
                 </div>
             @endforeach
-
+        
             <!-- Pagination -->
             <div class="d-flex justify-content-center mt-4">
                 {{ $services->links('vendor.pagination.bootstrap-5') }}
