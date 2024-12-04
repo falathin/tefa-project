@@ -31,4 +31,9 @@ class Sparepart extends Model
     {
         return $this->harga_jual - $this->harga_beli;
     }
+
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
+    }
 }

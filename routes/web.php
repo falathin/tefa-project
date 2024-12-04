@@ -22,10 +22,13 @@ Route::get('/sparepart/{id}/edit', [SparepartController::class, 'edit'])->name('
 Route::put('/sparepart/{id}', [SparepartController::class, 'update'])->name('sparepart.update');
 Route::delete('/sparepart/{id}', [SparepartController::class, 'destroy'])->name('sparepart.destroy');
 
-// Rute untuk Notifications
-Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
-Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
-Route::get('notifications/{id}/edit', [NotificationController::class, 'edit'])->name('notifications.edit');
+Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
+Route::post('notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+// routes/web.php
+Route::get('/notifications/unread-count', [NotificationController::class, 'unreadCount'])->name('notifications.unreadCount');
+
+Route::get('/notifications/{id}/edit', [NotificationController::class, 'edit'])->name('notifications.edit');
+
 Route::put('notifications/{id}', [NotificationController::class, 'update'])->name('notifications.update');
 
 Route::get('/customer', [CustomerController::class, 'index'])->name('customer.index');

@@ -17,6 +17,6 @@ class Notification extends Model
 
     public function sparepart()
     {
-        return $this->belongsTo(Sparepart::class);
+        return $this->belongsTo(Sparepart::class, 'sparepart_id');
     }
 }

@@ -21,7 +21,15 @@
                     <p class="mb-1">{{ $notification->message }}</p>
                     <small class="text-muted">{{ $notification->created_at->diffForHumans() }}</small>
                 </div>
-                <a href="{{ route('sparepart.edit', $notification->id) }}" class="btn btn-sm btn-outline-primary">Edit</a>
+                
+                <!-- Check if there's a related sparepart and show the edit button -->
+                @if($notification->sparepart)
+                    <a href="{{ route('sparepart.edit', $notification->sparepart->id_sparepart) }}" class="btn btn-sm btn-outline-primary">Edit</a>
+                @else
+                    <span class="text-muted">No Sparepart</span>
+                @endif
+                
+                <!-- Mark notification as read -->
                 <form method="POST" action="{{ route('notifications.read', $notification->id) }}" class="m-0 ms-2">
                     @csrf
                     <button type="submit" class="btn btn-sm btn-link text-success p-0">Tandai Dibaca</button>
