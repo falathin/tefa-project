@@ -61,6 +61,11 @@
                         <button class="btn btn-primary" type="submit">
                             <i class="bi bi-search"></i> Cari
                         </button>
+                        @if ($searchTerm)
+                            <a href="{{ route('customer.show', $customer->id) }}" class="btn btn-danger">
+                                <i class="bi bi-x-circle"></i> Reset
+                            </a>
+                        @endif
                     </div>
                 </form>
 
@@ -113,7 +118,7 @@
                         </table>
                         <!-- Pagination Links -->
                         <div class="d-flex justify-content-center mt-3 animate__animated animate__slideInUp" style="animation-delay: 4.0s;">
-                            {{ $vehicles->appends(request()->query())->links('pagination::bootstrap-4') }}
+                            {{ $vehicles->appends(request()->query())->links('vendor.pagination.simple-bootstrap-5') }}
                         </div>
                     @endif
                 </div>

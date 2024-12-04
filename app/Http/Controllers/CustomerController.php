@@ -14,25 +14,28 @@ class CustomerController extends Controller
     {
         $searchTerm = $request->input('search');
         $deletedSearch = $request->input('deletedSearch');
-    
+        
         $customers = Customer::when($searchTerm, function ($query, $searchTerm) {
             return $query->where('name', 'like', '%' . $searchTerm . '%')
                          ->orWhere('contact', 'like', '%' . $searchTerm . '%')
                          ->orWhere('address', 'like', '%' . $searchTerm . '%');
-        })->paginate(5);
-    
+        })
+        ->orderBy('created_at', 'desc')  // Ordering by created_at in descending order
+        ->paginate(5);
+        
         $deletedCustomers = Customer::onlyTrashed()
             ->when($deletedSearch, function ($query, $deletedSearch) {
                 return $query->where('name', 'like', '%' . $deletedSearch . '%')
                              ->orWhere('contact', 'like', '%' . $deletedSearch . '%')
                              ->orWhere('address', 'like', '%' . $deletedSearch . '%');
             })
+            ->orderBy('created_at', 'desc')  // Ordering by created_at in descending order
             ->paginate(5);
-    
+        
         $noData = $customers->isEmpty() && $deletedCustomers->isEmpty();
-    
+        
         return view('customer.index', compact('customers', 'deletedCustomers', 'noData', 'searchTerm', 'deletedSearch'));
-    }
+    }    
 
     public function create()
     {

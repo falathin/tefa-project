@@ -12,11 +12,13 @@ class SparepartController extends Controller
         $search = $request->search;
         $spareparts = Sparepart::when($search, function($query, $search) {
             return $query->where('nama_sparepart', 'like', '%' . $search . '%');
-        })->paginate(4);
-
+        })
+        ->orderBy('created_at', 'desc')  // Order spare parts by created_at in descending order
+        ->paginate(4);
+    
         return view('sparepart.index', compact('spareparts'));
     }
-
+    
     public function create()
     {
         return view('sparepart.create');

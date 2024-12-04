@@ -61,7 +61,7 @@
                     </div>
                 </div>
             
-                <div class="col-12 col-md-12 col-lg-10 d-flex justify-content-center"> <!-- Centered the search box -->
+                <div class="col-12 col-md-12 col-lg-10 d-flex justify-content-center">
                     <!-- Search Box with Icon -->
                     <div class="input-group w-100">
                         <span class="input-group-text"><i class="fas fa-search"></i></span>
@@ -76,8 +76,9 @@
             </form>
             
             @php
-                $groupedByDay = $services->groupBy(function($service) {
-                    return \Carbon\Carbon::parse($service->created_at)->locale('id')->dayName; // Menggunakan nama hari dalam bahasa Indonesia
+                // Mengelompokkan data servis berdasarkan hari dengan urutan tanggal terbaru
+                $groupedByDay = $services->sortByDesc('created_at')->groupBy(function($service) {
+                    return \Carbon\Carbon::parse($service->created_at)->locale('id')->dayName;
                 });
             @endphp
         

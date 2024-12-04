@@ -9,7 +9,7 @@
                 @csrf
             
                 <input type="hidden" name="vehicle_id" value="{{ $vehicle->id }}">
-                
+            
                 <div class="row">
                     <!-- Kolom pertama -->
                     <div class="col-md-6 mb-3">
@@ -19,7 +19,7 @@
                             <input type="text" name="complaint" class="form-control" placeholder="Masukkan keluhan kendaraan" required>
                         </div>
                     </div>
-
+            
                     <div class="col-md-6 mb-3">
                         <label for="current_mileage" class="form-label">Kilometer Saat Ini</label>
                         <div class="input-group">
@@ -27,7 +27,7 @@
                             <input type="number" name="current_mileage" class="form-control" placeholder="Masukkan kilometer kendaraan" required>
                         </div>
                     </div>
-
+            
                     <div class="col-md-6 mb-3">
                         <label for="service_fee" class="form-label">Biaya Service</label>
                         <div class="input-group">
@@ -35,7 +35,7 @@
                             <input type="number" name="service_fee" class="form-control" id="service_fee" placeholder="Masukkan biaya service" required>
                         </div>
                     </div>
-
+            
                     <div class="col-md-6 mb-3">
                         <label for="service_date" class="form-label">Tanggal Service</label>
                         <div class="input-group">
@@ -43,7 +43,7 @@
                             <input type="date" name="service_date" id="service_date" class="form-control" required>
                         </div>
                     </div>
-
+            
                     <div class="col-md-6 mb-3">
                         <label for="total_cost" class="form-label">Total Biaya</label>
                         <div class="input-group">
@@ -51,7 +51,7 @@
                             <input type="number" name="total_cost" id="total_cost" class="form-control" readonly placeholder="Total biaya" required>
                         </div>
                     </div>
-
+            
                     <div class="col-md-6 mb-3">
                         <label for="payment_received" class="form-label">Pembayaran Diterima</label>
                         <div class="input-group">
@@ -59,7 +59,7 @@
                             <input type="number" name="payment_received" id="payment_received" class="form-control" placeholder="Jumlah pembayaran diterima" required>
                         </div>
                     </div>
-
+            
                     <div class="col-md-6 mb-3">
                         <label for="change" class="form-label">Kembalian</label>
                         <div class="input-group">
@@ -67,49 +67,92 @@
                             <input type="number" name="change" id="change" class="form-control" readonly placeholder="Kembalian" required>
                         </div>
                     </div>
+            
                     <div class="col-md-6 mb-3">
                         <label for="service_type" class="form-label">Jenis Service</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-tools"></i></span>
                             <select name="service_type" class="form-control" required>
-                                <option value="light" {{ old('service_type', $service->service_type ?? '') == 'light' ? 'selected' : '' }}>Ringan</option>
-                                <option value="medium" {{ old('service_type', $service->service_type ?? '') == 'medium' ? 'selected' : '' }}>Sedang</option>
-                                <option value="heavy" {{ old('service_type', $service->service_type ?? '') == 'heavy' ? 'selected' : '' }}>Berat</option>
+                                <option value="light">Ringan</option>
+                                <option value="medium">Sedang</option>
+                                <option value="heavy">Berat</option>
                             </select>
                         </div>
-                    </div>                                        
+                    </div>
                 </div>
-
+            
                 <!-- Informasi Sparepart -->
                 <div class="card-header rounded bg-danger text-white d-flex justify-content-between align-items-center">
                     <h5 class="mb-0"><i class="fas fa-wrench"></i> &nbsp; Tambah Informasi Sparepart</h5>
                     <small class="text-right"><b>*</b> Hapus jika tidak diperlukan</small>
                 </div>
                 <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-bordered" id="sparepartTable">
-                                <thead>
-                                    <tr>
-                                        <th><i class="fas fa-wrench"></i> Nama Sparepart</th>
-                                        <th><i class="fas fa-tag"></i> Harga Satuan</th>
-                                        <th><i class="fas fa-plus-circle"></i> Jumlah yang Diambil</th>
-                                        <th><i class="fas fa-calculator"></i> Subtotal</th>
-                                        <th><i class="fas fa-trash-alt"></i> Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <!-- Existing spare parts will go here -->
-                                </tbody>
-                            </table>
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="sparepartTable">
+                            <thead>
+                                <tr>
+                                    <th>Nama Sparepart</th>
+                                    <th>Harga Satuan</th>
+                                    <th>Jumlah</th>
+                                    <th>Subtotal</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Sparepart Rows -->
+                            </tbody>
+                        </table>
                     </div>
-                        <br>
-                        <button type="button" class="btn btn-primary" id="addRow">+ Tambah Sparepart</button>
-                    </div>
-                <!-- Submit Button -->
-                <div class="text-center mt-4">
-                    <button type="submit" class="btn btn-success btn-lg"><i class="fas fa-save"></i> Simpan Service</button>
+                    <br>
+                    <button type="button" class="btn btn-primary" id="addRow">+ Tambah Sparepart</button>
                 </div>
-            </form>            
+            
+                <!-- Submit and Back Buttons -->
+                <div class="text-center mt-4">
+                    <a href="{{ route('vehicle.show', $vehicle->id) }}" class="btn btn-secondary btn-md">
+                        <i class="fas fa-arrow-left"></i> Kembali
+                    </a>
+                    <button type="reset" class="btn btn-warning btn-md">
+                        <i class="fas fa-redo"></i> Reset Form
+                    </button>
+                    <button type="button" class="btn btn-success btn-md" id="submitButton">
+                        <i class="fas fa-save"></i> Simpan Service
+                    </button>
+                </div>
+
+
+            </form>
+            
+            <!-- Modal Confirmation -->
+            <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="confirmationModalLabel">Konfirmasi Pengiriman</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Apakah Anda yakin semua data sudah benar?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-primary" id="confirmSubmit">Ya, Simpan</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <script>
+                document.getElementById('submitButton').addEventListener('click', function () {
+                    const confirmationModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+                    confirmationModal.show();
+                });
+            
+                document.getElementById('confirmSubmit').addEventListener('click', function () {
+                    document.querySelector('form').submit();
+                });
+            </script>
+                        
         </div>
     </div>
 </div>
