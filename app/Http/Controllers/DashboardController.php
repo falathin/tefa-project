@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Customer;
+use App\Models\Service;
+use App\Models\Sparepart;
+use App\Models\ServiceSparepart;
+use App\Models\Vehicle; // Tambahkan model Vehicle
 
 class DashboardController extends Controller
 {
@@ -20,16 +24,19 @@ class DashboardController extends Controller
         // Menghitung total pengunjung
         $totalVisitors = Customer::count(); // Hitung jumlah seluruh pelanggan
 
-        // Data untuk chart
-        $chartData = [
-            ['service_date' => '2024-12-01', 'total_profit' => 12.5],
-            ['service_date' => '2024-12-02', 'total_profit' => 15.0],
-        ];
+        // Menghitung total kendaraan
+        $totalVehicles = Vehicle::count(); // Hitung jumlah kendaraan yang terdaftar
+
+        // Data untuk chart (service history for example)
+        $chartData = Service::selectRaw('DATE(service_date) as date, SUM(total_cost) as total_profit')
+            ->groupBy('date')
+            ->orderBy('service_date')
+            ->get();
 
         return view('home', compact(
             'totalProfit', 'totalExpense', 'totalUnpaid', 
             'profitPercentage', 'expensePercentage', 'unpaidPercentage', 
-            'chartData', 'totalVisitors' // Pass total visitors data
+            'chartData', 'totalVisitors', 'totalVehicles' // Pass total vehicles data
         ));
     }    
 }

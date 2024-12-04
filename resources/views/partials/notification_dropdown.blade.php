@@ -1,9 +1,14 @@
 <li class="nav-item dropdown">
     <a class="nav-link count-indicator position-relative" id="notificationDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-        <i class="bi bi-bell-fill fs-4 {{ App\Models\Notification::where('is_read', false)->count() > 0 ? 'text-warning animate__animated animate__jello animate__infinite animate__slow' : 'text-dark' }}"></i>
-        <span class="badge bg-danger position-absolute top-0 start-100 translate-middle rounded-circle py-1 px-2 fs-8" id="notificationCount">
+        <i class="bi bi-bell-fill fs-4 {{ App\Models\Notification::where('is_read', false)->count() > 0 ? 'text-warning animate__animated animate__jello animate__infinite animate__slow' : 'text-dark' }}" id="notificationBell"></i>
+
+    <!-- Only show the badge if there are unread notifications -->
+    @if(App\Models\Notification::where('is_read', false)->count() > 0)
+        <span class="count" style="position: absolute; left: 45%; width: 15px; height: 15px; border-radius: 50%; background: #F95F53; font-size: 10px; top: -5px; font-weight: 600; line-height: 1.2rem; text-align: center; display: flex; justify-content: center; align-items: center; box-shadow: 0 0 6px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease-in-out; transform: scale(1.2);">
             {{ App\Models\Notification::where('is_read', false)->count() }}
-        </span>                    
+        </span>
+    @endif
+
     </a>
     <ul class="dropdown-menu dropdown-menu-end navbar-dropdown shadow-lg rounded-3" aria-labelledby="notificationDropdown">
         <li class="dropdown-header px-3 py-2 border-bottom d-flex justify-content-between align-items-center">
@@ -46,40 +51,10 @@
             </li>
         @endif                            
 
-        <li class="dropdown-footer text-center py-2 mt-2">
+        <footer class="dropdown-footer text-center py-2 mt-2">
             <a href="{{ route('notifications.index') }}" class="btn btn-sm btn-primary text-white">
                 <i class="bi bi-arrow-right-circle"></i>&nbsp;&nbsp; Lihat Semua Notifikasi
             </a>
-        </li>
+        </footer>
     </ul>
 </li>
-
-<script>
-    function updateNotificationCount() {
-        fetch('{{ route('notifications.unreadCount') }}')
-            .then(response => response.json())
-            .then(data => {
-                const unreadCount = data.count;
-
-                const badge = document.getElementById('notificationCount');
-                const newNotificationCount = document.getElementById('newNotificationCount');
-                const bellIcon = document.querySelector('.nav-link .bi-bell-fill');
-                
-                badge.textContent = unreadCount;
-                newNotificationCount.textContent = unreadCount;
-
-                if (unreadCount > 0) {
-                    bellIcon.classList.add('text-warning');
-                    bellIcon.classList.add('animate__animated', 'animate__jello', 'animate__infinite', 'animate__slow');
-                } else {
-                    bellIcon.classList.remove('text-warning');
-                    bellIcon.classList.remove('animate__animated', 'animate__jello', 'animate__infinite', 'animate__slow');
-                    bellIcon.classList.add('text-dark');
-                }
-            })
-            .catch(error => console.error('Error fetching notification count:', error));
-    }
-
-    setInterval(updateNotificationCount, 5000);
-    document.addEventListener('DOMContentLoaded', updateNotificationCount);
-</script>

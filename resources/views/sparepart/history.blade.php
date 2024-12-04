@@ -9,40 +9,126 @@
                 <li class="breadcrumb-item active" aria-current="page">Riwayat Sparepart</li>
             </ol>
         </nav>
-
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
             <h1 class="fw-bold">Riwayat Sparepart</h1>
-            <div class="d-flex flex-column flex-md-row align-items-center mt-3 mt-md-0">
-                <button class="btn btn-info mb-2 mb-md-0" data-bs-toggle="modal" data-bs-target="#infoModal">
+            <div class="d-flex flex-column flex-sm-row align-items-center mt-3 mt-md-0">
+                <button class="btn btn-info mb-2 mb-sm-0 me-sm-2" data-bs-toggle="modal" data-bs-target="#infoModal">
                     <i class="fas fa-info-circle"></i> Informasi
                 </button>
-                <a href="{{ route('sparepart.index') }}" class="btn btn-secondary ms-0 ms-md-2">
+                <a href="{{ route('sparepart.index') }}" class="btn btn-secondary ms-0 ms-sm-2">
                     <i class="fas fa-arrow-left"></i> Kembali
                 </a>
             </div>
-        </div>        
+        </div>         
+        <!-- Search Section (Visible only on mobile devices) -->
+        <div class="row mb-3 d-md-none">
+            <div class="col-12">
+                <!-- Button to open the filter modal -->
+                <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#filterModal">
+                    <i class="fas fa-filter"></i> Filter
+                </button>
+                
+                <!-- Modal for filter -->
+                <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="filterModalLabel">Filter Sparepart History</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form method="GET" action="{{ route('sparepart.history', $sparepart->id_sparepart) }}">
+                                    
+                                    <!-- Search by name with icon -->
+                                    <div class="mb-2">
+                                        <div class="input-group">
+                                            <input type="text" name="search" class="form-control" value="{{ request('search') }}" placeholder="Cari">
+                                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                        </div>
+                                    </div>
 
-        <!-- Search Section -->
-        <div class="row mb-3">
+                                    <!-- Filter by date with icon -->
+                                    <div class="mb-2">
+                                        <div class="input-group">
+                                            <input type="date" name="filter_date" class="form-control" value="{{ request('filter_date') }}">
+                                            <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Filter by action (add or subtract) with icon -->
+                                    <div class="mb-2">
+                                        <div class="input-group">
+                                            <select name="filter_action" class="form-select">
+                                                <option value="">Semua Aksi</option>
+                                                <option value="add" {{ request('filter_action') == 'add' ? 'selected' : '' }}>Tambah</option>
+                                                <option value="subtract" {{ request('filter_action') == 'subtract' ? 'selected' : '' }}>Kurang</option>
+                                            </select>
+                                            <span class="input-group-text"><i class="fas fa-exchange-alt"></i></span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Filter by day of the week (Senin to Minggu) with icon -->
+                                    <div class="mb-2">
+                                        <div class="input-group">
+                                            <select name="filter_day" class="form-select">
+                                                <option value="">Semua Hari</option>
+                                                <option value="monday" {{ request('filter_day') == 'monday' ? 'selected' : '' }}>Senin</option>
+                                                <option value="tuesday" {{ request('filter_day') == 'tuesday' ? 'selected' : '' }}>Selasa</option>
+                                                <option value="wednesday" {{ request('filter_day') == 'wednesday' ? 'selected' : '' }}>Rabu</option>
+                                                <option value="thursday" {{ request('filter_day') == 'thursday' ? 'selected' : '' }}>Kamis</option>
+                                                <option value="friday" {{ request('filter_day') == 'friday' ? 'selected' : '' }}>Jumat</option>
+                                                <option value="saturday" {{ request('filter_day') == 'saturday' ? 'selected' : '' }}>Sabtu</option>
+                                                <option value="sunday" {{ request('filter_day') == 'sunday' ? 'selected' : '' }}>Minggu</option>
+                                            </select>
+                                            <span class="input-group-text"><i class="fas fa-calendar-day"></i></span>
+                                        </div>
+                                    </div>
+                                
+                                    <!-- Buttons for Search and Reset (Side by Side) -->
+                                    <div class="d-flex mb-2">
+                                        <!-- Search Button -->
+                                        <button class="btn btn-primary w-50 me-2" type="submit">
+                                            <i class="fas fa-search"></i> Cari
+                                        </button>
+
+                                        <!-- Reset Button -->
+                                        <a href="{{ route('sparepart.history', $sparepart->id_sparepart) }}" class="btn btn-secondary w-50">
+                                            <i class="fas fa-undo"></i> Reset
+                                        </a>
+                                    </div>
+
+
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Search Section (Visible on larger screens) -->
+        <div class="row mb-3 d-none d-md-flex"> <!-- Visible on medium to large screens -->
             <div class="col-md-12">
                 <form method="GET" action="{{ route('sparepart.history', $sparepart->id_sparepart) }}">
                     <div class="input-group">
-                        <!-- Search by name -->
-                        <input type="text" name="search" class="form-control" placeholder="Cari berdasarkan nama sparepart atau aksi" value="{{ request('search') }}">
+                        <!-- Search by name with icon and placeholder -->
+                        <input type="text" name="search" class="form-control w-25" value="{{ request('search') }}" placeholder="Cari berdasarkan nama sparepart">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
 
-                        <!-- Filter by date -->
-                        <input type="date" name="filter_date" class="form-control" value="{{ request('filter_date') }}">
+                        <!-- Filter by date with icon and placeholder -->
+                        <input type="date" name="filter_date" class="form-control" value="{{ request('filter_date') }}" placeholder="Pilih tanggal">
+                        <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
 
-                        <!-- Filter by action (add or subtract) -->
+                        <!-- Filter by action (add or subtract) with icon and placeholder -->
                         <select name="filter_action" class="form-select">
-                            <option value="">Semua Aksi</option>
+                            <option value="">Pilih Aksi</option>
                             <option value="add" {{ request('filter_action') == 'add' ? 'selected' : '' }}>Tambah</option>
                             <option value="subtract" {{ request('filter_action') == 'subtract' ? 'selected' : '' }}>Kurang</option>
                         </select>
+                        <span class="input-group-text"><i class="fas fa-exchange-alt"></i></span>
 
-                        <!-- Filter by day of the week (Senin to Minggu) -->
+                        <!-- Filter by day of the week (Senin to Minggu) with icon and placeholder -->
                         <select name="filter_day" class="form-select">
-                            <option value="">Semua Hari</option>
+                            <option value="">Pilih Hari</option>
                             <option value="monday" {{ request('filter_day') == 'monday' ? 'selected' : '' }}>Senin</option>
                             <option value="tuesday" {{ request('filter_day') == 'tuesday' ? 'selected' : '' }}>Selasa</option>
                             <option value="wednesday" {{ request('filter_day') == 'wednesday' ? 'selected' : '' }}>Rabu</option>
@@ -51,15 +137,21 @@
                             <option value="saturday" {{ request('filter_day') == 'saturday' ? 'selected' : '' }}>Sabtu</option>
                             <option value="sunday" {{ request('filter_day') == 'sunday' ? 'selected' : '' }}>Minggu</option>
                         </select>
+                        <span class="input-group-text"><i class="fas fa-calendar-day"></i></span>
 
+                        <!-- Search Button -->
                         <button class="btn btn-primary" type="submit">
                             <i class="fas fa-search"></i> Cari
                         </button>
+
+                        <!-- Reset Button -->
+                        <a href="{{ route('sparepart.history', $sparepart->id_sparepart) }}" class="btn btn-secondary">
+                            <i class="fas fa-undo"></i> Reset
+                        </a>
                     </div>
                 </form>                
             </div>
         </div>
-
         <!-- Tabel Riwayat Sparepart -->
         <div class="card shadow-sm">
             <div class="card-body">
@@ -93,8 +185,8 @@
                             @endforelse
                         </tbody>
                     </table>
-                </div>
-                <div class="d-flex justify-content-center">
+                </div><br>
+                <div class="d-flex justify-content-center mt-3">
                     {{ $histories->links('vendor.pagination.simple-bootstrap-5') }}
                 </div>
             </div>
@@ -145,10 +237,6 @@
                             <p><strong>Perubahan Hari Ini:</strong> <span class="text-warning">{{ $todayChanges }} kali</span></p>
                             <p><strong>Perubahan Bulanan:</strong> <span class="text-warning">{{ $monthlyChanges }} kali</span></p>
                             <p><strong>Perubahan Total:</strong> <span class="text-warning">{{ $totalChanges }} kali</span></p>
-                        </div>
-
-                        <div class="pagination-container text-center mt-3">
-                            {{ $histories->links('vendor.pagination.simple-bootstrap-5') }}
                         </div>
                     </div>
                     <div class="modal-footer p-3">

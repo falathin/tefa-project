@@ -17,7 +17,6 @@ class Customer extends Model
         'address',
     ];
 
-    // Scope for customers deleted more than a week ago
     public function scopeDeletedOlderThanWeek($query)
     {
         return $query->where('deleted_at', '<', now()->subWeek());
@@ -29,4 +28,5 @@ class Customer extends Model
     {
         return $this->hasMany(Vehicle::class, 'customer_id');
     }
+
 }
