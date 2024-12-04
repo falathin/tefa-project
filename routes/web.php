@@ -1,46 +1,48 @@
 <?php
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\{
     SparepartController,
     ServiceController,
     VehicleController,
     CustomerController,
-    NotificationController
+    NotificationController,
+    DashboardController
 };
 
-Route::get('/', function () {
-    return view('home');
+Route::get('/', [DashboardController::class, 'index']);
+
+Route::prefix('sparepart')->name('sparepart.')->group(function() {
+    Route::get('/', [SparepartController::class, 'index'])->name('index');
+    Route::get('create', [SparepartController::class, 'create'])->name('create');
+    Route::post('/', [SparepartController::class, 'store'])->name('store');
+    Route::get('{id}', [SparepartController::class, 'show'])->name('show');
+    Route::get('{id}/edit', [SparepartController::class, 'edit'])->name('edit');
+    Route::put('{id}', [SparepartController::class, 'update'])->name('update');
+    Route::delete('{id}', [SparepartController::class, 'destroy'])->name('destroy');
+    Route::get('{id}/history', [SparepartController::class, 'history'])->name('history');
 });
 
+Route::prefix('notifications')->name('notifications.')->group(function() {
+    Route::get('/', [NotificationController::class, 'index'])->name('index');
+    Route::post('{id}/read', [NotificationController::class, 'markAsRead'])->name('read');
+    Route::get('unread-count', [NotificationController::class, 'unreadCount'])->name('unreadCount');
+    Route::get('{id}/edit', [NotificationController::class, 'edit'])->name('edit');
+    Route::put('{id}', [NotificationController::class, 'update'])->name('update');
+});
 
-// Rute untuk Sparepart
-Route::get('/sparepart', [SparepartController::class, 'index'])->name('sparepart.index');
-Route::get('/sparepart/create', [SparepartController::class, 'create'])->name('sparepart.create');
-Route::post('/sparepart', [SparepartController::class, 'store'])->name('sparepart.store');
-Route::get('/sparepart/{id}', [SparepartController::class, 'show'])->name('sparepart.show');
-Route::get('/sparepart/{id}/edit', [SparepartController::class, 'edit'])->name('sparepart.edit');
-Route::put('/sparepart/{id}', [SparepartController::class, 'update'])->name('sparepart.update');
-Route::delete('/sparepart/{id}', [SparepartController::class, 'destroy'])->name('sparepart.destroy');
-
-Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
-Route::post('notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
-// routes/web.php
-Route::get('/notifications/unread-count', [NotificationController::class, 'unreadCount'])->name('notifications.unreadCount');
-
-Route::get('/notifications/{id}/edit', [NotificationController::class, 'edit'])->name('notifications.edit');
-
-Route::put('notifications/{id}', [NotificationController::class, 'update'])->name('notifications.update');
-
-Route::get('/customer', [CustomerController::class, 'index'])->name('customer.index');
-Route::get('/customer/create', [CustomerController::class, 'create'])->name('customer.create');
-Route::post('/customer', [CustomerController::class, 'store'])->name('customer.store');
-Route::get('/customer/{id}', [CustomerController::class, 'show'])->name('customer.show');
-Route::get('/customer/{id}/edit', [CustomerController::class, 'edit'])->name('customer.edit');
-Route::put('/customer/{id}', [CustomerController::class, 'update'])->name('customer.update');
-Route::delete('/customer/{id}', [CustomerController::class, 'destroy'])->name('customer.destroy');
-Route::post('customer/{id}/restore', [CustomerController::class, 'restore'])->name('customer.restore');
-Route::delete('customer/{id}/force-delete', [CustomerController::class, 'forceDelete'])->name('customer.forceDelete');
-Route::delete('/customers/deleted/force-delete-all', [CustomerController::class, 'forceDeleteAll'])->name('customer.forceDeleteAll');
+Route::prefix('customer')->name('customer.')->group(function() {
+    Route::get('/', [CustomerController::class, 'index'])->name('index');
+    Route::get('create', [CustomerController::class, 'create'])->name('create');
+    Route::post('/', [CustomerController::class, 'store'])->name('store');
+    Route::get('{id}', [CustomerController::class, 'show'])->name('show');
+    Route::get('{id}/edit', [CustomerController::class, 'edit'])->name('edit');
+    Route::put('{id}', [CustomerController::class, 'update'])->name('update');
+    Route::delete('{id}', [CustomerController::class, 'destroy'])->name('destroy');
+    Route::post('{id}/restore', [CustomerController::class, 'restore'])->name('restore');
+    Route::delete('{id}/force-delete', [CustomerController::class, 'forceDelete'])->name('forceDelete');
+    Route::delete('deleted/force-delete-all', [CustomerController::class, 'forceDeleteAll'])->name('forceDeleteAll');
+});
 
 Route::prefix('vehicle')->name('vehicle.')->group(function() {
     Route::get('create/{customerId}', [VehicleController::class, 'create'])->name('create');
@@ -50,10 +52,13 @@ Route::prefix('vehicle')->name('vehicle.')->group(function() {
     Route::delete('destroy/{id}', [VehicleController::class, 'destroy'])->name('destroy');
     Route::get('{id}', [VehicleController::class, 'show'])->name('show');
 });
-Route::get('/service', [ServiceController::class, 'index'])->name('service.index');
-Route::get('service/create/{vehicle_id}', [ServiceController::class, 'create'])->name('service.create');
-Route::post('/service', [ServiceController::class, 'store'])->name('service.store');
-Route::get('/service/{id}', [ServiceController::class, 'show'])->name('service.show');
-Route::get('/service/{id}/edit', [ServiceController::class, 'edit'])->name('service.edit');
-Route::put('/service/{id}', [ServiceController::class, 'update'])->name('service.update');
-Route::delete('/service/{id}', [ServiceController::class, 'destroy'])->name('service.destroy');
+
+Route::prefix('service')->name('service.')->group(function() {
+    Route::get('/', [ServiceController::class, 'index'])->name('index');
+    Route::get('create/{vehicle_id}', [ServiceController::class, 'create'])->name('create');
+    Route::post('/', [ServiceController::class, 'store'])->name('store');
+    Route::get('{id}', [ServiceController::class, 'show'])->name('show');
+    Route::get('{id}/edit', [ServiceController::class, 'edit'])->name('edit');
+    Route::put('{id}', [ServiceController::class, 'update'])->name('update');
+    Route::delete('{id}', [ServiceController::class, 'destroy'])->name('destroy');
+});

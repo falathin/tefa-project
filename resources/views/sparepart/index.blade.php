@@ -60,6 +60,9 @@
                             <a href="{{ route('sparepart.edit', $sparepart->id_sparepart) }}" class="btn btn-warning btn-sm">
                                 <i class="bi bi-pencil"></i> Edit
                             </a>
+                            <a href="{{ route('sparepart.history', $sparepart->id_sparepart) }}" class="btn btn-secondary btn-sm">
+                                <i class="bi bi-clock-history"></i> History
+                            </a>
                             <form action="{{ route('sparepart.destroy', $sparepart->id_sparepart) }}" method="POST" style="display:inline;" onsubmit="return confirmDelete();">
                                 @csrf
                                 @method('DELETE')
@@ -67,7 +70,7 @@
                                     <i class="bi bi-trash"></i> Hapus
                                 </button>
                             </form>
-                        </td>
+                        </td>                        
                     </tr>
                     @endforeach
                 @endif
