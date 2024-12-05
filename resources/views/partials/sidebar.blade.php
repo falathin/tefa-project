@@ -17,8 +17,7 @@
                 <span class="menu-title">Program Layanan</span>
             </a>
         </li>
-
-        <!-- Sparepart Dropdown -->
+        <!-- Sparepart Menu -->
         <li class="nav-item animate__animated animate__slideInLeft animate__delay-4.8s">
             <a class="nav-link" data-bs-toggle="collapse" href="#sparepartMenu" aria-expanded="false" aria-controls="sparepartMenu">
                 <i class="mdi mdi-toolbox-outline menu-icon"></i>
@@ -31,12 +30,11 @@
                         <a class="nav-link" href="{{ route('sparepart.index') }}">Data Suku Cadang</a>
                     </li>
                     <li class="nav-item animate__animated animate__slideInLeft animate__delay-7.8s">
-                        <a class="nav-link" href="#">Transaksi Suku Cadang</a>
+                        <a class="nav-link" href="https://coming-soon-my-work.netlify.app/">Transaksi Suku Cadang</a>
                     </li>
                 </ul>
             </div>
         </li>
-
         <!-- Riwayat Service Menu Item -->
         <li class="nav-item animate__animated animate__slideInLeft animate__delay-9.3s">
             <a class="nav-link {{ Request::is('service*') ? 'active' : '' }}" href="{{ route('service.index') }}">
@@ -45,12 +43,11 @@
             </a>
         </li>
 
-        <!-- Documentation Menu Item -->
         <li class="nav-item animate__animated animate__slideInLeft animate__delay-10.8s">
-            <a class="nav-link {{ Request::is('dokumentasi*') ? 'active' : '' }}" href="#">
+            <a class="nav-link" href="{{ route('documentation') }}">
                 <i class="mdi mdi-file-document menu-icon"></i>
-                <span class="menu-title">Dokumentasi</span>
+                <span class="menu-title">Dokumentasi Web</span>
             </a>
-        </li>
+        </li>             
     </ul>
 </nav>

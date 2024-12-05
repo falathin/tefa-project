@@ -116,10 +116,8 @@ class SparepartController extends Controller
     {
         $sparepart = Sparepart::findOrFail($id);
     
-        // Initialize the query builder for SparepartHistory
         $query = SparepartHistory::where('sparepart_id', $id);
     
-        // Apply search filter by sparepart name or action
         if ($request->search) {
             $query->where(function($q) use ($request) {
                 $q->whereHas('sparepart', function($subQuery) use ($request) {
@@ -129,17 +127,14 @@ class SparepartController extends Controller
             });
         }
     
-        // Apply date filter (exact date match)
         if ($request->filter_date) {
             $query->whereDate('created_at', $request->filter_date);
         }
     
-        // Apply filter by action (add or subtract)
         if ($request->filter_action) {
             $query->where('action', $request->filter_action);
         }
     
-        // Apply filter by day of the week (Senin to Minggu)
         if ($request->filter_day) {
             switch ($request->filter_day) {
                 case 'monday':

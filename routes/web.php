@@ -7,12 +7,18 @@ use App\Http\Controllers\{
     VehicleController,
     CustomerController,
     NotificationController,
-    DashboardController
+    DashboardController,
+    TransactionController
 };
+
+Route::get('/documentation', function () {
+    return view('documentation');
+})->name('documentation');
+
 
 Route::get('/', [DashboardController::class, 'index']);
 
-Route::prefix('sparepart')->name('sparepart.')->group(function() {
+Route::prefix('sparepart')->name('sparepart.')->group(function () {
     Route::get('/', [SparepartController::class, 'index'])->name('index');
     Route::get('create', [SparepartController::class, 'create'])->name('create');
     Route::post('/', [SparepartController::class, 'store'])->name('store');
@@ -22,6 +28,16 @@ Route::prefix('sparepart')->name('sparepart.')->group(function() {
     Route::delete('{id}', [SparepartController::class, 'destroy'])->name('destroy');
     Route::get('{id}/history', [SparepartController::class, 'history'])->name('history');
 });
+
+// Route::prefix('sparepart')->name('transactions.')->group(function() {
+//     Route::get('transactions', [TransactionController::class, 'index'])->name('index');
+//     Route::get('transactions/create', [TransactionController::class, 'create'])->name('create');
+//     Route::post('transactions', [TransactionController::class, 'store'])->name('store');
+//     Route::get('transactions/{id}', [TransactionController::class, 'show'])->name('show');
+//     Route::get('transactions/{id}/edit', [TransactionController::class, 'edit'])->name('edit');
+//     Route::put('transactions/{id}', [TransactionController::class, 'update'])->name('update');
+//     Route::delete('transactions/{id}', [TransactionController::class, 'destroy'])->name('destroy');
+// });
 
 Route::prefix('notifications')->name('notifications.')->group(function() {
     Route::get('/', [NotificationController::class, 'index'])->name('index');

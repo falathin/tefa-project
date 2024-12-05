@@ -3,6 +3,7 @@
     $(function() {
         const ctx = document.getElementById('performanceLine').getContext('2d');
 
+        // Gradients for weekly and monthly data
         var graphGradient = ctx.createLinearGradient(5, 0, 5, 100);
         graphGradient.addColorStop(0, 'rgba(26, 115, 232, 0.18)');
         graphGradient.addColorStop(1, 'rgba(26, 115, 232, 0.02)');
@@ -10,6 +11,11 @@
         var graphGradient2 = ctx.createLinearGradient(100, 0, 50, 150);
         graphGradient2.addColorStop(0, 'rgba(0, 208, 255, 0.19)');
         graphGradient2.addColorStop(1, 'rgba(0, 208, 255, 0.03)');
+
+        // New gradient for monthly data (purple)
+        var graphGradientMonth = ctx.createLinearGradient(5, 0, 5, 100);
+        graphGradientMonth.addColorStop(0, 'rgba(128, 0, 128, 0.18)'); // Purple color
+        graphGradientMonth.addColorStop(1, 'rgba(128, 0, 128, 0.02)'); // Lighter purple color
 
         const chartData = {
             id: {
@@ -37,6 +43,18 @@
                     pointBorderWidth: 1,
                     pointRadius: 5,
                     pointBackgroundColor: '#52CDFF',
+                    pointBorderColor: '#fff',
+                }, {
+                    label: 'Kinerja Per Bulan (Ungu)',
+                    data: monthlyChartValues, // Data bulanan
+                    backgroundColor: graphGradientMonth,
+                    borderColor: '#800080', // Ungu
+                    borderWidth: 2,
+                    fill: true,
+                    lineTension: 0.4,
+                    pointBorderWidth: 1,
+                    pointRadius: 5,
+                    pointBackgroundColor: '#800080', // Ungu
                     pointBorderColor: '#fff',
                 }]
             },
@@ -66,6 +84,18 @@
                     pointRadius: 5,
                     pointBackgroundColor: '#52CDFF',
                     pointBorderColor: '#fff',
+                }, {
+                    label: '月間パフォーマンス (紫)',
+                    data: monthlyChartValues, // Data bulanan
+                    backgroundColor: graphGradientMonth,
+                    borderColor: '#800080', // Ungu
+                    borderWidth: 2,
+                    fill: true,
+                    lineTension: 0.4,
+                    pointBorderWidth: 1,
+                    pointRadius: 5,
+                    pointBackgroundColor: '#800080', // Ungu
+                    pointBorderColor: '#fff',
                 }]
             },
             en: {
@@ -94,6 +124,18 @@
                     pointRadius: 5,
                     pointBackgroundColor: '#52CDFF',
                     pointBorderColor: '#fff',
+                }, {
+                    label: 'Monthly Performance (Purple)',
+                    data: monthlyChartValues, // Data bulanan
+                    backgroundColor: graphGradientMonth,
+                    borderColor: '#800080', // Ungu
+                    borderWidth: 2,
+                    fill: true,
+                    lineTension: 0.4,
+                    pointBorderWidth: 1,
+                    pointRadius: 5,
+                    pointBackgroundColor: '#800080', // Ungu
+                    pointBorderColor: '#fff',
                 }]
             },
             su: {
@@ -121,6 +163,18 @@
                     pointBorderWidth: 1,
                     pointRadius: 5,
                     pointBackgroundColor: '#52CDFF',
+                    pointBorderColor: '#fff',
+                }, {
+                    label: 'Kinerja Per Bulan (Ungu)',
+                    data: monthlyChartValues, // Data bulanan
+                    backgroundColor: graphGradientMonth,
+                    borderColor: '#800080', // Ungu
+                    borderWidth: 2,
+                    fill: true,
+                    lineTension: 0.4,
+                    pointBorderWidth: 1,
+                    pointRadius: 5,
+                    pointBackgroundColor: '#800080', // Ungu
                     pointBorderColor: '#fff',
                 }]
             }

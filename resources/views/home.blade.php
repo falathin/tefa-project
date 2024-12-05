@@ -89,7 +89,6 @@
                                             });
                                         });
                                     });
-
                                 </script>
                             </div>
                         </div>
@@ -197,10 +196,10 @@
                                             </div>
                                         </div>
                                     </div>
-                                    
                                     <script>
                                         const chartLabels = @json($chartLabels);
                                         const chartValues = @json($chartValues);
+                                        const monthlyChartValues = @json($monthlyChartValues); // Add monthly values here
                                     </script>
                                     <div class="col-lg-6 d-flex flex-column">
                                         <div class="row flex-grow">
