@@ -58,8 +58,7 @@ class ServiceController extends Controller
         if ($dayOfWeek = $request->get('day_of_week')) {
             $servicesQuery = $servicesQuery->whereRaw('DAYOFWEEK(created_at) = ?', [$dayOfWeek]);
         }
-        
-        // Paginate the results
+
         $services = $servicesQuery->paginate(10);
         
         return view('service.index', compact('services'));

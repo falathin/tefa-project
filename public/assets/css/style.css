@@ -30386,3 +30386,65 @@ dl li {
     transform: translateY(-3px);
     transition: all 0.3s ease;
 }
+
+.card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for transform and box-shadow */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Regular gray shadow */
+}
+
+.card:hover {
+  transform: translateY(-8px); /* Slightly more movement */
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1), 0 0 20px #FFB6C1, 0 0 30px rgba(255, 182, 193, 0.5); /* Initial sakura pink glow */
+  animation: sakuraGlow 2s 1 forwards; /* Animation for sakura pink glow effect */
+}
+
+@keyframes sakuraGlow {
+  0% {
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1), 0 0 20px #FFB6C1, 0 0 30px rgba(255, 182, 193, 0.3); /* Soft initial pink glow */
+  }
+  25% {
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1), 0 0 20px #FFC0CB, 0 0 30px rgba(255, 192, 203, 0.4); /* Lighter pink glow */
+  }
+  50% {
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1), 0 0 20px #FF69B4, 0 0 30px rgba(255, 105, 180, 0.5); /* Hot pink glow */
+  }
+  75% {
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1), 0 0 20px #FF1493, 0 0 30px rgba(255, 20, 147, 0.5); /* Deeper pink glow */
+  }
+  100% {
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1), 0 0 20px #FFB6C1, 0 0 30px rgba(255, 182, 193, 0.3); /* Final soft pink glow */
+  }
+}
+
+
+/* Make card responsive */
+@media (max-width: 768px) {
+  .card {
+      margin-bottom: 20px;
+  }
+}
+
+/* Language Selector Icon */
+#languageSelect option {
+  padding-left: 20px;
+}
+
+#languageSelect option[value="id"]:before {
+  content: url('path/to/indonesia-flag-icon.png');
+  padding-right: 10px;
+}
+
+#languageSelect option[value="jp"]:before {
+  content: url('path/to/japan-flag-icon.png');
+  padding-right: 10px;
+}
+
+#languageSelect option[value="en"]:before {
+  content: url('path/to/uk-flag-icon.png');
+  padding-right: 10px;
+}
+
+#languageSelect option[value="su"]:before {
+  content: url('path/to/sunda-flag-icon.png');
+  padding-right: 10px;
+}

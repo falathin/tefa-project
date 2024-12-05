@@ -36,4 +36,16 @@ class Sparepart extends Model
     {
         return $this->hasMany(Notification::class);
     }
+
+    public function services()
+    {
+        return $this->belongsToMany(Service::class, 'service_sparepart', 'sparepart_id', 'service_id')
+                    ->withPivot('quantity');
+    }
+
+    public function getKeuntunganAttribute()
+    {
+        return $this->harga_jual - $this->harga_beli;
+    }
+
 }

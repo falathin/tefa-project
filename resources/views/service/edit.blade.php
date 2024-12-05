@@ -208,51 +208,34 @@
 
 
 
-                            <div class="text-center mt-4">
-                                @if($service->vehicle)
-                                <a href="{{ route('vehicle.show', $service->vehicle->id) }}" class="btn btn-dark btn-md me-3">
-                                    <i class="mdi mdi-car me-2"></i> Kembali
-                                </a>
-                                @endif
-                                
-                                <button type="reset" class="btn btn-warning btn-md me-3">
-                                    <i class="fas fa-redo"></i> Reset Form
-                                </button>
-                                
-                                <button type="button" class="btn btn-success btn-md" id="submitButton">
-                                    <i class="fas fa-save"></i> Simpan Perubahan
-                                </button>
-                                
-                                <!-- Pop-up Modal -->
-                                <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="confirmationModalLabel"><i class="fas fa-exclamation-circle"></i> Konfirmasi</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                Apakah Anda yakin ingin menyimpan perubahan? Pastikan semua data telah diperiksa.
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                                    <i class="fas fa-times"></i> Batal
-                                                </button>
-                                                <button type="submit" class="btn btn-success">
-                                                    <i class="fas fa-check"></i> Simpan
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div class="text-center mt-4">
+                                    @if($service->vehicle)
+                                    <a href="{{ route('vehicle.show', $service->vehicle->id) }}" class="btn btn-dark btn-md me-3 mb-2 mb-md-0">
+                                        <i class="mdi mdi-car me-2"></i> Kembali
+                                    </a>
+                                    @endif
+                                    
+                                    <button type="reset" class="btn btn-warning btn-md me-3 mb-2 mb-md-0">
+                                        <i class="fas fa-redo"></i> Reset Form
+                                    </button>
+                                    
+                                    <button type="button" class="btn btn-success btn-md mb-2 mb-md-0" id="submitButton">
+                                        <i class="fas fa-save"></i> Simpan Perubahan
+                                    </button>
                                 </div>
+                                
+                                <!-- Scripts -->
                                 <script>
                                     document.getElementById('submitButton').addEventListener('click', function () {
-                                        var confirmationModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
-                                        confirmationModal.show();
+                                        // Show a simple JavaScript confirmation alert
+                                        const confirmAction = confirm("Apakah Anda yakin ingin menyimpan perubahan? Pastikan semua data telah diperiksa.");
+                                        
+                                        if (confirmAction) {
+                                            // If confirmed, submit the form
+                                            document.querySelector('form').submit();
+                                        }
                                     });
-                                </script>
-                                    
-                            </div>
+                                </script>                                
             </form>
 
             <script>

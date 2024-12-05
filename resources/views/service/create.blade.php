@@ -106,7 +106,6 @@
                     <br>
                     <button type="button" class="btn btn-primary" id="addRow">+ Tambah Sparepart</button>
                 </div>
-            
                 <!-- Submit and Back Buttons -->
                 <div class="text-center mt-4">
                     <a href="{{ route('vehicle.show', $vehicle->id) }}" class="btn btn-secondary btn-md">
@@ -120,39 +119,19 @@
                     </button>
                 </div>
 
-
-            </form>
-            
-            <!-- Modal Confirmation -->
-            <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="confirmationModalLabel">Konfirmasi Pengiriman</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            Apakah Anda yakin semua data sudah benar?
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                            <button type="submit" class="btn btn-primary" id="confirmSubmit">Ya, Simpan</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <script>
-                document.getElementById('submitButton').addEventListener('click', function () {
-                    const confirmationModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
-                    confirmationModal.show();
-                });
-            
-                document.getElementById('confirmSubmit').addEventListener('click', function () {
-                    document.querySelector('form').submit();
-                });
-            </script>
+                <!-- Scripts -->
+                <script>
+                    // Show confirmation alert when the submit button is clicked
+                    document.getElementById('submitButton').addEventListener('click', function () {
+                        // Show a simple JavaScript confirmation alert
+                        const confirmAction = confirm("Apakah Anda yakin semua data sudah benar?");
                         
+                        if (confirmAction) {
+                            // If confirmed, submit the form
+                            document.querySelector('form').submit();
+                        }
+                    });
+                </script>
         </div>
     </div>
 </div>

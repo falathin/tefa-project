@@ -21,6 +21,11 @@ class Service extends Model
         'service_type',
     ];
 
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class);
+    }
+
     public function vehicle()
     {
         return $this->belongsTo(Vehicle::class);

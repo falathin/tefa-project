@@ -1,9 +1,22 @@
 @extends('layouts.app')
 
 @section('content')
-    <h1 class="welcome-text">Selamat Pagi, <span class="text-black fw-bold">Halo Dunia</span></h1>
+    <h1 class="welcome-text" id="greeting">Selamat Pagi, <span class="fw-bold welcome-text">Halo Dunia</span></h1>
     <h3 class="welcome-sub-text">Ringkasan kinerja Anda minggu ini</h3>
+    <script>
+        const hour = new Date().getHours();
+        let greetingText = '';
 
+        if (hour < 12) {
+            greetingText = 'Selamat Pagi';
+        } else if (hour < 18) {
+            greetingText = 'Selamat Siang';
+        } else {
+            greetingText = 'Selamat Malam';
+        }
+
+        document.getElementById('greeting').innerHTML = greetingText + ', <span class="fw-bold welcome-text">Halo Dunia</span>';
+    </script>
     <!-- partial -->
     <div class="main-paanel">
         <div class="content-wrapper">
@@ -27,67 +40,155 @@
                             </ul>
                             <div>
                                 <div class="btn-wrapper">
-                                    <a href="#" class="btn btn-otline-dark align-items-center"><i class="icon-share"></i> Bagikan</a>
-                                    <a href="#" class="btn btn-otline-dark"><i class="icon-printer"></i> Cetak</a>
-                                    <a href="#" class="btn btn-primary text-white me-0"><i class="icon-download"></i> Ekspor</a>
+                                    <a href="#" class="btn btn-outline-dark align-items-center" id="shareBtn"><i class="icon-share"></i> Bagikan</a>
+                                    <a href="#" class="btn btn-outline-dark" id="printBtn"><i class="icon-printer"></i> Cetak</a>
+                                    <a href="#" class="btn btn-primary text-white me-0" id="exportBtn"><i class="icon-download"></i> Ekspor</a>
                                 </div>
+                                
+                                <script>
+                                    document.addEventListener("DOMContentLoaded", function() {
+                                        const shareBtn = document.getElementById("shareBtn");
+                                        shareBtn.addEventListener("click", function(e) {
+                                            e.preventDefault();
+
+                                            // Memeriksa apakah browser mendukung Web Share API
+                                            if (navigator.share) {
+                                                navigator.share({
+                                                    title: document.title,
+                                                    text: "Check this page out!",
+                                                    url: window.location.href
+                                                }).then(() => {
+                                                    console.log("Page shared successfully");
+                                                }).catch((err) => {
+                                                    console.log("Error sharing page", err);
+                                                });
+                                            } else {
+                                                alert("Web Share API is not supported in this browser.");
+                                            }
+                                        });
+
+                                        const printBtn = document.getElementById("printBtn");
+                                        printBtn.addEventListener("click", function(e) {
+                                            e.preventDefault();
+                                            
+                                            window.print();
+                                        });
+
+                                        const exportBtn = document.getElementById("exportBtn");
+                                        exportBtn.addEventListener("click", function(e) {
+                                            e.preventDefault();
+                                            
+                                            const doc = new jsPDF();
+
+                                            const content = document.body.innerHTML;
+
+                                            doc.html(content, {
+                                                callback: function (doc) {
+                                                    doc.save("exported_page.pdf");
+                                                }
+                                            });
+                                        });
+                                    });
+
+                                </script>
                             </div>
                         </div>
                         <div class="tab-content tab-content-basic">
                             <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview">
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <div class="statistics-details d-flex align-items-center justify-content-between">
-                                            <!-- Total Profit -->
-                                            <div>
-                                                <p class="statistics-title">Total Keuntungan</p>
-                                                <h3 class="rate-percentage @if($totalProfit < 0) text-danger @else text-success @endif">
-                                                    Rp. {{ number_format($totalProfit, 2, ',', '.') }}
-                                                </h3>
-                                                <p class="text-success d-flex">
-                                                    <i class="mdi mdi-menu-up"></i>
-                                                    <span>{{ $totalProfit > 0 ? '+' : '' }}{{ number_format($totalProfit, 2, ',', '.') }}%</span>
-                                                </p>
-                                            </div>
-                                
-                                            <!-- Total Expenses -->
-                                            <div>
-                                                <p class="statistics-title">Total Pengeluaran</p>
-                                                <h3 class="rate-percentage @if($totalExpense < 0) text-danger @else text-success @endif">
-                                                    Rp. {{ number_format($totalExpense, 2, ',', '.') }}
-                                                </h3>
-                                                <p class="text-danger d-flex">
-                                                    <i class="mdi mdi-menu-up"></i>
-                                                    <span>{{ $totalExpense > 0 ? '+' : '' }}{{ number_format($totalExpense, 2, ',', '.') }}%</span>
-                                                </p>
-                                            </div>
-                                
-                                            <!-- Total Unpaid -->
-                                            <div>
-                                                <p class="statistics-title">Total Belum Dibayar</p>
-                                                <h3 class="rate-percentage @if($totalUnpaid < 0) text-danger @else text-success @endif">
-                                                    Rp. {{ number_format($totalUnpaid, 2, ',', '.') }}
-                                                </h3>
-                                                <p class="text-danger d-flex">
-                                                    <i class="mdi mdi-menu-up"></i>
-                                                    <span>{{ $totalUnpaid > 0 ? '+' : '' }}{{ number_format($totalUnpaid, 2, ',', '.') }}%</span>
-                                                </p>
+                                <div class="col-sm-12">
+                                    <div class="row">
+                                        <!-- Total Profit -->
+                                        <div class="col-12 col-md-6 col-lg-3">
+                                            <div class="statistics-details d-flex align-items-center justify-content-between">
+                                                <div>
+                                                    <p class="statistics-title">Total Keuntungan</p>
+                                                    <h3 class="rate-percentage @if($totalProfit < 0) text-danger @else text-success @endif">
+                                                        Rp. {{ number_format($totalProfit, 2, ',', '.') }}
+                                                    </h3>
+                                                    <p class="text-success d-flex">
+                                                        <i class="mdi mdi-menu-up"></i>
+                                                        <span>{{ $profitPercentage > 0 ? '+' : '' }}{{ number_format($profitPercentage, 2, ',', '.') }}%</span>
+                                                    </p>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>                                  
+                                
+                                        <!-- Total Expenses -->
+                                        <div class="col-12 col-md-6 col-lg-3">
+                                            <div class="statistics-details d-flex align-items-center justify-content-between">
+                                                <div>
+                                                    <p class="statistics-title">Total Pengeluaran</p>
+                                                    <h3 class="rate-percentage @if($totalExpense < 0) text-danger @else text-success @endif">
+                                                        Rp. {{ number_format($totalExpense, 2, ',', '.') }}
+                                                    </h3>
+                                                    <p class="text-danger d-flex">
+                                                        <i class="mdi mdi-menu-down"></i>
+                                                        <span>{{ $expensePercentage > 0 ? '-' : '' }}{{ number_format($expensePercentage, 2, ',', '.') }}%</span>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                
+                                        <!-- Total Unpaid -->
+                                        <div class="col-12 col-md-6 col-lg-3">
+                                            <div class="statistics-details d-flex align-items-center justify-content-between">
+                                                <div>
+                                                    <p class="statistics-title">Total Belum Dibayar</p>
+                                                    <h3 class="rate-percentage @if($totalUnpaid < 0) text-danger @else text-success @endif">
+                                                        Rp. {{ number_format($totalUnpaid, 2, ',', '.') }}
+                                                    </h3>
+                                                    <p class="text-danger d-flex">
+                                                        <i class="mdi mdi-menu-down"></i>
+                                                        <span>{{ $unpaidPercentage > 0 ? '-' : '' }}{{ number_format($unpaidPercentage, 2, ',', '.') }}%</span>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                
+                                        <!-- Average Profit Per Customer -->
+                                        <div class="col-12 col-md-6 col-lg-3">
+                                            <div class="statistics-details d-flex align-items-center justify-content-between">
+                                                <div>
+                                                    <p class="statistics-title">Keuntungan Rata-rata per Pelanggan</p>
+                                                    <h3 class="rate-percentage @if($averageProfitPerCustomer < 0) text-danger @else text-success @endif">
+                                                        Rp. {{ number_format($averageProfitPerCustomer, 2, ',', '.') }}
+                                                    </h3>
+                                                    <p class="text-success d-flex">
+                                                        <i class="mdi mdi-menu-up"></i>
+                                                        <span>
+                                                            Rp. {{ number_format($averageProfitPerCustomer, 2, ',', '.') }}
+                                                        </span>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
+                                
                                 <div class="row">
                                     <div class="col-lg-6 d-flex flex-column">
                                         <div class="row flex-grow">
                                             <div class="col-12 grid-margin stretch-card">
-                                                <div class="card card-rounded">
+                                                <div class="card card-rounded" style="transition: transform 0.3s ease, box-shadow 0.3s ease; border-radius: 10px;">
                                                     <div class="card-body">
-                                                        <div class="d-sm-flex justify-content-between align-items-start">
+                                                        <div class="d-sm-flex justify-content-between align-items-center">
                                                             <div>
                                                                 <h4 class="card-title card-title-dash text-dark">Grafik Kinerja</h4>
                                                                 <h5 class="card-subtitle card-subtitle-dash">Grafik keuntungan harian berdasarkan servis</h5>
                                                             </div>
+                                                            <!-- Language Selector with Icons -->
+                                                            <div class="mb-4">
+                                                                <select id="languageSelect" class="form-select form-select-sm" aria-label="Language Select" 
+                                                                        style="font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 5px;">
+                                                                    <option value="id" selected>Bahasa Indonesia</option>
+                                                                    <option value="jp">日本語 (Japanese)</option>
+                                                                    <option value="en">English</option>
+                                                                    <option value="su">Sunda</option>
+                                                                </select>
+                                                            </div>
                                                         </div>
+                                    
+                                                        <!-- Chart -->
                                                         <div class="chartjs-wrapper mt-4">
                                                             <canvas id="performanceLine" width="400" height="200"></canvas>
                                                         </div>
@@ -96,91 +197,128 @@
                                             </div>
                                         </div>
                                     </div>
+                                    
+                                    <script>
+                                        const chartLabels = @json($chartLabels);
+                                        const chartValues = @json($chartValues);
+                                    </script>
                                     <div class="col-lg-6 d-flex flex-column">
                                         <div class="row flex-grow">
-                                            <!-- Card for Total Kendaraan -->
                                             <div class="col-md-6 col-lg-12 grid-margin stretch-card">
-                                                <div class="card card-rounded"
-                                                    style="background-image: url('https://www.madornomad.com/wp-content/uploads/2019/09/japan-riding-17.jpg'); 
+                                                <div class="card card-rounded" id="vehicle-card"
+                                                     style="background-image: url('https://www.madornomad.com/wp-content/uploads/2019/09/japan-riding-17.jpg'); 
                                                             background-size: cover; 
                                                             background-position: center; 
                                                             color: white; 
                                                             border-radius: 20px; 
                                                             overflow: hidden; 
                                                             transition: transform 0.3s ease, box-shadow 0.3s ease; 
-                                                            position: relative;">
-                                                    <div class="card-body"
-                                                                padding: 20px; 
-                                                                position: relative; 
-                                                                z-index: 1;">
-                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            position: relative;" onclick="changeImageRandomly()">
+                                                    
+                                                    <div class="card-body" style="padding: 20px; position: relative; z-index: 1;">
+                                                        <div class="d-flex justify-content-between align-items-center bike-card">
                                                             <div>
                                                                 <p class="text-small mb-2" style="font-family: 'Poppins', sans-serif; font-weight: 400;">
                                                                     Total Kendaraan / 車両合計
-                                                                </p> <!-- Indonesian and Japanese Text -->
+                                                                </p>
                                                                 <h4 class="mb-0 fw-bold" style="font-family: 'Poppins', sans-serif; font-weight: 600;">
                                                                     {{ $totalVehicles }} / {{ $totalVehicles }}台
-                                                                </h4> <!-- Displaying total vehicles in both languages -->
+                                                                </h4>
                                                             </div>
-
-                                                            <!-- Icon added to the right -->
-                                                            <i class="fas fa-car-side fa-2x" style="color: white;"></i> <!-- Car icon -->
+                                                            <i class="fas fa-car-side fa-2x" style="color: white;"></i>
                                                         </div>
                                                     </div>
-
-                                                    <!-- Bunga Sakura SVG (Sekarang muncul saat hover) -->
+                                            
                                                     <svg class="sakura-hover" xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"
-                                                        style="position: absolute; top: 10%; left: 10%; opacity: 0; transition: opacity 0.3s ease;">
+                                                         style="position: absolute; top: 10%; left: 10%; opacity: 0; transition: opacity 0.3s ease;">
                                                         <circle cx="20" cy="20" r="6" fill="pink"/>
                                                         <circle cx="40" cy="30" r="6" fill="pink"/>
                                                         <circle cx="60" cy="20" r="6" fill="pink"/>
                                                         <circle cx="80" cy="40" r="6" fill="pink"/>
                                                     </svg>
-
-                                                    <!-- Hover Effect using Inline CSS -->
-                                                    <style>
-                                                        .card:hover {
-                                                            transform: scale(1.05);  /* Membesarkan card */
-                                                            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Menambahkan bayangan */
-                                                        }
-
-                                                        .card:hover .sakura-hover {
-                                                            opacity: 1;  /* Menampilkan bunga sakura saat hover */
-                                                        }
-                                                    </style>
                                                 </div>
-                                            </div>
-                                            <!-- Card with Indonesian and Japanese Text, Including Number Example -->
-                                            <div class="col-md-6 col-lg-12 grid-margin stretch-card">
-                                                <div class="card card-rounded"
-                                                    style="background-image: url('https://st3.depositphotos.com/4080643/17799/i/450/depositphotos_177995342-stock-photo-fuji-mountain-and-cherry-blossoms.jpg'); 
-                                                            background-size: cover; 
-                                                            background-position: center; 
-                                                            color: white; 
-                                                            border-radius: 20px; 
-                                                            overflow: hidden; 
-                                                            transition: transform 0.5s ease, box-shadow 0.5s ease, filter 0.3s ease; 
-                                                            height: 160px; width: 100%;">
-                                                    <div class="card-body" style="padding: 10px 15px; position: relative; z-index: 1;">
-                                                        <div class="d-flex justify-content-between align-items-center">
-                                                            <div>
-                                                                <!-- Indonesian and Japanese Text with Number Example -->
-                                                                <p class="text-small mb-2" style="font-family: 'Poppins', sans-serif; font-weight: 400;">
-                                                                    Total Pengunjung / 訪問者数
-                                                                </p>
-                                                                <h4 class="mb-0 fw-bold" style="font-family: 'Poppins', sans-serif; font-weight: 600;">
-                                                                    {{ $totalVisitors }} / {{ $totalVisitors }}人
-                                                                </h4> <!-- Example: Displaying number in both languages -->
-                                                            </div>
-                                                            <!-- Icon with hover effect -->
-                                                            <div>
-                                                                <i class="fas fa-users fa-2x group-hover:scale-125 group-hover:text-yellow-400 transition-all duration-300"></i> <!-- FontAwesome Icon -->
-                                                            </div>
+                                            </div>                                            
+                                            <script>
+                                                document.addEventListener("DOMContentLoaded", function() {
+                                                    const defaultImage = 'https://www.madornomad.com/wp-content/uploads/2019/09/japan-riding-17.jpg';
+
+                                                    const vehicleImages = [
+                                                        defaultImage,
+                                                        @foreach ($vehicles as $vehicle)
+                                                            '{{ $vehicle->image ? asset('storage/' . $vehicle->image) : '' }}',
+                                                        @endforeach
+                                                    ];
+
+                                                    const validVehicleImages = vehicleImages.filter(image => image !== '');
+
+                                                    const imagesToCycle = validVehicleImages.length > 0 ? validVehicleImages : [defaultImage];
+                                                    
+                                                    const cardElement = document.getElementById('vehicle-card');
+
+                                                    let currentIndex = 0;
+
+                                                    function changeImageRandomly() {
+                                                        currentIndex = (currentIndex + 1) % imagesToCycle.length;
+                                                        cardElement.style.backgroundImage = `url('${imagesToCycle[currentIndex]}')`;
+                                                    }
+
+                                                    setInterval(changeImageRandomly, 4000); // Gambar akan berubah setiap 4 detik
+
+                                                    cardElement.addEventListener('click', function() {
+                                                        changeImageRandomly(); // Panggil fungsi untuk mengganti gambar saat diklik
+                                                    });
+                                                });
+                                            </script>
+                                        <div class="col-md-6 col-lg-12 grid-margin stretch-card">
+                                            <div class="card card-rounded"
+                                                style="background-image: url('https://st3.depositphotos.com/4080643/17799/i/450/depositphotos_177995342-stock-photo-fuji-mountain-and-cherry-blossoms.jpg'); 
+                                                        background-size: cover; 
+                                                        background-position: center; 
+                                                        color: white; 
+                                                        border-radius: 20px; 
+                                                        overflow: hidden; 
+                                                        transition: transform 0.5s ease, box-shadow 0.5s ease, filter 0.3s ease; 
+                                                        height: 160px; width: 100%;" id="visitor-card">
+                                                
+                                                <div class="card-body" style="padding: 10px 15px; position: relative; z-index: 1;">
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <div>
+                                                            <p class="text-small mb-2" style="font-family: 'Poppins', sans-serif; font-weight: 400;">
+                                                                Total Pengunjung / 訪問者数
+                                                            </p>
+                                                            <h4 class="mb-0 fw-bold" style="font-family: 'Poppins', sans-serif; font-weight: 600;">
+                                                                {{ $totalVisitors }} / {{ $totalVisitors }}人
+                                                            </h4> <!-- Displaying number in both languages -->
+                                                        </div>
+                                                        <div>
+                                                            <i class="fas fa-users fa-2x group-hover:scale-125 group-hover:text-yellow-400 transition-all duration-300"></i>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
+                                        <script>
+                                            document.addEventListener("DOMContentLoaded", function() {
+                                                const backgroundImages = [
+                                                    'https://wallpapercave.com/wp/wp5753394.jpg',
+                                                    'https://wallpapercave.com/wp/wp5753409.jpg',
+                                                    'https://wallpapers.com/images/hd/night-cherry-blossom-pc4o7liqwpqdm894.jpg',
+                                                    'https://farm4.staticflickr.com/3406/3537584665_d2d1858a0a_b.jpg',
+                                                ];
+
+                                                const cardElement = document.getElementById('visitor-card');
+
+                                                function changeImageRandomly() {
+                                                    const randomIndex = Math.floor(Math.random() * backgroundImages.length);
+                                                    cardElement.style.backgroundImage = `url('${backgroundImages[randomIndex]}')`;
+                                                }
+
+                                                setInterval(changeImageRandomly, 4000);
+
+                                                cardElement.addEventListener('click', changeImageRandomly);
+                                            });
+                                        </script>
+                                        </div>                                        
                                     </div>                                    
                                 </div>
                                 <div class="row">
@@ -189,35 +327,35 @@
                                             <div class="card-body">
                                                 <div class="d-sm-flex justify-content-between align-items-center">
                                                     <div>
-                                                        <h4 class="card-title card-title-dash text-white">Statistik / 統計</h4>
-                                                        <p class="card-subtitle card-subtitle-dash text-white">Lorem ipsum dolor sit amet consectetur adipisicing elit / ロレム・イプサム・ドル・シット・アメット・コンセクテトゥア・アディピシング・エリット</p>
+                                                        <h4 class="card-title card-title-dash text-white">Statistik Kinerja</h4>
+                                                        <p class="card-subtitle card-subtitle-dash text-white">Pantau perkembangan pengunjung, sparepart, dan kendaraan untuk memastikan pertumbuhan dan efisiensi yang optimal.</p>
                                                     </div>
                                                 </div>
                                                 <div class="table-responsive">
                                                     <table class="table table-bordered table-hover text-white" style="background-color: transparent; border-radius: 15px; overflow: hidden;">
                                                         <thead>
                                                             <tr>
-                                                                <th>Tanggal / 日付</th>
-                                                                <th>Lead / リード</th>
-                                                                <th>Pengunjung / 訪問者</th>
-                                                                <th>Pertumbuhan / 成長</th>
+                                                                <th>Tanggal</th>
+                                                                <th>Pengunjung Hari Ini</th>
+                                                                <th>Jumlah Sparepart</th>
+                                                                <th>Pertumbuhan</th>
+                                                                <th colspan="3" class="text-center">Rata-rata Jumlah Kendaraan per Pelanggan</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            @foreach ($chartData as $data)
-                                                                <tr>
-                                                                    <td>{{ $data['service_date'] }}</td>
-                                                                    <td>--</td>
-                                                                    <td>--</td>
-                                                                    <td>{{ number_format($data['total_profit'], 2) }}%</td>
-                                                                </tr>
-                                                            @endforeach
+                                                            <tr>
+                                                                <td class="text-center">{{ $today }}</td>
+                                                                <td class="text-center">{{ $totalVisitorsToday }}</td>
+                                                                <td class="text-center">{{ $totalSpareparts }}</td>
+                                                                <td class="text-center">{{ number_format($data['total_profit'], 2) }}%</td>
+                                                                <td class="text-center">{{ number_format($averageVehiclesPerCustomer, 2) }}</td>
+                                                            </tr>
                                                         </tbody>
                                                     </table>
                                                 </div>
-                                            </div>
-                                        </div>                                        
-                                    </div>
+                                            </div>                                            
+                                        </div>
+                                    </div>                                                                                                          
                                 </div>
                             </div>
                         </div>
