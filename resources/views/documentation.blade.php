@@ -14,10 +14,19 @@
             <i class="fas fa-book-open"></i> Pendahuluan
         </h2>
         <p>
+            Assalamualaikum warahmatullahi wabarakatuh, 
+        </p>
+        <p>
             Laporan ini merupakan dokumentasi dari aplikasi web yang dikembangkan selama pelatihan kerja di <strong>PT Inovindo Digital Media</strong> menggunakan framework <strong>Laravel</strong>. Aplikasi ini bertujuan untuk mengelola data dan transaksi di dalam perusahaan, dengan fokus pada manajemen kendaraan, sparepart, dan transaksi pembayaran.
         </p>
         <p>
             Aplikasi ini dirancang untuk menyederhanakan proses bisnis yang ada, mengotomatiskan alur kerja, serta memberikan kemudahan bagi karyawan dalam mengelola dan memonitor transaksi harian. Selain itu, aplikasi ini juga memiliki tampilan yang responsif dan user-friendly, sehingga dapat digunakan dengan mudah oleh berbagai macam pengguna, baik itu administrator maupun pelanggan.
+        </p>
+        <p>
+            Semoga aplikasi ini dapat memberikan manfaat yang baik, serta menjadi sarana untuk meningkatkan produktivitas dan efisiensi di perusahaan. 
+        </p>
+        <p>
+            Wassalamualaikum warahmatullahi wabarakatuh.
         </p>
     </section>
 
