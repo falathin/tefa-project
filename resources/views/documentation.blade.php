@@ -230,7 +230,7 @@
             </li>
             <li class="list-group-item">
                 <strong>Repository TeFa Project:</strong> <a href="https://github.com/falathin/tefa-project" target="_blank">https://github.com/falathin/tefa-project</a><br>
-                <em>Total Commit: 24</em>
+                <em>Total Commit: 27</em>
             </li>
         </ul>
         <p>Silakan kunjungi repository untuk melihat lebih lanjut mengenai pengembangan aplikasi ini.</p>
