@@ -170,13 +170,13 @@
                                             <div class="col-12 grid-margin stretch-card">
                                                 <div class="card card-rounded" style="transition: transform 0.3s ease, box-shadow 0.3s ease; border-radius: 10px;">
                                                     <div class="card-body">
-                                                        <div class="d-sm-flex justify-content-between align-items-center">
+                                                        <div class="d-sm-flex align-items-center">
                                                             <div>
-                                                                <h4 class="card-title card-title-dash text-dark">Grafik Kinerja</h4>
-                                                                <h5 class="card-subtitle card-subtitle-dash">Grafik keuntungan harian berdasarkan servis</h5>
+                                                                <h4 id="grafikKinerja" class="card-title card-title-dash text-dark">Grafik Kinerja</h4>
+                                                                <h5 id="grafikKinerjaSub" class="card-subtitle card-subtitle-dash">Grafik keuntungan harian berdasarkan servis</h5>
                                                             </div>
                                                             <!-- Language Selector with Icons -->
-                                                            <div class="mb-4">
+                                                            <div class="mb-4 ml-auto">
                                                                 <select id="languageSelect" class="form-select form-select-sm" aria-label="Language Select" 
                                                                         style="font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 5px;">
                                                                     <option value="id" selected>Bahasa Indonesia</option>
@@ -186,7 +186,35 @@
                                                                 </select>
                                                             </div>
                                                         </div>
-                                    
+                                                        
+                                                        <script>
+                                                            const languageSelect = document.getElementById('languageSelect');
+                                                            const grafikKinerja = document.getElementById('grafikKinerja');
+                                                            const grafikKinerjaSub = document.getElementById('grafikKinerjaSub');
+                                                        
+                                                            languageSelect.addEventListener('change', function() {
+                                                                const selectedLanguage = languageSelect.value;
+                                                        
+                                                                switch (selectedLanguage) {
+                                                                    case 'id':
+                                                                        grafikKinerja.textContent = 'Grafik Kinerja';
+                                                                        grafikKinerjaSub.textContent = 'Grafik keuntungan harian berdasarkan servis';
+                                                                        break;
+                                                                    case 'jp':
+                                                                        grafikKinerja.textContent = 'パフォーマンス グラフ';
+                                                                        grafikKinerjaSub.textContent = 'サービスに基づく日別利益グラフ';
+                                                                        break;
+                                                                    case 'en':
+                                                                        grafikKinerja.textContent = 'Performance Graph';
+                                                                        grafikKinerjaSub.textContent = 'Daily profit graph based on services';
+                                                                        break;
+                                                                    case 'su':
+                                                                        grafikKinerja.textContent = 'Grafik Kinerja';
+                                                                        grafikKinerjaSub.textContent = 'Grafik kauntungan sapopoé dumasar kana layanan';
+                                                                        break;
+                                                                }
+                                                            });
+                                                        </script>                                                                                                              
                                                         <!-- Chart -->
                                                         <div class="chartjs-wrapper mt-4">
                                                             <canvas id="performanceLine" width="400" height="200"></canvas>
