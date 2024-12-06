@@ -194,7 +194,7 @@
         </h2>
         <p>Untuk menginstal aplikasi ini secara lokal, Anda dapat mengikuti langkah-langkah berikut:</p>
         <ol class="list-group list-group-numbered">
-            <li class="list-group-item">Clone repository dari GitHub.</li>
+            <li class="list-group-item">Clone repository <a style="text-decoration: none" class="text-danger" href="https://github.com/falathin/tefa-project.git"><code>git clone https://github.com/falathin/tefa-project.git</code></a> dari GitHub.</li>
             <li class="list-group-item">Jalankan perintah <code>composer install</code> untuk menginstal dependensi.</li>
             <li class="list-group-item">Atur file .env untuk konfigurasi database dan lainnya.</li>
             <li class="list-group-item">Jalankan perintah <code>php artisan migrate</code> untuk menjalankan migrasi database.</li>
