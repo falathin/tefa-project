@@ -84,12 +84,15 @@ class SparepartController extends Controller
     
         $sparepart = Sparepart::findOrFail($id);
     
+        // Simpan nilai lama jumlah
         $old_quantity = $sparepart->jumlah;
         $new_quantity = $request->jumlah;
         $quantity_changed = $new_quantity - $old_quantity;
     
+        // Update data sparepart
         $sparepart->update($request->all());
     
+        // Jika jumlah berubah, simpan perubahan pada history
         if ($quantity_changed != 0) {
             $action = $quantity_changed > 0 ? 'add' : 'subtract';
             SparepartHistory::create([
@@ -103,7 +106,7 @@ class SparepartController extends Controller
         }
     
         return redirect()->route('sparepart.index')->with('success', 'Sparepart berhasil diperbarui.');
-    }
+    }    
     
     public function destroy($id)
     {
@@ -176,6 +179,5 @@ class SparepartController extends Controller
             ->count();
     
         return view('sparepart.history', compact('sparepart', 'histories', 'totalChanges', 'todayChanges', 'monthlyChanges'));
-    }
-    
+    }   
 }

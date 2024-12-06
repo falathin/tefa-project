@@ -17,17 +17,18 @@
                 <span class="menu-title">Program Layanan</span>
             </a>
         </li>
+
         <!-- Sparepart Menu -->
         <li class="nav-item animate__animated animate__slideInLeft animate__delay-4.8s">
-            <a class="nav-link" data-bs-toggle="collapse" href="#sparepartMenu" aria-expanded="false" aria-controls="sparepartMenu">
+            <a class="nav-link {{ Request::is('sparepart*') ? 'active' : '' }}" data-bs-toggle="collapse" href="#sparepartMenu" aria-expanded="false" aria-controls="sparepartMenu">
                 <i class="mdi mdi-toolbox-outline menu-icon"></i>
                 <span class="menu-title">Suku Cadang</span>
                 <i class="menu-arrow"></i>
             </a>
-            <div class="collapse" id="sparepartMenu">
+            <div class="collapse {{ Request::is('sparepart*') ? 'show' : '' }}" id="sparepartMenu">
                 <ul class="nav flex-column sub-menu">
                     <li class="nav-item animate__animated animate__slideInLeft animate__delay-6.3s">
-                        <a class="nav-link" href="{{ route('sparepart.index') }}">Data Suku Cadang</a>
+                        <a class="nav-link {{ Request::is('sparepart') ? 'active' : '' }}" href="{{ route('sparepart.index') }}">Data Suku Cadang</a>
                     </li>
                     <li class="nav-item animate__animated animate__slideInLeft animate__delay-7.8s">
                         <a class="nav-link" href="https://coming-soon-my-work.netlify.app/">Transaksi Suku Cadang</a>
@@ -35,6 +36,7 @@
                 </ul>
             </div>
         </li>
+
         <!-- Riwayat Service Menu Item -->
         <li class="nav-item animate__animated animate__slideInLeft animate__delay-9.3s">
             <a class="nav-link {{ Request::is('service*') ? 'active' : '' }}" href="{{ route('service.index') }}">
