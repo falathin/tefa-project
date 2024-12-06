@@ -154,44 +154,62 @@
         </div>
         <!-- Tabel Riwayat Sparepart -->
         <div class="card shadow-sm">
-            <div class="card-body">
-                <h5 class="card-title mb-4">Riwayat Perubahan Stok</h5>
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover table-bordered">
-                        <thead class="table-light">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th>No</th>
+                            <th>Stok Awal</th>
+                            <th>Perubahan</th>
+                            <th>Stok Akhir</th>
+                            <th>Aksi</th>
+                            <th>Tanggal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @php
+                            $currentStock = $sparepart->jumlah;
+                        @endphp
+                        @forelse($histories as $history)
                             <tr>
-                                <th>No</th>
-                                <th>Perubahan Stok</th>
-                                <th>Sisa Stok</th>
-                                <th>Aksi</th>
-                                <th>Tanggal</th>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>
+                                    @php
+                                        $stockBeforeChange = $currentStock - $history->jumlah_changed;
+                                    @endphp
+                                    {{ $stockBeforeChange }} unit
+                                </td>
+                                <td>
+                                    @if($history->action == 'add')
+                                        +{{ $history->jumlah_changed }} unit
+                                    @elseif($history->action == 'use')
+                                        -{{ $history->jumlah_changed }} unit
+                                    @endif
+                                </td>
+                                <td>{{ $currentStock }} unit</td>
+                                <td class="{{ $history->action == 'add' ? 'text-success' : 'text-danger' }}">
+                                    {{ ucfirst($history->action) }}
+                                </td>
+                                <td>{{ $history->created_at->format('d M Y H:i') }}</td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($histories as $history)
-                                <tr class="animate__animated animate__fadeIn animate__delay-1s">
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $history->jumlah_changed }} unit</td>
-                                    <td>{{ $history->sparepart->jumlah }} unit</td>
-                                    <td class="fw-bold {{ $history->action == 'add' ? 'text-success' : 'text-danger' }}">
-                                        {{ ucfirst($history->action) }}
-                                    </td>
-                                    <td>{{ $history->created_at->format('d M Y H:i') }}</td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="5" class="text-center">Tidak ada riwayat ditemukan.</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div><br>
-                <div class="d-flex justify-content-center mt-3">
+            
+                            @php
+                                if ($history->action == 'add') {
+                                    $currentStock += $history->jumlah_changed;
+                                } elseif ($history->action == 'use') {
+                                    $currentStock -= $history->jumlah_changed;
+                                }
+                            @endphp
+                        @empty
+                            <tr>
+                                <td colspan="6" class="text-center">Tidak ada riwayat ditemukan.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
                     {{ $histories->links('vendor.pagination.simple-bootstrap-5') }}
-                </div>
-            </div>
-        </div>
-
+                </table>
+            </div>            
+        </div>        
         <!-- Modal Informasi -->
         <div class="modal fade animate__animated animate__fadeIn" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">

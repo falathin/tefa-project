@@ -9,7 +9,6 @@ use App\Models\Service;
 use App\Models\Sparepart;
 use App\Models\ServiceSparepart;
 use App\Models\Vehicle;
-use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
@@ -52,25 +51,25 @@ class DashboardController extends Controller
         $averageVehiclesPerCustomer = $totalVisitors > 0 ? $totalVehicles / $totalVisitors : 0;
         
         $chartData = Service::selectRaw('DATE(service_date) as date, SUM(total_cost) as total_profit')
-            ->groupBy('date')
-            ->orderBy('service_date')
+            ->groupBy(DB::raw('DATE(service_date)'))
+            ->orderBy(DB::raw('DATE(service_date)'), 'asc')
             ->get();
         
         $chartLabels = $chartData->pluck('date')->toArray();
         $chartValues = $chartData->pluck('total_profit')->toArray();
         
         $monthlyChartData = Service::selectRaw('MONTH(service_date) as month, SUM(total_cost) as total_profit')
-            ->groupBy('month')
-            ->orderBy('month')
+            ->groupBy(DB::raw('MONTH(service_date)'))
+            ->orderBy(DB::raw('MONTH(service_date)'), 'asc')
             ->get();
         
         $monthlyChartValues = $monthlyChartData->pluck('total_profit')->toArray();
     
-        $spareparts = Sparepart::all();
-        $vehicles = Vehicle::all();
+        $spareparts = Sparepart::orderBy('created_at', 'asc')->get();
+        $vehicles = Vehicle::orderBy('created_at', 'asc')->get();
     
         $data = [
-            'service_date' => '2024-12-05',
+            'service_date' => $today,
             'total_profit' => $totalProfit,
         ];
     
