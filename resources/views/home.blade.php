@@ -299,18 +299,19 @@
                                         <script>
                                             document.addEventListener("DOMContentLoaded", function() {
                                                 const backgroundImages = [
+                                                    'https://cdn.wallpapersafari.com/15/15/djZk0c.jpg',
                                                     'https://media.giphy.com/media/Xl0oVz3eb9mfu/giphy.gif',
+                                                    'https://i.pinimg.com/originals/01/c4/e4/01c4e4ccabb2e39311cd37cbdbfe453c.gif',
                                                     'https://i.pinimg.com/originals/94/fa/4b/94fa4b126901a1a2b79951f0a62d6a6c.gif',
-                                                    'https://i.pinimg.com/originals/94/fa/4b/94fa4b126901a1a2b79951f0a62d6a6c.gif',
-                                                    'https://i.pinimg.com/originals/94/fa/4b/94fa4b126901a1a2b79951f0a62d6a6c.gif',
-                                                    'https://i.pinimg.com/originals/14/84/5a/14845a1a6c528de17aca14878e965c84.gif',
-                                                    'https://th.bing.com/th/id/OIP.bK6FSd5aoh4hec3OKscBWQHaEK?rs=1&pid=ImgDetMain',
-                                                    'https://www.teahub.io/photos/full/62-623582_cherry-blossom-wallpaper-japanese-hd-cherry-blossom-wallpaper.jpg',
                                                     'https://wallpapercave.com/wp/wp5753394.jpg',
                                                     'https://wallpapercave.com/wp/wp5753409.jpg',
-                                                    'https://thumbs.dreamstime.com/b/symbols-icons-asian-culture-traditional-pattern-template-design-geometric-icon-logo-set-hand-drawn-trees-310769156.jpg',
-                                                    'https://wallpapers.com/images/hd/night-cherry-blossom-pc4o7liqwpqdm894.jpg',
                                                     'https://farm4.staticflickr.com/3406/3537584665_d2d1858a0a_b.jpg',
+                                                    'https://i.pinimg.com/originals/94/fa/4b/94fa4b126901a1a2b79951f0a62d6a6c.gif',
+                                                    'https://thumbs.dreamstime.com/b/symbols-icons-asian-culture-traditional-pattern-template-design-geometric-icon-logo-set-hand-drawn-trees-310769156.jpg',
+                                                    'https://i.pinimg.com/originals/94/fa/4b/94fa4b126901a1a2b79951f0a62d6a6c.gif',
+                                                    'https://www.teahub.io/photos/full/62-623582_cherry-blossom-wallpaper-japanese-hd-cherry-blossom-wallpaper.jpg',
+                                                    'https://i.pinimg.com/originals/14/84/5a/14845a1a6c528de17aca14878e965c84.gif',
+                                                    'https://wallpapers.com/images/hd/night-cherry-blossom-pc4o7liqwpqdm894.jpg',
                                                 ];
 
                                                 const cardElement = document.getElementById('visitor-card');
