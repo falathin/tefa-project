@@ -198,6 +198,7 @@
             <li class="list-group-item">Jalankan perintah <code>composer install</code> untuk menginstal dependensi.</li>
             <li class="list-group-item">Atur file .env untuk konfigurasi database dan lainnya.</li>
             <li class="list-group-item">Jalankan perintah <code>php artisan migrate</code> untuk menjalankan migrasi database.</li>
+            <li class="list-group-item">Jalankan perintah <code>php artisan storage:link</code> untuk mengkoneksikan gambar.</li>
             <li class="list-group-item">Jalankan aplikasi menggunakan perintah <code>php artisan serve</code>.</li>
         </ol>
         <p>
