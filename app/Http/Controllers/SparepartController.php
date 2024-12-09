@@ -17,10 +17,10 @@ class SparepartController extends Controller
         })
         ->orderBy('created_at', 'desc')
         ->paginate(4);
-    
+
         return view('sparepart.index', compact('spareparts'));
     }
-    
+
     public function create()
     {
         return view('sparepart.create');
@@ -36,9 +36,9 @@ class SparepartController extends Controller
             'tanggal_masuk' => 'required|date',
             'deskripsi' => 'nullable|string',
         ]);
-    
+
         $keuntungan = $request->harga_jual - $request->harga_beli;
-    
+
         $sparepart = Sparepart::create([
             'nama_sparepart' => $request->nama_sparepart,
             'jumlah' => $request->jumlah,
@@ -48,17 +48,17 @@ class SparepartController extends Controller
             'tanggal_masuk' => $request->tanggal_masuk,
             'deskripsi' => $request->deskripsi,
         ]);
-    
+
         SparepartHistory::create([
             'sparepart_id' => $sparepart->id_sparepart,
             'jumlah_changed' => $request->jumlah,
             'action' => 'add',
             'description' => 'Menambah stok sebanyak ' . $request->jumlah . ' unit.',
         ]);
-    
+
         return redirect()->route('sparepart.index')->with('success', 'Sparepart berhasil ditambahkan.');
     }
-    
+
     public function show($sparepart_id)
     {
         $sparepart = Sparepart::findOrFail($sparepart_id);
@@ -81,15 +81,15 @@ class SparepartController extends Controller
             'tanggal_masuk' => 'required|date',
             'deskripsi' => 'nullable|string',
         ]);
-    
+
         $sparepart = Sparepart::findOrFail($id);
-    
+
         $old_quantity = $sparepart->jumlah;
         $new_quantity = $request->jumlah;
         $quantity_changed = $new_quantity - $old_quantity;
-    
+
         $sparepart->update($request->all());
-    
+
         if ($quantity_changed != 0) {
             $action = $quantity_changed > 0 ? 'add' : 'use';
             SparepartHistory::create([
@@ -101,10 +101,10 @@ class SparepartController extends Controller
                     'Mengurangi stok sebanyak ' . abs($quantity_changed) . ' unit.',
             ]);
         }
-    
+
         return redirect()->route('sparepart.index')->with('success', 'Sparepart berhasil diperbarui.');
-    }    
-    
+    }
+
     public function destroy($id)
     {
         $sparepart = Sparepart::findOrFail($id);
@@ -141,5 +141,5 @@ class SparepartController extends Controller
         $totalChanges = SparepartHistory::where('sparepart_id', $id)->sum('jumlah_changed');
     
         return view('sparepart.history', compact('sparepart', 'histories', 'todayChanges', 'monthlyChanges', 'totalChanges'));
-    }
+    }    
 }
