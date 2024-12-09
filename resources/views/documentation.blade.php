@@ -197,6 +197,7 @@
             <li class="list-group-item">Clone repository <a style="text-decoration: none" class="text-danger" href="https://github.com/falathin/tefa-project.git"><code>git clone https://github.com/falathin/tefa-project.git</code></a> dari GitHub.</li>
             <li class="list-group-item">Jalankan perintah <code>composer install</code> untuk menginstal dependensi.</li>
             <li class="list-group-item">Atur file .env untuk konfigurasi database dan lainnya.</li>
+            <li class="list-group-item">Jalankan perintah <code>php artisan key:generate</code> untuk menghasilkan aplikasi key yang diperlukan.</li>
             <li class="list-group-item">Jalankan perintah <code>php artisan migrate</code> untuk menjalankan migrasi database.</li>
             <li class="list-group-item">Jalankan perintah <code>php artisan storage:link</code> untuk mengkoneksikan gambar.</li>
             <li class="list-group-item">Jalankan aplikasi menggunakan perintah <code>php artisan serve</code>.</li>
@@ -204,7 +205,7 @@
         <p>
             Pastikan Anda telah menginstal Composer dan PHP di perangkat Anda. Jika Anda belum familiar dengan pengaturan Laravel, Anda bisa mengunjungi dokumentasi resmi Laravel untuk panduan lebih lengkap mengenai instalasi dan konfigurasi.
         </p>
-    </section>
+    </section>    
     <section class="mb-4">
         <h2 class="h3 text-primary">
             <i class="fas fa-clipboard-list"></i> Instruksi Pengguna

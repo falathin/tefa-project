@@ -207,29 +207,61 @@
                             <h6 class="text-primary mb-2">Riwayat Perubahan Stok</h6>
                             <p class="text-muted" style="font-size: 0.85rem;">Halaman ini menampilkan riwayat perubahan stok untuk sparepart tertentu. Berikut adalah detail perubahan yang telah terjadi:</p>
                         </div>
-
                         <div class="table-responsive">
-                            <table class="table table-sm table-borderless align-middle">
+                            <table class="table table-striped table-hover table-bordered">
                                 <thead class="table-light">
                                     <tr>
-                                        <th class="text-start">Tanggal</th>
-                                        <th class="text-start">Aksi</th>
-                                        <th class="text-start">Jumlah</th>
+                                        <th>No</th>
+                                        <th>Stok Awal</th>
+                                        <th>Perubahan</th>
+                                        <th>Stok Akhir</th>
+                                        <th>Aksi</th>
+                                        <th>Tanggal</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($histories as $history)
+                                    @php
+                                        $currentStock = $sparepart->jumlah;
+                                    @endphp
+                                    @forelse($histories as $history)
                                         <tr>
-                                            <td class="text-muted fs-7">{{ $history->created_at->format('d M Y H:i') }}</td>
-                                            <td class="fw-bold {{ $history->action == 'add' ? 'text-success' : 'text-danger' }}">
-                                                {{ $history->action == 'add' ? 'Tambah' : 'Kurang' }}
+                                            <td>{{ $loop->iteration }}</td>
+                                            <td>
+                                                @php
+                                                    $stockBeforeChange = $currentStock - $history->jumlah_changed;
+                                                @endphp
+                                                {{ $stockBeforeChange }} unit
                                             </td>
-                                            <td class="text-info">{{ $history->jumlah_changed }} unit</td>
+                                            <td>
+                                                @if($history->action == 'add')
+                                                    +{{ $history->jumlah_changed }} unit
+                                                @elseif($history->action == 'use')
+                                                    -{{ $history->jumlah_changed }} unit
+                                                @endif
+                                            </td>
+                                            <td>{{ $currentStock }} unit</td>
+                                            <td class="{{ $history->action == 'add' ? 'text-success' : 'text-danger' }}">
+                                                {{ ucfirst($history->action) }}
+                                            </td>
+                                            <td>{{ $history->created_at->format('d M Y H:i') }}</td>
                                         </tr>
-                                    @endforeach
+                        
+                                        @php
+                                            if ($history->action == 'add') {
+                                                $currentStock += $history->jumlah_changed;
+                                            } elseif ($history->action == 'use') {
+                                                $currentStock -= $history->jumlah_changed;
+                                            }
+                                        @endphp
+                                    @empty
+                                        <tr>
+                                            <td colspan="6" class="text-center">Tidak ada riwayat ditemukan.</td>
+                                        </tr>
+                                    @endforelse
                                 </tbody>
+                                {{ $histories->links('vendor.pagination.simple-bootstrap-5') }}
                             </table>
-                        </div>
+                        </div>                        
 
                         <hr class="border-muted mt-2 mb-3">
 

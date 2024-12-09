@@ -84,29 +84,26 @@ class SparepartController extends Controller
     
         $sparepart = Sparepart::findOrFail($id);
     
-        // Simpan nilai lama jumlah
         $old_quantity = $sparepart->jumlah;
         $new_quantity = $request->jumlah;
         $quantity_changed = $new_quantity - $old_quantity;
     
-        // Update data sparepart
         $sparepart->update($request->all());
     
-        // Jika jumlah berubah, simpan perubahan pada history
         if ($quantity_changed != 0) {
-            $action = $quantity_changed > 0 ? 'add' : 'subtract';
+            $action = $quantity_changed > 0 ? 'add' : 'use';
             SparepartHistory::create([
                 'sparepart_id' => $sparepart->id_sparepart,
-                'jumlah_changed' => $quantity_changed,
+                'jumlah_changed' => abs($quantity_changed), // Menggunakan nilai absolut untuk perubahan
                 'action' => $action,
-                'description' => $action == 'add' ? 
+                'description' => $action == 'add' ?
                     'Menambah stok sebanyak ' . abs($quantity_changed) . ' unit.' :
                     'Mengurangi stok sebanyak ' . abs($quantity_changed) . ' unit.',
             ]);
         }
     
         return redirect()->route('sparepart.index')->with('success', 'Sparepart berhasil diperbarui.');
-    }    
+    }
     
     public function destroy($id)
     {
@@ -122,62 +119,27 @@ class SparepartController extends Controller
         $query = SparepartHistory::where('sparepart_id', $id);
     
         if ($request->search) {
-            $query->where(function($q) use ($request) {
-                $q->whereHas('sparepart', function($subQuery) use ($request) {
-                    $subQuery->where('nama_sparepart', 'like', '%' . $request->search . '%');
-                })
-                ->orWhere('action', 'like', '%' . $request->search . '%');
-            });
+            $query->where('action', 'like', '%' . $request->search . '%');
         }
     
         if ($request->filter_date) {
             $query->whereDate('created_at', $request->filter_date);
         }
     
-        if ($request->filter_action) {
-            $query->where('action', $request->filter_action);
-        }
-    
-        if ($request->filter_day) {
-            switch ($request->filter_day) {
-                case 'monday':
-                    $query->whereRaw('DAYOFWEEK(created_at) = 2'); // Monday
-                    break;
-                case 'tuesday':
-                    $query->whereRaw('DAYOFWEEK(created_at) = 3'); // Tuesday
-                    break;
-                case 'wednesday':
-                    $query->whereRaw('DAYOFWEEK(created_at) = 4'); // Wednesday
-                    break;
-                case 'thursday':
-                    $query->whereRaw('DAYOFWEEK(created_at) = 5'); // Thursday
-                    break;
-                case 'friday':
-                    $query->whereRaw('DAYOFWEEK(created_at) = 6'); // Friday
-                    break;
-                case 'saturday':
-                    $query->whereRaw('DAYOFWEEK(created_at) = 7'); // Saturday
-                    break;
-                case 'sunday':
-                    $query->whereRaw('DAYOFWEEK(created_at) = 1'); // Sunday
-                    break;
-            }
-        }
-    
-        // Get the filtered histories with pagination
         $histories = $query->orderBy('created_at', 'desc')
             ->with('sparepart')
             ->paginate(5);
     
-        // Calculate statistics (total, today, monthly)
-        $totalChanges = SparepartHistory::where('sparepart_id', $id)->count();
         $todayChanges = SparepartHistory::where('sparepart_id', $id)
             ->whereDate('created_at', Carbon::today())
-            ->count();
+            ->sum('jumlah_changed');
+    
         $monthlyChanges = SparepartHistory::where('sparepart_id', $id)
             ->whereMonth('created_at', Carbon::now()->month)
-            ->count();
+            ->sum('jumlah_changed');
     
-        return view('sparepart.history', compact('sparepart', 'histories', 'totalChanges', 'todayChanges', 'monthlyChanges'));
-    }   
+        $totalChanges = SparepartHistory::where('sparepart_id', $id)->sum('jumlah_changed');
+    
+        return view('sparepart.history', compact('sparepart', 'histories', 'todayChanges', 'monthlyChanges', 'totalChanges'));
+    }
 }
