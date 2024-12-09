@@ -221,17 +221,21 @@
                                 </thead>
                                 <tbody>
                                     @php
-                                        $currentStock = $sparepart->jumlah;
+                                        $currentStock = $sparepart->jumlah;  // Get initial stock from sparepart
                                     @endphp
                                     @forelse($histories as $history)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
+                        
+                                            <!-- Stok Awal -->
                                             <td>
                                                 @php
                                                     $stockBeforeChange = $currentStock - $history->jumlah_changed;
                                                 @endphp
                                                 {{ $stockBeforeChange }} unit
                                             </td>
+                        
+                                            <!-- Perubahan (Change) -->
                                             <td>
                                                 @if($history->action == 'add')
                                                     +{{ $history->jumlah_changed }} unit
@@ -239,14 +243,21 @@
                                                     -{{ $history->jumlah_changed }} unit
                                                 @endif
                                             </td>
+                        
+                                            <!-- Stok Akhir -->
                                             <td>{{ $currentStock }} unit</td>
+                        
+                                            <!-- Aksi (Action) -->
                                             <td class="{{ $history->action == 'add' ? 'text-success' : 'text-danger' }}">
                                                 {{ ucfirst($history->action) }}
                                             </td>
+                        
+                                            <!-- Tanggal (Date) -->
                                             <td>{{ $history->created_at->format('d M Y H:i') }}</td>
                                         </tr>
                         
                                         @php
+                                            // Update current stock after the action
                                             if ($history->action == 'add') {
                                                 $currentStock += $history->jumlah_changed;
                                             } elseif ($history->action == 'use') {
@@ -261,8 +272,7 @@
                                 </tbody>
                                 {{ $histories->links('vendor.pagination.simple-bootstrap-5') }}
                             </table>
-                        </div>                        
-
+                        </div>
                         <hr class="border-muted mt-2 mb-3">
 
                         <div class="text-start">

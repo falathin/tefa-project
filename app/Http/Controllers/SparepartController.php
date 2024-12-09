@@ -94,16 +94,16 @@ class SparepartController extends Controller
             $action = $quantity_changed > 0 ? 'add' : 'use';
             SparepartHistory::create([
                 'sparepart_id' => $sparepart->id_sparepart,
-                'jumlah_changed' => abs($quantity_changed), // Menggunakan nilai absolut untuk perubahan
+                'jumlah_changed' => $quantity_changed,
                 'action' => $action,
-                'description' => $action == 'add' ?
+                'description' => $action == 'add' ? 
                     'Menambah stok sebanyak ' . abs($quantity_changed) . ' unit.' :
                     'Mengurangi stok sebanyak ' . abs($quantity_changed) . ' unit.',
             ]);
         }
     
         return redirect()->route('sparepart.index')->with('success', 'Sparepart berhasil diperbarui.');
-    }
+    }    
     
     public function destroy($id)
     {

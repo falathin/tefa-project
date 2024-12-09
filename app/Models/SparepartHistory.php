@@ -20,4 +20,14 @@ class SparepartHistory extends Model
     {
         return $this->belongsTo(Sparepart::class, 'sparepart_id');
     }
+
+    public function getInitialStockAttribute()
+    {
+        // Hitung stok awal berdasarkan total perubahan sebelumnya
+        $totalChanges = SparepartHistory::where('sparepart_id', $this->sparepart_id)
+            ->where('id', '<', $this->id)
+            ->sum('jumlah_changed');
+
+        return $this->sparepart->jumlah - $totalChanges;
+    }
 }
