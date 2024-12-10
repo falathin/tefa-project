@@ -53,7 +53,7 @@
                             <h6 style="color: #6c757d;"><i class="mdi mdi-information"></i> Informasi Servis</h6>
                             <p><strong>Keluhan:</strong> {{ $service->complaint }}</p>
                             <p><strong>Jarak Tempuh:</strong> {{ $service->current_mileage }} km</p>
-                            <p><strong>Biaya Servis:</strong> <span style="color: #28a745;">Rp. {{ number_format($service->service_fee, 0, ',', '.') }}</span></p>
+                            <p><strong>Jasa Pelayanan:</strong> <span style="color: #28a745;">Rp. {{ number_format($service->service_fee, 0, ',', '.') }}</span></p>
                             <p><strong>Total Biaya:</strong> <span style="color: #dc3545;">Rp. {{ number_format($service->total_cost, 0, ',', '.') }}</span></p>
                             <p><strong>Pembayaran Diterima:</strong> <span style="color: #17a2b8;">Rp. {{ number_format($service->payment_received, 0, ',', '.') }}</span></p>
                             <p><strong>Kembalian:</strong> Rp. {{ number_format($service->change, 0, ',', '.') }}</p>

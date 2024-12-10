@@ -164,6 +164,13 @@ class ServiceController extends Controller
             'sparepart_id.*' => 'exists:spareparts,id_sparepart',
             'jumlah' => 'nullable|array',
             'jumlah.*' => 'required|numeric|min:1',
+        ], [
+            'sparepart_id.array' => 'ID sparepart harus berupa array.',
+            'sparepart_id.*.exists' => 'Salah satu sparepart tidak ditemukan.',
+            'jumlah.array' => 'Jumlah sparepart harus berupa array.',
+            'jumlah.*.required' => 'Jumlah sparepart harus diisi.',
+            'jumlah.*.numeric' => 'Jumlah sparepart harus berupa angka.',
+            'jumlah.*.min' => 'Jumlah sparepart minimal 1.',
         ]);
     
         $service = Service::findOrFail($id);
@@ -181,6 +188,7 @@ class ServiceController extends Controller
     
         $service->serviceSpareparts()->delete();
     
+        $total_keuntungan = 0;
         foreach ($request->input('sparepart_id') as $key => $sparepart_id) {
             $sparepart = Sparepart::find($sparepart_id);
     
@@ -227,6 +235,32 @@ class ServiceController extends Controller
             'sparepart_id.*' => 'exists:spareparts,id_sparepart',
             'jumlah' => 'nullable|array',
             'jumlah.*' => 'required|numeric|min:1',
+        ], [
+            'vehicle_id.required' => 'ID kendaraan harus dipilih.',
+            'vehicle_id.exists' => 'Kendaraan tidak ditemukan.',
+            'complaint.required' => 'Keluhan harus diisi.',
+            'complaint.string' => 'Keluhan harus berupa teks.',
+            'complaint.max' => 'Keluhan maksimal 255 karakter.',
+            'current_mileage.required' => 'Kilometer kendaraan harus diisi.',
+            'current_mileage.numeric' => 'Kilometer kendaraan harus berupa angka.',
+            'service_fee.required' => 'Biaya layanan harus diisi.',
+            'service_fee.numeric' => 'Biaya layanan harus berupa angka.',
+            'service_date.required' => 'Tanggal layanan harus diisi.',
+            'service_date.date' => 'Tanggal layanan tidak valid.',
+            'total_cost.required' => 'Biaya total harus diisi.',
+            'total_cost.numeric' => 'Biaya total harus berupa angka.',
+            'payment_received.required' => 'Pembayaran yang diterima harus diisi.',
+            'payment_received.numeric' => 'Pembayaran yang diterima harus berupa angka.',
+            'change.required' => 'Kembalian harus diisi.',
+            'change.numeric' => 'Kembalian harus berupa angka.',
+            'service_type.required' => 'Jenis layanan harus dipilih.',
+            'service_type.in' => 'Jenis layanan tidak valid.',
+            'sparepart_id.array' => 'ID sparepart harus berupa array.',
+            'sparepart_id.*.exists' => 'Salah satu sparepart tidak ditemukan.',
+            'jumlah.array' => 'Jumlah sparepart harus berupa array.',
+            'jumlah.*.required' => 'Jumlah sparepart harus diisi.',
+            'jumlah.*.numeric' => 'Jumlah sparepart harus berupa angka.',
+            'jumlah.*.min' => 'Jumlah sparepart minimal 1.',
         ]);
     
         $service = Service::findOrFail($id);
@@ -243,8 +277,6 @@ class ServiceController extends Controller
         }
     
         $service->serviceSpareparts()->delete();
-    
-        $service->update($request->except('sparepart_id', 'jumlah'));
     
         $total_keuntungan = 0;
         if ($request->sparepart_id) {
@@ -276,7 +308,7 @@ class ServiceController extends Controller
     
         return redirect()->route('vehicle.show', $service->vehicle_id)
                          ->with('success', 'Layanan berhasil diperbarui!');
-    }    
+    }  
     
     public function destroy($id)
     {
@@ -285,7 +317,7 @@ class ServiceController extends Controller
         $service->delete();
         return redirect()->route('vehicle.show', $vehicle_id)
                          ->with('success', 'Layanan berhasil dihapus!');
-    }
+    }    
 
     public function show($id)
     {
