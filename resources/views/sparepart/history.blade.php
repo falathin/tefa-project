@@ -180,57 +180,62 @@
                         </thead>
                         <tbody>
                             @php
-                                $currentStock = $sparepart->jumlah; // Stok awal sparepart
+                                $currentStock = $sparepart->jumlah; // Initial stock
                             @endphp
-
+                
                             @forelse($histories as $history)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
-
-                                    <!-- Stok Akhir -->
+                
+                                    <!-- Final Stock -->
                                     <td>{{ $currentStock }} unit</td>
-
-                                    <!-- Perubahan -->
+                
+                                    <!-- Change -->
                                     <td>
                                         @if($history->action == 'add')
-                                            <span class="text-success">+{{ $history->jumlah_changed }} unit</span> <!-- Penambahan -->
-                                        @elseif($history->action == 'use')
-                                            <span class="text-danger">-{{ $history->jumlah_changed }} unit</span> <!-- Pengurangan -->
+                                            <span class="text-success">+{{ $history->jumlah_changed }} unit (Penambahan)</span>
+                                        @elseif($history->action == 'subtract' || $history->action == 'use')
+                                            <span class="text-danger">-{{ $history->jumlah_changed }} unit (Pemakaian)</span>
                                         @endif
                                     </td>
-
-                                    <!-- Stok Awal -->
+                
+                                    <!-- Initial Stock -->
                                     <td>
                                         @php
-                                            // Menghitung stok awal sebelum perubahan
+                                            // Calculate the initial stock before change
                                             $stockBeforeChange = $currentStock - $history->jumlah_changed;
-                                            $currentStock = $stockBeforeChange; // Update stok untuk perhitungan selanjutnya
+                                            $currentStock = $stockBeforeChange; // Update the stock for next iteration
                                         @endphp
                                         {{ $stockBeforeChange }} unit
                                     </td>
-
-                                    <!-- Aksi -->
+                
+                                    <!-- Action -->
                                     <td class="{{ $history->action == 'add' ? 'text-success' : 'text-danger' }}">
-                                        {{ ucfirst($history->action) }}
+                                        @if($history->action == 'subtract' || $history->action == 'use')
+                                            Pemakaian
+                                        @else
+                                            Penambahan
+                                        @endif
                                     </td>
-
-                                    <!-- Tanggal -->
-                                    <td>{{ $history->created_at->format('d M Y H:i') }}</td>
+                
+                                    <!-- Date -->
+                                    <td>{{ $history->created_at->format('d-m-Y H:i') }}</td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="text-center">Tidak ada riwayat ditemukan.</td>
+                                    <td colspan="6" class="text-center">Tidak ada histori perubahan stok.</td>
                                 </tr>
                             @endforelse
                         </tbody>
                     </table>
                 </div>
-
+                             
+            
                 <!-- Pagination -->
                 <div class="d-flex justify-content-center mt-3">
                     {{ $histories->links('vendor.pagination.simple-bootstrap-5') }}
                 </div>
-
+            
                 <!-- Text and Right-to-Left Arrow with Animation -->
                 <div id="stock-history-message" class="mt-4 text-center animate__animated animate__fadeInRight">
                     <p>
@@ -238,21 +243,22 @@
                         <span class="text-muted animate__animated animate__fadeInRight">Baca Riwayat Perubahan Stok dari kanan ke kiri</span>
                     </p>
                 </div>
-
+            
                 <script>
                     // Set a timeout to fade out the element after 5 seconds
                     setTimeout(function() {
                         // Add the fade-out animation
                         document.getElementById("stock-history-message").classList.add("animate__fadeOutLeft");
-
+            
                         // After the animation duration (5 seconds), remove the element from the DOM
                         setTimeout(function() {
                             document.getElementById("stock-history-message").style.display = 'none';
                         }, 1000); // Wait for fade-out animation to finish before hiding (1 second)
                     }, 5000); // Trigger the fade-out after 5 seconds
                 </script>
-
+            
             </div>
+            
         </div>
 
         <!-- Modal Informasi -->
@@ -275,81 +281,84 @@
                                 <thead class="table-light">
                                     <tr>
                                         <th>No</th>
-                                        <th>Stok Awal</th>
-                                        <th>Perubahan</th>
-                                        <th>Stok Akhir</th>
-                                        <th>Aksi</th>
-                                        <th>Tanggal</th>
+                                        <th>Stok Akhir</th> <!-- Stok Akhir -->
+                                        <th>Perubahan</th> <!-- Perubahan -->
+                                        <th>Stok Awal</th> <!-- Stok Awal -->
+                                        <th>Aksi</th> <!-- Aksi -->
+                                        <th>Tanggal</th> <!-- Tanggal -->
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @php
-                                        $currentStock = $sparepart->jumlah;  // Get initial stock from sparepart
+                                        $currentStock = $sparepart->jumlah; // Stok awal sparepart
                                     @endphp
+                    
                                     @forelse($histories as $history)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
-                        
+                    
+                                            <!-- Stok Akhir -->
+                                            <td>{{ $currentStock }} unit</td>
+                    
+                                            <!-- Perubahan -->
+                                            <td>
+                                                @if($history->action == 'add')
+                                                    <span class="text-success">+{{ $history->jumlah_changed }} unit (Penambahan)</span> <!-- Penambahan -->
+                                                @elseif($history->action == 'subtract')
+                                                <span class="text-danger">-{{ $history->jumlah_changed }} unit (Pemakaian)</span> <!-- Pengurangan -->
+                                                @elseif($history->action == 'use')
+                                                <span class="text-danger">-{{ $history->jumlah_changed }} unit (Pengurangan)</span> <!-- Pengurangan -->
+                                                @endif
+                                            </td>
+                    
                                             <!-- Stok Awal -->
                                             <td>
                                                 @php
+                                                    // Menghitung stok awal sebelum perubahan
                                                     $stockBeforeChange = $currentStock - $history->jumlah_changed;
+                                                    $currentStock = $stockBeforeChange; // Update stok untuk perhitungan selanjutnya
                                                 @endphp
                                                 {{ $stockBeforeChange }} unit
                                             </td>
-                        
-                                            <!-- Perubahan (Change) -->
-                                            <td>
-                                                @if($history->action == 'add')
-                                                    +{{ $history->jumlah_changed }} unit
-                                                @elseif($history->action == 'use')
-                                                    -{{ $history->jumlah_changed }} unit
-                                                @endif
-                                            </td>
-                        
-                                            <!-- Stok Akhir -->
-                                            <td>{{ $currentStock }} unit</td>
-                        
-                                            <!-- Aksi (Action) -->
+                    
+                                            <!-- Aksi -->
                                             <td class="{{ $history->action == 'add' ? 'text-success' : 'text-danger' }}">
                                                 {{ ucfirst($history->action) }}
                                             </td>
-                        
-                                            <!-- Tanggal (Date) -->
+                    
+                                            <!-- Tanggal -->
                                             <td>{{ $history->created_at->format('d M Y H:i') }}</td>
                                         </tr>
-                        
-                                        @php
-                                            // Update current stock after the action
-                                            if ($history->action == 'add') {
-                                                $currentStock += $history->jumlah_changed;
-                                            } elseif ($history->action == 'use') {
-                                                $currentStock -= $history->jumlah_changed;
-                                            }
-                                        @endphp
                                     @empty
                                         <tr>
                                             <td colspan="6" class="text-center">Tidak ada riwayat ditemukan.</td>
                                         </tr>
                                     @endforelse
                                 </tbody>
-                                {{ $histories->links('vendor.pagination.simple-bootstrap-5') }}
                             </table>
                         </div>
                         <hr class="border-muted mt-2 mb-3">
-
+                
                         <div class="text-start">
-                            <p><strong>Perubahan Hari Ini:</strong> <span class="text-warning">{{ $todayChanges }} kali</span></p>
-                            <p><strong>Perubahan Bulanan:</strong> <span class="text-warning">{{ $monthlyChanges }} kali</span></p>
-                            <p><strong>Perubahan Total:</strong> <span class="text-warning">{{ $totalChanges }} kali</span></p>
-                        </div>
+                            <p><strong>Perubahan Hari Ini:</strong> <span class="text-warning">{{ $todayChanges }} unit</span> ({{ $todayActionsCount }} kali)</p>
+                            <p><strong>Ditambah Hari Ini:</strong> <span class="text-success">{{ $todayAdded }} unit</span></p>
+                            <p><strong>Dikurangi Hari Ini:</strong> <span class="text-danger">{{ $todaySubtracted }} unit</span></p>
+                            
+                            <p><strong>Perubahan Bulanan:</strong> <span class="text-warning">{{ $monthlyChanges }} unit</span> ({{ $monthlyActionsCount }} kali)</p>
+                            <p><strong>Ditambah Bulan Ini:</strong> <span class="text-success">{{ $monthlyAdded }} unit</span></p>
+                            <p><strong>Dikurangi Bulan Ini:</strong> <span class="text-danger">{{ $monthlySubtracted }} unit</span></p>
+                            
+                            <p><strong>Perubahan Total:</strong> <span class="text-warning">{{ $totalChanges }} unit</span> ({{ $totalActionsCount }} kali)</p>
+                            <p><strong>Ditambah Total:</strong> <span class="text-success">{{ $totalAdded }} unit</span></p>
+                            <p><strong>Dikurangi Total:</strong> <span class="text-danger">{{ $totalSubtracted }} unit</span></p>
+                        </div>                        
                     </div>
                     <div class="modal-footer p-3">
                         <button type="button" class="btn btn-outline-primary fw-semibold rounded-3 px-4 py-2" data-bs-dismiss="modal">
                             <i class="fas fa-times me-2"></i> Tutup
                         </button>
                     </div>
-                </div>
+                </div>                
             </div>
         </div>
     </div>

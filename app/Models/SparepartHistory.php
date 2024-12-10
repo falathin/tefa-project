@@ -15,19 +15,14 @@ class SparepartHistory extends Model
         'action',
     ];
 
-    // Define the relationship with Sparepart
     public function sparepart()
     {
         return $this->belongsTo(Sparepart::class, 'sparepart_id');
     }
 
-    public function getInitialStockAttribute()
+    public function vehicle()
     {
-        // Hitung stok awal berdasarkan total perubahan sebelumnya
-        $totalChanges = SparepartHistory::where('sparepart_id', $this->sparepart_id)
-            ->where('id', '<', $this->id)
-            ->sum('jumlah_changed');
-
-        return $this->sparepart->jumlah - $totalChanges;
+        return $this->belongsTo(Vehicle::class);
     }
+
 }

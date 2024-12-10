@@ -35,10 +35,10 @@
                                 </div>
                             
                                 <div class="col-md-6 mb-3">
-                                    <label for="service_fee" class="form-label">Biaya Service</label>
+                                    <label for="service_fee" class="form-label">Biaya Jasa Pelayanan</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
-                                        <input type="number" name="service_fee" class="form-control" id="service_fee" placeholder="Masukkan biaya service" value="{{ old('service_fee', $service->service_fee) }}" required>
+                                        <input type="number" name="service_fee" class="form-control" id="service_fee" placeholder="Masukkan Biaya Pelayanan" value="{{ old('service_fee', $service->service_fee) }}" required>
                                     </div>
                                     @error('service_fee')
                                         <div class="text-danger">{{ $message }}</div>

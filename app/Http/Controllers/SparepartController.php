@@ -49,10 +49,12 @@ class SparepartController extends Controller
             'deskripsi' => $request->deskripsi,
         ]);
 
+        // Insert into SparepartHistory
         SparepartHistory::create([
             'sparepart_id' => $sparepart->id_sparepart,
             'jumlah_changed' => $request->jumlah,
             'action' => 'add',
+            'remaining_stock' => $sparepart->jumlah, // Add the remaining stock here
             'description' => 'Menambah stok sebanyak ' . $request->jumlah . ' unit.',
         ]);
 
@@ -115,31 +117,78 @@ class SparepartController extends Controller
     public function history($id, Request $request)
     {
         $sparepart = Sparepart::findOrFail($id);
-    
+        
         $query = SparepartHistory::where('sparepart_id', $id);
-    
+        
         if ($request->search) {
             $query->where('action', 'like', '%' . $request->search . '%');
         }
-    
+        
         if ($request->filter_date) {
             $query->whereDate('created_at', $request->filter_date);
         }
-    
-        $histories = $query->orderBy('created_at', 'desc')
-            ->with('sparepart')
-            ->paginate(5);
-    
+        
+        $histories = $query->orderBy('created_at', 'desc')->paginate(5);
+        
         $todayChanges = SparepartHistory::where('sparepart_id', $id)
             ->whereDate('created_at', Carbon::today())
+            ->get()
+            ->sum(function($history) {
+                return $history->action == 'add' ? $history->jumlah_changed : -$history->jumlah_changed;
+            });
+    
+        $todayActionsCount = SparepartHistory::where('sparepart_id', $id)
+            ->whereDate('created_at', Carbon::today())
+            ->count();
+    
+        $todayAdded = SparepartHistory::where('sparepart_id', $id)
+            ->whereDate('created_at', Carbon::today())
+            ->where('action', 'add')
             ->sum('jumlah_changed');
     
+        $todaySubtracted = SparepartHistory::where('sparepart_id', $id)
+            ->whereDate('created_at', Carbon::today())
+            ->where('action', 'subtract')
+            ->sum('jumlah_changed');
+        
         $monthlyChanges = SparepartHistory::where('sparepart_id', $id)
             ->whereMonth('created_at', Carbon::now()->month)
+            ->get()
+            ->sum(function($history) {
+                return $history->action == 'add' ? $history->jumlah_changed : -$history->jumlah_changed;
+            });
+    
+        $monthlyActionsCount = SparepartHistory::where('sparepart_id', $id)
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->count();
+        
+        $monthlyAdded = SparepartHistory::where('sparepart_id', $id)
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->where('action', 'add')
             ->sum('jumlah_changed');
     
-        $totalChanges = SparepartHistory::where('sparepart_id', $id)->sum('jumlah_changed');
+        $monthlySubtracted = SparepartHistory::where('sparepart_id', $id)
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->where('action', 'subtract')
+            ->sum('jumlah_changed');
+        
+        $totalChanges = SparepartHistory::where('sparepart_id', $id)
+            ->get()
+            ->sum(function($history) {
+                return $history->action == 'add' ? $history->jumlah_changed : -$history->jumlah_changed;
+            });
     
-        return view('sparepart.history', compact('sparepart', 'histories', 'todayChanges', 'monthlyChanges', 'totalChanges'));
-    }    
+        $totalActionsCount = SparepartHistory::where('sparepart_id', $id)
+            ->count();
+        
+        $totalAdded = SparepartHistory::where('sparepart_id', $id)
+            ->where('action', 'add')
+            ->sum('jumlah_changed');
+    
+        $totalSubtracted = SparepartHistory::where('sparepart_id', $id)
+            ->where('action', 'subtract')
+            ->sum('jumlah_changed');
+        
+        return view('sparepart.history', compact('sparepart', 'histories', 'todayChanges', 'todayActionsCount', 'todayAdded', 'todaySubtracted', 'monthlyChanges', 'monthlyActionsCount', 'monthlyAdded', 'monthlySubtracted', 'totalChanges', 'totalActionsCount', 'totalAdded', 'totalSubtracted'));
+    }
 }
