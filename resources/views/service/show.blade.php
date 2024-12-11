@@ -3,10 +3,10 @@
 @section('content')
     <div class="container mt-5">
         <!-- Card Container -->
-        <div class="card shadow-lg border-0 animate__animated animate__fadeIn animate__delay-1s" 
+        <div class="card shadow-lg border-0 animate__animated animate__fadeIn animate__delay-1s"
             style="animation-duration: 1.5s; background-color: #f9fafb;">
             <!-- Card Header -->
-            <div class="card-header text-white text-center py-3 animate__animated animate__fadeInDown" 
+            <div class="card-header text-white text-center py-3 animate__animated animate__fadeInDown"
                 style="animation-duration: 1.5s; animation-delay: 0.2s; background-color: #007bff;">
                 <h4 class="mb-0"><i class="mdi mdi-wrench"></i> Detail Servis</h4>
             </div>
@@ -14,11 +14,10 @@
             <!-- Card Body -->
             <div class="card-body">
                 <!-- Informasi Kendaraan -->
-                <h5 class="card-title text-center mb-4 animate__animated animate__zoomIn" 
+                <h5 class="card-title text-center mb-4 animate__animated animate__zoomIn"
                     style="animation-duration: 1.5s; color: #007bff; font-weight: bold;">
-                    Kendaraan: <strong>{{ $service->vehicle->license_plate }}</strong> 
-                    <span class="badge" 
-                        style="background-color: #17a2b8; color: #fff; font-size: 0.9em;">
+                    Kendaraan: <strong>{{ $service->vehicle->license_plate }}</strong>
+                    <span class="badge" style="background-color: #17a2b8; color: #fff; font-size: 0.9em;">
                         {{ $service->vehicle->vehicle_type }}
                     </span>
                 </h5>
@@ -27,16 +26,16 @@
                     <!-- Kolom Kiri -->
                     <div class="col-md-6">
                         <!-- Informasi Kendaraan -->
-                        <div class="border p-3 rounded shadow-sm bg-white animate__animated animate__fadeInLeft" 
+                        <div class="border p-3 rounded shadow-sm bg-white animate__animated animate__fadeInLeft"
                             style="animation-duration: 1.5s; animation-delay: 0.5s; border-color: #e3e6f0;">
                             <h6 style="color: #6c757d;"><i class="mdi mdi-car"></i> Informasi Kendaraan</h6>
                             <p><strong>Warna:</strong> {{ $service->vehicle->color }}</p>
                             <p><strong>Tahun Produksi:</strong> {{ $service->vehicle->production_year }}</p>
                             <p><strong>Kode Mesin:</strong> {{ $service->vehicle->engine_code }}</p>
                         </div>
-                        
+
                         <!-- Informasi Pelanggan -->
-                        <div class="border p-4 rounded shadow-sm bg-white mt-4 animate__animated animate__fadeInLeft" 
+                        <div class="border p-4 rounded shadow-sm bg-white mt-4 animate__animated animate__fadeInLeft"
                             style="animation-duration: 1.5s; animation-delay: 0.7s; border-color: #e3e6f0;">
                             <h6 style="color: #6c757d;"><i class="mdi mdi-account"></i> Informasi Pelanggan</h6>
                             <p><strong>Nama:</strong> {{ $service->vehicle->customer->name }}</p>
@@ -48,27 +47,31 @@
                     <!-- Kolom Kanan -->
                     <div class="col-md-6">
                         <!-- Informasi Servis -->
-                        <div class="border p-3 rounded shadow-sm bg-white animate__animated animate__fadeInRight" 
+                        <div class="border p-3 rounded shadow-sm bg-white animate__animated animate__fadeInRight"
                             style="animation-duration: 1.5s; animation-delay: 0.5s; border-color: #e3e6f0;">
                             <h6 style="color: #6c757d;"><i class="mdi mdi-information"></i> Informasi Servis</h6>
                             <p><strong>Keluhan:</strong> {{ $service->complaint }}</p>
                             <p><strong>Jarak Tempuh:</strong> {{ $service->current_mileage }} km</p>
-                            <p><strong>Jasa Pelayanan:</strong> <span style="color: #28a745;">Rp. {{ number_format($service->service_fee, 0, ',', '.') }}</span></p>
-                            <p><strong>Total Biaya:</strong> <span style="color: #dc3545;">Rp. {{ number_format($service->total_cost, 0, ',', '.') }}</span></p>
-                            <p><strong>Pembayaran Diterima:</strong> <span style="color: #17a2b8;">Rp. {{ number_format($service->payment_received, 0, ',', '.') }}</span></p>
+                            <p><strong>Jasa Pelayanan:</strong> <span style="color: #28a745;">Rp.
+                                    {{ number_format($service->service_fee, 0, ',', '.') }}</span></p>
+                            <p><strong>Total Biaya:</strong> <span style="color: #dc3545;">Rp.
+                                    {{ number_format($service->total_cost, 0, ',', '.') }}</span></p>
+                            <p><strong>Pembayaran Diterima:</strong> <span style="color: #17a2b8;">Rp.
+                                    {{ number_format($service->payment_received, 0, ',', '.') }}</span></p>
                             <p><strong>Kembalian:</strong> Rp. {{ number_format($service->change, 0, ',', '.') }}</p>
-                            <p><strong>Tipe Servis:</strong> 
+                            <p><strong>Tipe Servis:</strong>
                                 <span class="badge" style="background-color: #28a745; color: #fff;">
                                     {{ ucfirst($service->service_type == 'light' ? 'ringan' : ($service->service_type == 'medium' ? 'sedang' : 'berat')) }}
                                 </span>
-                            </p>                            
-                            <p><strong>Tanggal Servis:</strong> 
+                            </p>
+                            <p><strong>Tanggal Servis:</strong>
                                 <span style="color: #6c757d;">
                                     {{ \Carbon\Carbon::parse($service->service_date)->format('d-m-Y') }}
                                 </span>
                             </p>
                             <p><strong>Status Pembayaran:</strong>
-                                <span class="badge" style="background-color: {{ $service->isPaid() ? '#28a745' : '#dc3545' }}; color: #fff;">
+                                <span class="badge"
+                                    style="background-color: {{ $service->isPaid() ? '#28a745' : '#dc3545' }}; color: #fff;">
                                     {{ $service->isPaid() ? 'Lunas' : 'Belum Lunas' }}
                                 </span>
                             </p>
@@ -77,12 +80,12 @@
                 </div>
 
                 <!-- Informasi Sparepart -->
-                <h6 class="mb-3 animate__animated animate__fadeInUp" 
+                <h6 class="mb-3 animate__animated animate__fadeInUp"
                     style="animation-duration: 1.5s; animation-delay: 0.8s; color: #6c757d;">
                     <i class="mdi mdi-tools"></i> Sparepart yang Digunakan
                 </h6>
                 <div class="table-responsive">
-                    <table class="table table-hover animate__animated animate__zoomIn" 
+                    <table class="table table-hover animate__animated animate__zoomIn"
                         style="animation-duration: 1.5s; animation-delay: 0.9s;">
                         <thead style="background-color: #007bff; color: #fff;">
                             <tr>
@@ -93,29 +96,29 @@
                         </thead>
                         <tbody>
                             @forelse($service->serviceSpareparts as $serviceSparepart)
-                            <tr class="animate__animated animate__flipInX">
-                                <td>{{ $serviceSparepart->sparepart->nama_sparepart }}</td>
-                                <td>{{ $serviceSparepart->quantity }}</td>
-                                <td>Rp. {{ number_format($serviceSparepart->sparepart->harga_jual, 0, ',', '.') }}</td>
-                            </tr>
+                                <tr class="animate__animated animate__flipInX">
+                                    <td>{{ $serviceSparepart->sparepart->nama_sparepart }}</td>
+                                    <td>{{ $serviceSparepart->quantity }}</td>
+                                    <td>Rp. {{ number_format($serviceSparepart->sparepart->harga_jual, 0, ',', '.') }}</td>
+                                </tr>
                             @empty
-                            <tr>
-                                <td colspan="3" class="text-center">Tidak ada sparepart yang digunakan.</td>
-                            </tr>
+                                <tr>
+                                    <td colspan="3" class="text-center">Tidak ada sparepart yang digunakan.</td>
+                                </tr>
                             @endforelse
                         </tbody>
                     </table>
                 </div>
-                
+
                 <!-- Action Buttons -->
-                <div class="mt-3 d-flex flex-wrap gap-2 align-items-center animate__animated animate__fadeInUp" 
+                <div class="mt-3 d-flex flex-wrap gap-2 align-items-center animate__animated animate__fadeInUp"
                     style="animation-duration: 1.5s; animation-delay: 1s;">
-                    
+
                     <!-- Kembali ke Kendaraan -->
-                    @if($service->vehicle)
-                    <a href="{{ route('vehicle.show', $service->vehicle->id) }}" class="btn btn-dark btn-sm">
-                        <i class="mdi mdi-car me-2"></i> Kembali
-                    </a>
+                    @if ($service->vehicle)
+                        <a href="{{ route('vehicle.show', $service->vehicle->id) }}" class="btn btn-dark btn-sm">
+                            <i class="mdi mdi-car me-2"></i> Kembali
+                        </a>
                     @endif
 
                     <!-- Cetak Button -->
@@ -137,8 +140,8 @@
                     <form action="{{ route('service.destroy', $service->id) }}" method="POST" class="d-inline-block">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="btn btn-danger btn-sm" 
-                                onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
+                        <button type="submit" class="btn btn-danger btn-sm"
+                            onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
                             <i class="mdi mdi-delete me-2"></i> Hapus
                         </button>
                     </form>
@@ -150,37 +153,41 @@
     <script>
         document.getElementById('copyReportBtn').addEventListener('click', function() {
             // Define variables for each section of the report with bold text, emojis, and a link
-            var vehicleInfo = `**🚗 Informasi Kendaraan:**\nNomor Polisi: ${'{{ $service->vehicle->license_plate }}'} (${'{{ $service->vehicle->vehicle_type }}'})\nWarna: ${'{{ $service->vehicle->color }}'}\nTahun Produksi: ${'{{ $service->vehicle->production_year }}'}\nKode Mesin: ${'{{ $service->vehicle->engine_code }}'}`;
-            
-            var customerInfo = `**👤 Informasi Pelanggan:**\nNama: ${'{{ $service->vehicle->customer->name }}'}\nKontak: ${'{{ $service->vehicle->customer->contact }}'}\nAlamat: ${'{{ $service->vehicle->customer->address }}'}`;
-            
-            var serviceInfo = `**🛠️ Informasi Servis:**\nKeluhan: ${'{{ $service->complaint }}'}\nKilometer Saat Ini: ${'{{ $service->current_mileage }}'} km\nBiaya Servis: Rp. ${'{{ number_format($service->service_fee, 0, ',', '.') }}'}\nTotal Biaya: Rp. ${'{{ number_format($service->total_cost, 0, ',', '.') }}'}\nPembayaran Diterima: Rp. ${'{{ number_format($service->payment_received, 0, ',', '.') }}'}\nKembalian: Rp. ${'{{ number_format($service->change, 0, ',', '.') }}'}\nJenis Servis: ${'{{ ucfirst($service->service_type) }}'}\nTanggal Servis: ${'{{ \Carbon\Carbon::parse($service->service_date)->format('d-m-Y') }}'}`;
-            
+            var vehicleInfo =
+                `**🚗 Informasi Kendaraan:**\nNomor Polisi: ${'{{ $service->vehicle->license_plate }}'} (${'{{ $service->vehicle->vehicle_type }}'})\nWarna: ${'{{ $service->vehicle->color }}'}\nTahun Produksi: ${'{{ $service->vehicle->production_year }}'}\nKode Mesin: ${'{{ $service->vehicle->engine_code }}'}`;
+
+            var customerInfo =
+                `**👤 Informasi Pelanggan:**\nNama: ${'{{ $service->vehicle->customer->name }}'}\nKontak: ${'{{ $service->vehicle->customer->contact }}'}\nAlamat: ${'{{ $service->vehicle->customer->address }}'}`;
+
+            var serviceInfo =
+                `**🛠️ Informasi Servis:**\nKeluhan: ${'{{ $service->complaint }}'}\nKilometer Saat Ini: ${'{{ $service->current_mileage }}'} km\nBiaya Servis: Rp. ${'{{ number_format($service->service_fee, 0, ',', '.') }}'}\nTotal Biaya: Rp. ${'{{ number_format($service->total_cost, 0, ',', '.') }}'}\nPembayaran Diterima: Rp. ${'{{ number_format($service->payment_received, 0, ',', '.') }}'}\nKembalian: Rp. ${'{{ number_format($service->change, 0, ',', '.') }}'}\nJenis Servis: ${'{{ ucfirst($service->service_type) }}'}\nTanggal Servis: ${'{{ \Carbon\Carbon::parse($service->service_date)->format('d-m-Y') }}'}`;
+
             var sparepartsInfo = '**🔧 Sparepart yang Digunakan:**\n';
-            
+
             // Loop through the spare parts and append their details with bold text and emojis
-            @foreach($service->serviceSpareparts as $serviceSparepart)
-                sparepartsInfo += `Nama: **${'{{ $serviceSparepart->sparepart->nama_sparepart }}'}** | Jumlah: ${'{{ $serviceSparepart->quantity }}'} | Harga: Rp. ${'{{ number_format($serviceSparepart->sparepart->harga_jual, 0, ',', '.') }}'}\n`;
+            @foreach ($service->serviceSpareparts as $serviceSparepart)
+                sparepartsInfo +=
+                    `Nama: **${'{{ $serviceSparepart->sparepart->nama_sparepart }}'}** | Jumlah: ${'{{ $serviceSparepart->quantity }}'} | Harga: Rp. ${'{{ number_format($serviceSparepart->sparepart->harga_jual, 0, ',', '.') }}'}\n`;
             @endforeach
 
             // Update the phone number link to use WhatsApp
             var linkInfo = `\nAda masalah? Telepon via WhatsApp: [Chat dengan Jamat](https://wa.me/6285715467500)`;
-            
+
             // Combine all the sections into one report
             var fullReport = `${vehicleInfo}\n\n${customerInfo}\n\n${serviceInfo}\n\n${sparepartsInfo}${linkInfo}`;
-            
+
             // Create a temporary textarea element to hold the content
             var textarea = document.createElement('textarea');
             textarea.value = fullReport;
             document.body.appendChild(textarea);
-            
+
             // Select the text in the textarea and copy it
             textarea.select();
             document.execCommand('copy');
-            
+
             // Remove the textarea element from the DOM
             document.body.removeChild(textarea);
-            
+
             // Optionally, show an alert to the user confirming the action
             alert('Laporan berhasil disalin ke clipboard! 📋');
         });
@@ -189,7 +196,7 @@
         document.getElementById('printBtn').addEventListener('click', function() {
             const printContent = document.querySelector('.container').innerHTML;
             const newWindow = window.open('', '', 'width=300,height=600');
-        
+
             newWindow.document.write(`
                 <html>
                     <head>
@@ -376,7 +383,7 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="list-group">
-                                        @foreach($service->serviceSpareparts as $serviceSparepart)
+                                        @foreach ($service->serviceSpareparts as $serviceSparepart)
                                         <div class="list-group-item">
                                             <span><i class="bi bi-gear"></i> <strong>{{ $serviceSparepart->sparepart->nama_sparepart }}</strong></span>
                                             <span>{{ $serviceSparepart->quantity }} pcs</span>
@@ -398,10 +405,9 @@
                     </body>
                 </html>
             `);
-        
+
             newWindow.document.close();
             newWindow.print();
         });
     </script>
-    
 @endsection

@@ -33,7 +33,7 @@
                             </ul>
                             <div>
                                 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
-
+                            
                                 <div class="btn-wrapper">
                                     <a href="#" class="btn btn-outline-dark align-items-center" id="shareBtn">
                                         <i class="icon-share"></i> Bagikan
@@ -44,15 +44,16 @@
                                     <a href="#" class="btn btn-primary text-white me-0" id="exportBtn">
                                         <i class="icon-download"></i> Ekspor
                                     </a>
-                                    <a href="#" class="btn btn-info" id="screenshotBtn">
+                                    <a href="#" class="btn btn-info text-white" id="screenshotBtn">
                                         <i class="icon-camera"></i> Screenshot
                                     </a>
                                 </div>
-
+                            
                                 <script>
-                                    document.addEventListener("DOMContentLoaded", function() {
+                                    document.addEventListener("DOMContentLoaded", function () {
+                                        // Share functionality
                                         const shareBtn = document.getElementById("shareBtn");
-                                        shareBtn.addEventListener("click", function(e) {
+                                        shareBtn.addEventListener("click", function (e) {
                                             e.preventDefault();
                                             if (navigator.share) {
                                                 navigator.share({
@@ -68,15 +69,109 @@
                                                 alert("Web Share API is not supported in this browser.");
                                             }
                                         });
-
+                            
+                                        // Print functionality
                                         const printBtn = document.getElementById("printBtn");
-                                        printBtn.addEventListener("click", function(e) {
-                                            e.preventDefault();
-                                            window.print();
+                                        printBtn.addEventListener("click", function () {
+                                            const printContent = `
+                                                <div style="font-family: 'Arial', sans-serif; margin: 20px; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
+                                                    <h2 style="text-align: center; color: #4CAF50; font-size: 20px; margin-bottom: 20px;">Statistik Kinerja</h2>
+                            
+                                                    <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                                                        <table class="table table-bordered table-hover text-white" style="background-color: transparent; border-radius: 15px; overflow: hidden;">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Tanggal</th>
+                                                                    <th>Pengunjung Hari Ini</th>
+                                                                    <th>Jumlah Sparepart</th>
+                                                                    <th>Pertumbuhan</th>
+                                                                    <th colspan="3" class="text-center">Rata-rata Jumlah Kendaraan per Pelanggan</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td class="text-center">{{ $today }}</td>
+                                                                    <td class="text-center">{{ $totalVisitorsToday }}</td>
+                                                                    <td class="text-center">{{ $totalSpareparts }}</td>
+                                                                    <td class="text-center">{{ number_format($data['total_profit'], 2) }}%</td>
+                                                                    <td class="text-center">{{ number_format($averageVehiclesPerCustomer, 2) }}</td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                            
+                                                    <div class="row">
+                                                        <div class="col-12 col-md-6 col-lg-3">
+                                                            <div class="statistics-details">
+                                                                <p class="statistics-title">Total Keuntungan</p>
+                                                                <h3 class="rate-percentage {{ $totalProfit < 0 ? 'text-danger' : 'text-success' }}">
+                                                                    Rp. {{ number_format($totalProfit, 2, ',', '.') }}
+                                                                </h3>
+                                                                <p class="text-success d-flex">
+                                                                    <i class="mdi mdi-menu-up"></i> 
+                                                                    <span>{{ $profitPercentage > 0 ? '+' : '' }}{{ number_format($profitPercentage, 2, ',', '.') }}%</span>
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-md-6 col-lg-3">
+                                                            <div class="statistics-details">
+                                                                <p class="statistics-title">Total Pengeluaran</p>
+                                                                <h3 class="rate-percentage {{ $totalExpense < 0 ? 'text-danger' : 'text-success' }}">
+                                                                    Rp. {{ number_format($totalExpense, 2, ',', '.') }}
+                                                                </h3>
+                                                                <p class="text-danger d-flex">
+                                                                    <i class="mdi mdi-menu-down"></i>
+                                                                    <span>{{ $expensePercentage > 0 ? '-' : '' }}{{ number_format($expensePercentage, 2, ',', '.') }}%</span>
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-md-6 col-lg-3">
+                                                            <div class="statistics-details">
+                                                                <p class="statistics-title">Total Belum Dibayar</p>
+                                                                <h3 class="rate-percentage {{ $totalUnpaid < 0 ? 'text-danger' : 'text-success' }}">
+                                                                    Rp. {{ number_format($totalUnpaid, 2, ',', '.') }}
+                                                                </h3>
+                                                                <p class="text-danger d-flex">
+                                                                    <i class="mdi mdi-menu-down"></i>
+                                                                    <span>{{ $unpaidPercentage > 0 ? '-' : '' }}{{ number_format($unpaidPercentage, 2, ',', '.') }}%</span>
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-md-6 col-lg-3">
+                                                            <div class="statistics-details">
+                                                                <p class="statistics-title">Keuntungan Rata-rata per Pelanggan</p>
+                                                                <h3 class="rate-percentage {{ $averageProfitPerCustomer < 0 ? 'text-danger' : 'text-success' }}">
+                                                                    Rp. {{ number_format($averageProfitPerCustomer, 2, ',', '.') }}
+                                                                </h3>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            `;
+                            
+                                            const printWindow = window.open('', '', 'height=1130,width=850');
+                                            printWindow.document.write('<html><head><title>Print Preview</title>');
+                                            printWindow.document.write('<style>');
+                                            printWindow.document.write('@page { size: A4; margin: 0; padding: 0; }');
+                                            printWindow.document.write('body { font-family: Arial, sans-serif; margin: 20px; padding: 20px; }');
+                                            printWindow.document.write('h2 { text-align: center; color: #4CAF50; font-size: 20px; margin-bottom: 20px; }');
+                                            printWindow.document.write('table { width: 100%; border-collapse: collapse; margin-top: 20px; }');
+                                            printWindow.document.write('th, td { padding: 10px; text-align: center; border: 1px solid #ddd; }');
+                                            printWindow.document.write('th { background-color: #4CAF50; color: white; font-size: 14px; }');
+                                            printWindow.document.write('td { font-size: 14px; color: #333; }');
+                                            printWindow.document.write('tr:nth-child(even) { background-color: #f2f2f2; }');
+                                            printWindow.document.write('.statistics-details { padding: 10px; font-size: 14px; }');
+                                            printWindow.document.write('</style>');
+                                            printWindow.document.write('</head><body>');
+                                            printWindow.document.write(printContent);
+                                            printWindow.document.write('</body></html>');
+                                            printWindow.document.close();
+                                            printWindow.print();
                                         });
-
+                            
+                                        // Export functionality (PDF)
                                         const exportBtn = document.getElementById("exportBtn");
-                                        exportBtn.addEventListener("click", function(e) {
+                                        exportBtn.addEventListener("click", function (e) {
                                             e.preventDefault();
                                             const doc = new jsPDF();
                                             const content = document.body.innerHTML;
@@ -86,15 +181,15 @@
                                                 }
                                             });
                                         });
-
+                            
                                         // Screenshot functionality
                                         const screenshotBtn = document.getElementById("screenshotBtn");
-                                        screenshotBtn.addEventListener("click", function(e) {
+                                        screenshotBtn.addEventListener("click", function (e) {
                                             e.preventDefault();
-                                            html2canvas(document.body).then(function(canvas) {
+                                            html2canvas(document.body).then(function (canvas) {
                                                 // Create an image from the canvas
                                                 const imgData = canvas.toDataURL("image/png");
-                                                
+                            
                                                 // Create a link element to trigger the download
                                                 const link = document.createElement('a');
                                                 link.href = imgData;
@@ -103,9 +198,8 @@
                                             });
                                         });
                                     });
-
                                 </script>
-                            </div>
+                            </div>                            
                         </div> <br>
                         <div class="tab-content tab-content-basic">
                             <div class="tab-pane fade show active" id="overview" role="tabpanel"
