@@ -33,6 +33,7 @@
                             </ul>
                             <div>
                                 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+                                <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
                             
                                 <div class="btn-wrapper">
                                     <a href="#" class="btn btn-outline-dark align-items-center" id="shareBtn">
@@ -51,7 +52,6 @@
                             
                                 <script>
                                     document.addEventListener("DOMContentLoaded", function () {
-                                        // Share functionality
                                         const shareBtn = document.getElementById("shareBtn");
                                         shareBtn.addEventListener("click", function (e) {
                                             e.preventDefault();
@@ -69,98 +69,112 @@
                                                 alert("Web Share API is not supported in this browser.");
                                             }
                                         });
-                            
-                                        // Print functionality
+                                
                                         const printBtn = document.getElementById("printBtn");
                                         printBtn.addEventListener("click", function () {
+                                            const userName = prompt("Masukkan nama Anda:");
+                                            const footerContent = userName ? `Nama: ${userName}` : "Nama tidak diberikan";
+
                                             const printContent = `
-                                                <div style="font-family: 'Arial', sans-serif; margin: 20px; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
-                                                    <h2 style="text-align: center; color: #4CAF50; font-size: 20px; margin-bottom: 20px;">Statistik Kinerja</h2>
-                            
-                                                    <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
-                                                        <table class="table table-bordered table-hover text-white" style="background-color: transparent; border-radius: 15px; overflow: hidden;">
+                                                <div style="font-family: 'Roboto', sans-serif; margin: 30px; padding: 30px; background-color: #f5f5f5; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
+                                                    <!-- Title and Icon -->
+                                                    <div style="text-align: center; margin-bottom: 30px;">
+                                                        <h2 style="color: #4CAF50; font-size: 28px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Laporan Bengkel Teaching Factory</h2>
+                                                    </div>
+                                                    <!-- Table Content -->
+                                                    <div class="table-responsive" style="max-height: 400px; overflow-y: auto; margin-bottom: 30px;">
+                                                        <table style="width: 100%; border-collapse: collapse; background-color: #ffffff; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
                                                             <thead>
-                                                                <tr>
+                                                                <tr style="background-color: #4CAF50; color: white; font-size: 16px;">
                                                                     <th>Tanggal</th>
                                                                     <th>Pengunjung Hari Ini</th>
                                                                     <th>Jumlah Sparepart</th>
                                                                     <th>Pertumbuhan</th>
-                                                                    <th colspan="3" class="text-center">Rata-rata Jumlah Kendaraan per Pelanggan</th>
+                                                                    <th class="text-center">Rata-rata Kendaraan per Pelanggan</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
                                                                 <tr>
-                                                                    <td class="text-center">{{ $today }}</td>
-                                                                    <td class="text-center">{{ $totalVisitorsToday }}</td>
-                                                                    <td class="text-center">{{ $totalSpareparts }}</td>
-                                                                    <td class="text-center">{{ number_format($data['total_profit'], 2) }}%</td>
-                                                                    <td class="text-center">{{ number_format($averageVehiclesPerCustomer, 2) }}</td>
+                                                                    <td class="text-center" style="font-size: 14px; padding: 12px;">{{ $today }}</td>
+                                                                    <td class="text-center" style="font-size: 14px; padding: 12px;">{{ $totalVisitorsToday }}</td>
+                                                                    <td class="text-center" style="font-size: 14px; padding: 12px;">{{ $totalSpareparts }}</td>
+                                                                    <td class="text-center" style="font-size: 14px; padding: 12px;">{{ number_format($data['total_profit'], 2) }}%</td>
+                                                                    <td class="text-center" style="font-size: 14px; padding: 12px;">{{ number_format($averageVehiclesPerCustomer, 2) }}</td>
                                                                 </tr>
                                                             </tbody>
                                                         </table>
                                                     </div>
-                            
-                                                    <div class="row">
-                                                        <div class="col-12 col-md-6 col-lg-3">
-                                                            <div class="statistics-details">
-                                                                <p class="statistics-title">Total Keuntungan</p>
-                                                                <h3 class="rate-percentage {{ $totalProfit < 0 ? 'text-danger' : 'text-success' }}">
+                                                    <!-- Statistics -->
+                                                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+                                                        <div style="padding: 10px;">
+                                                            <div style="background-color: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);">
+                                                                <p style="font-size: 14px; color: #333;">Total Keuntungan</p>
+                                                                <h3 style="font-size: 18px; color: #333;">
                                                                     Rp. {{ number_format($totalProfit, 2, ',', '.') }}
                                                                 </h3>
-                                                                <p class="text-success d-flex">
-                                                                    <i class="mdi mdi-menu-up"></i> 
+                                                                <p style="font-size: 14px; color: #4CAF50;">
+                                                                    <svg width="24" height="24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l4 4-4 4M16 6H6v12h10V6z"></path></svg>
                                                                     <span>{{ $profitPercentage > 0 ? '+' : '' }}{{ number_format($profitPercentage, 2, ',', '.') }}%</span>
                                                                 </p>
                                                             </div>
                                                         </div>
-                                                        <div class="col-12 col-md-6 col-lg-3">
-                                                            <div class="statistics-details">
-                                                                <p class="statistics-title">Total Pengeluaran</p>
-                                                                <h3 class="rate-percentage {{ $totalExpense < 0 ? 'text-danger' : 'text-success' }}">
+                                                        <div style="padding: 10px;">
+                                                            <div style="background-color: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);">
+                                                                <p style="font-size: 14px; color: #333;">Total Pengeluaran</p>
+                                                                <h3 style="font-size: 18px; color: #333;">
                                                                     Rp. {{ number_format($totalExpense, 2, ',', '.') }}
                                                                 </h3>
-                                                                <p class="text-danger d-flex">
-                                                                    <i class="mdi mdi-menu-down"></i>
+                                                                <p style="font-size: 14px; color: #F44336;">
+                                                                    <svg width="24" height="24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 22l-4-4 4-4M8 18h10V6H8v12z"></path></svg>
                                                                     <span>{{ $expensePercentage > 0 ? '-' : '' }}{{ number_format($expensePercentage, 2, ',', '.') }}%</span>
                                                                 </p>
                                                             </div>
                                                         </div>
-                                                        <div class="col-12 col-md-6 col-lg-3">
-                                                            <div class="statistics-details">
-                                                                <p class="statistics-title">Total Belum Dibayar</p>
-                                                                <h3 class="rate-percentage {{ $totalUnpaid < 0 ? 'text-danger' : 'text-success' }}">
+                                                        <div style="padding: 10px;">
+                                                            <div style="background-color: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);">
+                                                                <p style="font-size: 14px; color: #333;">Total Belum Dibayar</p>
+                                                                <h3 style="font-size: 18px; color: #333;">
                                                                     Rp. {{ number_format($totalUnpaid, 2, ',', '.') }}
                                                                 </h3>
-                                                                <p class="text-danger d-flex">
-                                                                    <i class="mdi mdi-menu-down"></i>
+                                                                <p style="font-size: 14px; color: #F44336;">
+                                                                    <svg width="24" height="24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 22l-4-4 4-4M8 18h10V6H8v12z"></path></svg>
                                                                     <span>{{ $unpaidPercentage > 0 ? '-' : '' }}{{ number_format($unpaidPercentage, 2, ',', '.') }}%</span>
                                                                 </p>
                                                             </div>
                                                         </div>
-                                                        <div class="col-12 col-md-6 col-lg-3">
-                                                            <div class="statistics-details">
-                                                                <p class="statistics-title">Keuntungan Rata-rata per Pelanggan</p>
-                                                                <h3 class="rate-percentage {{ $averageProfitPerCustomer < 0 ? 'text-danger' : 'text-success' }}">
+                                                        <div style="padding: 10px;">
+                                                            <div style="background-color: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);">
+                                                                <p style="font-size: 14px; color: #333;">Keuntungan Rata-rata per Pelanggan</p>
+                                                                <h3 style="font-size: 18px; color: #333;">
                                                                     Rp. {{ number_format($averageProfitPerCustomer, 2, ',', '.') }}
                                                                 </h3>
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    <!-- Signature -->
+                                                    <div style="margin-top: 40px; text-align: center;">
+                                                        <p style="font-size: 14px; color: #333;">Tanda Tangan:</p>
+                                                        <br><br><br><br>
+                                                        <div style="border-top: 1px solid #333; width: 200px; margin: 0 auto;"></div>
+                                                    </div>
+                                                    <div style="text-align: center; margin-top: 20px; font-size: 14px; color: #333;">
+                                                        <p><strong>${footerContent}</strong></p>
+                                                    </div>
                                                 </div>
                                             `;
-                            
+
                                             const printWindow = window.open('', '', 'height=1130,width=850');
                                             printWindow.document.write('<html><head><title>Print Preview</title>');
+                                            printWindow.document.write('<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">');
                                             printWindow.document.write('<style>');
                                             printWindow.document.write('@page { size: A4; margin: 0; padding: 0; }');
-                                            printWindow.document.write('body { font-family: Arial, sans-serif; margin: 20px; padding: 20px; }');
-                                            printWindow.document.write('h2 { text-align: center; color: #4CAF50; font-size: 20px; margin-bottom: 20px; }');
+                                            printWindow.document.write('body { font-family: "Roboto", sans-serif; margin: 20px; padding: 20px; background-color: #f5f5f5; }');
+                                            printWindow.document.write('h2 { text-align: center; color: #4CAF50; font-size: 28px; font-weight: 700; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; }');
                                             printWindow.document.write('table { width: 100%; border-collapse: collapse; margin-top: 20px; }');
-                                            printWindow.document.write('th, td { padding: 10px; text-align: center; border: 1px solid #ddd; }');
-                                            printWindow.document.write('th { background-color: #4CAF50; color: white; font-size: 14px; }');
-                                            printWindow.document.write('td { font-size: 14px; color: #333; }');
-                                            printWindow.document.write('tr:nth-child(even) { background-color: #f2f2f2; }');
-                                            printWindow.document.write('.statistics-details { padding: 10px; font-size: 14px; }');
+                                            printWindow.document.write('th, td { padding: 12px; text-align: center; border: 1px solid #ddd; font-size: 14px; color: #333; }');
+                                            printWindow.document.write('th { background-color: #4CAF50; color: white; font-weight: 500; }');
+                                            printWindow.document.write('tr:nth-child(even) { background-color: #f9f9f9; }');
+                                            printWindow.document.write('.statistics-details { padding: 15px; font-size: 14px; background-color: #fff; border-radius: 8px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); margin-top: 20px; }');
                                             printWindow.document.write('</style>');
                                             printWindow.document.write('</head><body>');
                                             printWindow.document.write(printContent);
@@ -168,38 +182,9 @@
                                             printWindow.document.close();
                                             printWindow.print();
                                         });
-                            
-                                        // Export functionality (PDF)
-                                        const exportBtn = document.getElementById("exportBtn");
-                                        exportBtn.addEventListener("click", function (e) {
-                                            e.preventDefault();
-                                            const doc = new jsPDF();
-                                            const content = document.body.innerHTML;
-                                            doc.html(content, {
-                                                callback: function (doc) {
-                                                    doc.save("exported_page.pdf");
-                                                }
-                                            });
-                                        });
-                            
-                                        // Screenshot functionality
-                                        const screenshotBtn = document.getElementById("screenshotBtn");
-                                        screenshotBtn.addEventListener("click", function (e) {
-                                            e.preventDefault();
-                                            html2canvas(document.body).then(function (canvas) {
-                                                // Create an image from the canvas
-                                                const imgData = canvas.toDataURL("image/png");
-                            
-                                                // Create a link element to trigger the download
-                                                const link = document.createElement('a');
-                                                link.href = imgData;
-                                                link.download = 'screenshot.png';
-                                                link.click();
-                                            });
-                                        });
                                     });
                                 </script>
-                            </div>                            
+                            </div>
                         </div> <br>
                         <div class="tab-content tab-content-basic">
                             <div class="tab-pane fade show active" id="overview" role="tabpanel"
