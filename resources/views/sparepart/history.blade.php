@@ -171,9 +171,9 @@
                         <thead class="table-light">
                             <tr>
                                 <th>No</th>
-                                <th>Stok Akhir</th> <!-- Stok Akhir -->
-                                <th>Perubahan</th> <!-- Perubahan -->
                                 <th>Stok Awal</th> <!-- Stok Awal -->
+                                <th>Perubahan</th> <!-- Perubahan -->
+                                <th>Stok Akhir</th> <!-- Stok Akhir -->
                                 <th>Aksi</th> <!-- Aksi -->
                                 <th>Tanggal</th> <!-- Tanggal -->
                             </tr>
@@ -187,8 +187,13 @@
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                 
-                                    <!-- Final Stock -->
-                                    <td>{{ $currentStock }} unit</td>
+                                    <!-- Initial Stock -->
+                                    <td>
+                                        @php
+                                            $stockBeforeChange = $currentStock - $history->jumlah_changed;
+                                        @endphp
+                                        {{ $stockBeforeChange }} unit
+                                    </td>
                 
                                     <!-- Change -->
                                     <td>
@@ -201,14 +206,8 @@
                                         @endif
                                     </td>
                 
-                                    <!-- Initial Stock -->
-                                    <td>
-                                        @php
-                                            $stockBeforeChange = $currentStock - $history->jumlah_changed;
-                                            $currentStock = $stockBeforeChange; // Update the stock for next iteration
-                                        @endphp
-                                        {{ $stockBeforeChange }} unit
-                                    </td>
+                                    <!-- Final Stock -->
+                                    <td>{{ $currentStock }} unit</td>
                 
                                     <!-- Action -->
                                     <td class="{{ $history->action == 'add' ? 'text-success' : ($history->action == 'edit' ? 'text-warning' : 'text-danger') }}">
@@ -224,6 +223,10 @@
                                     <!-- Date -->
                                     <td>{{ $history->created_at->format('d-m-Y H:i') }}</td>
                                 </tr>
+                
+                                @php
+                                    $currentStock = $stockBeforeChange; // Update the stock for next iteration
+                                @endphp
                             @empty
                                 <tr>
                                     <td colspan="6" class="text-center">Tidak ada histori perubahan stok.</td>
