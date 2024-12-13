@@ -196,13 +196,14 @@
                                             <span class="text-success">+{{ $history->jumlah_changed }} unit (Penambahan)</span>
                                         @elseif($history->action == 'subtract' || $history->action == 'use')
                                             <span class="text-danger">-{{ $history->jumlah_changed }} unit (Pemakaian)</span>
+                                        @elseif($history->action == 'edit')
+                                            <span class="text-warning">Edit Data</span>
                                         @endif
                                     </td>
                 
                                     <!-- Initial Stock -->
                                     <td>
                                         @php
-                                            // Calculate the initial stock before change
                                             $stockBeforeChange = $currentStock - $history->jumlah_changed;
                                             $currentStock = $stockBeforeChange; // Update the stock for next iteration
                                         @endphp
@@ -210,11 +211,13 @@
                                     </td>
                 
                                     <!-- Action -->
-                                    <td class="{{ $history->action == 'add' ? 'text-success' : 'text-danger' }}">
+                                    <td class="{{ $history->action == 'add' ? 'text-success' : ($history->action == 'edit' ? 'text-warning' : 'text-danger') }}">
                                         @if($history->action == 'subtract' || $history->action == 'use')
                                             Pemakaian
-                                        @else
+                                        @elseif($history->action == 'add')
                                             Penambahan
+                                        @elseif($history->action == 'edit')
+                                            Perubahan Data (Edit)
                                         @endif
                                     </td>
                 
@@ -229,8 +232,6 @@
                         </tbody>
                     </table>
                 </div>
-                             
-            
                 <!-- Pagination -->
                 <div class="d-flex justify-content-center mt-3">
                     {{ $histories->links('vendor.pagination.simple-bootstrap-5') }}
@@ -245,12 +246,9 @@
                 </div>
             
                 <script>
-                    // Set a timeout to fade out the element after 5 seconds
                     setTimeout(function() {
-                        // Add the fade-out animation
                         document.getElementById("stock-history-message").classList.add("animate__fadeOutLeft");
             
-                        // After the animation duration (5 seconds), remove the element from the DOM
                         setTimeout(function() {
                             document.getElementById("stock-history-message").style.display = 'none';
                         }, 1000); // Wait for fade-out animation to finish before hiding (1 second)

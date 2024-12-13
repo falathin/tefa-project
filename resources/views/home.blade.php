@@ -31,10 +31,7 @@
                                 <li class="nav-item"> <a class="nav-link border-0" id="more-tab" data-bs-toggle="tab"
                                         href="#more" role="tab" aria-selected="false">Lainnya</a> </li>
                             </ul>
-                            <div>
-                                <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
-                                <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-                            
+                            <div>                            
                                 <div class="btn-wrapper">
                                     <a href="#" class="btn btn-outline-dark align-items-center" id="shareBtn">
                                         <i class="icon-share"></i> Bagikan
