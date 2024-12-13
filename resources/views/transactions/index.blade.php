@@ -44,5 +44,5 @@
     </table>
 
     <!-- Pagination Links -->
-    {{ $transactions->links() }}
+    {{ $transactions->links('vendor.pagination.simple-bootstrap-5') }}
 @endsection

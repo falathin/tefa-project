@@ -20,7 +20,7 @@
                 </a>
             </div>
         </div>
-
+        
         <!-- Search Section (Visible only on mobile devices) -->
         <div class="row mb-3 d-md-none">
             <div class="col-12">
@@ -28,7 +28,7 @@
                 <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#filterModal">
                     <i class="fas fa-filter"></i> Filter
                 </button>
-
+        
                 <!-- Modal for filter -->
                 <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel"
                     aria-hidden="true">
@@ -41,7 +41,7 @@
                             </div>
                             <div class="modal-body">
                                 <form method="GET" action="{{ route('sparepart.history', $sparepart->id_sparepart) }}">
-
+        
                                     <!-- Search by name with icon -->
                                     <div class="row mb-3">
                                         <div class="col-12">
@@ -52,7 +52,7 @@
                                             </div>
                                         </div>
                                     </div>
-
+        
                                     <!-- Filter by date with icon -->
                                     <div class="row mb-3">
                                         <div class="col-12">
@@ -63,7 +63,7 @@
                                             </div>
                                         </div>
                                     </div>
-
+        
                                     <!-- Filter by action (add or subtract) with icon -->
                                     <div class="row mb-3">
                                         <div class="col-12">
@@ -81,7 +81,7 @@
                                             </div>
                                         </div>
                                     </div>
-
+        
                                     <!-- Filter by day of the week (Senin to Minggu) with icon -->
                                     <div class="row mb-3">
                                         <div class="col-12">
@@ -114,7 +114,7 @@
                                             </div>
                                         </div>
                                     </div>
-
+        
                                     <!-- Buttons for Search and Reset (Side by Side) -->
                                     <div class="row mb-2">
                                         <div class="col-6">
@@ -138,6 +138,7 @@
                 </div>
             </div>
         </div>
+        
         <!-- Search Section (Visible on larger screens) -->
         <div class="row mb-3 d-none d-md-flex"> <!-- Visible on medium to large screens -->
             <div class="col-md-12">
@@ -282,14 +283,14 @@
                 <div id="stock-history-message" class="mt-4 text-center animate__animated animate__fadeInRight">
                     <p>
                         <span class="bi bi-arrow-left animate__animated animate__bounceInLeft"></span>&nbsp;&nbsp;&nbsp;
-                        <span class="text-muted animate__animated animate__fadeInRight">Baca Riwayat Perubahan Stok dari
-                            kanan ke kiri</span>
+                        <span class="text-muted animate__animated animate__fadeInLeft">Baca Riwayat Perubahan Stok dari
+                            kiri ke kanan</span>
                     </p>
                 </div>
 
                 <script>
                     setTimeout(function() {
-                        document.getElementById("stock-history-message").classList.add("animate__fadeOutLeft");
+                        document.getElementById("stock-history-message").classList.add("animate__fadeOutRight");
 
                         setTimeout(function() {
                             document.getElementById("stock-history-message").style.display = 'none';
@@ -324,61 +325,69 @@
                                 <thead class="table-light">
                                     <tr>
                                         <th>No</th>
-                                        <th>Stok Akhir</th> <!-- Stok Akhir -->
-                                        <th>Perubahan</th> <!-- Perubahan -->
                                         <th>Stok Awal</th> <!-- Stok Awal -->
+                                        <th>Perubahan</th> <!-- Perubahan -->
+                                        <th>Stok Akhir</th> <!-- Stok Akhir -->
                                         <th>Aksi</th> <!-- Aksi -->
                                         <th>Tanggal</th> <!-- Tanggal -->
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @php
-                                        $currentStock = $sparepart->jumlah; // Stok awal sparepart
+                                        $currentStock = $sparepart->jumlah; // Initial stock
                                     @endphp
-
+        
                                     @forelse($histories as $history)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
-
-                                            <!-- Stok Akhir -->
-                                            <td>{{ $currentStock }} unit</td>
-
-                                            <!-- Perubahan -->
+        
+                                            <!-- Initial Stock -->
+                                            <td>
+                                                @php
+                                                    $stockBeforeChange = $currentStock - $history->jumlah_changed;
+                                                @endphp
+                                                {{ $stockBeforeChange }} unit
+                                            </td>
+        
+                                            <!-- Change -->
                                             <td>
                                                 @if ($history->action == 'add')
                                                     <span class="text-success">+{{ $history->jumlah_changed }} unit
                                                         (Penambahan)
-                                                    </span> <!-- Penambahan -->
-                                                @elseif($history->action == 'subtract')
+                                                    </span>
+                                                @elseif($history->action == 'subtract' || $history->action == 'use')
                                                     <span class="text-danger">-{{ $history->jumlah_changed }} unit
-                                                        (Pemakaian)</span> <!-- Pengurangan -->
-                                                @elseif($history->action == 'use')
-                                                    <span class="text-danger">-{{ $history->jumlah_changed }} unit
-                                                        (Pengurangan)</span> <!-- Pengurangan -->
+                                                        (Pemakaian)</span>
+                                                @elseif($history->action == 'edit')
+                                                    <span class="text-warning">Edit Data</span>
                                                 @endif
                                             </td>
-
-                                            <!-- Stok Awal -->
-                                            <td>
-                                                @php
-                                                    // Menghitung stok awal sebelum perubahan
-                                                    $stockBeforeChange = $currentStock - $history->jumlah_changed;
-                                                    $currentStock = $stockBeforeChange; // Update stok untuk perhitungan selanjutnya
-                                                @endphp
-                                                {{ $stockBeforeChange }} unit
+        
+                                            <!-- Final Stock -->
+                                            <td>{{ $currentStock }} unit</td>
+        
+                                            <!-- Action -->
+                                            <td
+                                                class="{{ $history->action == 'add' ? 'text-success' : ($history->action == 'edit' ? 'text-warning' : 'text-danger') }}">
+                                                @if ($history->action == 'subtract' || $history->action == 'use')
+                                                    Pemakaian
+                                                @elseif($history->action == 'add')
+                                                    Penambahan
+                                                @elseif($history->action == 'edit')
+                                                    Perubahan Data (Edit)
+                                                @endif
                                             </td>
-
-                                            <!-- Aksi -->
-                                            <td class="{{ $history->action == 'add' ? 'text-success' : 'text-danger' }}">
-                                                {{ ucfirst($history->action) }}
-                                            </td>
-
-                                            <!-- Tanggal -->
-                                            <td>{{ $history->created_at->format('d M Y H:i') }}</td>
+        
+                                            <!-- Date -->
+                                            <td>{{ $history->created_at->format('d-m-Y H:i') }}</td>
                                         </tr>
+        
+                                        @php
+                                            $currentStock = $stockBeforeChange; // Update the stock for next iteration
+                                        @endphp
                                     @empty
                                         <tr>
-                                            <td colspan="6" class="text-center">Tidak ada riwayat ditemukan.</td>
+                                            <td colspan="6" class="text-center">Tidak ada histori perubahan stok.</td>
                                         </tr>
                                     @endforelse
                                 </tbody>

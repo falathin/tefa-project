@@ -44,7 +44,7 @@
 
     <!-- Pagination -->
     <div class="mt-3">
-        {{ $notifications->links() }}
+        {{ $notifications->links('vendor.pagination.simple-bootstrap-5') }}
     </div>
 </div>
 @endsection

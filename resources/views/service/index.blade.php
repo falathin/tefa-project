@@ -134,7 +134,7 @@
         
             <!-- Pagination -->
             <div class="d-flex justify-content-center mt-4">
-                {{ $services->links('vendor.pagination.bootstrap-5') }}
+                {{ $services->links('vendor.pagination.simple-bootstrap-5') }}
             </div>
         </div>
     </div>
