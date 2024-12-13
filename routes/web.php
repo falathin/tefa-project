@@ -39,6 +39,13 @@ Route::prefix('sparepart')->name('sparepart.')->group(function () {
 //     Route::delete('transactions/{id}', [TransactionController::class, 'destroy'])->name('destroy');
 // });
 
+Route::get('/service/{id}/show', [ServiceController::class, 'show'])->name('service.show');
+Route::post('/service/{id}/checklist', [ServiceController::class, 'addChecklist'])->name('service.addChecklist');
+Route::patch('/service/checklist/{id}', [ServiceController::class, 'updateChecklistStatus'])->name('service.updateChecklistStatus');
+Route::patch('/service/checklist/{id}/task', [ServiceController::class, 'updateChecklistTask'])->name('service.updateChecklistTask'); // Updating task text
+Route::get('/service/checklist/{id}/edit', [ServiceController::class, 'editChecklist'])->name('service.editChecklist');
+Route::delete('/service/checklist/{id}', [ServiceController::class, 'deleteChecklist'])->name('service.deleteChecklist');
+
 Route::prefix('notifications')->name('notifications.')->group(function() {
     Route::get('/', [NotificationController::class, 'index'])->name('index');
     Route::post('{id}/read', [NotificationController::class, 'markAsRead'])->name('read');

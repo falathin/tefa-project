@@ -8,6 +8,7 @@ use App\Models\Customer;
 use App\Models\SparepartHistory;
 use App\Models\ServiceSparepart;
 use App\Models\Sparepart;
+use App\Models\ServiceChecklist;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
@@ -215,10 +216,8 @@ class ServiceController extends Controller
             ]);
         }
     
-        // Hapus hubungan sparepart sebelumnya
         $service->serviceSpareparts()->delete();
     
-        // Update data layanan
         $service->update($request->except('sparepart_id', 'jumlah'));
     
         $total_keuntungan = 0;
@@ -226,7 +225,6 @@ class ServiceController extends Controller
             foreach ($request->sparepart_id as $index => $sparepart_id) {
                 $sparepart = Sparepart::findOrFail($sparepart_id);
     
-                // Cek stok cukup sebelum mengurangi
                 if ($sparepart->jumlah >= $request->jumlah[$index]) {
                     $sparepart->decrement('jumlah', $request->jumlah[$index]);
     
@@ -327,18 +325,63 @@ class ServiceController extends Controller
 
     public function show($id)
     {
-        $service = Service::findOrFail($id);
-        $serviceSpareparts = $service->serviceSpareparts;
-
-        return view('service.show', compact('service', 'serviceSpareparts'));
+        $service = Service::with('checklists')->findOrFail($id);
+    
+        return view('service.show', compact('service'));
     }
+    public function addChecklist(Request $request, $id)
+    {
+        $request->validate([
+            'task' => 'required|string|max:255',
+        ]);
+    
+        $service = Service::findOrFail($id);
+        $service->checklists()->create([
+            'task' => $request->task,
+            'added_at' => now(), // Menambahkan waktu sekarang
+        ]);
+    
+        return redirect()->route('service.show', $id)->with('success', 'Checklist added successfully!');
+    }
+    
+    public function updateChecklistStatus(Request $request, $id)
+    {
+        $checklist = ServiceChecklist::findOrFail($id);
+        $checklist->is_completed = $request->has('is_completed');
+        $checklist->save();
+    
+        return redirect()->route('service.show', $checklist->service_id)->with('success', 'Checklist updated successfully!');
+    }   
+    public function editChecklist($id)
+    {
+        $checklist = ServiceChecklist::findOrFail($id);
+        return view('service.editChecklist', compact('checklist'));
+    }
+    public function updateChecklistTask(Request $request, $id)
+    {
+        $request->validate([
+            'task' => 'required|string|max:255',
+        ]);
+
+        $checklist = ServiceChecklist::findOrFail($id);
+        $checklist->task = $request->task;
+        $checklist->save();
+
+        // Redirect back to the service's show page after the update
+        return redirect()->route('service.show', $checklist->service_id)->with('success', 'Checklist updated successfully!');
+    }
+
+    public function deleteChecklist($id)
+    {
+        $checklist = ServiceChecklist::findOrFail($id);
+        $checklist->delete();
+        return redirect()->route('service.show', $checklist->service_id)->with('success', 'Checklist deleted successfully!');
+    }    
 
     public function getSparepartNotifications()
     {
-        // Fetch spare parts where the quantity is 2 or more
         $spareparts = Sparepart::where('jumlah', '>=', 2)->get();
 
-        // Return the data as JSON
         return response()->json($spareparts);
     }
 

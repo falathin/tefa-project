@@ -9,7 +9,7 @@ class CreateServicesTable extends Migration
     public function up()
     {
         Schema::create('services', function (Blueprint $table) {
-            $table->id(); // bigint unsigned
+            $table->id();
             $table->foreignId('vehicle_id')->constrained('vehicles')->cascadeOnDelete();
             $table->text('complaint');
             $table->integer('current_mileage');

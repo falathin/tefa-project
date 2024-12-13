@@ -24,20 +24,20 @@
 
                 <div class="row mb-5">
                     <!-- Kolom Kiri -->
-                    <div class="col-md-6">
+                    <div class="col-12 col-md-6 mb-4 mb-md-0">
                         <!-- Informasi Kendaraan -->
                         <div class="border p-3 rounded shadow-sm bg-white animate__animated animate__fadeInLeft"
                             style="animation-duration: 1.5s; animation-delay: 0.5s; border-color: #e3e6f0;">
-                            <h6 style="color: #6c757d;"><i class="mdi mdi-car"></i> Informasi Kendaraan</h6>
+                            <h6 class="text-muted"><i class="mdi mdi-car"></i> Informasi Kendaraan</h6>
                             <p><strong>Warna:</strong> {{ $service->vehicle->color }}</p>
                             <p><strong>Tahun Produksi:</strong> {{ $service->vehicle->production_year }}</p>
                             <p><strong>Kode Mesin:</strong> {{ $service->vehicle->engine_code }}</p>
                         </div>
 
                         <!-- Informasi Pelanggan -->
-                        <div class="border p-4 rounded shadow-sm bg-white mt-4 animate__animated animate__fadeInLeft"
+                        <div class="border p-3 rounded shadow-sm bg-white mt-4 animate__animated animate__fadeInLeft"
                             style="animation-duration: 1.5s; animation-delay: 0.7s; border-color: #e3e6f0;">
-                            <h6 style="color: #6c757d;"><i class="mdi mdi-account"></i> Informasi Pelanggan</h6>
+                            <h6 class="text-muted"><i class="mdi mdi-account"></i> Informasi Pelanggan</h6>
                             <p><strong>Nama:</strong> {{ $service->vehicle->customer->name }}</p>
                             <p><strong>Kontak:</strong> {{ $service->vehicle->customer->contact }}</p>
                             <p><strong>Alamat:</strong> {{ $service->vehicle->customer->address }}</p>
@@ -45,11 +45,11 @@
                     </div>
 
                     <!-- Kolom Kanan -->
-                    <div class="col-md-6">
+                    <div class="col-12 col-md-6 mb-4 mb-md-0">
                         <!-- Informasi Servis -->
                         <div class="border p-3 rounded shadow-sm bg-white animate__animated animate__fadeInRight"
                             style="animation-duration: 1.5s; animation-delay: 0.5s; border-color: #e3e6f0;">
-                            <h6 style="color: #6c757d;"><i class="mdi mdi-information"></i> Informasi Servis</h6>
+                            <h6 class="text-muted"><i class="mdi mdi-information"></i> Informasi Servis</h6>
                             <p><strong>Keluhan:</strong> {{ $service->complaint }}</p>
                             <p><strong>Jarak Tempuh:</strong> {{ $service->current_mileage }} km</p>
                             <p><strong>Jasa Pelayanan:</strong> <span style="color: #28a745;">Rp.
@@ -65,9 +65,8 @@
                                 </span>
                             </p>
                             <p><strong>Tanggal Servis:</strong>
-                                <span style="color: #6c757d;">
-                                    {{ \Carbon\Carbon::parse($service->service_date)->format('d-m-Y') }}
-                                </span>
+                                <span
+                                    class="text-muted">{{ \Carbon\Carbon::parse($service->service_date)->format('d-m-Y') }}</span>
                             </p>
                             <p><strong>Status Pembayaran:</strong>
                                 <span class="badge"
@@ -79,12 +78,104 @@
                     </div>
                 </div>
 
+                <div class="border p-3 rounded shadow-sm bg-white animate__animated animate__fadeIn animate__delay-1s"
+                    style="animation-duration: 1.5s; background-color: white; border-color: #e3e6f0;">
+                    <div class="card-body">
+                        <h6 class="mb-4 text-muted">
+                            <i class="fas fa-tasks"></i> Pekerjaan
+                        </h6>
+                    
+                        <form action="{{ route('service.addChecklist', $service->id) }}" method="POST" class="mb-4">
+                            @csrf
+                            <div class="mb-3">
+                                <input type="text" name="task" class="form-control form-control-sm" placeholder="Tambah item pekerjaan baru" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class="fas fa-plus-circle"></i> Tambah Pekerjaan
+                            </button>
+                        </form>
+                    
+                        <ul class="list-group mt-4" id="checklist-list">
+                            @foreach ($service->checklists as $checklist)
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <form action="{{ route('service.updateChecklistStatus', $checklist->id) }}" method="POST" class="d-flex align-items-center">
+                                        @csrf
+                                        @method('PATCH')
+                                        <input type="checkbox" name="is_completed" onchange="this.form.submit()" {{ $checklist->is_completed ? 'checked' : '' }} class="form-check-input me-2">
+                                        <span class="ms-3 {{ $checklist->is_completed ? 'text-decoration-line-through' : '' }}">{{ $checklist->task }}</span>
+                                    </form>
+                                    <span>
+                                        <i class="fas md-block sm-block {{ $checklist->is_completed ? 'fa-check-circle text-success' : 'fa-times-circle text-warning' }}"></i>
+                                        {{ $checklist->is_completed ? 'Selesai' : 'Tertunda' }}
+                                    </span>
+                                    <small class="text-muted ms-3">Ditambahkan pada: {{ $checklist->created_at->format('d M Y') }}</small>
+                    
+                                    <div class="dropdown ms-3">
+                                        <button class="btn btn-link p-0" type="button" id="dropdownMenuButton-{{ $checklist->id }}" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton-{{ $checklist->id }}">
+                                            <button class="btn btn-link edit-btn" data-id="{{ $checklist->id }}" data-task="{{ $checklist->task }}">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </button>
+                                            <li>
+                                                <form action="{{ route('service.deleteChecklist', $checklist->id) }}" method="POST" class="d-inline">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="dropdown-item text-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus item ini?')">Hapus</button>
+                                                </form>
+                                            </li>
+                                        </ul>
+                                    </div>
+                    
+                                    <div class="edit-form-container" id="edit-form-container-{{ $checklist->id }}" style="display: none; padding: 5px;">
+                                        <form action="{{ route('service.updateChecklistTask', $checklist->id) }}" method="POST" class="mt-2">
+                                            @csrf
+                                            @method('PATCH')
+                                            <div class="input-group" style="display: flex; gap: 5px; align-items: center;">
+                                                <input type="text" name="task" value="{{ $checklist->task }}" class="form-control form-control-sm" required
+                                                    style="padding: 6px 10px; font-size: 12px; border-radius: 4px; border: 1px solid #ccc; width: 100%;">
+                                                <button type="submit" class="btn btn-warning btn-sm" style="padding: 5px 10px; font-size: 12px; border-radius: 4px; background-color: #ff9800; color: white; border: none;">
+                                                    <i class="fas fa-save"></i> Simpan
+                                                </button>
+                                                <button type="button" class="btn btn-secondary cancel-edit-btn btn-sm" data-id="{{ $checklist->id }}"
+                                                    style="padding: 5px 10px; font-size: 12px; border-radius: 4px; background-color: #607d8b; color: white; border: none;">
+                                                    <i class="fas fa-times"></i> Batal
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </li>
+                            @endforeach
+                        </ul>
+                    
+                        <script>
+                            document.querySelectorAll('.edit-btn').forEach(button => {
+                                button.addEventListener('click', function() {
+                                    const checklistId = this.getAttribute('data-id');
+                                    const formContainer = document.getElementById(`edit-form-container-${checklistId}`);
+                                    formContainer.style.display = formContainer.style.display === 'none' ? 'block' : 'none';
+                                });
+                            });
+                    
+                            document.querySelectorAll('.cancel-edit-btn').forEach(button => {
+                                button.addEventListener('click', function() {
+                                    const checklistId = this.getAttribute('data-id');
+                                    const formContainer = document.getElementById(`edit-form-container-${checklistId}`);
+                                    formContainer.style.display = 'none';
+                                });
+                            });
+                        </script>
+                    </div>
+                </div>
+
+                <br>
                 <!-- Informasi Sparepart -->
-                <h6 class="mb-3 animate__animated animate__fadeInUp"
+                <h6 class="mb-3 mt-3 animate__animated animate__fadeInUp"
                     style="animation-duration: 1.5s; animation-delay: 0.8s; color: #6c757d;">
                     <i class="mdi mdi-tools"></i> Sparepart yang Digunakan
                 </h6>
-                <div class="table-responsive">
+                <div class="table-responsive border p-3 rounded shadow-sm bg-white">
                     <table class="table table-hover animate__animated animate__zoomIn"
                         style="animation-duration: 1.5s; animation-delay: 0.9s;">
                         <thead style="background-color: #007bff; color: #fff;">
@@ -109,11 +200,11 @@
                         </tbody>
                     </table>
                 </div>
+                <br><br>
 
                 <!-- Action Buttons -->
                 <div class="mt-3 d-flex flex-wrap gap-2 align-items-center animate__animated animate__fadeInUp"
                     style="animation-duration: 1.5s; animation-delay: 1s;">
-
                     <!-- Kembali ke Kendaraan -->
                     @if ($service->vehicle)
                         <a href="{{ route('vehicle.show', $service->vehicle->id) }}" class="btn btn-dark btn-sm">
@@ -155,43 +246,51 @@
             // Define variables for each section of the report with bold text, emojis, and a link
             var vehicleInfo =
                 `**🚗 Informasi Kendaraan:**\nNomor Polisi: ${'{{ $service->vehicle->license_plate }}'} (${'{{ $service->vehicle->vehicle_type }}'})\nWarna: ${'{{ $service->vehicle->color }}'}\nTahun Produksi: ${'{{ $service->vehicle->production_year }}'}\nKode Mesin: ${'{{ $service->vehicle->engine_code }}'}`;
-
+    
             var customerInfo =
                 `**👤 Informasi Pelanggan:**\nNama: ${'{{ $service->vehicle->customer->name }}'}\nKontak: ${'{{ $service->vehicle->customer->contact }}'}\nAlamat: ${'{{ $service->vehicle->customer->address }}'}`;
-
+    
             var serviceInfo =
                 `**🛠️ Informasi Servis:**\nKeluhan: ${'{{ $service->complaint }}'}\nKilometer Saat Ini: ${'{{ $service->current_mileage }}'} km\nBiaya Servis: Rp. ${'{{ number_format($service->service_fee, 0, ',', '.') }}'}\nTotal Biaya: Rp. ${'{{ number_format($service->total_cost, 0, ',', '.') }}'}\nPembayaran Diterima: Rp. ${'{{ number_format($service->payment_received, 0, ',', '.') }}'}\nKembalian: Rp. ${'{{ number_format($service->change, 0, ',', '.') }}'}\nJenis Servis: ${'{{ ucfirst($service->service_type) }}'}\nTanggal Servis: ${'{{ \Carbon\Carbon::parse($service->service_date)->format('d-m-Y') }}'}`;
-
+    
             var sparepartsInfo = '**🔧 Sparepart yang Digunakan:**\n';
-
+    
             // Loop through the spare parts and append their details with bold text and emojis
             @foreach ($service->serviceSpareparts as $serviceSparepart)
                 sparepartsInfo +=
                     `Nama: **${'{{ $serviceSparepart->sparepart->nama_sparepart }}'}** | Jumlah: ${'{{ $serviceSparepart->quantity }}'} | Harga: Rp. ${'{{ number_format($serviceSparepart->sparepart->harga_jual, 0, ',', '.') }}'}\n`;
             @endforeach
-
+    
+            // Collecting checklist items
+            var checklistInfo = '**📝 Pekerjaan yang Dikerjakan:**\n';
+            
+            @foreach ($service->checklists as $checklist)
+                checklistInfo += `- **${'{{ $checklist->task }}'}** ${'{{ $checklist->is_completed ? "✅ Selesai" : "❌ Tertunda" }}'}\n`;
+            @endforeach
+    
             // Update the phone number link to use WhatsApp
             var linkInfo = `\nAda masalah? Telepon via WhatsApp: [Chat dengan Jamat](https://wa.me/6285715467500)`;
-
+    
             // Combine all the sections into one report
-            var fullReport = `${vehicleInfo}\n\n${customerInfo}\n\n${serviceInfo}\n\n${sparepartsInfo}${linkInfo}`;
-
+            var fullReport = `${vehicleInfo}\n\n${customerInfo}\n\n${serviceInfo}\n\n${sparepartsInfo}\n\n${checklistInfo}${linkInfo}`;
+    
             // Create a temporary textarea element to hold the content
             var textarea = document.createElement('textarea');
             textarea.value = fullReport;
             document.body.appendChild(textarea);
-
+    
             // Select the text in the textarea and copy it
             textarea.select();
             document.execCommand('copy');
-
+    
             // Remove the textarea element from the DOM
             document.body.removeChild(textarea);
-
+    
             // Optionally, show an alert to the user confirming the action
             alert('Laporan berhasil disalin ke clipboard! 📋');
         });
     </script>
+    
     <script>
         document.getElementById('printBtn').addEventListener('click', function() {
             const printContent = document.querySelector('.container').innerHTML;

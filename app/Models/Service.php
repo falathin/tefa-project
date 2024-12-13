@@ -46,4 +46,9 @@ class Service extends Model
         return $this->payment_received >= $this->total_cost;
     }
 
+    public function checklists()
+    {
+        return $this->hasMany(ServiceChecklist::class);
+    }
+
 }
