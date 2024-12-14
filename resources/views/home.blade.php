@@ -39,11 +39,11 @@
                                     <a href="#" class="btn btn-outline-dark" id="printBtn">
                                         <i class="icon-printer"></i> Cetak
                                     </a>
-                                    <a href="#" class="btn btn-primary text-white me-0" id="exportBtn">
-                                        <i class="icon-download"></i> Ekspor <span style="text-decoration: underline; font-weight: bold;">(Belum Tersedia)</span>
+                                    <a href="#" class="btn btn-primary text-white me-0" id="exportBtn"  style="text-decoration: line-through;">
+                                        <i class="icon-download"></i> Ekspor</span>
                                     </a>
-                                    <a href="#" class="btn btn-info text-white" id="screenshotBtn">
-                                        <i class="icon-camera"></i> Screenshot <span style="text-decoration: underline; font-weight: bold;">(Belum Tersedia)</span>
+                                    <a href="#" class="btn btn-info text-white" style="text-decoration: line-through;" id="screenshotBtn">
+                                        <i class="icon-camera"></i> Screenshot</span>
                                     </a>
                                 </div>                                
                             

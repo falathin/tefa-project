@@ -31,7 +31,7 @@
                         <a class="nav-link {{ Request::is('sparepart') ? 'active' : '' }}" href="{{ route('sparepart.index') }}">Data Suku Cadang</a>
                     </li>
                     <li class="nav-item animate__animated animate__slideInLeft animate__delay-7.8s">
-                        <a class="nav-link" href="https://coming-soon-my-work.netlify.app/">Transaksi Suku Cadang</a>
+                        <a class="nav-link" href="https://coming-soon-my-work.netlify.app/" style="text-decoration: line-through;">Transaksi Suku Cadang</a>
                     </li>
                 </ul>
             </div>
@@ -46,7 +46,7 @@
         </li>
 
         <li class="nav-item animate__animated animate__slideInLeft animate__delay-10.8s">
-            <a class="nav-link" href="{{ route('documentation') }}">
+            <a class="nav-link {{ Request::is('documentation') ? 'active' : '' }}" href="{{ route('documentation') }}">
                 <i class="mdi mdi-file-document menu-icon"></i>
                 <span class="menu-title">Dokumentasi Web</span>
             </a>
