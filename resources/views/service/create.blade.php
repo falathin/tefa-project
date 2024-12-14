@@ -9,86 +9,150 @@
                     @csrf
 
                     <input type="hidden" name="vehicle_id" value="{{ $vehicle->id }}">
-
                     <div class="row">
-                        <!-- Kolom pertama -->
+                        <!-- Kategori Informasi Servis -->
+                        <div class="col-md-12 mb-3">
+                            <h5 class="fw-bold">Informasi Servis</h5>
+                        </div>
+                    
                         <div class="col-md-6 mb-3">
                             <label for="complaint" class="form-label">Keluhan</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-comment"></i></span>
-                                <input type="text" name="complaint" class="form-control"
-                                    placeholder="Masukkan keluhan kendaraan" required>
+                                <input type="text" name="complaint" class="form-control" placeholder="Masukkan keluhan kendaraan" value="{{ old('complaint') }}" required>
                             </div>
+                            @error('complaint')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
                         </div>
-
+                    
                         <div class="col-md-6 mb-3">
                             <label for="current_mileage" class="form-label">Kilometer Saat Ini</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-tachometer-alt"></i></span>
-                                <input type="number" name="current_mileage" class="form-control"
-                                    placeholder="Masukkan kilometer kendaraan" required>
+                                <input type="number" name="current_mileage" class="form-control" placeholder="Masukkan kilometer kendaraan" value="{{ old('current_mileage') }}" required>
                             </div>
+                            @error('current_mileage')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
                         </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label for="service_fee" class="form-label">Jasa Pelayanan</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
-                                <input type="number" name="service_fee" class="form-control" id="service_fee"
-                                    placeholder="Masukkan Biaya Jasa" required>
-                            </div>
-                        </div>
-
+                    
                         <div class="col-md-6 mb-3">
                             <label for="service_date" class="form-label">Tanggal Service</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
-                                <input type="date" name="service_date" id="service_date" class="form-control" required>
+                                <input type="date" name="service_date" id="service_date" class="form-control" value="{{ old('service_date') }}" required>
                             </div>
+                            @error('service_date')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
                         </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label for="total_cost" class="form-label">Total Biaya</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-calculator"></i></span>
-                                <input type="number" name="total_cost" id="total_cost" class="form-control" readonly
-                                    placeholder="Total biaya" required>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label for="payment_received" class="form-label">Pembayaran Diterima</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-credit-card"></i></span>
-                                <input type="number" name="payment_received" id="payment_received" class="form-control"
-                                    placeholder="Jumlah pembayaran diterima" required>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label for="change" class="form-label">Kembalian</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
-                                <input type="number" name="change" id="change" class="form-control" readonly
-                                    placeholder="Kembalian" required>
-                            </div>
-                        </div>
-
+                    
                         <div class="col-md-6 mb-3">
                             <label for="service_type" class="form-label">Jenis Service</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-tools"></i></span>
                                 <select name="service_type" class="form-control" required>
-                                    <option value="light">Ringan</option>
-                                    <option value="medium">Sedang</option>
-                                    <option value="heavy">Berat</option>
+                                    <option value="light" {{ old('service_type') == 'light' ? 'selected' : '' }}>Ringan</option>
+                                    <option value="medium" {{ old('service_type') == 'medium' ? 'selected' : '' }}>Sedang</option>
+                                    <option value="heavy" {{ old('service_type') == 'heavy' ? 'selected' : '' }}>Berat</option>
                                 </select>
                             </div>
+                            @error('service_type')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    
+                        <div class="col-md-6 mb-3">
+                            <label for="technician_name" class="form-label">Nama Teknisi</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-user-cog"></i></span>
+                                <input type="text" name="technician_name" id="technician_name" class="form-control" placeholder="Masukkan nama teknisi" value="{{ old('technician_name') }}" required>
+                            </div>
+                            @error('technician_name')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    
+                        <!-- Kategori Informasi Pembayaran -->
+                        <div class="col-md-12 mb-3">
+                            <h5 class="fw-bold">Informasi Pembayaran</h5>
+                        </div>
+                    
+                        <div class="col-md-6 mb-3">
+                            <label for="service_fee" class="form-label">Jasa Pelayanan</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
+                                <input type="number" name="service_fee" class="form-control" id="service_fee" placeholder="Masukkan Biaya Jasa" value="{{ old('service_fee') }}" required>
+                            </div>
+                            @error('service_fee')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    
+                        <div class="col-md-6 mb-3">
+                            <label for="total_cost" class="form-label">Total Biaya</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-calculator"></i></span>
+                                <input type="number" name="total_cost" id="total_cost" class="form-control" readonly placeholder="Total biaya" value="{{ old('total_cost') }}" required>
+                            </div>
+                            @error('total_cost')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    
+                        <div class="col-md-6 mb-3">
+                            <label for="payment_received" class="form-label">Pembayaran Diterima</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-credit-card"></i></span>
+                                <input type="number" name="payment_received" id="payment_received" class="form-control" placeholder="Jumlah pembayaran diterima" value="{{ old('payment_received') }}" required>
+                            </div>
+                            @error('payment_received')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    
+                        <div class="col-md-6 mb-3">
+                            <label for="change" class="form-label">Kembalian</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
+                                <input type="number" name="change" id="change" class="form-control" readonly placeholder="Kembalian" value="{{ old('change') }}" required>
+                            </div>
+                            @error('change')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    
+                        <div class="col-md-6 mb-3">
+                            <label for="payment_proof" class="form-label">Bukti Pembayaran</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-file-upload"></i></span>
+                                <input type="file" name="payment_proof" id="payment_proof" class="form-control" accept=".jpg,.png,.pdf">
+                            </div>
+                            @error('payment_proof')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    
+                        <!-- Kategori Catatan Tambahan -->
+                        <div class="col-md-12 mb-3">
+                            <h5 class="fw-bold">Informasi Tambahan</h5>
+                        </div>
+                    
+                        <div class="col-md-12 mb-3">
+                            <label for="additional_notes" class="form-label">Catatan Tambahan</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-sticky-note"></i></span>
+                                <textarea name="additional_notes" id="additional_notes" class="form-control" placeholder="Masukkan catatan tambahan" rows="5" style="resize: vertical;">{{ old('additional_notes') }}</textarea>
+                            </div>
+                            @error('additional_notes')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
-
+                    
                     <!-- Informasi Sparepart -->
-                    <div class="card-header rounded bg-danger text-white d-flex justify-content-between align-items-center">
+                    <div class="card-header mt-3 rounded bg-danger text-white d-flex justify-content-between align-items-center">
                         <h5 class="mb-0"><i class="fas fa-wrench"></i> &nbsp; Tambah Informasi Sparepart</h5>
                         <small class="text-right"><b>*</b> Hapus jika tidak diperlukan</small>
                     </div>

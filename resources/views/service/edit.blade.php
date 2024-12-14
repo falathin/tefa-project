@@ -11,7 +11,11 @@
                         
                             <input type="hidden" name="vehicle_id" value="{{ $service->vehicle_id }}">
                             <div class="row">
-                                <!-- Kolom pertama -->
+                                <!-- Kategori Informasi Servis -->
+                                <div class="col-md-12 mb-3">
+                                    <h5 class="fw-bold">Informasi Servis</h5>
+                                </div>
+                            
                                 <div class="col-md-6 mb-3">
                                     <label for="complaint" class="form-label">Keluhan</label>
                                     <div class="input-group">
@@ -35,23 +39,54 @@
                                 </div>
                             
                                 <div class="col-md-6 mb-3">
-                                    <label for="service_fee" class="form-label">Biaya Jasa Pelayanan</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
-                                        <input type="number" name="service_fee" class="form-control" id="service_fee" placeholder="Masukkan Biaya Pelayanan" value="{{ old('service_fee', $service->service_fee) }}" required>
-                                    </div>
-                                    @error('service_fee')
-                                        <div class="text-danger">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            
-                                <div class="col-md-6 mb-3">
                                     <label for="service_date" class="form-label">Tanggal Service</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
                                         <input type="date" name="service_date" id="service_date" class="form-control" value="{{ old('service_date', $service->service_date) }}" required>
                                     </div>
                                     @error('service_date')
+                                        <div class="text-danger">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            
+                                <div class="col-md-6 mb-3">
+                                    <label for="service_type" class="form-label">Jenis Service</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-tools"></i></span>
+                                        <select name="service_type" class="form-control" required>
+                                            <option value="light" {{ old('service_type', $service->service_type) == 'light' ? 'selected' : '' }}>Ringan</option>
+                                            <option value="medium" {{ old('service_type', $service->service_type) == 'medium' ? 'selected' : '' }}>Sedang</option>
+                                            <option value="heavy" {{ old('service_type', $service->service_type) == 'heavy' ? 'selected' : '' }}>Berat</option>
+                                        </select>
+                                    </div>
+                                    @error('service_type')
+                                        <div class="text-danger">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            
+                                <div class="col-md-6 mb-3">
+                                    <label for="technician_name" class="form-label">Nama Teknisi</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-user-cog"></i></span>
+                                        <input type="text" name="technician_name" id="technician_name" class="form-control" placeholder="Masukkan nama teknisi" value="{{ old('technician_name', $service->technician_name) }}" required>
+                                    </div>
+                                    @error('technician_name')
+                                        <div class="text-danger">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            
+                                <!-- Kategori Informasi Pembayaran -->
+                                <div class="col-md-12 mb-3">
+                                    <h5 class="fw-bold">Informasi Pembayaran</h5>
+                                </div>
+                            
+                                <div class="col-md-6 mb-3">
+                                    <label for="service_fee" class="form-label">Jasa Pelayanan</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
+                                        <input type="number" name="service_fee" class="form-control" id="service_fee" placeholder="Masukkan Biaya Jasa" value="{{ old('service_fee', $service->service_fee) }}" required>
+                                    </div>
+                                    @error('service_fee')
                                         <div class="text-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
@@ -90,20 +125,32 @@
                                 </div>
                             
                                 <div class="col-md-6 mb-3">
-                                    <label for="service_type" class="form-label">Jenis Service</label>
+                                    <label for="payment_proof" class="form-label">Bukti Pembayaran</label>
                                     <div class="input-group">
-                                        <span class="input-group-text"><i class="fas fa-tools"></i></span>
-                                        <select name="service_type" class="form-control" required>
-                                            <option value="light" {{ old('service_type', $service->service_type) == 'light' ? 'selected' : '' }}>Ringan</option>
-                                            <option value="medium" {{ old('service_type', $service->service_type) == 'medium' ? 'selected' : '' }}>Sedang</option>
-                                            <option value="heavy" {{ old('service_type', $service->service_type) == 'heavy' ? 'selected' : '' }}>Berat</option>
-                                        </select>
+                                        <span class="input-group-text"><i class="fas fa-file-upload"></i></span>
+                                        <input type="file" name="payment_proof" id="payment_proof" class="form-control" accept=".jpg,.png,.pdf">
                                     </div>
-                                    @error('service_type')
+                                    @error('payment_proof')
                                         <div class="text-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
-                            </div>
+                            
+                                <!-- Kategori Catatan Tambahan -->
+                                <div class="col-md-12 mb-3">
+                                    <h5 class="fw-bold">Informasi Tambahan</h5>
+                                </div>
+                            
+                                <div class="col-md-12 mb-3">
+                                    <label for="additional_notes" class="form-label">Catatan Tambahan</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-sticky-note"></i></span>
+                                        <textarea name="additional_notes" id="additional_notes" class="form-control" placeholder="Masukkan catatan tambahan" rows="5" style="resize: vertical;">{{ old('additional_notes', $service->additional_notes) }}</textarea>
+                                    </div>
+                                    @error('additional_notes')
+                                        <div class="text-danger">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>                            
                             
                                 <!-- Informasi Sparepart -->
                                 <div class="card-header rounded bg-danger text-white d-flex justify-content-between align-items-center">
@@ -277,7 +324,6 @@
                         document.getElementById('change').value = kembalian.toFixed(2);
                     }
 
-                    // Handle quantity change
                     document.querySelector('#sparepartTable').addEventListener('input', function (event) {
                         if (event.target.classList.contains('jumlah') || event.target.classList.contains('harga')) {
                             calculateSubtotal(event.target.closest('tr'));

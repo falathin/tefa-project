@@ -19,6 +19,10 @@ class Service extends Model
         'payment_received',
         'change',
         'service_type',
+        'status',
+        'additional_notes',
+        'technician_name',
+        'payment_proof'
     ];
 
     public function customer()
@@ -50,5 +54,4 @@ class Service extends Model
     {
         return $this->hasMany(ServiceChecklist::class);
     }
-
 }

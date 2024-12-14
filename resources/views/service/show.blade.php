@@ -33,7 +33,7 @@
                             <p><strong>Tahun Produksi:</strong> {{ $service->vehicle->production_year }}</p>
                             <p><strong>Kode Mesin:</strong> {{ $service->vehicle->engine_code }}</p>
                         </div>
-
+                
                         <!-- Informasi Pelanggan -->
                         <div class="border p-3 rounded shadow-sm bg-white mt-4 animate__animated animate__fadeInLeft"
                             style="animation-duration: 1.5s; animation-delay: 0.7s; border-color: #e3e6f0;">
@@ -43,7 +43,7 @@
                             <p><strong>Alamat:</strong> {{ $service->vehicle->customer->address }}</p>
                         </div>
                     </div>
-
+                
                     <!-- Kolom Kanan -->
                     <div class="col-12 col-md-6 mb-4 mb-md-0">
                         <!-- Informasi Servis -->
@@ -65,8 +65,7 @@
                                 </span>
                             </p>
                             <p><strong>Tanggal Servis:</strong>
-                                <span
-                                    class="text-muted">{{ \Carbon\Carbon::parse($service->service_date)->format('d-m-Y') }}</span>
+                                <span class="text-muted">{{ \Carbon\Carbon::parse($service->service_date)->format('d-m-Y') }}</span>
                             </p>
                             <p><strong>Status Pembayaran:</strong>
                                 <span class="badge"
@@ -74,9 +73,22 @@
                                     {{ $service->isPaid() ? 'Lunas' : 'Belum Lunas' }}
                                 </span>
                             </p>
+                
+                            <!-- Informasi Teknisi -->
+                            <p><strong>Nama Teknisi:</strong> {{ $service->technician_name }}</p>
+                
+                            <!-- Informasi Bukti Pembayaran -->
+                            @if($service->payment_proof)
+                                <p><strong>Bukti Pembayaran:</strong> <a href="{{ asset('storage/' . $service->payment_proof) }}" target="_blank">Lihat Bukti Pembayaran</a></p>
+                            @else
+                                <p><strong>Bukti Pembayaran:</strong> <span class="text-muted">Belum tersedia</span></p>
+                            @endif
+                
+                            <!-- Catatan Tambahan -->
+                            <p><strong>Catatan Tambahan:</strong> {{ $service->additional_notes ?? 'Tidak ada catatan tambahan' }}</p>
                         </div>
                     </div>
-                </div>
+                </div>                
 
                 <div class="border p-3 rounded shadow-sm bg-white animate__animated animate__fadeIn animate__delay-1s"
                     style="animation-duration: 1.5s; background-color: white; border-color: #e3e6f0;">
@@ -297,46 +309,54 @@
     <script>
         document.getElementById('copyReportBtn').addEventListener('click', function() {
             var vehicleInfo =
-                `**🚗 Informasi Kendaraan:**\nNomor Polisi: ${'{{ $service->vehicle->license_plate }}'} (${'{{ $service->vehicle->vehicle_type }}'})\nWarna: ${'{{ $service->vehicle->color }}'}\nTahun Produksi: ${'{{ $service->vehicle->production_year }}'}\nKode Mesin: ${'{{ $service->vehicle->engine_code }}'}`;
-
+                `**🚗 Informasi Kendaraan:**\nNomor Polisi: ${'{{ $service->vehicle->license_plate }}'} (${{
+                    $service->vehicle->vehicle_type }})\nWarna: ${'{{ $service->vehicle->color }}'}\nTahun Produksi: ${
+                    '{{ $service->vehicle->production_year }}'}\nKode Mesin: ${'{{ $service->vehicle->engine_code }}'}`;
+        
             var customerInfo =
                 `**👤 Informasi Pelanggan:**\nNama: ${'{{ $service->vehicle->customer->name }}'}\nKontak: ${'{{ $service->vehicle->customer->contact }}'}\nAlamat: ${'{{ $service->vehicle->customer->address }}'}`;
-
+        
             var serviceInfo =
                 `**🛠️ Informasi Servis:**\nKeluhan: ${'{{ $service->complaint }}'}\nKilometer Saat Ini: ${'{{ $service->current_mileage }}'} km\nBiaya Servis: Rp. ${'{{ number_format($service->service_fee, 0, ',', '.') }}'}\nTotal Biaya: Rp. ${'{{ number_format($service->total_cost, 0, ',', '.') }}'}\nPembayaran Diterima: Rp. ${'{{ number_format($service->payment_received, 0, ',', '.') }}'}\nKembalian: Rp. ${'{{ number_format($service->change, 0, ',', '.') }}'}\nJenis Servis: ${'{{ ucfirst($service->service_type) }}'}\nTanggal Servis: ${'{{ \Carbon\Carbon::parse($service->service_date)->format('d-m-Y') }}'}`;
-
+        
             var sparepartsInfo = '**🔧 Sparepart yang Digunakan:**\n';
-
+        
+            // Loop through the service spareparts dynamically
             @foreach ($service->serviceSpareparts as $serviceSparepart)
                 sparepartsInfo +=
                     `Nama: **${'{{ $serviceSparepart->sparepart->nama_sparepart }}'}** | Jumlah: ${'{{ $serviceSparepart->quantity }}'} | Harga: Rp. ${'{{ number_format($serviceSparepart->sparepart->harga_jual, 0, ',', '.') }}'}\n`;
             @endforeach
-
+        
             var checklistInfo = '**📝 Pekerjaan yang Dikerjakan:**\n';
-
+        
+            // Loop through the service checklists dynamically
             @foreach ($service->checklists as $checklist)
                 checklistInfo +=
                     `- **${'{{ $checklist->task }}'}** ${'{{ $checklist->is_completed ? '✅ Selesai' : '❌ Tertunda' }}'}\n`;
             @endforeach
-
+        
+            // Adding Additional Notes and Technician Name
+            var additionalNotes = `**📝 Catatan Tambahan:**\n${'{{ $service->additional_notes }}'}`;
+            var technicianName = `**👨‍🔧 Nama Teknisi:**\n${'{{ $service->technician_name }}'}`;
+        
             var linkInfo = `\nAda masalah? Telepon via WhatsApp: [Chat dengan Jamat](https://wa.me/6285715467500)`;
-
+        
             var fullReport =
-                `${vehicleInfo}\n\n${customerInfo}\n\n${serviceInfo}\n\n${sparepartsInfo}\n\n${checklistInfo}${linkInfo}`;
-
+                `${vehicleInfo}\n\n${customerInfo}\n\n${serviceInfo}\n\n${sparepartsInfo}\n\n${checklistInfo}\n\n${additionalNotes}\n\n${technicianName}${linkInfo}`;
+        
             var textarea = document.createElement('textarea');
             textarea.value = fullReport;
             document.body.appendChild(textarea);
-
+        
             textarea.select();
             document.execCommand('copy');
-
+        
             document.body.removeChild(textarea);
-
+        
             alert('Laporan berhasil disalin ke clipboard! 📋');
         });
     </script>
-
+    
     <script>
         document.getElementById('printBtn').addEventListener('click', function() {
             const technicianName = prompt("Masukkan nama teknisi:");
