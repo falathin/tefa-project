@@ -30390,10 +30390,7 @@ dl li {
   opacity: 0.9;
   transform: translateY(-5px) scale(1.03);
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-  background-color: rgba(245, 245, 245, 0.8);
 }
-
-
 
 /* Language Selector Icon */
 #languageSelect option {
