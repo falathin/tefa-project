@@ -40,12 +40,12 @@
                                         <i class="icon-printer"></i> Cetak
                                     </a>
                                     <a href="#" class="btn btn-primary text-white me-0" id="exportBtn">
-                                        <i class="icon-download"></i> Ekspor
+                                        <i class="icon-download"></i> Ekspor <span style="text-decoration: underline; font-weight: bold;">(Belum Tersedia)</span>
                                     </a>
                                     <a href="#" class="btn btn-info text-white" id="screenshotBtn">
-                                        <i class="icon-camera"></i> Screenshot
+                                        <i class="icon-camera"></i> Screenshot <span style="text-decoration: underline; font-weight: bold;">(Belum Tersedia)</span>
                                     </a>
-                                </div>
+                                </div>                                
                             
                                 <script>
                                     document.getElementById('screenshotBtn').addEventListener('click', function(event) {

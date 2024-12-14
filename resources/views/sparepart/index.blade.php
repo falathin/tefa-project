@@ -86,7 +86,6 @@
             cursor: pointer; /* Change cursor to pointer */
         }
 
-        /* Hover effect on buttons inside <tr> */
         .hover-row:hover .btn {
             opacity: 0.8; /* Slight opacity change on hover for buttons */
         }
@@ -99,7 +98,7 @@
 
     <!-- Pagination -->
     <div class="d-flex justify-content-center">
-        {{ $spareparts->links('vendor.pagination.simnple-bootstrap-5') }}
+        {{ $spareparts->links('vendor.pagination.simple-bootstrap-5') }}
     </div>
 </div>
 
