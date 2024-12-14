@@ -78,19 +78,16 @@
         </table>
     </div><br><br>
 
-    <!-- CSS: Add hover effect to <tr> -->
     <style>
-        /* Hover effect on <tr> */
         .table-hover tbody tr:hover {
-            background-color: #f1f1f1; /* Light grey background on hover */
-            cursor: pointer; /* Change cursor to pointer */
+            background-color: #f1f1f1;
+            cursor: pointer;
         }
 
         .hover-row:hover .btn {
-            opacity: 0.8; /* Slight opacity change on hover for buttons */
+            opacity: 0.8;
         }
 
-        /* Optional: Customize hover effect for each button */
         .hover-effect:hover {
             opacity: 0.8;
         }
