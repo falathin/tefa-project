@@ -99,7 +99,7 @@
 
     <!-- Pagination -->
     <div class="d-flex justify-content-center">
-        {{ $spareparts->links('vendor.pagination.simple-bootstrap-5') }}
+        {{ $spareparts->links('vendor.pagination.simnple-bootstrap-5') }}
     </div>
 </div>
 

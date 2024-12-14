@@ -48,6 +48,15 @@
                                 </div>
                             
                                 <script>
+                                    document.getElementById('screenshotBtn').addEventListener('click', function(event) {
+                                        event.preventDefault();
+                                        alert('📸 Fitur screenshot belum tersedia.');
+                                    });
+
+                                    document.getElementById('exportBtn').addEventListener('click', function(event) {
+                                        event.preventDefault();
+                                        alert('📤 Fitur ekspor belum tersedia.');
+                                    });
                                     document.addEventListener("DOMContentLoaded", function () {
                                         const shareBtn = document.getElementById("shareBtn");
                                         shareBtn.addEventListener("click", function (e) {
