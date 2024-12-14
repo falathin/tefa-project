@@ -9,10 +9,10 @@ class CreateCustomersTable extends Migration
     public function up()
     {
         Schema::create('customers', function (Blueprint $table) {
-            $table->id(); // Primary key
+            $table->id();
             $table->string('name');
-            $table->string('contact')->nullable(); // Make contact nullable
-            $table->text('address')->nullable();  // Make address nullable if it's optional
+            $table->string('contact')->nullable();
+            $table->text('address')->nullable();
             $table->timestamps();
         });
     }
