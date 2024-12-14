@@ -30387,22 +30387,6 @@ dl li {
     transition: all 0.3s ease;
 }
 
-.card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for transform and box-shadow */
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Regular gray shadow */
-}
-
-.card:hover {
-  transform: translateY(-8px); /* Slightly more movement */
-  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1), 0 0 20px #FFB6C1, 0 0 30px rgba(255, 182, 193, 0.5); /* Simple sakura pink glow */
-}
-
-/* Make card responsive */
-@media (max-width: 768px) {
-  .card {
-      margin-bottom: 20px;
-  }
-}
 
 /* Language Selector Icon */
 #languageSelect option {

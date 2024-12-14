@@ -168,7 +168,7 @@
                                                 <div class="modal fade" id="confirmDeleteModal{{ $customer->id }}" tabindex="-1" aria-labelledby="confirmDeleteModalLabel{{ $customer->id }}" aria-hidden="true">
                                                     <div class="modal-dialog">
                                                         <div class="modal-content">
-                                                            <div class="modal-header bg-danger text-white">
+                                                            <div class="modal-header text-dark">
                                                                 <h5 class="modal-title" id="confirmDeleteModalLabel{{ $customer->id }}">
                                                                     <i class="bi bi-exclamation-circle me-2"></i> Konfirmasi Penghapusan Permanen
                                                                 </h5>

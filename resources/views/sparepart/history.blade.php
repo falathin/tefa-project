@@ -280,11 +280,12 @@
                 </div>
 
                 <!-- Text and Right-to-Left Arrow with Animation -->
-                <div id="stock-history-message" class="mt-4 text-center animate__animated animate__fadeInRight">
+                <div id="stock-history-message" class="mt-4 text-center animate__animated animate__fadeInLeft">
                     <p>
-                        <span class="bi bi-arrow-left animate__animated animate__bounceInLeft"></span>&nbsp;&nbsp;&nbsp;
                         <span class="text-muted animate__animated animate__fadeInLeft">Baca Riwayat Perubahan Stok dari
                             kiri ke kanan</span>
+                            &nbsp;&nbsp;&nbsp;
+                            <span class="bi bi-arrow-right animate__animated animate__bounceInLeft"></span>
                     </p>
                 </div>
 
@@ -294,8 +295,8 @@
 
                         setTimeout(function() {
                             document.getElementById("stock-history-message").style.display = 'none';
-                        }, 1000); // Wait for fade-out animation to finish before hiding (1 second)
-                    }, 5000); // Trigger the fade-out after 5 seconds
+                        }, 1000); 
+                    }, 5000); 
                 </script>
 
             </div>
