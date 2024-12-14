@@ -252,7 +252,7 @@
                                     <div class="col-lg-6 d-flex flex-column">
                                         <div class="row flex-grow">
                                             <div class="col-12 grid-margin stretch-card">
-                                                <div class="card card-rounded"
+                                                <div class="card card-rounded hover-effect"
                                                     style="transition: transform 0.3s ease, box-shadow 0.3s ease; border-radius: 10px;">
                                                     <div class="card-body">
                                                         <div class="d-sm-flex justify-content-between align-items-center">
@@ -316,7 +316,7 @@
                                     <div class="col-lg-6 d-flex flex-column">
                                         <div class="row flex-grow">
                                             <div class="col-md-6 col-lg-12 grid-margin stretch-card">
-                                                <div class="card card-rounded" id="vehicle-card"
+                                                <div class="card card-rounded hover-effect" id="vehicle-card"
                                                     style="background-image: url('https://www.madornomad.com/wp-content/uploads/2019/09/japan-riding-17.jpg'); background-size: cover; background-position: center; color: white; border-radius: 20px; overflow: hidden; transition: transform 0.3s ease, box-shadow 0.3s ease; position: relative;"
                                                     onclick="changeImageRandomly()">
                                                     <div class="card-body"
@@ -371,7 +371,7 @@
                                                 });
                                             </script>                                            
                                             <div class="col-md-6 col-lg-12 grid-margin stretch-card">
-                                                <div class="card card-rounded"
+                                                <div class="card card-rounded hover-effect"
                                                     style="background-image: url('https://st3.depositphotos.com/4080643/17799/i/450/depositphotos_177995342-stock-photo-fuji-mountain-and-cherry-blossoms.jpg'); background-size: cover; background-position: center; color: white; border-radius: 20px; overflow: hidden; transition: transform 0.5s ease, box-shadow 0.5s ease, filter 0.3s ease; height: 160px; width: 100%;"
                                                     id="visitor-card">
                                                     <div class="card-body"

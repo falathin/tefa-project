@@ -79,74 +79,74 @@
                 </div>
 
                 <div class="border p-3 rounded shadow-sm bg-white animate__animated animate__fadeIn animate__delay-1s"
-                    style="animation-duration: 1.5s; background-color: white; border-color: #e3e6f0;">
-                    <div class="card-body">
-                        <h6 class="mb-4 text-muted">
-                            <i class="fas fa-tasks"></i> Pekerjaan
-                        </h6>
-
-                        <form action="{{ route('service.addChecklist', $service->id) }}" method="POST" class="mb-4">
-                            @csrf
-                            <div class="mb-3">
-                                <input type="text" name="task" class="form-control form-control-sm"
-                                    placeholder="Tambah item pekerjaan baru" required>
-                            </div>
-                            <button type="submit" class="btn btn-primary btn-sm">
-                                <i class="fas fa-plus-circle"></i> Tambah Pekerjaan
-                            </button>
-                        </form>
-                        <ul class="list-group mt-4" id="checklist-list">
-                            @foreach ($service->checklists as $checklist)
-                                <li class="list-group-item d-flex justify-content-between align-items-center p-3 border rounded mb-2"
-                                    style="font-size: 12px; border: 1px solid #ddd; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">
-                                    <!-- Checklist Item -->
-                                    <div class="d-flex justify-content-between align-items-center w-100">
-                                        <!-- Checkbox and Task Description -->
-                                        <form action="{{ route('service.updateChecklistStatus', $checklist->id) }}"
-                                            method="POST" class="d-flex align-items-center w-75">
+                style="animation-duration: 1.5s; background-color: white; border-color: #e3e6f0;">
+                <div class="card-body">
+                    <h6 class="mb-4 text-muted">
+                        <i class="fas fa-tasks"></i> Pekerjaan
+                    </h6>
+                
+                    <!-- Form Tambah Item Pekerjaan -->
+                    <form action="{{ route('service.addChecklist', $service->id) }}" method="POST" class="mb-4">
+                        @csrf
+                        <div class="mb-3">
+                            <input type="text" name="task" class="form-control form-control-sm" placeholder="Tambah item pekerjaan baru" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            <i class="fas fa-plus-circle"></i> Tambah Pekerjaan
+                        </button>
+                    </form>
+                
+                    <!-- Daftar Checklist -->
+                    <ul class="list-group mt-4" id="checklist-list">
+                        @foreach ($service->checklists->groupBy(function ($item) {
+                            return $item->created_at->format('Y-m-d');
+                        }) as $date => $checklists)
+                            <!-- Section for Date -->
+                            <li class="list-group-item bg-primary text-white fw-bold">
+                                <i class="fas fa-calendar-alt"></i> 
+                                {{ \Carbon\Carbon::parse($date)->translatedFormat('l, d F Y') }}
+                            </li>
+                
+                            <!-- Checklist Items for the Date -->
+                            @foreach ($checklists as $checklist)
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center w-100">
+                                        <!-- Checkbox with Task -->
+                                        <form action="{{ route('service.updateChecklistStatus', $checklist->id) }}" method="POST" class="d-flex align-items-center w-100">
                                             @csrf
                                             @method('PATCH')
-                                            <input type="checkbox" name="is_completed" onchange="this.form.submit()"
-                                                {{ $checklist->is_completed ? 'checked' : '' }}
-                                                class="form-check-input me-2" style="width: 18px; height: 18px;">
-                        
-                                            <span class="{{ $checklist->is_completed ? 'text-decoration-line-through text-muted' : '' }}"
-                                                style="font-size: 12px; word-wrap: break-word; flex: 1;">
+                                            <input type="checkbox" name="is_completed" onchange="this.form.submit()" class="form-check-input me-3" {{ $checklist->is_completed ? 'checked' : '' }}>
+                
+                                            <span class="flex-grow-1 {{ $checklist->is_completed ? 'text-decoration-line-through text-muted' : '' }}">
                                                 {{ $checklist->task }}
                                             </span>
                                         </form>
-                        
-                                        <!-- Status Text (Trello style) -->
-                                        <span class="d-none d-md-block text-uppercase" style="font-size: 10px; text-transform: uppercase;">
-                                            <i
-                                                class="fas {{ $checklist->is_completed ? 'fa-check-circle text-success' : 'fa-times-circle text-danger' }}"></i>
-                                            {{ $checklist->is_completed ? 'Selesai' : 'Tertunda' }}
-                                        </span>
-                        
-                                        <small class="text-muted ms-2 d-none d-md-block" style="font-size: 9px;">Ditambahkan pada: {{ $checklist->created_at->format('d M Y') }}</small>
-                        
-                                        <!-- Dropdown Menu (Desktop) -->
-                                        <div class="dropdown ms-2 d-none d-md-block">
-                                            <button class="btn btn-link p-0" type="button"
-                                                id="dropdownMenuButton-{{ $checklist->id }}" data-bs-toggle="dropdown"
-                                                aria-expanded="false" style="font-size: 12px; padding: 0;">
+                                    </div>
+                
+                                    <!-- Status Badge (Hidden on Small Screens) -->
+                                    <span class="badge {{ $checklist->is_completed ? 'bg-success' : 'bg-danger' }} d-none d-sm-inline-block">
+                                        <i class="fas {{ $checklist->is_completed ? 'fa-check-circle' : 'fa-times-circle' }}"></i>
+                                        {{ $checklist->is_completed ? 'Selesai' : 'Tertunda' }}
+                                    </span>
+                
+                                    <!-- Time and Actions -->
+                                    <div class="ms-3 text-end">
+                                        <small class="text-muted">Ditambahkan: {{ $checklist->created_at->format('H:i') }}</small>
+                                        <div class="dropdown d-inline-block ms-2">
+                                            <button class="btn btn-sm btn-light" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                                 <i class="fas fa-ellipsis-v"></i>
                                             </button>
-                                            <ul class="dropdown-menu"
-                                                aria-labelledby="dropdownMenuButton-{{ $checklist->id }}">
+                                            <ul class="dropdown-menu dropdown-menu-end">
                                                 <li>
-                                                    <button class="dropdown-item edit-btn text-warning"
-                                                        data-id="{{ $checklist->id }}" data-task="{{ $checklist->task }}">
+                                                    <button class="dropdown-item edit-btn text-warning" data-id="{{ $checklist->id }}">
                                                         <i class="fas fa-edit"></i> Edit
                                                     </button>
                                                 </li>
                                                 <li>
-                                                    <form action="{{ route('service.deleteChecklist', $checklist->id) }}"
-                                                        method="POST" class="d-inline">
+                                                    <form action="{{ route('service.deleteChecklist', $checklist->id) }}" method="POST">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit" class="dropdown-item text-danger"
-                                                            onclick="return confirm('Apakah Anda yakin ingin menghapus item ini?')">
+                                                        <button type="submit" class="dropdown-item text-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus item ini?')">
                                                             <i class="fas fa-trash-alt"></i> Hapus
                                                         </button>
                                                     </form>
@@ -154,79 +154,56 @@
                                             </ul>
                                         </div>
                                     </div>
-                        
-                                    <!-- Mobile view: display dropdown and edit form -->
-                                    <div class="dropdown ms-2 d-md-none">
-                                        <button class="btn btn-link p-0" type="button"
-                                            id="dropdownMenuButtonMobile-{{ $checklist->id }}" data-bs-toggle="dropdown"
-                                            aria-expanded="false" style="font-size: 12px; padding: 0;">
-                                            <i class="fas fa-ellipsis-v"></i>
-                                        </button>
-                                        <ul class="dropdown-menu"
-                                            aria-labelledby="dropdownMenuButtonMobile-{{ $checklist->id }}">
-                                            <button class="btn btn-link edit-btn" data-id="{{ $checklist->id }}"
-                                                data-task="{{ $checklist->task }}">
-                                                <i class="fas fa-edit"></i> Edit
-                                            </button>
-                                            <li>
-                                                <form action="{{ route('service.deleteChecklist', $checklist->id) }}"
-                                                    method="POST" class="d-inline">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="dropdown-item text-danger"
-                                                        onclick="return confirm('Apakah Anda yakin ingin menghapus item ini?')">Hapus</button>
-                                                </form>
-                                            </li>
-                                        </ul>
-                                    </div>
-                        
-                                    <!-- Edit Form Container (Mobile and Desktop) -->
-                                    <div class="edit-form-container" id="edit-form-container-{{ $checklist->id }}"
-                                        style="display: none; padding: 5px; width: 100%; font-size: 10px;">
-                                        <form action="{{ route('service.updateChecklistTask', $checklist->id) }}"
-                                            method="POST" class="mt-2" style="width: 100%;">
-                                            @csrf
-                                            @method('PATCH')
-                                            <div class="input-group" style="gap: 1px; width: 100%; flex-wrap: nowrap;">
-                                                <input type="text" name="task" value="{{ $checklist->task }}"
-                                                    class="form-control form-control-sm" required
-                                                    style="font-size: 10px; padding: 5px 6px; border-radius: 4px; max-width: 180px; min-width: 120px; margin-right: 0;">
-                                                <button type="submit" class="btn btn-warning btn-sm"
-                                                    style="font-size: 10px; background-color: #ff9800; color: white; padding: 5px 8px; min-width: 60px; margin: 0;">
-                                                    <i class="fas fa-save"></i> Simpan
-                                                </button>
-                                                <button type="button" class="btn btn-secondary cancel-edit-btn btn-sm"
-                                                    data-id="{{ $checklist->id }}"
-                                                    style="font-size: 10px; background-color: #607d8b; color: white; padding: 5px 8px; min-width: 60px; margin: 0;">
-                                                    <i class="fas fa-times"></i> Batal
-                                                </button>
-                                            </div>
-                                        </form>
-                                    </div>
                                 </li>
+                
+                                <!-- Form Edit (Hidden by Default) -->
+                                <li class="list-group-item" id="edit-form-container-{{ $checklist->id }}" style="display: none;">
+                                    <form action="{{ route('service.updateChecklistTask', $checklist->id) }}" method="POST" class="d-flex align-items-center">
+                                        @csrf
+                                        @method('PATCH')
+
+                                        <!-- Input for Task -->
+                                        <input type="text" name="task" class="form-control form-control-sm me-3" value="{{ $checklist->task }}" required style="font-size: 0.875rem;">
+
+                                        <!-- Save Button -->
+                                        <button type="submit" class="btn btn-sm btn-success me-2" style="font-size: 0.75rem; padding: 0.375rem 0.75rem;">
+                                            <i class="fas fa-check"></i>
+                                            <span class="d-none d-sm-inline-block">Simpan</span>
+                                        </button>
+
+                                        <!-- Cancel Button -->
+                                        <button type="button" class="btn btn-sm btn-secondary cancel-edit-btn" data-id="{{ $checklist->id }}" style="font-size: 0.75rem; padding: 0.375rem 0.75rem;">
+                                            <i class="fas fa-times"></i>
+                                            <span class="d-none d-sm-inline-block">Batal</span>
+                                        </button>
+                                    </form>
+                                </li>
+
                             @endforeach
-                        </ul>
-
-                        <script>
-                            document.querySelectorAll('.edit-btn').forEach(button => {
-                                button.addEventListener('click', function() {
-                                    const checklistId = this.getAttribute('data-id');
-                                    const formContainer = document.getElementById(`edit-form-container-${checklistId}`);
-                                    formContainer.style.display = formContainer.style.display === 'none' ? 'block' : 'none';
-                                });
+                        @endforeach
+                    </ul>
+                
+                    <!-- Script JS -->
+                    <script>
+                        document.querySelectorAll('.edit-btn').forEach(button => {
+                            button.addEventListener('click', function () {
+                                const checklistId = this.getAttribute('data-id');
+                                const formContainer = document.getElementById(`edit-form-container-${checklistId}`);
+                                formContainer.style.display = formContainer.style.display === 'none' ? 'block' : 'none';
                             });
-
-                            document.querySelectorAll('.cancel-edit-btn').forEach(button => {
-                                button.addEventListener('click', function() {
-                                    const checklistId = this.getAttribute('data-id');
-                                    const formContainer = document.getElementById(`edit-form-container-${checklistId}`);
-                                    formContainer.style.display = 'none';
-                                });
+                        });
+                
+                        document.querySelectorAll('.cancel-edit-btn').forEach(button => {
+                            button.addEventListener('click', function () {
+                                const checklistId = this.getAttribute('data-id');
+                                const formContainer = document.getElementById(`edit-form-container-${checklistId}`);
+                                formContainer.style.display = 'none';
                             });
-                        </script>
-                    </div>
-
-                </div>
+                        });
+                    </script>
+                </div>                
+            </div>
+            
 
                 <br>
                 <!-- Informasi Sparepart -->
