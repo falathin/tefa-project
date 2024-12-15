@@ -11,16 +11,26 @@ class SparepartTransaction extends Model
 
     protected $fillable = [
         'sparepart_id',
-        'jumlah',
-        'harga_beli',
-        'total_harga',
-        'tanggal_transaksi',
-        'jenis_transaksi',
+        'quantity',
+        'purchase_price',
+        'total_price',
+        'transaction_date',
+        'transaction_type',
     ];
+
+    protected $casts = [
+        'transaction_date' => 'date',
+    ];
+
 
     public function sparepart()
     {
-        return $this->belongsTo(Sparepart::class);
+        return $this->belongsTo(Sparepart::class, 'sparepart_id', 'id_sparepart');
+    }
+
+    public function spareparts()
+    {
+        return $this->hasMany(Sparepart::class, 'id_sparepart', 'sparepart_id');
     }
 
 }

@@ -31,7 +31,7 @@
                         <a class="nav-link {{ Request::is('sparepart') ? 'active' : '' }}" href="{{ route('sparepart.index') }}">Data Suku Cadang</a>
                     </li>
                     <li class="nav-item animate__animated animate__slideInLeft animate__delay-7.8s">
-                        <a class="nav-link" href="https://coming-soon-my-work.netlify.app/" style="text-decoration: line-through;">Transaksi Suku Cadang</a>
+                        <a class="nav-link {{ Request::is('sparepart/transaction*') ? 'active' : '' }}" href="https://coming-soon-my-work.netlify.app/" style="text-decoration: line-through;">Transaksi Suku Cadang</a>
                     </li>
                 </ul>
             </div>
