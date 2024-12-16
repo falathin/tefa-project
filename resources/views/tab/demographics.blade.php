@@ -1,1 +1,2 @@
 <h1>Demografi</h1>
+<p>Tab ini kosong, namun kami sedang mempersiapkan data terbaru yang akan segera tersedia. Harap bersabar dan kembali lagi nanti untuk informasi lebih lanjut mengenai demografi yang akan kami tampilkan.</p>
