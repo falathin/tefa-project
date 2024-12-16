@@ -1,74 +1,231 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container">
-        <div class="card shadow-sm">
-            <div class="card-header mt-3 rounded bg-danger text-white d-flex justify-content-between align-items-center">
-                <h5 class="mb-0"><i class="fas fa-info-circle"></i> &nbsp; Detail Transaksi</h5>
+<div class="container mt-4">
+    <h1 class="mb-4">Detail Transaksi</h1>
+
+    <div class="card shadow-sm">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span class="font-weight-bold">Transaksi #{{ $transaction->id }}</span>
+            <div class="btn-group">
+                <a href="{{ route('transactions.index') }}" class="btn btn-secondary btn-sm">
+                    <i class="fas fa-arrow-left"></i> Kembali
+                </a>
+                <button id="printBtn" class="btn btn-info btn-sm">
+                    <i class="fas fa-print"></i> Print
+                </button>
+                <a href="{{ route('transactions.edit', $transaction->id) }}" class="btn btn-warning btn-sm">
+                    <i class="fas fa-edit"></i> Edit
+                </a>
+                <button class="btn btn-danger btn-sm" onclick="confirmDelete({{ $transaction->id }})">
+                    <i class="fas fa-trash"></i> Hapus
+                </button>
             </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="transaction_date"><i class="bi bi-calendar-event"></i> Tanggal Transaksi</label>
-                            <input type="text" class="form-control" value="{{ \Carbon\Carbon::parse($transaction->transaction_date)->format('d-m-Y') }}" readonly>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="transaction_type"><i class="bi bi-arrow-up-down"></i> Jenis Transaksi</label>
-                            <input type="text" class="form-control" value="{{ $transaction->transaction_type == 'purchase' ? 'Pembelian' : 'Penjualan' }}" readonly>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="total_cost"><i class="bi bi-wallet2"></i> Total Biaya</label>
-                            <input type="text" class="form-control" value="{{ number_format($transaction->total_cost, 2) }}" readonly>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="payment_received"><i class="bi bi-credit-card"></i> Uang Masuk</label>
-                            <input type="text" class="form-control" value="{{ number_format($transaction->payment_received, 2) }}" readonly>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="change"><i class="bi bi-cash-coin"></i> Kembalian</label>
-                            <input type="text" class="form-control" value="{{ number_format($transaction->change, 2) }}" readonly>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        @if ($transaction->spareparts->isNotEmpty())
-                            <h5><i class="fas fa-cogs"></i> Spareparts</h5>
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Nama Sparepart</th>
-                                        <th>Harga Satuan</th>
-                                        <th>Jumlah</th>
-                                        <th>Subtotal</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($transaction->spareparts as $sparepart)
-                                        @if ($sparepart->pivot)
-                                            <tr>
-                                                <td>{{ $sparepart->nama_sparepart }}</td>
-                                                <td>{{ number_format($sparepart->harga_jual, 2) }}</td>
-                                                <td>{{ $sparepart->pivot->quantity ?? 0 }}</td>
-                                                <td>{{ number_format($sparepart->pivot->subtotal ?? 0, 2) }}</td>
-                                            </tr>
-                                        @endif
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        @else
-                            <div class="alert alert-warning">
-                                <i class="bi bi-exclamation-circle"></i> Tidak ada sparepart yang terlibat dalam transaksi ini.
-                            </div>
-                        @endif
-                    </div>
+        </div>
+    
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <strong>Sparepart:</strong>
+                    <p class="mb-0">{{ $transaction->sparepart->nama_sparepart }}</p>
                 </div>
-                <a href="{{ route('transactions.index') }}" class="btn btn-secondary mt-3"><i class="bi bi-arrow-left"></i> Kembali</a>
+                <div class="col-md-4">
+                    <strong>Jumlah:</strong>
+                    <p class="mb-0">{{ $transaction->quantity }}</p>
+                </div>
+                <div class="col-md-4">
+                    <strong>Jenis Transaksi:</strong>
+                    <p class="mb-0">{{ ucfirst($transaction->transaction_type) }}</p>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <strong>Harga Beli:</strong>
+                    <p class="mb-0">Rp. {{ number_format($transaction->purchase_price, 2, ',', '.') }}</p>
+                </div>
+                <div class="col-md-4">
+                    <strong>Total Harga:</strong>
+                    <p class="mb-0">Rp. {{ number_format($transaction->total_price, 2, ',', '.') }}</p>
+                </div>
+                <div class="col-md-4">
+                    <strong>Tanggal Transaksi:</strong>
+                    <p class="mb-0">{{ $transaction->transaction_date->format('d-m-Y') }}</p>
+                </div>
             </div>
         </div>
     </div>
+    
+    <script>
+        function confirmDelete(transactionId) {
+            if (confirm('Apakah Anda yakin ingin menghapus transaksi ini?')) {
+                var formAction = '{{ route('transactions.destroy', ':id') }}'.replace(':id', transactionId);
+                var form = document.createElement('form');
+                form.method = 'POST';
+                form.action = formAction;
+    
+                var csrfToken = '{{ csrf_token() }}';
+                var methodField = document.createElement('input');
+                methodField.type = 'hidden';
+                methodField.name = '_method';
+                methodField.value = 'DELETE';
+    
+                var csrfField = document.createElement('input');
+                csrfField.type = 'hidden';
+                csrfField.name = '_token';
+                csrfField.value = csrfToken;
+    
+                form.appendChild(methodField);
+                form.appendChild(csrfField);
+    
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+    </script>
+    
+</div>
+<script>
+    document.getElementById('printBtn').addEventListener('click', function() {
+        const printContent = document.querySelector('.container').innerHTML; // Ambil konten yang ingin dicetak
+        const newWindow = window.open('', '', 'width=300,height=600'); // Buka jendela baru
+
+        newWindow.document.write(`
+            <html>
+                <head>
+                    <title>Struk Transaksi</title>
+                    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css" rel="stylesheet">
+                    <style>
+                        body {
+                            font-family: 'Courier New', monospace;
+                            font-size: 12px;
+                            line-height: 1.5;
+                            margin: 0;
+                            padding: 0;
+                            color: #333;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            height: 100vh;
+                            text-align: center;
+                        }
+                        h1 {
+                            font-size: 18px;
+                            font-weight: bold;
+                            text-align: center;
+                            margin: 0;
+                            padding: 10px 0;
+                            text-transform: uppercase;
+                            letter-spacing: 1px;
+                            color: #007bff;
+                        }
+                        h5 {
+                            font-size: 16px;
+                            text-align: center;
+                            font-weight: normal;
+                            margin: 10px 0;
+                            color: #555;
+                        }
+                        .container {
+                            width: 100%;
+                            max-width: 350px;
+                            padding: 20px;
+                            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                            border-radius: 10px;
+                            background-color: #fff;
+                            margin: 0 auto;
+                            text-align: left;
+                        }
+                        .card-header {
+                            font-weight: bold;
+                            font-size: 14px;
+                            border-bottom: 2px solid #007bff;
+                            padding: 6px 0;
+                            color: #007bff;
+                            text-transform: uppercase;
+                        }
+                        .list-group-item {
+                            padding: 8px 0;
+                            border-bottom: 1px dashed #ddd;
+                            font-size: 12px;
+                            display: flex;
+                            justify-content: space-between;
+                        }
+                        .list-group-item strong {
+                            font-weight: bold;
+                            text-transform: uppercase;
+                        }
+                        .footer {
+                            font-size: 10px;
+                            text-align: center;
+                            margin-top: 15px;
+                            color: #888;
+                        }
+                        .icon {
+                            margin-right: 5px;
+                        }
+                        .card-body {
+                            padding: 10px;
+                        }
+                        @media print {
+                            body {
+                                padding: 0;
+                                margin: 0;
+                            }
+                            .container {
+                                width: 100%;
+                                margin: 0;
+                                padding: 10px;
+                            }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <h1><i class="bi bi-cash-coin icon"></i> Transaksi #{{ $transaction->id }}</h1>
+                        <h5><i class="bi bi-info-circle icon"></i> Detail Transaksi</h5>
+                        <div class="card">
+                            <div class="card-header">
+                                Informasi Transaksi
+                            </div>
+                            <div class="card-body">
+                                <div class="list-group">
+                                    <div class="list-group-item">
+                                        <span><i class="bi bi-hash icon"></i><strong>Sparepart:</strong></span>
+                                        <span>{{ $transaction->sparepart->nama_sparepart }}</span>
+                                    </div>
+                                    <div class="list-group-item">
+                                        <span><i class="bi bi-box icon"></i><strong>Jumlah:</strong></span>
+                                        <span>{{ number_format($transaction->quantity, 0, ',', '.') }}</span>
+                                    </div>
+                                    <div class="list-group-item">
+                                        <span><i class="bi bi-file-earmark-ear icon"></i><strong>Jenis Transaksi:</strong></span>
+                                        <span>{{ ucfirst($transaction->transaction_type) }}</span>
+                                    </div>
+                                    <div class="list-group-item">
+                                        <span><i class="bi bi-currency-dollar icon"></i><strong>Harga Beli:</strong></span>
+                                        <span>Rp. {{ number_format($transaction->purchase_price, 2, ',', '.') }}</span>
+                                    </div>
+                                    <div class="list-group-item">
+                                        <span><i class="bi bi-currency-dollar icon"></i><strong>Total Harga:</strong></span>
+                                        <span>Rp. {{ number_format($transaction->total_price, 2, ',', '.') }}</span>
+                                    </div>
+                                    <div class="list-group-item">
+                                        <span><i class="bi bi-calendar-event icon"></i><strong>Tanggal Transaksi:</strong></span>
+                                        <span>{{ $transaction->transaction_date->format('d-m-Y') }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="footer">
+                            <p><i class="bi bi-emoji-smile icon"></i> Terima kasih atas kunjungan Anda!</p>
+                        </div>
+                    </div>
+                </body>
+            </html>
+        `);
+
+        newWindow.document.close();
+        newWindow.print();
+    });
+</script>
 @endsection

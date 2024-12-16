@@ -33,45 +33,44 @@
                             <i class="bi bi-exclamation-circle"></i> Tidak ada sparepart yang tersedia.
                         </div>
                     @else
-                        <div class="table-responsive">
-                            <table class="table table-bordered" id="sparepartTable">
-                                <thead>
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="sparepartTable">
+                            <thead>
+                                <tr>
+                                    <th>Nama Sparepart</th>
+                                    <th>Harga Satuan</th>
+                                    <th>Jumlah</th>
+                                    <th>Subtotal</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($transaction->spareparts as $sparepart)
                                     <tr>
-                                        <th>Nama Sparepart</th>
-                                        <th>Harga Satuan</th>
-                                        <th>Jumlah</th>
-                                        <th>Subtotal</th>
-                                        <th>Aksi</th>
+                                        <td>
+                                            <select name="sparepart_id[]" class="form-control sparepart_id" required>
+                                                <option value="">Pilih Sparepart</option>
+                                                @foreach ($spareparts as $availableSparepart)
+                                                    <option value="{{ $availableSparepart->id_sparepart }}"
+                                                            data-harga="{{ $availableSparepart->harga_jual }}"
+                                                            @if ($sparepart->id_sparepart == $availableSparepart->id_sparepart) selected @endif>
+                                                        {{ $availableSparepart->nama_sparepart }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </td>
+                                        <td><input type="text" class="form-control harga"
+                                                value="{{ $sparepart->harga_jual ?? 0 }}" readonly></td>
+                                        <td><input type="number" name="quantity[]" class="form-control jumlah"
+                                                value="{{ $sparepart->pivot->quantity ?? 1 }}" min="1" required></td>
+                                        <td><input type="text" class="form-control subtotal"
+                                                value="{{ ($sparepart->harga_jual ?? 0) * ($sparepart->pivot->quantity ?? 1) }}" readonly></td>
+                                        <td><button type="button" class="btn btn-danger remove-row">Hapus</button></td>
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($transaction->spareparts as $sparepart)
-                                        <tr>
-                                            <td>
-                                                <select name="sparepart_id[]" class="form-control sparepart_id" required>
-                                                    <option value="">Pilih Sparepart</option>
-                                                    @foreach ($spareparts as $availableSparepart)
-                                                        <option value="{{ $availableSparepart->id_sparepart }}"
-                                                                data-harga="{{ $availableSparepart->harga_jual }}"
-                                                                @if ($sparepart->id_sparepart == $availableSparepart->id_sparepart) selected @endif>
-                                                            {{ $availableSparepart->nama_sparepart }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </td>
-                                            <td><input type="text" class="form-control harga"
-                                                    value="{{ $sparepart->harga_jual }}" readonly></td>
-                                            <td><input type="number" name="quantity[]" class="form-control jumlah"
-                                                    value="{{ $sparepart->pivot->quantity ?? 1 }}" min="1" required></td>
-                                            <td><input type="text" class="form-control subtotal"
-                                                    value="{{ $sparepart->pivot->subtotal ?? 0 }}" readonly></td>
-                                            <td><button type="button" class="btn btn-danger remove-row">Hapus</button></td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
                         <br>
                         <button type="button" class="btn btn-primary" id="addRow">+ Tambah Sparepart</button>
                     @endif
@@ -111,11 +110,11 @@
                     </div>
 
                     <div class="form-group mt-3">
-                        <label for="payment_received">
+                        <label for="purchase_price">
                             <i class="bi bi-credit-card"></i> Uang Masuk
                         </label>
-                        <input type="number" name="payment_received" id="payment_received" class="form-control"
-                            min="0" value="{{ old('payment_received', $transaction->payment_received) }}">
+                        <input type="number" name="purchase_price" id="purchase_price" class="form-control"
+                            min="0" value="{{ old('purchase_price', $transaction->purchase_price) }}">
                     </div>
 
                     <div class="form-group mt-3">
@@ -160,7 +159,7 @@
             }
 
             function updateChange() {
-                const paymentReceived = parseFloat(document.getElementById('payment_received').value) || 0;
+                const paymentReceived = parseFloat(document.getElementById('purchase_price').value) || 0;
                 const totalCost = parseFloat(document.getElementById('total_cost').value) || 0;
                 document.getElementById('change').value = (paymentReceived - totalCost).toFixed(2);
             }
@@ -212,7 +211,7 @@
                 }
             });
 
-            document.getElementById('payment_received').addEventListener('input', updateChange);
+            document.getElementById('purchase_price').addEventListener('input', updateChange);
 
             updateTotalCost();
             updateChange();

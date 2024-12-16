@@ -22,7 +22,6 @@ class SparepartTransaction extends Model
         'transaction_date' => 'date',
     ];
 
-
     public function sparepart()
     {
         return $this->belongsTo(Sparepart::class, 'sparepart_id', 'id_sparepart');

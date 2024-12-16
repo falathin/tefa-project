@@ -7,6 +7,27 @@
                 <h5 class="mb-0">Daftar Transaksi Sparepart</h5>
             </div>
             <div class="card-body">
+                <!-- Success Alert -->
+                @if (session()->has('success'))
+                    <div class="alert alert-success">
+                        <i class="bi bi-check-circle"></i> {{ session('success') }}
+                    </div>
+                @endif
+
+                <!-- Search Form -->
+                <div class="mb-3">
+                    <form action="{{ route('transactions.index') }}" method="GET" class="form-inline">
+                        <div class="input-group">
+                            <input type="text" name="search" class="form-control" placeholder="Cari Sparepart..." value="{{ request()->search }}">
+                            <div class="input-group-append">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-search"></i> Cari
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
                 <!-- Add Transaction Button -->
                 <div class="mb-3">
                     <a href="{{ route('transactions.create') }}" class="btn btn-success">
@@ -29,7 +50,7 @@
                                     <th>Total Biaya</th>
                                     <th>Tanggal Transaksi</th>
                                     <th>Jenis Transaksi</th>
-                                    <th>Aksi</th> <!-- Added actions column -->
+                                    <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -54,7 +75,6 @@
                                         <td>{{ \Carbon\Carbon::parse($transaction->transaction_date)->format('d-m-Y') }}</td>
                                         <td>{{ ucfirst($transaction->transaction_type) }}</td>
                                         <td>
-                                            <!-- Action Buttons -->
                                             <a href="{{ route('transactions.show', $transaction->id) }}" class="btn btn-info btn-sm">
                                                 <i class="bi bi-eye"></i> Detail
                                             </a>
@@ -74,9 +94,11 @@
                             </tbody>
                         </table>
                     </div>
+                    <br><br>
 
+                    <!-- Pagination -->
                     <div class="d-flex justify-content-center mt-4">
-                        {{ $transactions->links('vendor.pagination.simple-bootstrap-5') }}
+                        {{ $transactions->appends(request()->input())->links('vendor.pagination.simple-bootstrap-5') }}
                     </div>
                 @endif
             </div>

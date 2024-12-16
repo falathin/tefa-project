@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -46,5 +45,10 @@ class Sparepart extends Model
     public function getKeuntunganAttribute()
     {
         return $this->harga_jual - $this->harga_beli;
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(SparepartTransaction::class, 'sparepart_id', 'id_sparepart');
     }
 }
