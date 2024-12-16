@@ -3,7 +3,7 @@
 @section('content')
     <div class="container">
         <div class="card shadow-sm">
-            <div class="card-header mt-3 rounded bg-primary text-white">
+            <div class="card-header mt-3 rounded" style="background-color: #4B0082; color: white;">
                 <h5 class="mb-0">Daftar Transaksi Sparepart</h5>
             </div>
             <div class="card-body">
@@ -18,11 +18,16 @@
                 <div class="mb-3">
                     <form action="{{ route('transactions.index') }}" method="GET" class="form-inline">
                         <div class="input-group">
-                            <input type="text" name="search" class="form-control" placeholder="Cari Sparepart..." value="{{ request()->search }}">
+                            <input type="text" name="search" class="form-control" placeholder="Cari Sparepart..."
+                                value="{{ request()->search }}">
                             <div class="input-group-append">
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" class="btn btn-primary hover-effect">
                                     <i class="bi bi-search"></i> Cari
                                 </button>
+                                <!-- Cancel Button -->
+                                <a href="{{ route('transactions.index') }}" class="btn btn-secondary ml-2 hover-effect">
+                                    <i class="bi bi-x-circle"></i> Batal
+                                </a>
                             </div>
                         </div>
                     </form>
@@ -30,7 +35,7 @@
 
                 <!-- Add Transaction Button -->
                 <div class="mb-3">
-                    <a href="{{ route('transactions.create') }}" class="btn btn-success">
+                    <a href="{{ route('transactions.create') }}" class="btn btn-success hover-effect">
                         <i class="bi bi-plus-circle"></i> Tambah Transaksi
                     </a>
                 </div>
@@ -72,19 +77,32 @@
                                                 <span class="text-muted">Total tidak tersedia</span>
                                             @endif
                                         </td>
-                                        <td>{{ \Carbon\Carbon::parse($transaction->transaction_date)->format('d-m-Y') }}</td>
-                                        <td>{{ ucfirst($transaction->transaction_type) }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($transaction->transaction_date)->format('d-m-Y') }}
+                                        </td>
                                         <td>
-                                            <a href="{{ route('transactions.show', $transaction->id) }}" class="btn btn-info btn-sm">
+                                            @if ($transaction->transaction_type == 'sale')
+                                                Penjualan
+                                            @elseif($transaction->transaction_type == 'purchase')
+                                                Pembelian
+                                            @else
+                                                <span class="text-muted">Jenis tidak tersedia</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <a href="{{ route('transactions.show', $transaction->id) }}"
+                                                class="btn btn-info btn-sm hover-effect">
                                                 <i class="bi bi-eye"></i> Detail
                                             </a>
-                                            <a href="{{ route('transactions.edit', $transaction->id) }}" class="btn btn-warning btn-sm">
+                                            <a href="{{ route('transactions.edit', $transaction->id) }}"
+                                                class="btn btn-warning btn-sm hover-effect">
                                                 <i class="bi bi-pencil"></i> Edit
                                             </a>
-                                            <form action="{{ route('transactions.destroy', $transaction->id) }}" method="POST" class="d-inline">
+                                            <form action="{{ route('transactions.destroy', $transaction->id) }}"
+                                                method="POST" class="d-inline">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus transaksi ini?')">
+                                                <button type="submit" class="btn btn-danger btn-sm hover-effect"
+                                                    onclick="return confirm('Apakah Anda yakin ingin menghapus transaksi ini?')">
                                                     <i class="bi bi-trash"></i> Hapus
                                                 </button>
                                             </form>
@@ -94,7 +112,6 @@
                             </tbody>
                         </table>
                     </div>
-                    <br><br>
 
                     <!-- Pagination -->
                     <div class="d-flex justify-content-center mt-4">

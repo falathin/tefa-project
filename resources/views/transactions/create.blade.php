@@ -77,10 +77,10 @@
                         </div>
 
                         <div class="form-group mt-3">
-                            <label for="payment_received">
+                            <label for="purchase_price">
                                 <i class="bi bi-credit-card"></i> Uang Masuk
                             </label>
-                            <input type="number" name="payment_received" id="payment_received" class="form-control" min="0" value="{{ old('payment_received', 0) }}">
+                            <input type="number" name="purchase_price" id="purchase_price" class="form-control" min="0" value="{{ old('purchase_price', 0) }}" required>
                         </div>
 
                         <div class="form-group mt-3">
@@ -90,9 +90,28 @@
                             <input type="text" id="change" class="form-control" readonly>
                         </div>
 
-                        <button type="submit" class="btn btn-success mt-4">
-                            <i class="bi bi-save"></i> Simpan Transaksi
-                        </button>
+                        <form method="POST" action="{{ route('transactions.store') }}">
+                            @csrf
+                            <!-- Your form fields go here -->
+                        
+                            <div class="d-flex justify-content-between">
+                                <!-- Kembali button -->
+                                <a href="{{ route('transactions.index') }}" class="btn btn-secondary mt-4">
+                                    <i class="bi bi-arrow-left"></i> Kembali
+                                </a>
+                        
+                                <!-- Submit button with confirmation -->
+                                <button type="submit" class="btn btn-success mt-4" onclick="return confirmSubmit()">
+                                    <i class="bi bi-save"></i> Simpan Transaksi
+                                </button>
+                            </div>
+                        </form>
+                        
+                        <script>
+                            function confirmSubmit() {
+                                return confirm('Apakah Anda yakin ingin menyimpan transaksi ini?');
+                            }
+                        </script>                        
                     </form>
                 @endif
             </div>
@@ -125,7 +144,7 @@
             }
 
             function updateChange() {
-                const paymentReceived = parseFloat(document.getElementById('payment_received').value) || 0;
+                const paymentReceived = parseFloat(document.getElementById('purchase_price').value) || 0;
                 const totalCost = parseFloat(document.getElementById('total_cost').value) || 0;
                 document.getElementById('change').value = (paymentReceived - totalCost).toFixed(2);
             }
@@ -186,7 +205,7 @@
             });
 
             updateTotalCost();
-            document.getElementById('payment_received').addEventListener('input', updateChange);
+            document.getElementById('purchase_price').addEventListener('input', updateChange);
 
             // Validasi saat submit form
             document.getElementById('transactionForm').addEventListener('submit', function(e) {

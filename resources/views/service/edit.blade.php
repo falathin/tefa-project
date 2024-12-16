@@ -284,15 +284,22 @@
                                 <i class="mdi mdi-car me-2"></i> Kembali
                             </a>
                         @endif
-
+                    
                         <button type="reset" class="btn btn-warning btn-md me-3 mb-2 mb-md-0">
                             <i class="fas fa-redo"></i> Reset Form
                         </button>
-
-                        <button type="button" class="btn btn-success btn-md mb-2 mb-md-0" id="submitButton">
+                    
+                        <!-- Save button with confirmation -->
+                        <button type="button" class="btn btn-success btn-md mb-2 mb-md-0" id="submitButton" onclick="return confirmSubmit()">
                             <i class="fas fa-save"></i> Simpan Perubahan
                         </button>
                     </div>
+                    
+                    <script>
+                        function confirmSubmit() {
+                            return confirm('Apakah Anda yakin ingin menyimpan perubahan ini?');
+                        }
+                    </script>                    
 
                     <!-- Scripts -->
                     <script>

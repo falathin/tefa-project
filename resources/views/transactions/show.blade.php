@@ -4,56 +4,112 @@
 <div class="container mt-4">
     <h1 class="mb-4">Detail Transaksi</h1>
 
-    <div class="card shadow-sm">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <span class="font-weight-bold">Transaksi #{{ $transaction->id }}</span>
-            <div class="btn-group">
-                <a href="{{ route('transactions.index') }}" class="btn btn-secondary btn-sm">
-                    <i class="fas fa-arrow-left"></i> Kembali
-                </a>
-                <button id="printBtn" class="btn btn-info btn-sm">
-                    <i class="fas fa-print"></i> Print
-                </button>
-                <a href="{{ route('transactions.edit', $transaction->id) }}" class="btn btn-warning btn-sm">
-                    <i class="fas fa-edit"></i> Edit
-                </a>
-                <button class="btn btn-danger btn-sm" onclick="confirmDelete({{ $transaction->id }})">
-                    <i class="fas fa-trash"></i> Hapus
-                </button>
-            </div>
-        </div>
-    
-        <div class="card-body">
-            <div class="row mb-3">
-                <div class="col-md-4">
-                    <strong>Sparepart:</strong>
-                    <p class="mb-0">{{ $transaction->sparepart->nama_sparepart }}</p>
-                </div>
-                <div class="col-md-4">
-                    <strong>Jumlah:</strong>
-                    <p class="mb-0">{{ $transaction->quantity }}</p>
-                </div>
-                <div class="col-md-4">
-                    <strong>Jenis Transaksi:</strong>
-                    <p class="mb-0">{{ ucfirst($transaction->transaction_type) }}</p>
+    <div class="container mt-4">
+        <div class="card shadow-lg">
+            <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #7abaff; color: white;">
+                <span class="font-weight-bold">Transaksi #{{ $transaction->id }}</span>
+                <div class="btn-group">
+                    <a href="{{ route('transactions.index') }}" class="btn btn-light btn-sm">
+                        <i class="fas fa-arrow-left"></i> Kembali
+                    </a>
+                    <button id="printBtn" class="btn btn-dark btn-sm">
+                        <i class="fas fa-print"></i> Print
+                    </button>
+                    <a href="{{ route('transactions.edit', $transaction->id) }}" class="btn btn-warning btn-sm">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                    <button class="btn btn-danger btn-sm" onclick="confirmDelete({{ $transaction->id }})">
+                        <i class="fas fa-trash"></i> Hapus
+                    </button>
                 </div>
             </div>
-            <div class="row mb-3">
-                <div class="col-md-4">
-                    <strong>Harga Beli:</strong>
-                    <p class="mb-0">Rp. {{ number_format($transaction->purchase_price, 2, ',', '.') }}</p>
+        
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h5 class="mb-2"><i class="fas fa-cogs"></i> Sparepart</h5>
+                        <p class="mb-1">{{ $transaction->sparepart->nama_sparepart }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h5 class="mb-2"><i class="fas fa-exchange-alt"></i> Jenis Transaksi</h5>
+                        <p class="mb-1">
+                            @if($transaction->transaction_type == 'sale')
+                                Penjualan
+                            @elseif($transaction->transaction_type == 'purchase')
+                                Pembelian
+                            @else
+                                <span class="text-muted">Jenis tidak tersedia</span>
+                            @endif
+                        </p>
+                    </div>
                 </div>
-                <div class="col-md-4">
-                    <strong>Total Harga:</strong>
-                    <p class="mb-0">Rp. {{ number_format($transaction->total_price, 2, ',', '.') }}</p>
+        
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h5 class="mb-2"><i class="fas fa-sort-numeric-up"></i> Jumlah</h5>
+                        <p class="mb-1">{{ $transaction->quantity }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h5 class="mb-2"><i class="fas fa-calendar-alt"></i> Tanggal Transaksi</h5>
+                        <p class="mb-1">{{ $transaction->transaction_date->format('d-m-Y') }}</p>
+                    </div>
                 </div>
-                <div class="col-md-4">
-                    <strong>Tanggal Transaksi:</strong>
-                    <p class="mb-0">{{ $transaction->transaction_date->format('d-m-Y') }}</p>
+        
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h5 class="mb-2"><i class="fas fa-money-bill-wave"></i> Uang Masuk</h5>
+                        <p class="mb-1">Rp. {{ number_format($transaction->purchase_price, 2, ',', '.') }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h5 class="mb-2"><i class="fas fa-dollar-sign"></i> Total Harga</h5>
+                        <p class="mb-1">Rp. {{ number_format($transaction->total_price, 2, ',', '.') }}</p>
+                    </div>
+                </div>
+        
+                <!-- Subtotal Calculation -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h5 class="mb-2"><i class="fas fa-calculator"></i> Subtotal</h5>
+                        <p class="mb-1">Rp. {{ number_format($transaction->purchase_price * $transaction->quantity, 2, ',', '.') }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h5 class="mb-2"><i class="fas fa-credit-card"></i> Kembalian</h5>
+                        <p class="mb-1" id="changeAmount">
+                            Rp. 
+                            @php
+                                $subtotal = $transaction->purchase_price * $transaction->quantity;
+                                $change = $transaction->purchase_price - $subtotal;
+                            @endphp
+                            {{ number_format($change, 2, ',', '.') }}
+                        </p>
+                    </div>
                 </div>
             </div>
-        </div>
+        
+            <div class="card-footer text-muted text-center">
+                Terima kasih telah bertransaksi dengan kami!
+            </div>
+        </div>        
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const changeElement = document.getElementById('changeAmount');
+                const changeValue = parseFloat(changeElement.textContent.replace('Rp. ', '').replace(',', '.'));
+        
+                if (changeValue < 0) {
+                    changeElement.style.color = 'red'; // Berhutang
+                } else {
+                    changeElement.style.color = 'green'; // Lunas
+                }
+            });
+        
+            function confirmDelete(transactionId) {
+                if (confirm('Apakah Anda yakin ingin menghapus transaksi ini?')) {
+                    window.location.href = `/transactions/${transactionId}/delete`;
+                }
+            }
+        </script>                
     </div>
+    
     
     <script>
         function confirmDelete(transactionId) {
@@ -82,10 +138,9 @@
             }
         }
     </script>
-    
-</div>
 <script>
     document.getElementById('printBtn').addEventListener('click', function() {
+        const technicianName = prompt("Masukkan nama teknisi yang mencetak:"); // Prompt untuk mendapatkan nama teknisi
         const printContent = document.querySelector('.container').innerHTML; // Ambil konten yang ingin dicetak
         const newWindow = window.open('', '', 'width=300,height=600'); // Buka jendela baru
 
@@ -213,11 +268,26 @@
                                         <span><i class="bi bi-calendar-event icon"></i><strong>Tanggal Transaksi:</strong></span>
                                         <span>{{ $transaction->transaction_date->format('d-m-Y') }}</span>
                                     </div>
+                                    <div class="list-group-item">
+                                        <span><i class="bi bi-box-arrow-in-down icon"></i><strong>Subtotal:</strong></span>
+                                        <span>Rp. {{ number_format($transaction->purchase_price * $transaction->quantity, 2, ',', '.') }}</span>
+                                    </div>
+                                    <div class="list-group-item">
+                                        <span><i class="bi bi-cash-coin icon"></i><strong>Kembalian:</strong></span>
+                                        <span>Rp. 
+                                            @php
+                                                $subtotal = $transaction->purchase_price * $transaction->quantity;
+                                                $change = $transaction->purchase_price - $subtotal;
+                                            @endphp
+                                            {{ number_format($change, 2, ',', '.') }}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         <div class="footer">
                             <p><i class="bi bi-emoji-smile icon"></i> Terima kasih atas kunjungan Anda!</p>
+                            <p><strong>Teknisi: </strong>${technicianName}</p> <!-- Menampilkan nama teknisi -->
                         </div>
                     </div>
                 </body>
@@ -228,4 +298,5 @@
         newWindow.print();
     });
 </script>
+
 @endsection
