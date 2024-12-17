@@ -7,11 +7,11 @@
     <div class="container mt-4">
         <!-- Card Wrapper -->
         <div class="card shadow-sm rounded">
-            <div class="card-header d-flex justify-content-between align-items-center">
+            <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #4B0082; color: white;">
                 <h3 class="mb-0">
                     <i class="bi bi-box"></i> Data Sparepart
                 </h3>
-                <a href="{{ route('sparepart.create') }}" class="btn btn-success btn-sm shadow-sm">
+                <a href="{{ route('sparepart.create') }}" class="btn btn-light btn-sm shadow-sm">
                     <i class="bi bi-plus-circle"></i> Tambah Sparepart
                 </a>
             </div>
