@@ -8,9 +8,9 @@
         <!-- Card Wrapper -->
         <div class="card shadow-sm rounded">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h1 class="mb-0">
+                <h3 class="mb-0">
                     <i class="bi bi-box"></i> Data Sparepart
-                </h1>
+                </h3>
                 <a href="{{ route('sparepart.create') }}" class="btn btn-success btn-sm shadow-sm">
                     <i class="bi bi-plus-circle"></i> Tambah Sparepart
                 </a>
