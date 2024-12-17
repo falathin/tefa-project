@@ -3,7 +3,6 @@
 @section('content')
 <div class="container mt-4">
     <h1 class="mb-4">Detail Transaksi</h1>
-
     <div class="container mt-4">
         <div class="card shadow-lg">
             <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #7abaff; color: white;">
@@ -58,11 +57,11 @@
                 <div class="row mb-4">
                     <div class="col-md-6">
                         <h5 class="mb-2"><i class="fas fa-money-bill-wave"></i> Uang Masuk</h5>
-                        <p class="mb-1">Rp. {{ number_format($transaction->purchase_price, 2, ',', '.') }}</p>
+                        <p class="mb-1" id="amountPaidText">Rp. {{ number_format($transaction->purchase_price, 2, ',', '.') }}</p>
                     </div>
                     <div class="col-md-6">
                         <h5 class="mb-2"><i class="fas fa-dollar-sign"></i> Total Harga</h5>
-                        <p class="mb-1">Rp. {{ number_format($transaction->total_price, 2, ',', '.') }}</p>
+                        <p class="mb-1" data-total-price="true">Rp. {{ number_format($totalPrice, 2, ',', '.') }}</p>
                     </div>
                 </div>
         
@@ -70,44 +69,52 @@
                 <div class="row mb-4">
                     <div class="col-md-6">
                         <h5 class="mb-2"><i class="fas fa-calculator"></i> Subtotal</h5>
-                        <p class="mb-1">Rp. {{ number_format($transaction->purchase_price * $transaction->quantity, 2, ',', '.') }}</p>
+                        <p class="mb-1">Rp. {{ number_format($subtotal, 2, ',', '.') }}</p>
                     </div>
                     <div class="col-md-6">
                         <h5 class="mb-2"><i class="fas fa-credit-card"></i> Kembalian</h5>
-                        <p class="mb-1" id="changeAmount">
-                            Rp. 
-                            @php
-                                $subtotal = $transaction->purchase_price * $transaction->quantity;
-                                $change = $transaction->purchase_price - $subtotal;
-                            @endphp
-                            {{ number_format($change, 2, ',', '.') }}
-                        </p>
+                        <p class="mb-1" id="changeAmount">Rp. 0,00</p>
                     </div>
                 </div>
+        
             </div>
         
             <div class="card-footer text-muted text-center">
                 Terima kasih telah bertransaksi dengan kami!
             </div>
-        </div>        
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const changeElement = document.getElementById('changeAmount');
-                const changeValue = parseFloat(changeElement.textContent.replace('Rp. ', '').replace(',', '.'));
+        </div>
         
-                if (changeValue < 0) {
-                    changeElement.style.color = 'red'; // Berhutang
-                } else {
-                    changeElement.style.color = 'green'; // Lunas
-                }
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                calculateChange();  // Calculate change when the page loads
             });
         
-            function confirmDelete(transactionId) {
-                if (confirm('Apakah Anda yakin ingin menghapus transaksi ini?')) {
-                    window.location.href = `/transactions/${transactionId}/delete`;
+            function calculateChange() {
+                // Get the amount paid from the predefined value (Uang Masuk)
+                var amountPaid = parseFloat('{{ $transaction->purchase_price }}');
+                var totalPrice = parseFloat('{{ $totalPrice }}');
+        
+                // Calculate the change
+                var change = amountPaid - totalPrice;
+        
+                // Get the change element
+                var changeAmountElement = document.getElementById('changeAmount');
+        
+                // Update the change amount and display accordingly
+                if (change < 0) {
+                    // If change is negative, show debt and red text
+                    changeAmountElement.innerHTML = 'Rp. <span class="text-danger">' + formatCurrency(Math.abs(change)) + '</span> (Hutang)';
+                } else {
+                    // If change is positive or zero, show "Lunas" and green text
+                    changeAmountElement.innerHTML = 'Rp. <span class="text-success">' + formatCurrency(change) + '</span> (Lunas)';
                 }
             }
-        </script>                
+        
+            // Format number as currency with Rp.
+            function formatCurrency(amount) {
+                return amount.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' }).replace('IDR', '').trim();
+            }
+        </script>                            
     </div>
     
     

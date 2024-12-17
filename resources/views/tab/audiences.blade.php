@@ -61,8 +61,8 @@
             data: @json($customers->map(function($customer) {
                 return $customer->vehicles ? $customer->vehicles->count() : 0;
             })),
-            backgroundColor: 'rgba(0, 123, 255, 0.2)',  // Warna biru cerah
-            borderColor: 'rgb(0,255,255)',  // Warna biru cerah
+            backgroundColor: 'rgba(0, 123, 255, 0.2)',
+            borderColor: 'rgb(0,255,255)',
             borderWidth: 3,
             fill: true,
             tension: 0.4
@@ -72,80 +72,14 @@
     const vehiclesPerCustomerChart = new Chart(document.getElementById('vehiclesPerCustomerChart'), {
         type: 'line',
         data: vehiclesPerCustomerData,
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            animation: {
-                duration: 1500,
-                easing: 'easeInOutQuart'
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        stepSize: 1,
-                        font: {
-                            family: 'Arial, sans-serif',
-                            size: 14,
-                            weight: 'bold',
-                            color: '#fff' // Set text color to white
-                        }
-                    },
-                    grid: {
-                        color: 'rgba(0, 0, 0, 0.1)',
-                        borderDash: [5, 5]
-                    }
-                },
-                x: {
-                    grid: {
-                        color: 'rgba(0, 0, 0, 0.1)',
-                        borderDash: [5, 5]
-                    },
-                    ticks: {
-                        font: {
-                            family: 'Arial, sans-serif',
-                            size: 14,
-                            weight: 'bold',
-                            color: '#fff' // Set text color to white
-                        }
-                    }
-                }
-            },
-            plugins: {
-                tooltip: {
-                    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-                    titleColor: '#fff',
-                    bodyColor: '#fff',
-                    bodyFont: {
-                        family: 'Arial, sans-serif',
-                        size: 14
-                    },
-                    callbacks: {
-                        label: function(tooltipItem) {
-                            return tooltipItem.raw + ' kendaraan';
-                        }
-                    }
-                },
-                legend: {
-                    labels: {
-                        font: {
-                            family: 'Arial, sans-serif',
-                            size: 16,
-                            weight: 'bold',
-                            color: '#fff' // Set legend text color to white
-                        }
-                    }
-                }
-            }
-        }
+        options: getChartOptions()
     });
 
-    // Breakdown of vehicles by time periods
     const vehiclesPerPeriodData = {
-        labels: ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'], // Weekdays
+        labels: ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'],
         datasets: [{
             label: 'Jumlah Kendaraan per Pelanggan (Minggu Ini)',
-            data: @json($vehiclesPerWeekData), // Assuming you pass week data here (e.g., count per day of the week)
+            data: @json($vehiclesPerWeekData),
             backgroundColor: 'rgba(75, 192, 192, 0.2)',
             borderColor: 'rgb(127,255,212)',
             borderWidth: 3,
@@ -157,72 +91,7 @@
     const vehiclesPerPeriodChart = new Chart(document.getElementById('vehiclesPerPeriodChart'), {
         type: 'line',
         data: vehiclesPerPeriodData,
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            animation: {
-                duration: 1500,
-                easing: 'easeInOutQuart'
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        stepSize: 1,
-                        font: {
-                            family: 'Arial, sans-serif',
-                            size: 14,
-                            weight: 'bold',
-                            color: '#fff' // Set text color to white
-                        }
-                    },
-                    grid: {
-                        color: 'rgba(0, 0, 0, 0.1)',
-                        borderDash: [5, 5]
-                    }
-                },
-                x: {
-                    grid: {
-                        color: 'rgba(0, 0, 0, 0.1)',
-                        borderDash: [5, 5]
-                    },
-                    ticks: {
-                        font: {
-                            family: 'Arial, sans-serif',
-                            size: 14,
-                            weight: 'bold',
-                            color: '#fff' // Set text color to white
-                        }
-                    }
-                }
-            },
-            plugins: {
-                tooltip: {
-                    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-                    titleColor: '#fff',
-                    bodyColor: '#fff',
-                    bodyFont: {
-                        family: 'Arial, sans-serif',
-                        size: 14
-                    },
-                    callbacks: {
-                        label: function(tooltipItem) {
-                            return tooltipItem.raw + ' kendaraan';
-                        }
-                    }
-                },
-                legend: {
-                    labels: {
-                        font: {
-                            family: 'Arial, sans-serif',
-                            size: 16,
-                            weight: 'bold',
-                            color: '#fff' // Set legend text color to white
-                        }
-                    }
-                }
-            }
-        }
+        options: getChartOptions()
     });
 
     const averageVehiclesPerCustomerData = {
@@ -236,7 +105,7 @@
                 @json($averageVehiclesPerCustomer['thisYear'] ?? 0)
             ],
             backgroundColor: 'rgba(75, 192, 192, 0.2)',
-            borderColor: '	rgb(0,191,255)',
+            borderColor: 'rgb(0,191,255)',
             borderWidth: 3,
             fill: true,
             tension: 0.4
@@ -246,7 +115,11 @@
     const averageVehiclesPerCustomerChart = new Chart(document.getElementById('averageVehiclesPerCustomerChart'), {
         type: 'line',
         data: averageVehiclesPerCustomerData,
-        options: {
+        options: getChartOptions()
+    });
+
+    function getChartOptions() {
+        return {
             responsive: true,
             maintainAspectRatio: false,
             animation: {
@@ -262,17 +135,17 @@
                             family: 'Arial, sans-serif',
                             size: 14,
                             weight: 'bold',
-                            color: '#fff' // Set text color to white
+                            color: '#fff' // Set y-axis text color to white
                         }
                     },
                     grid: {
-                        color: 'rgba(0, 0, 0, 0.1)',
+                        color: 'rgba(255, 255, 255, 0.1)',
                         borderDash: [5, 5]
                     }
                 },
                 x: {
                     grid: {
-                        color: 'rgba(0, 0, 0, 0.1)',
+                        color: 'rgba(255, 255, 255, 0.1)',
                         borderDash: [5, 5]
                     },
                     ticks: {
@@ -280,7 +153,7 @@
                             family: 'Arial, sans-serif',
                             size: 14,
                             weight: 'bold',
-                            color: '#fff' // Set text color to white
+                            color: '#fff' // Set x-axis text color to white
                         }
                     }
                 }
@@ -311,13 +184,17 @@
                     }
                 }
             }
-        }
-    });
+        };
+    }
 
+    // Display current date in white color
     const currentDate = new Date();
     const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     const monthsOfYear = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     const formattedDate = `${daysOfWeek[currentDate.getDay()]}, ${currentDate.getDate()} ${monthsOfYear[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
     
-    document.getElementById('currentDate').innerHTML = `<p style="text-align: center; font-family: 'Arial', sans-serif; font-size: 14px; color: #fff;">${formattedDate}</p>`; // Set date text color to white
+    document.getElementById('currentDate').innerHTML = `
+        <p style="text-align: center; font-family: 'Arial', sans-serif; font-size: 14px; color: #fff;">
+            ${formattedDate}
+        </p>`;
 </script>

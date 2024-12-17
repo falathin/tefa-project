@@ -78,10 +78,21 @@
 
                         <div class="form-group mt-3">
                             <label for="purchase_price">
-                                <i class="bi bi-credit-card"></i> Uang Masuk
+                                <i class="bi bi-credit-card"></i> Harga Satuan
                             </label>
-                            <input type="number" name="purchase_price" id="purchase_price" class="form-control" min="0" value="{{ old('purchase_price', 0) }}" required>
+                            @foreach($spareparts as $index => $sparepart)
+                                <input 
+                                    type="number" 
+                                    name="purchase_price[]" 
+                                    id="purchase_price_{{ $index }}" 
+                                    class="form-control mb-2" 
+                                    min="0" 
+                                    value="{{ old('purchase_price.' . $index, 0) }}" 
+                                    required
+                                >
+                            @endforeach
                         </div>
+                        
 
                         <div class="form-group mt-3">
                             <label for="change">
@@ -92,7 +103,6 @@
 
                         <form method="POST" action="{{ route('transactions.store') }}">
                             @csrf
-                            <!-- Your form fields go here -->
                         
                             <div class="d-flex justify-content-between">
                                 <!-- Kembali button -->
@@ -144,7 +154,7 @@
             }
 
             function updateChange() {
-                const paymentReceived = parseFloat(document.getElementById('purchase_price').value) || 0;
+                const paymentReceived = parseFloat(document.getElementById('purchase_price_{{$index}}').value) || 0;
                 const totalCost = parseFloat(document.getElementById('total_cost').value) || 0;
                 document.getElementById('change').value = (paymentReceived - totalCost).toFixed(2);
             }
@@ -205,7 +215,7 @@
             });
 
             updateTotalCost();
-            document.getElementById('purchase_price').addEventListener('input', updateChange);
+            document.getElementById('purchase_price_{{$index}}').addEventListener('input', updateChange);
 
             // Validasi saat submit form
             document.getElementById('transactionForm').addEventListener('submit', function(e) {
