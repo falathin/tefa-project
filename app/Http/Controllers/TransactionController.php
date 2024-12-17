@@ -34,7 +34,6 @@ class TransactionController extends Controller
 
     public function store(Request $request)
     {
-        // Validasi input
         $request->validate([
             'transaction_type' => 'required|in:sale,purchase',
             'sparepart_id' => 'required|array',
@@ -61,55 +60,44 @@ class TransactionController extends Controller
 
         $total_profit = 0;
 
-        // Iterasi untuk setiap sparepart
         foreach ($request->sparepart_id as $index => $sparepart_id) {
             $sparepart = Sparepart::where('id_sparepart', $sparepart_id)->firstOrFail();
 
-            // Ambil harga beli dari input form
             $purchase_price = $request->purchase_price[$index];
 
             if ($request->transaction_type == 'sale') {
-                // Cek apakah stok cukup untuk transaksi sale
                 if ($sparepart->jumlah >= $request->quantity[$index]) {
-                    // Kurangi stok jika transaksi adalah penjualan
                     $sparepart->decrement('jumlah', $request->quantity[$index]);
 
-                    // Catat perubahan stok ke history
                     SparepartHistory::create([
                         'sparepart_id' => $sparepart_id,
                         'jumlah_changed' => -$request->quantity[$index],
                         'action' => 'subtract',
                     ]);
 
-                    // Hitung profit dari transaksi (profit = harga_jual - harga_beli)
                     $profit_per_sparepart = $sparepart->harga_jual - $purchase_price;
                     $total_profit += $profit_per_sparepart * $request->quantity[$index];
 
-                    // Simpan transaksi sparepart (total_price dihitung berdasarkan harga jual)
                     SparepartTransaction::create([
                         'sparepart_id' => $sparepart_id,
                         'quantity' => $request->quantity[$index],
-                        'purchase_price' => $purchase_price,  // Gunakan harga beli dari form
+                        'purchase_price' => $purchase_price,
                         'total_price' => $sparepart->harga_jual * $request->quantity[$index],  // Gunakan harga jual untuk total harga
                         'transaction_date' => now(),
                         'transaction_type' => 'sale',
                     ]);
                 } else {
-                    // Jika stok tidak cukup
                     return redirect()->back()->withErrors(['sparepart_id' => 'Stok sparepart tidak cukup untuk salah satu item.']);
                 }
             } elseif ($request->transaction_type == 'purchase') {
-                // Tambah stok jika transaksi adalah pembelian
                 $sparepart->increment('jumlah', $request->quantity[$index]);
 
-                // Catat perubahan stok ke history
                 SparepartHistory::create([
                     'sparepart_id' => $sparepart_id,
                     'jumlah_changed' => $request->quantity[$index],
                     'action' => 'add',
                 ]);
 
-                // Simpan transaksi pembelian (total_price dihitung berdasarkan harga beli)
                 SparepartTransaction::create([
                     'sparepart_id' => $sparepart_id,
                     'quantity' => $request->quantity[$index],
@@ -120,31 +108,23 @@ class TransactionController extends Controller
                 ]);
             }
         }
-
-        // Redirect ke halaman transaksi dengan pesan sukses
         return redirect()->route('transactions.index')
             ->with('success', 'Transaksi sparepart berhasil disimpan!');
     }
     public function show($id)
     {
-        // Fetch the transaction with the related sparepart
         $transaction = SparepartTransaction::with('sparepart')->findOrFail($id);
 
-        // Calculate the subtotal (harga_jual * quantity)
         $subtotal = $transaction->sparepart->harga_jual * $transaction->quantity;
 
-        // Set the total price as the same as the subtotal (in case it's a sale)
         $totalPrice = $subtotal;
 
-        // Initialize change as 0
         $change = 0;
 
-        // If it's a sale, calculate the change
         if ($transaction->transaction_type == 'sale') {
             $change = $transaction->purchase_price - $subtotal; // Kembalian = uang bayar - subtotal
         }
 
-        // Return the view with the calculated subtotal, total price, and change
         return view('transactions.show', compact('transaction', 'subtotal', 'totalPrice', 'change'));
     }
 
@@ -191,23 +171,18 @@ class TransactionController extends Controller
             if ($previous_quantity > $request->quantity[$index]) {
                 $difference = $previous_quantity - $request->quantity[$index];
 
-                // Mengembalikan stok sparepart
                 $sparepart->increment('jumlah', $difference);
 
-                // Catat perubahan stok ke history
                 SparepartHistory::create([
                     'sparepart_id' => $sparepart_id,
                     'jumlah_changed' => $difference,
-                    'action' => 'add', // Tindakan pengembalian
+                    'action' => 'add',
                 ]);
             } elseif ($previous_quantity < $request->quantity[$index]) {
-                // Jika jumlah bertambah, lakukan pengurangan
                 $difference = $request->quantity[$index] - $previous_quantity;
 
-                // Mengurangi stok sparepart
                 $sparepart->decrement('jumlah', $difference);
 
-                // Catat perubahan stok ke history
                 SparepartHistory::create([
                     'sparepart_id' => $sparepart_id,
                     'jumlah_changed' => -$difference,
@@ -215,27 +190,20 @@ class TransactionController extends Controller
                 ]);
             }
 
-            // Perhitungan tergantung pada jenis transaksi
             if ($request->transaction_type == 'sale') {
-                // Keuntungan dihitung berdasarkan harga jual dan harga beli
                 $profit_per_sparepart = $sparepart->harga_jual - $sparepart->harga_beli;
                 $total_profit += $profit_per_sparepart * $request->quantity[$index];
 
-                // Transaksi penjualan
-                $transaction->purchase_price = $sparepart->harga_beli;  // Harga beli digunakan untuk menghitung keuntungan
-                $transaction->total_price = $sparepart->harga_jual * $request->quantity[$index]; // Total harga dihitung berdasarkan harga jual
+                $transaction->purchase_price = $sparepart->harga_beli;
+                $transaction->total_price = $sparepart->harga_jual * $request->quantity[$index];
             } elseif ($request->transaction_type == 'purchase') {
-                // Transaksi pembelian
-                $purchase_price = $request->purchase_price; // Ambil harga beli dari input form
+                $purchase_price = $request->purchase_price;
 
-                // Menghitung total harga berdasarkan harga beli yang dimasukkan
                 $transaction->purchase_price = $purchase_price;
                 $transaction->total_price = $purchase_price * $request->quantity[$index];
 
-                // Tambah stok sparepart sesuai dengan jumlah pembelian
                 $sparepart->increment('jumlah', $request->quantity[$index]);
 
-                // Catat perubahan stok ke history
                 SparepartHistory::create([
                     'sparepart_id' => $sparepart_id,
                     'jumlah_changed' => $request->quantity[$index],
@@ -243,7 +211,6 @@ class TransactionController extends Controller
                 ]);
             }
 
-            // Update transaksi dengan data terbaru
             $transaction->sparepart_id = $sparepart_id;
             $transaction->quantity = $request->quantity[$index];
             $transaction->transaction_date = now();
@@ -251,7 +218,6 @@ class TransactionController extends Controller
             $transaction->save();
         }
 
-        // Redirect ke halaman transaksi dengan pesan sukses
         return redirect()->route('transactions.index')
             ->with('success', 'Transaksi sparepart berhasil diperbarui!');
     }

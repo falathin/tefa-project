@@ -94,13 +94,10 @@
                 var amountPaid = parseFloat('{{ $transaction->purchase_price }}');
                 var totalPrice = parseFloat('{{ $totalPrice }}');
         
-                // Calculate the change
                 var change = amountPaid - totalPrice;
         
-                // Get the change element
                 var changeAmountElement = document.getElementById('changeAmount');
         
-                // Update the change amount and display accordingly
                 if (change < 0) {
                     // If change is negative, show debt and red text
                     changeAmountElement.innerHTML = 'Rp. <span class="text-danger">' + formatCurrency(Math.abs(change)) + '</span> (Hutang)';
