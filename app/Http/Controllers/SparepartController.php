@@ -2,15 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Sparepart;
-use App\Models\SparepartHistory;
-use Illuminate\Http\Request;
 use Carbon\Carbon;
+use App\Models\Sparepart;
+use Illuminate\Http\Request;
+use App\Models\SparepartHistory;
+use Illuminate\Support\Facades\Gate;
 
 class SparepartController extends Controller
 {
     public function index(Request $request)
     {
+        // Admin & kasir
+        if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
+            abort(403, 'Butuh level Admin & Kasir');
+        }
         $search = $request->search;
         $spareparts = Sparepart::when($search, function($query, $search) {
             return $query->where('nama_sparepart', 'like', '%' . $search . '%');
@@ -23,6 +28,10 @@ class SparepartController extends Controller
 
     public function create()
     {
+        // Admin & kasir
+        if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
+            abort(403, 'Butuh level Admin & Kasir');
+        }
         return view('sparepart.create');
     }
 
@@ -63,12 +72,20 @@ class SparepartController extends Controller
 
     public function show($sparepart_id)
     {
+        // Admin & kasir
+        if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
+            abort(403, 'Butuh level Admin & Kasir');
+        }
         $sparepart = Sparepart::findOrFail($sparepart_id);
         return view('sparepart.show', compact('sparepart'));
     }
 
     public function edit($id)
     {
+        // Admin & kasir
+        if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
+            abort(403, 'Butuh level Admin & Kasir');
+        }
         $sparepart = Sparepart::findOrFail($id);
         return view('sparepart.edit', compact('sparepart'));
     }

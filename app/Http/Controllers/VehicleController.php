@@ -23,6 +23,7 @@ class VehicleController extends Controller
         $customer = Customer::findOrFail($customerId);
         return view('vehicle.create', compact('customer'));
     }
+    
 
     public function store(Request $request)
     {

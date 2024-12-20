@@ -21,7 +21,9 @@
             </div>
 
             <select class="form-select mb-4 w-50" aria-label="Pilih level akun" id="level" name="level" required>
-                <option value="engineer">Engineer</option>
+                @if (Gate::allows('isEngineer'))
+                    <option value="engineer">Engineer</option>
+                @endif
                 <option value="admin">Admin</option>
                 <option value="bendahara">Bendahara</option>
                 <option value="kasir" selected>Kasir</option>

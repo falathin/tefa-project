@@ -17,6 +17,10 @@ class ServiceController extends Controller
 {
     public function index(Request $request)
     {
+        // Admin & kasir
+        if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
+            abort(403, 'Butuh level Admin & Kasir');
+        }
         $paymentStatus = $request->get('payment_status', 'all');
         $request->session()->put('payment_status', $paymentStatus);
         

@@ -21,37 +21,38 @@
         @endif
 
         <!-- Sparepart Menu -->
-        <li class="nav-item animate__animated animate__slideInLeft animate__delay-4.8s">
-            <a class="nav-link {{ Request::is('sparepart*') ? 'active' : '' }}" data-bs-toggle="collapse"
-                href="#sparepartMenu" aria-expanded="false" aria-controls="sparepartMenu">
-                <i class="mdi mdi-toolbox-outline menu-icon"></i>
-                <span class="menu-title">Suku Cadang</span>
-                <i class="menu-arrow"></i>
-            </a>
-            <div class="collapse {{ Request::is('sparepart*') ? 'show' : '' }}" id="sparepartMenu">
-                <ul class="nav flex-column sub-menu">
-                    @if (Gate::allows(''))
-                        
-                    @endif
-                    <li class="nav-item animate__animated animate__slideInLeft animate__delay-6.3s">
-                        <a class="nav-link {{ Request::is('sparepart') ? 'active' : '' }}"
-                            href="{{ route('sparepart.index') }}">Data Suku Cadang</a>
-                    </li>
-                    <li class="nav-item animate__animated animate__slideInLeft animate__delay-7.8s">
-                        <a class="nav-link {{ Request::is('sparepart/transaction*') ? 'active' : '' }}"
-                            href="{{ route('transactions.index') }}">Transaksi Suku Cadang</a>
-                    </li>
-                </ul>
-            </div>
-        </li>
+        @if (Gate::allows('isAdminOrEngineer') || Gate::allows('isKasir'))
+            <li class="nav-item animate__animated animate__slideInLeft animate__delay-4.8s">
+                <a class="nav-link {{ Request::is('sparepart*') ? 'active' : '' }}" data-bs-toggle="collapse"
+                    href="#sparepartMenu" aria-expanded="false" aria-controls="sparepartMenu">
+                    <i class="mdi mdi-toolbox-outline menu-icon"></i>
+                    <span class="menu-title">Suku Cadang</span>
+                    <i class="menu-arrow"></i>
+                </a>
+                <div class="collapse {{ Request::is('sparepart*') ? 'show' : '' }}" id="sparepartMenu">
+                    <ul class="nav flex-column sub-menu">
+                        <li class="nav-item animate__animated animate__slideInLeft animate__delay-6.3s">
+                            <a class="nav-link {{ Request::is('sparepart') ? 'active' : '' }}"
+                                href="{{ route('sparepart.index') }}">Data Suku Cadang</a>
+                        </li>
+                        <li class="nav-item animate__animated animate__slideInLeft animate__delay-7.8s">
+                            <a class="nav-link {{ Request::is('sparepart/transaction*') ? 'active' : '' }}"
+                                href="{{ route('transactions.index') }}">Transaksi Suku Cadang</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+        @endif
 
-        <!-- Riwayat Service Menu Item -->
-        <li class="nav-item animate__animated animate__slideInLeft animate__delay-9.3s">
-            <a class="nav-link {{ Request::is('service*') ? 'active' : '' }}" href="{{ route('service.index') }}">
-                <i class="mdi mdi-history menu-icon"></i>
-                <span class="menu-title">Riwayat Layanan</span>
-            </a>
-        </li>
+        @if (Gate::allows('isAdminOrEngineer') || Gate::allows('isKasir'))
+            <!-- Riwayat Service Menu Item -->
+            <li class="nav-item animate__animated animate__slideInLeft animate__delay-9.3s">
+                <a class="nav-link {{ Request::is('service*') ? 'active' : '' }}" href="{{ route('service.index') }}">
+                    <i class="mdi mdi-history menu-icon"></i>
+                    <span class="menu-title">Riwayat Layanan</span>
+                </a>
+            </li>
+        @endif
 
         <li class="nav-item animate__animated animate__slideInLeft animate__delay-10.8s">
             <a class="nav-link {{ Request::is('documentation') ? 'active' : '' }}"

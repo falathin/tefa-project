@@ -6,11 +6,16 @@ use App\Models\SparepartTransaction;
 use App\Models\Sparepart;
 use App\Models\SparepartHistory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class TransactionController extends Controller
 {
     public function index(Request $request)
     {
+        // Admin & kasir
+        if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
+            abort(403, 'Butuh level Admin & Kasir');
+        }
         $search = $request->input('search');
 
         $transactions = SparepartTransaction::with('sparepart')

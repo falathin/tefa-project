@@ -37,7 +37,7 @@ class ProfileController extends Controller
 
         $data->save();
 
-        return back()->with('status', 'Ubah profil berhasil!');
+        return back()->with('statusBerhasil', 'Ubah profil berhasil!');
     }
 
     function updatePassword (Request $request) {
@@ -61,6 +61,6 @@ class ProfileController extends Controller
             'password' => Hash::make($validated['new_password']),
         ]);
 
-        return back()->with('status', 'Ubah password berhasil! ');
+        return back()->with('statusBerhasil', 'Ubah password berhasil! ');
     }
 }
