@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Service;
 use App\Models\Vehicle;
 use App\Models\Customer;
 // At the top of your VehicleController.php (or any relevant controller)
-use App\Models\Service;
+use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
 class VehicleController extends Controller
@@ -15,6 +16,10 @@ class VehicleController extends Controller
     // Show the form to add a new vehicle
     public function create($customerId)
     {
+        // Admin & kasir
+        if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
+            abort(403, 'Butuh level Admin & Kasir');
+        }
         $customer = Customer::findOrFail($customerId);
         return view('vehicle.create', compact('customer'));
     }
@@ -52,6 +57,10 @@ class VehicleController extends Controller
 
     public function show($id, Request $request)
     {
+        // Admin & kasir
+        if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
+            abort(403, 'Butuh level Admin & Kasir');
+        }
         $vehicle = Vehicle::findOrFail($id);
         
         $services = Service::where('vehicle_id', $id)
@@ -67,6 +76,10 @@ class VehicleController extends Controller
     // Show the form to edit the vehicle data
     public function edit($id)
     {
+        // Admin & kasir
+        if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
+            abort(403, 'Butuh level Admin & Kasir');
+        }
         $vehicle = Vehicle::findOrFail($id);
         return view('vehicle.edit', compact('vehicle'));
     }

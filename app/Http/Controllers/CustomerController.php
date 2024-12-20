@@ -2,43 +2,52 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Customer;
-use App\Models\Vehicle;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
+use App\Models\Vehicle;
+use App\Models\Customer;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 
 class CustomerController extends Controller
 {
     public function index(Request $request)
     {
+        // Admin & kasir
+        if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
+            abort(403, 'Butuh level Admin & Kasir');
+        }
         $searchTerm = $request->input('search');
         $deletedSearch = $request->input('deletedSearch');
-        
+
         $customers = Customer::when($searchTerm, function ($query, $searchTerm) {
             return $query->where('name', 'like', '%' . $searchTerm . '%')
-                         ->orWhere('contact', 'like', '%' . $searchTerm . '%')
-                         ->orWhere('address', 'like', '%' . $searchTerm . '%');
+                ->orWhere('contact', 'like', '%' . $searchTerm . '%')
+                ->orWhere('address', 'like', '%' . $searchTerm . '%');
         })
-        ->orderBy('created_at', 'desc')  // Ordering by created_at in descending order
-        ->paginate(5);
-        
+            ->orderBy('created_at', 'desc')  // Ordering by created_at in descending order
+            ->paginate(5);
+
         $deletedCustomers = Customer::onlyTrashed()
             ->when($deletedSearch, function ($query, $deletedSearch) {
                 return $query->where('name', 'like', '%' . $deletedSearch . '%')
-                             ->orWhere('contact', 'like', '%' . $deletedSearch . '%')
-                             ->orWhere('address', 'like', '%' . $deletedSearch . '%');
+                    ->orWhere('contact', 'like', '%' . $deletedSearch . '%')
+                    ->orWhere('address', 'like', '%' . $deletedSearch . '%');
             })
             ->orderBy('created_at', 'desc')  // Ordering by created_at in descending order
             ->paginate(5);
-        
+
         $noData = $customers->isEmpty() && $deletedCustomers->isEmpty();
-        
+
         return view('customer.index', compact('customers', 'deletedCustomers', 'noData', 'searchTerm', 'deletedSearch'));
-    }    
+    }
 
     public function create()
     {
+        // Admin & kasir
+        if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
+            abort(403, 'Butuh level Admin & Kasir');
+        }
         return view('customer.create');
     }
 
@@ -71,7 +80,7 @@ class CustomerController extends Controller
         }
 
         return redirect()->route('customer.show', $customer->id)
-                        ->with('success', 'Customer and vehicles created successfully!');
+            ->with('success', 'Customer and vehicles created successfully!');
     }
 
     public function edit($id)
@@ -82,6 +91,7 @@ class CustomerController extends Controller
 
     public function update(Request $request, $id)
     {
+        
         $request->validate([
             'name' => 'required|string|max:255',
             'contact' => 'nullable|regex:/^[0-9+\-()\s]*$/|max:255',
@@ -92,24 +102,28 @@ class CustomerController extends Controller
         $customer->update($request->only(['name', 'contact', 'address']));
 
         return redirect()->route('customer.show', $customer->id)
-                        ->with('success', 'Customer updated successfully!');
+            ->with('success', 'Customer updated successfully!');
     }
 
     public function show(Request $request, $id)
     {
+        // Admin & kasir
+        if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
+            abort(403, 'Butuh level Admin & Kasir');
+        }
         $customer = Customer::findOrFail($id);
 
         $customer->contact = $customer->contact ?: 'Tidak ada data kontak';
         $customer->address = $customer->address ?: 'Tidak ada data alamat';
 
         $searchTerm = $request->input('search');
-        
+
         $vehicles = $customer->vehicles()
-                             ->when($searchTerm, function ($query, $searchTerm) {
-                                 return $query->where('license_plate', 'like', '%' . $searchTerm . '%')
-                                              ->orWhere('vehicle_type', 'like', '%' . $searchTerm . '%');
-                             })
-                             ->paginate(3);
+            ->when($searchTerm, function ($query, $searchTerm) {
+                return $query->where('license_plate', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('vehicle_type', 'like', '%' . $searchTerm . '%');
+            })
+            ->paginate(3);
 
         return view('customer.show', compact('customer', 'vehicles', 'searchTerm'));
     }

@@ -1,5 +1,11 @@
 @extends('layouts.app') @section('content')
-    <h1 class="welcome-text" id="greeting">Selamat Pagi, <span class="fw-bold welcome-text">Halo Dunia</span></h1>
+    @if (session('statusBerhasil'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('statusBerhasil') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+    <h1 class="welcome-text" id="greeting">Selamat Pagi, <span class="fw-bold welcome-text">Traveler ~</span></h1>
     <h3 class="welcome-sub-text">Ringkasan kinerja Anda minggu ini</h3>
     <script>
         const hour = new Date().getHours();
@@ -12,7 +18,7 @@
             greetingText = 'Selamat Malam';
         }
         document.getElementById('greeting').innerHTML = greetingText +
-            ', <span class="fw-bold welcome-text">Halo Dunia</span>';
+            ', <span class="fw-bold welcome-text">{{ Auth::user()->name }}</span>';
     </script> <!-- partial -->
     <div class="main-paanel">
         <div class="content-wrapper">
@@ -22,26 +28,30 @@
                         <div class="d-sm-flex align-items-center justify-content-between border-bottom">
                             <ul class="nav nav-tabs" role="tablist">
                                 <li class="nav-item">
-                                    <a class="nav-link active ps-0" id="home-tab" data-bs-toggle="tab" href="#overview" role="tab" aria-controls="overview" aria-selected="true">
+                                    <a class="nav-link active ps-0" id="home-tab" data-bs-toggle="tab" href="#overview"
+                                        role="tab" aria-controls="overview" aria-selected="true">
                                         <i class="fas fa-home"></i> Gambaran Umum
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" id="profile-tab" data-bs-toggle="tab" href="#audiences" role="tab" aria-selected="false">
+                                    <a class="nav-link" id="profile-tab" data-bs-toggle="tab" href="#audiences"
+                                        role="tab" aria-selected="false">
                                         <i class="fas fa-users"></i> Audiens
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" id="contact-tab" data-bs-toggle="tab" href="#demographics" role="tab" aria-selected="false">
+                                    <a class="nav-link" id="contact-tab" data-bs-toggle="tab" href="#demographics"
+                                        role="tab" aria-selected="false">
                                         <i class="fas fa-chart-bar"></i> Demografi
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link border-0" id="more-tab" data-bs-toggle="tab" href="#more" role="tab" aria-selected="false">
+                                    <a class="nav-link border-0" id="more-tab" data-bs-toggle="tab" href="#more"
+                                        role="tab" aria-selected="false">
                                         <i class="fas fa-ellipsis-h"></i> Lainnya
                                     </a>
                                 </li>
-                            </ul>                            
+                            </ul>
                             <div>
                                 <div class="btn-wrapper">
                                     <a href="#" class="btn btn-outline-dark align-items-center" id="shareBtn">
@@ -186,26 +196,26 @@
                                             printWindow.document.write('<html><head><title>Print Preview</title>');
                                             printWindow.document.write(
                                                 '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">'
-                                                );
+                                            );
                                             printWindow.document.write('<style>');
                                             printWindow.document.write('@page { size: A4; margin: 0; padding: 0; }');
                                             printWindow.document.write(
                                                 'body { font-family: "Roboto", sans-serif; margin: 20px; padding: 20px; background-color: #f5f5f5; }'
-                                                );
+                                            );
                                             printWindow.document.write(
                                                 'h2 { text-align: center; color: #4CAF50; font-size: 28px; font-weight: 700; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; }'
-                                                );
+                                            );
                                             printWindow.document.write(
                                                 'table { width: 100%; border-collapse: collapse; margin-top: 20px; }');
                                             printWindow.document.write(
                                                 'th, td { padding: 12px; text-align: center; border: 1px solid #ddd; font-size: 14px; color: #333; }'
-                                                );
+                                            );
                                             printWindow.document.write(
                                                 'th { background-color: #4CAF50; color: white; font-weight: 500; }');
                                             printWindow.document.write('tr:nth-child(even) { background-color: #f9f9f9; }');
                                             printWindow.document.write(
                                                 '.statistics-details { padding: 15px; font-size: 14px; background-color: #fff; border-radius: 8px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); margin-top: 20px; }'
-                                                );
+                                            );
                                             printWindow.document.write('</style>');
                                             printWindow.document.write('</head><body>');
                                             printWindow.document.write(printContent);
@@ -220,6 +230,29 @@
                         <div class="tab-content tab-content-basic">
                             @include('tab.overview')
                         </div>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        ...
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-primary">Save changes</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>

@@ -40,13 +40,44 @@
     <div class="container-scroller flex-grow-1">
         <!-- Navbar -->
         @include('partials.navbar')
-
+        
         <div class="container-fluid page-body-wrapper d-flex flex-grow-1">
             <!-- Sidebar -->
             @include('partials.sidebar')
-
+            
             <div class="main-panel flex-grow-1">
                 <div class="content-wrapper d-flex flex-column flex-grow-1">
+                    
+                    {{-- Modal --}}
+                    <div class="modal" tabindex="-1" id="exampleModal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Logout</h5>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Konfirmasi logout?</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Kembali</button>
+                                    <form action="{{ route('logout')  }}" method="GET">
+                                        @csrf
+                                        <button type="submit" class="btn btn-danger fw-bold">Logout</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @if (session('confirmLogout'))
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function() {
+                            var myModal = new bootstrap.Modal(document.getElementById('exampleModal'));
+                                myModal.show();
+                            });
+                            </script>
+                    @endif
+
+                    
                     <!-- Content -->
                     @yield('content')
                 </div>

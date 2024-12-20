@@ -184,7 +184,7 @@
                         <button type="reset" class="btn btn-warning btn-md">
                             <i class="fas fa-redo"></i> Reset Form
                         </button>
-                        <button type="button" class="btn btn-success btn-md" id="submitButton">
+                        <button type="submit" class="btn btn-success btn-md" id="submitButton">
                             <i class="fas fa-save"></i> Simpan Service
                         </button>
                     </div>

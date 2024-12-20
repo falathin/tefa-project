@@ -91,29 +91,13 @@
 
 <footer class="footer">
     <div class="d-sm-flex justify-content-center justify-content-sm-between container">
-        <span class="text-muted text-center text-sm-left d-block d-sm-inline-block wave-text">
-            <span>Connect</span> 
-            <span>with</span>
-            <a href="https://www.linkedin.com/in/ibrahim-ahmad-falathin-b57243334/" target="_blank" class="font-weight-bold text-primary">
-                <span class="wave-icon"><i class="fab fa-linkedin social-icon"></i></span>
-                <span>Ibrahim Ahmad Falathin</span>
-            </a>
-            <span>on</span>
-            <span>LinkedIn</span> 
-            <span> - </span> 
-            <span>Software</span> 
-            <span>Engineering</span> 
-            <span>Student</span> 
-            <span>&</span> 
-            <span>Aspiring</span> 
-            <span>Developer</span>.
-        </span>
+        
     
         <span class="float-none float-sm-end d-block mt-1 mt-sm-0 text-center">
-            <small>Redesigned by 
-                <a href="https://www.instagram.com/i.a.falathin/" target="_blank" class="font-weight-bold text-primary"> 
+            <small>Developed by
+                <a href="https://www.instagram.com/iteenagers_?igsh=MWpraWN5bTJuejk4bw==" target="_blank" class="font-weight-bold text-primary"> 
                     <span class="wave-icon"><i class="fab fa-instagram social-icon"></i></span>
-                    Ibrahim Ahmad Falathin</a>
+                    Iteens</a>
             </small>
         </span>
     </div>

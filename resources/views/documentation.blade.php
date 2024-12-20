@@ -367,12 +367,9 @@
         </p>
         <!-- WhatsApp Button for Bugs -->
         <div class="mt-4 mb-4 ml-3">
-            <a href="https://wa.me/6285719443650" class="btn btn-success btn-md" target="_blank">
+            <a href="https://wa.me/6285892819795" class="btn btn-success btn-md" target="_blank">
                 <i class="fab fa-whatsapp"></i>&nbsp; Chat Laporkan (Jika ada Bug)
             </a>
         </div>
     </section>
-
-
-
 @endsection

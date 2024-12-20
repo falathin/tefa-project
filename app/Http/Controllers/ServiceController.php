@@ -5,12 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Service;
 use App\Models\Vehicle;
 use App\Models\Customer;
-use App\Models\SparepartHistory;
-use App\Models\ServiceSparepart;
 use App\Models\Sparepart;
-use App\Models\ServiceChecklist;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use App\Models\ServiceChecklist;
+use App\Models\ServiceSparepart;
+use App\Models\SparepartHistory;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class ServiceController extends Controller
 {
@@ -68,6 +69,10 @@ class ServiceController extends Controller
     
     public function create($vehicle_id)
     {
+        // Admin & kasir
+        if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
+            abort(403, 'Butuh level Admin & Kasir');
+        }
         $vehicle = Vehicle::findOrFail($vehicle_id);
         $spareparts = Sparepart::all();
         return view('service.create', compact('vehicle', 'spareparts'));
