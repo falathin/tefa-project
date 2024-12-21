@@ -78,7 +78,7 @@
 
                         <div class="form-group mt-3">
                             <label for="purchase_price">
-                                <i class="bi bi-credit-card"></i> Harga Satuan
+                                <i class="bi bi-credit-card"></i> Uang tunai
                             </label>
                             @foreach($spareparts as $index => $sparepart)
                                 <input 
