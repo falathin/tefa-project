@@ -11,7 +11,7 @@
             </a>
 
             <a class="navbar-brand brand-logo-mini" href="{{ url('/') }}">
-                <img src="{{ asset('assets/images/logo.svg') }}" alt="logo"/>
+                <img src="{{ asset('assets/images/logo.svg') }}" alt="logo" />
             </a>
         </div>
     </div>
@@ -52,15 +52,14 @@
                                 class="dropdown-item-icon mdi mdi-message-text-outline text-primary me-2"></i>
                             Buat akun baru
                         </a>
+                        <a class="dropdown-item" href="{{ route('hapusAkunUser') }}"><i
+                                class="dropdown-item-icon mdi mdi-help-circle-outline text-primary me-2"></i>
+                            Hapus akun</a>
                     @endif
                     @if (Auth::user()->level == 'engineer')
                         <a class="dropdown-item" href="{{ route('gantiEmergencyPassword') }}"><i
                                 class="dropdown-item-icon mdi mdi-calendar-check-outline text-primary me-2"></i>
                             Ganti Emergency password</a>
-
-                        <a class="dropdown-item" href="{{ route('hapusAkunUser') }}"><i
-                                class="dropdown-item-icon mdi mdi-help-circle-outline text-primary me-2"></i>
-                            Hapus akun</a>
                     @endif
 
                     <a class="dropdown-item" href="{{ route('confirm.logout') }}"><i

@@ -1,11 +1,11 @@
 <x-layout></x-layout>
-<x-nav-auth>Hapus Akun</x-nav-auth>
 @if (session('status'))
     <div class="alert alert-light alert-dismissible fade show" role="alert">
         {{ session('status') }}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 @endif
+<x-nav-auth>Hapus Akun</x-nav-auth>
 <form class="d-flex w-50 mt-5 container" method="POST" action="{{ route('hapusAkunUser') }}">
     @csrf
     <input class="form-control me-2" type="number" placeholder="Masukkan ID akun" id="id" name="id"
