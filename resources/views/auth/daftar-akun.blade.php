@@ -20,14 +20,21 @@
                     value="{{ old('email') }}" required autocomplete="email">
             </div>
 
-            <select class="form-select mb-4 w-50" aria-label="Pilih level akun" id="level" name="level" required>
-                @if (Gate::allows('isEngineer'))
-                    <option value="engineer">Engineer</option>
-                @endif
-                <option value="admin">Admin</option>
-                <option value="bendahara">Bendahara</option>
-                <option value="kasir" selected>Kasir</option>
-            </select>
+            <div class="row">
+                <select class="col-6 form-select mb-4" aria-label="Pilih level akun" id="level" name="level" required>
+                    @if (Gate::allows('isEngineer'))
+                        <option value="engineer">Engineer</option>
+                    @endif
+                    <option value="admin">Admin</option>
+                    <option value="bendahara">Bendahara</option>
+                    <option value="kasir" selected>Kasir</option>
+                </select>
+                <select class="col-6 form-select mb-4" aria-label="Pilih level akun" id="jurusan" name="jurusan" required>
+                    <option value="TKRO">TKRO</option>
+                    <option value="TBSM">TBSM</option>
+                </select>
+            </div>
+
 
             <div class="mb-1">
                 <label for="new_password" class="form-label">Masukkan Password</label>
