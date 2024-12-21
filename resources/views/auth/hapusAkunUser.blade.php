@@ -28,6 +28,11 @@
             $i = 1;
         @endphp
         @foreach ($users->sortBy('id') as $user)
+        @if (! Gate::allows('isEngineer'))
+            @if ($user->level == 'engineer')
+                @continue
+            @endif
+        @endif
             <tr>
                 <th scope="row">{{ $i }}</th>
                 <td>{{ $user->id }}</td>

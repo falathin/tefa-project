@@ -18,10 +18,24 @@ class hapusAkunUserController extends Controller
 
     public function hapusAkun(Request $request)
     {
+        // @foreach ($users->sortBy('id') as $user)
+        // @if (! Gate::allows('isEngineer'))
+        //     @if ($user->level == 'engineer')
+        //         @continue
+        //     @endif
+        // @endif
+        
         $data = $request->validate([
             'id' => 'required',
         ]);
         $hapusAkun = User::find($data['id']);
+        
+
+        if(! Gate::allows('isEngineer')) {
+            if ($hapusAkun->level == 'engineer') {
+                return back()->with('status', 'super akun tidak dapat dihapus');
+            }
+        }
         
         if ($hapusAkun) {
             $hapusAkun->delete();

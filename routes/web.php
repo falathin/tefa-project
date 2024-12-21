@@ -102,9 +102,9 @@ Route::middleware('auth')->group(function () {
         Route::get('create/{vehicle_id}', [ServiceController::class, 'create'])->name('create');
         Route::post('/', [ServiceController::class, 'store'])->name('store');
         Route::get('{id}', [ServiceController::class, 'show'])->name('show');
-        Route::get('{id}/edit', [ServiceController::class, 'edit'])->name('edit');
-        Route::put('{id}', [ServiceController::class, 'update'])->name('update');
-        Route::delete('{id}', [ServiceController::class, 'destroy'])->name('destroy');
+        // Route::get('{id}/edit', [ServiceController::class, 'edit'])->name('edit');
+        // Route::put('{id}', [ServiceController::class, 'update'])->name('update');
+        // Route::delete('{id}', [ServiceController::class, 'destroy'])->name('destroy');
 
         Route::post('{id}/checklist', [ServiceController::class, 'addChecklist'])->name('addChecklist');
         Route::patch('/checklist/{id}', [ServiceController::class, 'updateChecklistStatus'])->name('updateChecklistStatus');
