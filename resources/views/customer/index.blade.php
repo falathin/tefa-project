@@ -12,7 +12,6 @@
                     <i class="bi bi-plus-circle me-2"></i> Tambah Pelanggan
                 </a>
             </div>
-
                     <!-- Alert Sukses -->
                     @if(session('success'))
                         <div class="alert alert-success alert-dismissible fade show">

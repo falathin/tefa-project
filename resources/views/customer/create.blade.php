@@ -12,6 +12,9 @@
             <form action="{{ route('customer.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
 
+                {{-- jurusan --}}
+                <input type="text" readonly value="{{ Auth::user()->jurusan }}" name="jurusan" id="jurusan">
+
                 <!-- Customer Data Section -->
                 <h4 class="mb-4"><i class="fas fa-user"></i> Data Pelanggan</h4>
                 <div class="row">

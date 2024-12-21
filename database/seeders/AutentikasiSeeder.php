@@ -19,24 +19,35 @@ class AutentikasiSeeder extends Seeder
                 'name' => 'Engineer',
                 'email' => 'iteens.tefa@gmail.com',
                 'level' => 'engineer',
+                'jurusan' => 'TKRO',
                 'password' => bcrypt('asu12345')
             ],
             [
                 'name' => 'Admin',
                 'email' => 'admin@gmail.com',
                 'level' => 'admin',
+                'jurusan' => 'TKRO',
                 'password' => bcrypt('asu12345')
             ],
             [
                 'name' => 'Bendahara',
                 'email' => 'bendahara@gmail.com',
                 'level' => 'bendahara',
+                'jurusan' => 'TKRO',
                 'password' => bcrypt('asu12345')
             ],
             [
                 'name' => 'Kasir',
                 'email' => 'kasir@gmail.com',
                 'level' => 'kasir',
+                'jurusan' => 'TKRO',
+                'password' => bcrypt('asu12345')
+            ],
+            [
+                'name' => 'admin tbsm',
+                'email' => 'AdminTbsm@gmail.com',
+                'level' => 'admin',
+                'jurusan' => 'TBSM',
                 'password' => bcrypt('asu12345')
             ],
         ];

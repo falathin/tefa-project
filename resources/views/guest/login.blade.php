@@ -11,11 +11,11 @@
                 <label for="email" class="form-label">Email Address</label>
                 <input type="email" class="form-control" id="email" name="email" placeholder="contoh@gmail.com"
                     value="{{ old('email') }}" required autofocus autocomplete="username">
-                @error('email')
+                {{-- @error('email')
                     <div class="text-red-500">
                         {{ $message }}
                     </div>
-                @enderror
+                @enderror --}}
             </div>
             <div class="mb-3">
                 <label for="password" class="form-label">Password</label>

@@ -8,6 +8,7 @@ use App\Observers\SparepartObserver;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use App\Http\Middleware\LevelMiddleware;
+use App\Models\Customer;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -34,6 +35,10 @@ class AppServiceProvider extends ServiceProvider
 
         Gate::define('isKasir', function(User $user) {
             return $user->level == 'kasir';
+        });        
+
+        Gate::define('isSameJurusan', function (User $user, Customer $customer) {
+            return $user->jurusan == $customer->jurusan;
         });
     }
 }

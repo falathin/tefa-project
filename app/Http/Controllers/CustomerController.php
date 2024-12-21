@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\Vehicle;
 use App\Models\Customer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
@@ -17,14 +18,18 @@ class CustomerController extends Controller
         if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
             abort(403, 'Butuh level Admin & Kasir');
         }
+
+        $jurusan = Auth::user()->jurusan;
         $searchTerm = $request->input('search');
         $deletedSearch = $request->input('deletedSearch');
 
         $customers = Customer::when($searchTerm, function ($query, $searchTerm) {
             return $query->where('name', 'like', '%' . $searchTerm . '%')
                 ->orWhere('contact', 'like', '%' . $searchTerm . '%')
-                ->orWhere('address', 'like', '%' . $searchTerm . '%');
+                ->orWhere('address', 'like', '%' . $searchTerm . '%')
+            ;
         })
+            ->where('jurusan', 'like', $jurusan)
             ->orderBy('created_at', 'desc')  // Ordering by created_at in descending order
             ->paginate(5);
 
@@ -38,6 +43,7 @@ class CustomerController extends Controller
             ->paginate(5);
 
         $noData = $customers->isEmpty() && $deletedCustomers->isEmpty();
+        // var_dump($jurusan['']);
 
         return view('customer.index', compact('customers', 'deletedCustomers', 'noData', 'searchTerm', 'deletedSearch'));
     }
@@ -63,9 +69,10 @@ class CustomerController extends Controller
             'vehicles.*.production_year' => 'nullable|integer|lte:' . Carbon::now()->year,
             'vehicles.*.engine_code' => 'nullable|string|max:255',
             'vehicles.*.image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'jurusan' => 'required'
         ]);
 
-        $customer = Customer::create($request->only(['name', 'contact', 'address']));
+        $customer = Customer::create($request->only(['name', 'contact', 'address', 'jurusan']));
 
         if ($request->has('vehicles')) {
             foreach ($request->vehicles as $vehicle) {
@@ -85,13 +92,16 @@ class CustomerController extends Controller
 
     public function edit($id)
     {
+        $customer = Customer::find($id);
+        if (! Gate::allows('isSameJurusan', [$customer])) {
+            abort(403, 'data tidak ditemukan!!');
+        }
         $customer = Customer::with('vehicles')->findOrFail($id);
         return view('customer.edit', compact('customer'));
     }
 
     public function update(Request $request, $id)
     {
-        
         $request->validate([
             'name' => 'required|string|max:255',
             'contact' => 'nullable|regex:/^[0-9+\-()\s]*$/|max:255',
@@ -107,6 +117,11 @@ class CustomerController extends Controller
 
     public function show(Request $request, $id)
     {
+        $customer = Customer::find($id);
+
+        if (! Gate::allows('isSameJurusan', [$customer])) {
+            abort(403, 'data tidak ditemukan!!');
+        }
         // Admin & kasir
         if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
             abort(403, 'Butuh level Admin & Kasir');

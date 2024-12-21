@@ -21,7 +21,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'level'
+        'level',
+        'jurusan'
     ];
 
     /**
@@ -46,4 +47,10 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+//     public function customers()
+// {
+//     return $this->hasMany(Customer::class);
+// }
+
 }
