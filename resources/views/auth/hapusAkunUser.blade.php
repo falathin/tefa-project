@@ -39,6 +39,7 @@
                 <td>{{ $user->name }}</td>
                 <td>{{ $user->email }}</td>
                 <td>{{ $user->level }}</td>
+                <td>{{ $user->jurusan }}</td>
             </tr>
             @php
                 $i++;
