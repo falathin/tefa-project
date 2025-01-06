@@ -237,15 +237,14 @@ aria-labelledby="overview">
             <div class="card-body">
                 <div class="d-sm-flex justify-content-between align-items-center">
                     <div>
-                        <h4 class="card-title card-title-dash text-white">Statistik Kinerja
-                        </h4>
-                        <p class="card-subtitle card-subtitle-dash text-white">Pantau
-                            perkembangan pengunjung, sparepart, dan kendaraan untuk
-                            memastikan pertumbuhan dan efisiensi yang optimal.</p>
+                        <h4 class="card-title card-title-dash text-white">Statistik Kinerja</h4>
+                        <p class="card-subtitle card-subtitle-dash text-white">
+                            Pantau perkembangan pengunjung, sparepart, dan kendaraan untuk memastikan pertumbuhan dan efisiensi yang optimal.
+                        </p>
                     </div>
+                    <button class="btn btn-warning" onclick="printDailyReport()">Print Laporan Harian</button>
                 </div>
-                <div class="table-responsive"
-                    style="max-height: 300px; overflow-y: auto;">
+                <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
                     <table class="table table-bordered table-hover text-white"
                         style="background-color: transparent; border-radius: 15px; overflow: hidden;">
                         <thead>
@@ -254,8 +253,7 @@ aria-labelledby="overview">
                                 <th>Pengunjung Hari Ini</th>
                                 <th>Jumlah Sparepart</th>
                                 <th>Pertumbuhan</th>
-                                <th colspan="3" class="text-center">Rata-rata Jumlah
-                                    Kendaraan per Pelanggan</th>
+                                <th colspan="3" class="text-center">Rata-rata Jumlah Kendaraan per Pelanggan</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -263,11 +261,8 @@ aria-labelledby="overview">
                                 <td class="text-center">{{ $today }}</td>
                                 <td class="text-center">{{ $totalVisitorsToday }}</td>
                                 <td class="text-center">{{ $totalSpareparts }}</td>
-                                <td class="text-center">
-                                    {{ number_format($data['total_profit'], 2) }}%</td>
-                                <td class="text-center">
-                                    {{ number_format($averageVehiclesPerCustomer, 2) }}
-                                </td>
+                                <td class="text-center">{{ number_format($data['total_profit'], 2) }}%</td>
+                                <td class="text-center">{{ number_format($averageVehiclesPerCustomer, 2) }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -275,30 +270,117 @@ aria-labelledby="overview">
             </div>
         </div>
     </div>
-    <style>
-        .table-responsive {
-            scrollbar-width: thin;
-            scrollbar-color: #6c757d transparent;
-        }
-
-        .table-responsive::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .table-responsive::-webkit-scrollbar-thumb {
-            background-color: #6c757d;
-            border-radius: 4px;
-        }
-
-        .table-responsive::-webkit-scrollbar-thumb:hover {
-            background-color: #495057;
-        }
-
-        .table-responsive::-webkit-scrollbar-track {
-            background-color: transparent;
-        }
-    </style>
 </div>
+<script>
+    function printDailyReport() {
+        const reportContent = `
+            <html>
+            <head>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        margin: 0;
+                        padding: 20px;
+                        background-color: #f5f5f5;
+                    }
+                    .nota-container {
+                        max-width: 400px;
+                        margin: auto;
+                        background: white;
+                        padding: 20px;
+                        border-radius: 8px;
+                        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                        border: 1px solid #ddd;
+                    }
+                    .nota-header {
+                        text-align: center;
+                        margin-bottom: 20px;
+                    }
+                    .nota-header img {
+                        width: 60px;
+                        height: 60px;
+                    }
+                    .nota-header h3 {
+                        margin: 10px 0 5px;
+                    }
+                    .nota-header p {
+                        font-size: 12px;
+                        color: #555;
+                        margin: 0;
+                    }
+                    table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        margin-bottom: 20px;
+                    }
+                    table th, table td {
+                        text-align: left;
+                        padding: 8px;
+                        border-bottom: 1px solid #ddd;
+                    }
+                    table th {
+                        background-color: #f9f9f9;
+                        font-size: 14px;
+                    }
+                    table td {
+                        font-size: 13px;
+                    }
+                    .nota-footer {
+                        text-align: center;
+                        font-size: 12px;
+                        color: #777;
+                        margin-top: 20px;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="nota-container">
+                    <div class="nota-header">
+                        <img src="{{ asset('assets/images/logo-mini.svg') }}" alt="Logo Laporan">
+                        <h3>Laporan Servis Harian</h3>
+                        <p>Tanggal: {{ $today }}</p>
+                    </div>
+                    <table>
+                        <tr>
+                            <th>Deskripsi</th>
+                            <th>Detail</th>
+                        </tr>
+                        <tr>
+                            <td>Pengunjung Hari Ini</td>
+                            <td>{{ $totalVisitorsToday }}</td>
+                        </tr>
+                        <tr>
+                            <td>Jumlah Sparepart</td>
+                            <td>{{ $totalSpareparts }}</td>
+                        </tr>
+                        <tr>
+                            <td>Sparepart Digunakan</td>
+                            <td>{{ $totalSparepartsUsed }}</td>
+                        </tr>
+                        <tr>
+                            <td>Keuntungan Total</td>
+                            <td>Rp. {{ number_format($totalProfit, 2) }}</td>
+                        </tr>
+                        <tr>
+                            <td>Kendaraan per Pelanggan</td>
+                            <td>{{ number_format($averageVehiclesPerCustomer, 2) }}</td>
+                        </tr>
+                    </table>
+                    <div class="nota-footer">
+                        <p>Terima kasih telah menggunakan layanan kami!</p>
+                        <p>&copy; 2025 Bengkel TeFa</p>
+                    </div>
+                </div>
+            </body>
+            </html>
+        `;
+        const newWindow = window.open('', '_blank');
+        newWindow.document.write(reportContent);
+        newWindow.document.close();
+        newWindow.print();
+    }
+</script>
+
 </div>
 
 <div class="tab-pane fade" id="audiences" role="tabpanel" aria-labelledby="profile-tab">

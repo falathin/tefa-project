@@ -191,13 +191,10 @@
 
                     <!-- Scripts -->
                     <script>
-                        // Show confirmation alert when the submit button is clicked
                         document.getElementById('submitButton').addEventListener('click', function() {
-                            // Show a simple JavaScript confirmation alert
                             const confirmAction = confirm("Apakah Anda yakin semua data sudah benar?");
 
                             if (confirmAction) {
-                                // If confirmed, submit the form
                                 document.querySelector('form').submit();
                             }
                         });

@@ -94,8 +94,6 @@
                                             const userName = prompt("Masukkan nama Anda:");
                                             const footerContent = userName ? `Nama: ${userName}` : "Nama tidak diberikan";
 
-z
-
                                             const printWindow = window.open('', '', 'height=1130,width=850');
                                             printWindow.document.write('<html><head><title>Print Preview</title>');
                                             printWindow.document.write(

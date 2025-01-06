@@ -24,8 +24,11 @@ class DashboardController extends Controller
             $query->whereDate('service_date', $today);
         })->sum('quantity');
 
-        $totalProfit = Service::whereDate('service_date', $today)->sum('total_cost') - 
-                       Service::whereDate('service_date', $today)->sum('service_fee');
+        $totalProfit = ServiceSparepart::whereHas('service', function ($query) use ($today) {
+            $query->whereDate('service_date', $today);
+        })
+        ->join('spareparts', 'service_spareparts.sparepart_id', '=', 'spareparts.id_sparepart')
+        ->sum(DB::raw('service_spareparts.quantity * (spareparts.harga_jual - spareparts.harga_beli)'));
 
         $totalExpense = DB::table('service_spareparts')
             ->join('spareparts', 'service_spareparts.sparepart_id', '=', 'spareparts.id_sparepart')
