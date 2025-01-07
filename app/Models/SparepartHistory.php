@@ -13,6 +13,7 @@ class SparepartHistory extends Model
         'sparepart_id', 
         'jumlah_changed',
         'action',
+        'jurusan'
     ];
 
     public function sparepart()

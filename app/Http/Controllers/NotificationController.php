@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Notification;
 use App\Models\Sparepart;
+use App\Models\Notification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class NotificationController extends Controller
 {
@@ -12,19 +14,31 @@ class NotificationController extends Controller
     {
         $search = $request->input('search');
         $notifications = Notification::query();
+        $jurusanId = Auth::user()->jurusan;
 
         if ($search) {
-            $notifications = $notifications->where('message', 'like', '%' . $search . '%');
+            $notifications = $notifications
+            ->where('message', 'like', '%' . $search . '%')
+            ->where('jurusan', 'like', $jurusanId)
+            ;
         }
+        
+        $jurusanUser = Auth::user()->jurusan;
+        
+        $notifications = $notifications->with('sparepart')
+        ->where('jurusan', 'like', $jurusanId)
+        ->where('is_read', false)->latest()->paginate(5);
 
-        $notifications = $notifications->with('sparepart')->where('is_read', false)->latest()->paginate(5);
+        $jurusanNotif = 1;
+        
 
-        return view('notifications.index', compact('notifications', 'search'));
+        return view('notifications.index', compact('notifications', 'search', 'jurusanNotif'));
     }
 
     public function markAsRead($id)
     {
         $notification = Notification::find($id);
+        if (! Gate::allows('isSameJurusan', [$notification]))
         if ($notification) {
             $notification->update(['is_read' => true]);
         }
@@ -35,6 +49,8 @@ class NotificationController extends Controller
     public function edit($id)
     {
         $notification = Notification::findOrFail($id);
+        if ( Gate::allows('isSameJurusan', [$notification]))
+
         $sparepart = $notification->sparepart;
 
         if (!$sparepart) {
@@ -49,6 +65,7 @@ class NotificationController extends Controller
         $request->validate([
             'nama_sparepart' => 'required|string|max:255',
             'jumlah' => 'required|integer|min:1',
+            'jurusan' => 'required',
             'harga_beli' => 'required|numeric',
             'harga_jual' => 'required|numeric',
             'tanggal_masuk' => 'required|date',

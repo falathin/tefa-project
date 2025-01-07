@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Customer;
+use App\Models\Notification;
 use App\Models\Service;
 use App\Models\Sparepart;
 use App\Models\ServiceSparepart;
 use App\Models\Vehicle;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
@@ -104,6 +105,10 @@ class DashboardController extends Controller
         ];
 
         $customers = Customer::with('vehicles')->get();
+
+        $userId = Auth::user()->jurusan;
+        $jurusanNotif = Notification::all()->where('jurusan', 'like', $userId)->count();
+        
 
         return view('home', compact(
             'spareparts', 'totalSpareparts', 'totalVisitorsToday', 'today', 'totalProfit', 'totalExpense', 'totalUnpaid',

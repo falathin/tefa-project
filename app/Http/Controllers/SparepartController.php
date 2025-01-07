@@ -2,24 +2,30 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Notification;
 use Carbon\Carbon;
 use App\Models\Sparepart;
 use Illuminate\Http\Request;
 use App\Models\SparepartHistory;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 class SparepartController extends Controller
 {
     public function index(Request $request)
     {
+        
         // Admin & kasir
         if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
             abort(403, 'Butuh level Admin & Kasir');
         }
         $search = $request->search;
+        $jurusanUser = Auth::user()->jurusan;
+
         $spareparts = Sparepart::when($search, function($query, $search) {
             return $query->where('nama_sparepart', 'like', '%' . $search . '%');
         })
+        ->where('jurusan', 'like', $jurusanUser)
         ->orderBy('created_at', 'desc')
         ->paginate(4);
 
@@ -50,6 +56,7 @@ class SparepartController extends Controller
 
         $sparepart = Sparepart::create([
             'nama_sparepart' => $request->nama_sparepart,
+            'jurusan' => Auth::user()->jurusan,
             'jumlah' => $request->jumlah,
             'harga_beli' => $request->harga_beli,
             'harga_jual' => $request->harga_jual,
@@ -61,6 +68,7 @@ class SparepartController extends Controller
         // Insert into SparepartHistory
         SparepartHistory::create([
             'sparepart_id' => $sparepart->id_sparepart,
+            'jurusan' => $sparepart->jurusan,
             'jumlah_changed' => $request->jumlah,
             'action' => 'add',
             'remaining_stock' => $sparepart->jumlah, // Add the remaining stock here
@@ -76,6 +84,10 @@ class SparepartController extends Controller
         if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
             abort(403, 'Butuh level Admin & Kasir');
         }
+        $sparepartId = Sparepart::find($sparepart_id);
+        if (! Gate::allows('isSameJurusan', [$sparepartId])) {
+            abort(403, 'data tidak ditemukan!!');
+        }
         $sparepart = Sparepart::findOrFail($sparepart_id);
         return view('sparepart.show', compact('sparepart'));
     }
@@ -85,6 +97,10 @@ class SparepartController extends Controller
         // Admin & kasir
         if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
             abort(403, 'Butuh level Admin & Kasir');
+        }
+        $sparepartId = Sparepart::find($id);
+        if (! Gate::allows('isSameJurusan', [$sparepartId])) {
+            abort(403, 'data tidak ditemukan!!');
         }
         $sparepart = Sparepart::findOrFail($id);
         return view('sparepart.edit', compact('sparepart'));
@@ -113,6 +129,7 @@ class SparepartController extends Controller
             $action = $quantity_changed > 0 ? 'add' : 'use';
             SparepartHistory::create([
                 'sparepart_id' => $sparepart->id_sparepart,
+                'jurusan' => $sparepart->jurusan,
                 'jumlah_changed' => $quantity_changed,
                 'action' => $action,
                 'description' => $action == 'add' ? 

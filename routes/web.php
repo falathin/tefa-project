@@ -51,7 +51,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/daftar', [DaftarAkunController::class, 'create'])->name('profile.daftar');
     Route::post('/daftar', [DaftarAkunController::class, 'storeByAdmin']);
     
-    // hapus akun melalui the engineer
+    // hapus akun melalui the engineer & admin
     Route::get('/superPrograms/hapusAkunUser', [hapusAkunUserController::class, 'index'])->name('hapusAkunUser');
     Route::post('/superPrograms/hapusAkunUser', [hapusAkunUserController::class, 'hapusAkun']);
 

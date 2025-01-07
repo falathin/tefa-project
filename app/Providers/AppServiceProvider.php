@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use App\Http\Middleware\LevelMiddleware;
 use App\Models\Customer;
+use Illuminate\Database\Eloquent\Model;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -37,8 +38,8 @@ class AppServiceProvider extends ServiceProvider
             return $user->level == 'kasir';
         });        
 
-        Gate::define('isSameJurusan', function (User $user, Customer $customer) {
-            return $user->jurusan == $customer->jurusan;
+        Gate::define('isSameJurusan', function (User $user, Model $model) {
+            return $user->jurusan == $model->jurusan;
         });
     }
 }
