@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\Sparepart;
 use Illuminate\Http\Request;
 use App\Models\SparepartHistory;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 class SparepartController extends Controller
@@ -18,7 +19,9 @@ class SparepartController extends Controller
         }
         $search = $request->search;
         $spareparts = Sparepart::when($search, function($query, $search) {
-            return $query->where('nama_sparepart', 'like', '%' . $search . '%');
+            $jurusan = Auth::user()->jurusan;
+            return $query->where('nama_sparepart', 'like', '%' . $search . '%')
+            ->where('jurusan', 'like', $jurusan);
         })
         ->orderBy('created_at', 'desc')
         ->paginate(4);

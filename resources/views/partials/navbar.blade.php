@@ -40,6 +40,7 @@
                     <div class="dropdown-header text-center mt-3">
                         {{-- <img class="img-md rounded-circle" src="{{ asset('assets/images/logo-mini.svg') }}"
                             alt="Profile image" width="100px"> --}}
+                            
                         <h1>{{ Auth::user()->jurusan }}</h1>
                         <p class="mb-1 mt-3 fw-semibold">{{ Auth::user()->name }}</p>
                         <p class="fw-light text-muted mb-0">{{ Auth::user()->email }}</p>
