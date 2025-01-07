@@ -5,15 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\Service;
 use App\Models\Vehicle;
 use App\Models\Customer;
+
 // At the top of your VehicleController.php (or any relevant controller)
 use Illuminate\Http\Request;
+
 
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
 class VehicleController extends Controller
 {
-    // Show the form to add a new vehicle
     public function create($customerId)
     {
         // Admin & kasir
@@ -68,11 +69,11 @@ class VehicleController extends Controller
                             ->when($request->search, function($query) use ($request) {
                                 return $query->where('service_type', 'like', '%' . $request->search . '%');
                             })
+                            ->orderBy('created_at', 'desc') // Order by latest services first
                             ->paginate(2);
     
         return view('vehicle.show', compact('vehicle', 'services'));
-    }
-    
+    }    
 
     // Show the form to edit the vehicle data
     public function edit($id)

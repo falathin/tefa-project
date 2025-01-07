@@ -24,8 +24,15 @@ class DashboardController extends Controller
             $query->whereDate('service_date', $today);
         })->sum('quantity');
 
-        $totalProfit = Service::whereDate('service_date', $today)->sum('total_cost') - 
-                       Service::whereDate('service_date', $today)->sum('service_fee');
+        // Perhitungan total profit (keuntungan jasa service + keuntungan sparepart)
+        $serviceProfit = Service::whereDate('service_date', $today)->sum('service_fee');
+        $sparepartProfit = ServiceSparepart::whereHas('service', function ($query) use ($today) {
+            $query->whereDate('service_date', $today);
+        })
+        ->join('spareparts', 'service_spareparts.sparepart_id', '=', 'spareparts.id_sparepart')
+        ->sum(DB::raw('service_spareparts.quantity * (spareparts.harga_jual - spareparts.harga_beli)'));
+
+        $totalProfit = $serviceProfit + $sparepartProfit;
 
         $totalExpense = DB::table('service_spareparts')
             ->join('spareparts', 'service_spareparts.sparepart_id', '=', 'spareparts.id_sparepart')
@@ -103,6 +110,6 @@ class DashboardController extends Controller
             'profitPercentage', 'expensePercentage', 'unpaidPercentage', 'chartLabels', 'chartValues', 
             'totalVisitors', 'totalVehicles', 'data', 'averageVehiclesPerCustomer', 'totalSparepartsUsed', 'vehicles', 
             'averageProfitPerCustomer', 'monthlyChartValues', 'customers', 'vehiclesPerWeekData'
-        ));        
-    }    
+        ));
+    }
 }

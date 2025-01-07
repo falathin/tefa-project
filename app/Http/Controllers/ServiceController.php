@@ -24,10 +24,8 @@ class ServiceController extends Controller
         $paymentStatus = $request->get('payment_status', 'all');
         $request->session()->put('payment_status', $paymentStatus);
         
-        // Start with the base query
         $servicesQuery = Service::query();
         
-        // Apply payment status filter
         if ($paymentStatus !== 'all') {
             $servicesQuery = $servicesQuery->when($paymentStatus === 'paid', function ($query) {
                 return $query->where('payment_received', '>=', DB::raw('total_cost'));
