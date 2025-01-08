@@ -14,13 +14,14 @@
 </form>
 
 <table class="table mt-4 container" border="2">
-    <thead>
+    <thead class="bg-primary">
         <tr>
             <th scope="col">No</th>
             <th scope="col">Id</th>
             <th scope="col">Username</th>
             <th scope="col">Email</th>
             <th scope="col">Level</th>
+            <th scope="col">Jurusan</th>
         </tr>
     </thead>
     <tbody>
@@ -28,11 +29,14 @@
             $i = 1;
         @endphp
         @foreach ($users->sortBy('id') as $user)
-        @if (! Gate::allows('isEngineer'))
-            @if ($user->level == 'engineer')
+            @if (!Gate::allows('isEngineer'))
+                @if ($user->level == 'engineer')
+                    @continue
+                @endif
+            @endif
+            @if ($user->jurusan != Auth::user()->jurusan)
                 @continue
             @endif
-        @endif
             <tr>
                 <th scope="row">{{ $i }}</th>
                 <td>{{ $user->id }}</td>

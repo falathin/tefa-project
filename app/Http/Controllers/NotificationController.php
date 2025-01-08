@@ -29,16 +29,16 @@ class NotificationController extends Controller
         ->where('jurusan', 'like', $jurusanId)
         ->where('is_read', false)->latest()->paginate(5);
 
-        $jurusanNotif = 1;
+        
         
 
-        return view('notifications.index', compact('notifications', 'search', 'jurusanNotif'));
+        return view('notifications.index', compact('notifications', 'search'));
     }
 
     public function markAsRead($id)
     {
         $notification = Notification::find($id);
-        if (! Gate::allows('isSameJurusan', [$notification]))
+        // if (! Gate::allows('isSameJurusan', [$notification]))
         if ($notification) {
             $notification->update(['is_read' => true]);
         }

@@ -2,7 +2,7 @@
 use App\Models\Notification;
 
 $userId = Auth::user()->jurusan;
-$jurusanNotif = Notification::all()->where('jurusan', 'like', $userId)->count();
+$jurusanNotif = Notification::all()->where('jurusan', 'like', $userId)->where('is_read', 'like', false)->count();
 
 ?>
 
