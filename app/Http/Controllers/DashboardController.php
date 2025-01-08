@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Customer;
+use App\Models\Notification;
 use App\Models\Service;
 use App\Models\Sparepart;
 use App\Models\ServiceSparepart;
 use App\Models\Vehicle;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
@@ -24,8 +25,15 @@ class DashboardController extends Controller
             $query->whereDate('service_date', $today);
         })->sum('quantity');
 
-        $totalProfit = Service::whereDate('service_date', $today)->sum('total_cost') - 
-                       Service::whereDate('service_date', $today)->sum('service_fee');
+        // Perhitungan total profit (keuntungan jasa service + keuntungan sparepart)
+        $serviceProfit = Service::whereDate('service_date', $today)->sum('service_fee');
+        $sparepartProfit = ServiceSparepart::whereHas('service', function ($query) use ($today) {
+            $query->whereDate('service_date', $today);
+        })
+        ->join('spareparts', 'service_spareparts.sparepart_id', '=', 'spareparts.id_sparepart')
+        ->sum(DB::raw('service_spareparts.quantity * (spareparts.harga_jual - spareparts.harga_beli)'));
+
+        $totalProfit = $serviceProfit + $sparepartProfit;
 
         $totalExpense = DB::table('service_spareparts')
             ->join('spareparts', 'service_spareparts.sparepart_id', '=', 'spareparts.id_sparepart')
@@ -98,11 +106,15 @@ class DashboardController extends Controller
 
         $customers = Customer::with('vehicles')->get();
 
+        $userId = Auth::user()->jurusan;
+        $jurusanNotif = Notification::all()->where('jurusan', 'like', $userId)->count();
+        
+
         return view('home', compact(
             'spareparts', 'totalSpareparts', 'totalVisitorsToday', 'today', 'totalProfit', 'totalExpense', 'totalUnpaid',
             'profitPercentage', 'expensePercentage', 'unpaidPercentage', 'chartLabels', 'chartValues', 
             'totalVisitors', 'totalVehicles', 'data', 'averageVehiclesPerCustomer', 'totalSparepartsUsed', 'vehicles', 
             'averageProfitPerCustomer', 'monthlyChartValues', 'customers', 'vehiclesPerWeekData'
-        ));        
-    }    
+        ));
+    }
 }

@@ -46,26 +46,27 @@
                         <p class="fw-light text-muted mb-0">{{ Auth::user()->email }}</p>
                         <p class="fw-semibold text-muted mb-0">{{ Auth::user()->level }}</p>
                     </div>
-                    <a class="dropdown-item" href="{{ route('profile.edit') }}"><i
-                            class="dropdown-item-icon mdi mdi-account-outline text-primary me-2"></i>Profil Saya
+
+                    <a class="dropdown-item" href="{{ route('profile.edit') }}"><img class="me-2"
+                            src="{{ asset('assets/images/profile2.png') }}" width="28"></img>Akun saya
                     </a>
+
                     @if (Auth::user()->level == 'admin' || Auth::user()->level == 'engineer')
-                        <a class="dropdown-item" href="{{ route('profile.daftar') }}"><i
-                                class="dropdown-item-icon mdi mdi-message-text-outline text-primary me-2"></i>
-                            Buat akun baru
+                        <a class="dropdown-item" href="{{ route('profile.daftar') }}"><img
+                                class="me-2" src="{{ asset('assets/images/add_account.png') }}" width="28"></img>Buat akun baru
                         </a>
-                        <a class="dropdown-item" href="{{ route('hapusAkunUser') }}"><i
-                                class="dropdown-item-icon mdi mdi-help-circle-outline text-primary me-2"></i>
-                            Hapus akun</a>
+                        <a class="dropdown-item " href="{{ route('hapusAkunUser') }}"><img
+                            class="me-2" src="{{ asset('assets/images/manage_account.png') }}" width="28"></img>List akun {{ Auth::user()->jurusan }}
+                        </a>
                     @endif
                     @if (Auth::user()->level == 'engineer')
-                        <a class="dropdown-item" href="{{ route('gantiEmergencyPassword') }}"><i
-                                class="dropdown-item-icon mdi mdi-calendar-check-outline text-primary me-2"></i>
+                        <a class="dropdown-item" href="{{ route('gantiEmergencyPassword') }}"><img
+                                class="me-2" src="{{ asset('assets/images/emergency_password.png') }}" width="28"></img>
                             Ganti Emergency password</a>
                     @endif
 
-                    <a class="dropdown-item" href="{{ route('confirm.logout') }}"><i
-                            class="dropdown-item-icon mdi mdi-power text-primary me-2"></i>
+                    <a class="dropdown-item" href="{{ route('confirm.logout') }}"><img
+                            class="me-2" src="{{ asset('assets/images/logout.png') }}" width="28"></img>
                         Logout</a>
                 </div>
             </li>
