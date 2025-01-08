@@ -47,7 +47,7 @@
                     </div>
 
                     <a class="dropdown-item" href="{{ route('profile.edit') }}"><img class="me-2"
-                            src="{{ asset('assets/images/profile2.png') }}" width="28"></img>Profil Saya
+                            src="{{ asset('assets/images/profile2.png') }}" width="28"></img>Akun saya
                     </a>
 
                     @if (Auth::user()->level == 'admin' || Auth::user()->level == 'engineer')
@@ -55,7 +55,7 @@
                                 class="me-2" src="{{ asset('assets/images/add_account.png') }}" width="28"></img>Buat akun baru
                         </a>
                         <a class="dropdown-item " href="{{ route('hapusAkunUser') }}"><img
-                            class="me-2" src="{{ asset('assets/images/manage_account.png') }}" width="28"></img>Kelola akun
+                            class="me-2" src="{{ asset('assets/images/manage_account.png') }}" width="28"></img>List akun {{ Auth::user()->jurusan }}
                         </a>
                     @endif
                     @if (Auth::user()->level == 'engineer')

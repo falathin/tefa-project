@@ -5,7 +5,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 @endif
-<x-nav-auth>Profil</x-nav-auth>
+<x-nav-auth>Akun</x-nav-auth>
 <section class="my-5 bg-light container rounded-3 py-2">
     <div class="p-3">
         <div class="fs-4 ">Informasi akun</div>

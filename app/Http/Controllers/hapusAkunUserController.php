@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 class hapusAkunUserController extends Controller
@@ -29,7 +30,12 @@ class hapusAkunUserController extends Controller
             'id' => 'required',
         ]);
         $hapusAkun = User::find($data['id']);
-        
+        if ($hapusAkun == null) {
+            return back()->with('status', 'id tidak ditemukan!');
+        }
+        if ($hapusAkun->jurusan != Auth::user()->jurusan) {
+            return back()->with('status', 'akun jurusan tidak sama!');
+        }
 
         if(! Gate::allows('isEngineer')) {
             if ($hapusAkun->level == 'engineer') {
@@ -38,7 +44,6 @@ class hapusAkunUserController extends Controller
         }
         
         if ($hapusAkun) {
-            $hapusAkun->delete();
             $hapusAkun->delete();
             return back()->with('status', 'hapus akun berhasil');
         } else {
