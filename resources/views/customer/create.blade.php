@@ -13,7 +13,7 @@
                 @csrf
 
                 {{-- jurusan --}}
-                <input type="text" readonly value="{{ Auth::user()->jurusan }}" name="jurusan" id="jurusan">
+                <input type="text" readonly value="{{ Auth::user()->jurusan }}" name="jurusan" id="jurusan" hidden>
 
                 <!-- Customer Data Section -->
                 <h4 class="mb-4"><i class="fas fa-user"></i> Data Pelanggan</h4>
