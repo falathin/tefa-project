@@ -18,7 +18,7 @@ class SparepartLowStockNotification extends Notification
 
     public function via($notifiable)
     {
-        return ['database'];  // Use the database driver to store notifications
+        return ['database'];
     }
 
     public function toDatabase($notifiable)

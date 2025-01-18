@@ -26,7 +26,7 @@ aria-labelledby="overview">
                         Rp. {{ number_format($totalExpense, 2, ',', '.') }} </h3>
                     <p class="text-danger d-flex"> <i class="mdi mdi-menu-down"></i>
                         <span>{{ $expensePercentage > 0 ? '-' : '' }}{{ number_format($expensePercentage, 2, ',', '.') }}%</span>
-                    </p>
+                    </p>    
                 </div>
             </div>
         </div> <!-- Total Unpaid -->
@@ -242,7 +242,7 @@ aria-labelledby="overview">
                             Pantau perkembangan pengunjung, sparepart, dan kendaraan untuk memastikan pertumbuhan dan efisiensi yang optimal.
                         </p>
                     </div>
-                    <button class="btn btn-warning" onclick="printDailyReport()">Print Laporan Harian</button>
+                    <button class="btn btn-warning text-white" onclick="printDailyReport()">Print Laporan Harian</button>
                 </div>
                 <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
                     <table class="table table-bordered table-hover text-white"
