@@ -77,17 +77,17 @@
     
     <!-- Core JS -->
     <script src="{{ asset('assets/js/off-canvas.js') }}"></script>
+    <script src="{{ asset('assets/js/template.js') }}"></script>
+    <script src="{{ asset('assets/js/settings.js') }}"></script>
+    <script src="{{ asset('assets/js/hoverable-collapse.js') }}"></script>
+    <script src="{{ asset('assets/js/todolist.js') }}"></script>
     <script src="{{ asset('assets/js/Chart.roundedBarCharts.js') }}"></script>
     <script src="{{ asset('assets/js/codemirror.js') }}"></script>
     <script src="{{ asset('assets/js/dashboard.js') }}"></script>
     <script src="{{ asset('assets/js/file-upload.js') }}"></script>
-    <script src="{{ asset('assets/js/hoverable-collapse.js') }}"></script>
     <script src="{{ asset('assets/js/jquery-file-upload.js') }}"></script>
     <script src="{{ asset('assets/js/jquery.cookie.js') }}"></script>
     <script src="{{ asset('assets/js/select2.js') }}"></script>
-    <script src="{{ asset('assets/js/settings.js') }}"></script>
-    <script src="{{ asset('assets/js/template.js') }}"></script>
-    <script src="{{ asset('assets/js/todolist.js') }}"></script>
     <script src="{{ asset('assets/js/typeahead.js') }}"></script>
 
     <!-- Init AOS for Animations -->

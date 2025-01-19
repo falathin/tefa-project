@@ -15,7 +15,7 @@ use App\Http\Controllers\{
 Route::get('/documentation', fn() => view('documentation'))->name('documentation');
 
 // Dashboard
-Route::get('/', [DashboardController::class, 'index']);
+Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
 /**
  * Sparepart Routes
