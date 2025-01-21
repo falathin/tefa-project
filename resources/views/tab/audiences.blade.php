@@ -3,56 +3,33 @@
 <div class="container mt-5">
     <div class="row">
         <div class="col-md-6 mb-4">
-            <div class="card shadow-sm hover-effect" id="card1" style="background-image: url('https://repository-images.githubusercontent.com/323802795/a4775800-4496-11eb-974f-29a5fef050c1'); background-size: cover; background-position: center; background-color: rgba(0, 0, 0, 0.7);">
-                <div class="card-header d-flex align-items-center" style="color: white;">
+            <div class="card shadow-sm hover-effect" id="card1" style="background-color: white;">
+                <div class="card-header d-flex align-items-center" style="color: black; background-color: #f8f9fa;">
                     <i class="bi bi-car-front me-2" style="font-size: 1.5rem;"></i>
-                    <h5 class="card-title mb-0" style="color: rgb(255, 255, 255);">Jumlah Kendaraan per Pelanggan</h5>
+                    <h5 class="card-title mb-0">Jumlah Kendaraan per Pelanggan</h5>
                 </div>
-                <div class="card-body" style="color: rgb(255, 255, 255);">
+                <div class="card-body" style="color: black;">
                     <canvas id="vehiclesPerCustomerChart"></canvas>
                 </div>
             </div>
         </div>
 
         <div class="col-md-6 mb-4">
-            <div class="card shadow-sm hover-effect" id="card2" style="background-image: url('https://i.redd.it/58dbg2g0d7w41.jpg'); background-size: cover; background-position: center; background-color: rgba(0, 0, 0, 0.7);">
-                <div class="card-header d-flex align-items-center" style="color: white;">
+            <div class="card shadow-sm hover-effect" id="card2" style="background-color: white;">
+                <div class="card-header d-flex align-items-center" style="color: black; background-color: #f8f9fa;">
                     <i class="bi bi-person-lines-fill me-2" style="font-size: 1.5rem;"></i>
-                    <h5 class="card-title mb-0" style="color: rgb(255, 255, 255);">Jumlah Rata-Rata Kendaraan per Pelanggan</h5>
+                    <h5 class="card-title mb-0">Jumlah Rata-Rata Kendaraan per Pelanggan</h5>
                 </div>
-                <div class="card-body" style="color: rgb(255, 255, 255);">
+                <div class="card-body" style="color: black;">
                     <canvas id="averageVehiclesPerCustomerChart"></canvas>
                 </div>
             </div>
         </div>
     </div>
-    <div class="text-center mt-4" style="color: white;">
+    <div class="text-center mt-4" style="color: black;">
         <p id="currentDate"></p>
     </div>
 </div>
-
-<script>
-    var images = [
-        'https://c4.wallpaperflare.com/wallpaper/291/819/697/illustration-city-anime-painting-wallpaper-preview.jpg',
-        'https://wallpapercave.com/wp/wp4982777.jpg',
-        'https://wallpapercrafter.com/desktop/328207-Anime-Weathering-With-You-Phone-Wallpaper.jpg',
-        'https://wallpapercave.com/wp/wp6371069.jpg',
-        'https://wallpapercave.com/wp/wp4979765.jpg',
-        'https://wallpaperaccess.com/full/87241.jpg',
-        'https://wallpapercave.com/wp/wp5393079.jpg',
-        'https://th.bing.com/th/id/OIP.p0nxZ5M7f8Scm7IhR4Ts0gHaNK?pid=ImgDet&w=184&h=325&c=7&dpr=1,3',
-    ];
-
-    var currentIndex = 0;
-
-    function changeBackgroundImage() {
-        currentIndex = (currentIndex + 1) % images.length;
-        document.getElementById('card1').style.backgroundImage = 'url(' + images[currentIndex] + ')';
-        document.getElementById('card2').style.backgroundImage = 'url(' + images[(currentIndex + 1) % images.length] + ')';
-    }
-
-    setInterval(changeBackgroundImage, 5000);
-</script>
 <script>
     const vehiclesPerCustomerData = {
         labels: @json($customers->pluck('id')),
