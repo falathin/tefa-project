@@ -1,60 +1,116 @@
 <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview">
     <div class="col-sm-12">
-        <div class="row"> <!-- Total Profit -->
+        <!-- Internal CSS -->
+        <style>
+            .tooltip-inner {
+                font-size: 0.9rem;
+                background-color: #000;
+                color: #fff;
+                padding: 10px;
+                border-radius: 5px;
+            }
+
+            .tooltip-arrow {
+                border-color: #000;
+            }
+        </style>
+
+        <!-- Internal JavaScript -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Inisialisasi semua elemen dengan tooltip
+                const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                tooltipTriggerList.forEach(function(tooltipTriggerEl) {
+                    new bootstrap.Tooltip(tooltipTriggerEl);
+                });
+            });
+        </script>
+
+        <!-- Internal HTML -->
+        <div class="row">
+            <!-- Total Daily Profit -->
             <div class="col-12 col-md-6 col-lg-3">
                 <div class="statistics-details d-flex align-items-center justify-content-between">
                     <div>
-                        <p class="statistics-title">Pemasukan Hari Ini</p>
+                        <p class="statistics-title" data-bs-toggle="tooltip" data-bs-placement="top"
+                            title="Pemasukan Hari Ini dihitung berdasarkan transaksi servis yang selesai pada hari ini.">
+                            Pemasukan Hari Ini
+                        </p>
                         <h3
                             class="rate-percentage @if ($serviceIncomeDaily < 0) text-danger @else text-success @endif">
-                            Rp. {{ number_format($serviceIncomeDaily, 2, ',', '.') }} </h3>
-                        <p class="text-success d-flex"> <i class="mdi mdi-menu-up"></i>
+                            Rp. {{ number_format($serviceIncomeDaily, 2, ',', '.') }}
+                        </h3>
+                        <p class="text-success d-flex">
+                            <i class="mdi mdi-menu-up"></i>
                             <span>{{ $profitPercentage > 0 ? '+' : '' }}{{ number_format($profitPercentage, 2, ',', '.') }}%</span>
                         </p>
                     </div>
                 </div>
-            </div> <!-- Total Expenses -->
+            </div>
+
+            <!-- Total Monthly Income -->
             <div class="col-12 col-md-6 col-lg-3">
                 <div class="statistics-details d-flex align-items-center justify-content-between">
                     <div>
-                        <p class="statistics-title">Pemasukkan Bulanan</p>
+                        <p class="statistics-title" data-bs-toggle="tooltip" data-bs-placement="top"
+                            title="Pemasukan Bulanan dihitung berdasarkan semua pemasukan dari transaksi servis selama bulan ini.">
+                            Pemasukkan Bulanan
+                        </p>
                         <h3
                             class="rate-percentage @if ($serviceIncomeMonthly < 0) text-danger @else text-success @endif">
-                            Rp. {{ number_format($serviceIncomeMonthly, 2, ',', '.') }} </h3>
-                        <p class="text-danger d-flex"> <i class="mdi mdi-menu-down"></i>
+                            Rp. {{ number_format($serviceIncomeMonthly, 2, ',', '.') }}
+                        </h3>
+                        <p class="text-danger d-flex">
+                            <i class="mdi mdi-menu-down"></i>
                             <span>{{ $expensePercentage > 0 ? '-' : '' }}{{ number_format($expensePercentage, 2, ',', '.') }}%</span>
                         </p>
                     </div>
                 </div>
-            </div> <!-- Total Unpaid -->
+            </div>
+
+            <!-- Total Unpaid -->
             <div class="col-12 col-md-6 col-lg-3">
                 <div class="statistics-details d-flex align-items-center justify-content-between">
                     <div>
-                        <p class="statistics-title">Total Belum Dibayar</p>
+                        <p class="statistics-title" data-bs-toggle="tooltip" data-bs-placement="top"
+                            title="Total Belum Dibayar adalah jumlah tagihan yang belum dilunasi pelanggan.">
+                            Total Belum Dibayar
+                        </p>
                         <h3
                             class="rate-percentage @if ($totalUnpaid < 0) text-danger @else text-success @endif">
-                            Rp. {{ number_format($totalUnpaid, 2, ',', '.') }} </h3>
-                        <p class="text-danger d-flex"> <i class="mdi mdi-menu-down"></i>
+                            Rp. {{ number_format($totalUnpaid, 2, ',', '.') }}
+                        </h3>
+                        <p class="text-danger d-flex">
+                            <i class="mdi mdi-menu-down"></i>
                             <span>{{ $unpaidPercentage > 0 ? '-' : '' }}{{ number_format($unpaidPercentage, 2, ',', '.') }}%</span>
                         </p>
                     </div>
                 </div>
-            </div> <!-- Average Profit Per Customer -->
+            </div>
+
+            <!-- Total Yearly Income -->
             <div class="col-12 col-md-6 col-lg-3">
                 <div class="statistics-details d-flex align-items-center justify-content-between">
                     <div>
-                        <p class="statistics-title">Pemasukkan Tahunan</p>
+                        <p class="statistics-title" data-bs-toggle="tooltip" data-bs-placement="top"
+                            title="Pemasukan Tahunan dihitung dari total semua transaksi servis sepanjang tahun ini.">
+                            Pemasukkan Tahunan
+                        </p>
                         <h3
                             class="rate-percentage @if ($serviceIncomeYearly < 0) text-danger @else text-success @endif">
                             Rp. {{ number_format($serviceIncomeYearly, 2, ',', '.') }}
                         </h3>
-                        <p class="text-success d-flex"> <i class="mdi mdi-menu-up"></i> <span>
+                        <p class="text-success d-flex">
+                            <i class="mdi mdi-menu-up"></i>
+                            <span>
                                 Rp. {{ number_format($serviceIncomeYearly, 2, ',', '.') }}
-                            </span> </p>
+                            </span>
+                        </p>
                     </div>
                 </div>
             </div>
         </div>
+
     </div>
     <hr style="border: 1px solid rgb(171, 171, 171);"> <br>
     <div class="row">
