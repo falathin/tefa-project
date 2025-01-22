@@ -359,226 +359,211 @@
     
     <script>
         document.getElementById('printBtn').addEventListener('click', function() {
-            const technicianName = prompt("Masukkan nama teknisi:");
-
-            if (technicianName) {
+    
                 const printContent = document.querySelector('.container').innerHTML;
                 const newWindow = window.open('', '', 'width=300,height=600');
-
+    
                 newWindow.document.write(`
-            <html>
-                <head>
-                    <title>Detail Servis</title>
-                    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css" rel="stylesheet">
-                    <style>
-                        body {
-                            font-family: 'Courier New', monospace;
-                            font-size: 12px;
-                            line-height: 1.5;
-                            margin: 0;
-                            padding: 0;
-                            color: #333;
-                            display: flex;
-                            justify-content: center;
-                            align-items: center;
-                            height: 100vh;
-                            text-align: center;
-                        }
-                        h1 {
-                            font-size: 20px;
-                            font-weight: bold;
-                            text-align: center;
-                            margin: 0;
-                            padding: 10px 0;
-                            text-transform: uppercase;
-                            letter-spacing: 1px;
-                        }
-                        h5 {
-                            font-size: 16px;
-                            text-align: center;
-                            font-weight: normal;
-                            margin: 10px 0;
-                        }
-                        .container {
-                            width: 100%;
-                            max-width: 350px;
-                            padding: 20px;
-                            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                            border-radius: 10px;
-                            background-color: #fff;
-                            margin: 0 auto;
-                            text-align: left;
-                        }
-                        .card-header {
-                            font-weight: bold;
-                            font-size: 14px;
-                            border-bottom: 2px solid #007bff;
-                            padding: 6px 0;
-                            color: #007bff;
-                            text-transform: uppercase;
-                        }
-                        .list-group-item {
-                            padding: 8px 0;
-                            border-bottom: 1px dashed #ddd;
-                            font-size: 12px;
-                            display: flex;
-                            justify-content: space-between;
-                        }
-                        .list-group-item strong {
-                            font-weight: bold;
-                            text-transform: uppercase;
-                        }
-                        .total {
-                            border-top: 2px solid #000;
-                            margin-top: 20px;
-                            padding-top: 10px;
-                            font-size: 14px;
-                            font-weight: bold;
-                            text-align: center;
-                        }
-                        .footer {
-                            font-size: 10px;
-                            text-align: center;
-                            margin-top: 15px;
-                            color: #888;
-                        }
-                        @media print {
+                <html>
+                    <head>
+                        <title>Detail Servis</title>
+                        <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css" rel="stylesheet">
+                        <style>
                             body {
-                                padding: 0;
+                                font-family: 'Courier New', monospace;
+                                font-size: 12px;
+                                line-height: 1.5;
                                 margin: 0;
+                                padding: 0;
+                                color: #333;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                height: 100vh;
+                                text-align: center;
+                            }
+                            h1 {
+                                font-size: 20px;
+                                font-weight: bold;
+                                text-align: center;
+                                margin: 0;
+                                padding: 10px 0;
+                                text-transform: uppercase;
+                                letter-spacing: 1px;
+                            }
+                            h5 {
+                                font-size: 16px;
+                                text-align: center;
+                                font-weight: normal;
+                                margin: 10px 0;
                             }
                             .container {
                                 width: 100%;
-                                margin: 0;
-                                padding: 10px;
+                                max-width: 350px;
+                                padding: 20px;
+                                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                                border-radius: 10px;
+                                background-color: #fff;
+                                margin: 0 auto;
+                                text-align: left;
                             }
-                        }
-                    </style>
-                </head>
-                <body>
-                    <div class="container">
-                        <h1><i class="bi bi-wrench"></i> Detail Servis</h1>
-                        <h5><i class="bi bi-info-circle"></i> Kendaraan: {{ $service->vehicle->license_plate }}</h5>
-                        <div class="card">
-                            <div class="card-header">
-                                Informasi Kendaraan
-                            </div>
-                            <div class="card-body">
-                                <div class="list-group">
-                                    <div class="list-group-item">
-                                        <span><i class="bi bi-car"></i> <strong>Warna:</strong></span>
-                                        <span>{{ $service->vehicle->color }}</span>
-                                    </div>
-                                    <div class="list-group-item">
-                                        <span><i class="bi bi-calendar"></i> <strong>Tahun Produksi:</strong></span>
-                                        <span>{{ $service->vehicle->production_year }}</span>
-                                    </div>
-                                    <div class="list-group-item">
-                                        <span><i class="bi bi-hash"></i> <strong>Kode Mesin:</strong></span>
-                                        <span>{{ $service->vehicle->engine_code }}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-            
-                        <div class="card mt-3">
-                            <div class="card-header">
-                                Informasi Pelanggan
-                            </div>
-                            <div class="card-body">
-                                <div class="list-group">
-                                    <div class="list-group-item">
-                                        <span><i class="bi bi-person"></i> <strong>Nama:</strong></span>
-                                        <span>{{ $service->vehicle->customer->name }}</span>
-                                    </div>
-                                    <div class="list-group-item">
-                                        <span><i class="bi bi-phone"></i> <strong>Kontak:</strong></span>
-                                        <span>{{ $service->vehicle->customer->contact }}</span>
-                                    </div>
-                                    <div class="list-group-item">
-                                        <span><i class="bi bi-house"></i> <strong>Alamat:</strong></span>
-                                        <span>{{ $service->vehicle->customer->address }}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-            
-                        <div class="card mt-3">
-                            <div class="card-header">
-                                Informasi Servis
-                            </div>
-                            <div class="card-body">
-                                <div class="list-group">
-                                    <div class="list-group-item">
-                                        <span><i class="bi bi-exclamation-circle"></i> <strong>Keluhan:</strong></span>
-                                        <span>{{ $service->complaint }}</span>
-                                    </div>
-                                    <div class="list-group-item">
-                                        <span><i class="bi bi-tachometer"></i> <strong>Kilometer Saat Ini:</strong></span>
-                                        <span>{{ $service->current_mileage }} km</span>
-                                    </div>
-                                    <div class="list-group-item">
-                                        <span><i class="bi bi-cash-stack"></i> <strong>Biaya Servis:</strong></span>
-                                        <span>Rp. {{ number_format($service->service_fee, 0, ',', '.') }}</span>
-                                    </div>
-                                    <div class="list-group-item">
-                                        <span><i class="bi bi-cash-coin"></i> <strong>Total Biaya:</strong></span>
-                                        <span>Rp. {{ number_format($service->total_cost, 0, ',', '.') }}</span>
-                                    </div>
-                                    <div class="list-group-item">
-                                        <span><i class="bi bi-credit-card"></i> <strong>Pembayaran Diterima:</strong></span>
-                                        <span>Rp. {{ number_format($service->payment_received, 0, ',', '.') }}</span>
-                                    </div>
-                                    <div class="list-group-item">
-                                        <span><i class="bi bi-cash"></i> <strong>Kembalian:</strong></span>
-                                        <span>Rp. {{ number_format($service->change, 0, ',', '.') }}</span>
-                                    </div>
-                                    <div class="list-group-item">
-                                        <span><i class="bi bi-wrench"></i> <strong>Jenis Servis:</strong></span>
-                                        <span>{{ ucfirst($service->service_type) }}</span>
-                                    </div>
-                                    <div class="list-group-item">
-                                        <span><i class="bi bi-calendar-event"></i> <strong>Tanggal Servis:</strong></span>
-                                        <span>{{ \Carbon\Carbon::parse($service->service_date)->format('d-m-Y') }}</span>
+                            .card-header {
+                                font-weight: bold;
+                                font-size: 14px;
+                                border-bottom: 2px solid #007bff;
+                                padding: 6px 0;
+                                color: #007bff;
+                                text-transform: uppercase;
+                            }
+                            .list-group-item {
+                                padding: 8px 0;
+                                border-bottom: 1px dashed #ddd;
+                                font-size: 12px;
+                                display: flex;
+                                justify-content: space-between;
+                            }
+                            .list-group-item strong {
+                                font-weight: bold;
+                                text-transform: uppercase;
+                            }
+                            .total {
+                                border-top: 2px solid #000;
+                                margin-top: 20px;
+                                padding-top: 10px;
+                                font-size: 14px;
+                                font-weight: bold;
+                                text-align: center;
+                            }
+                            .footer {
+                                font-size: 10px;
+                                text-align: center;
+                                margin-top: 15px;
+                                color: #888;
+                            }
+                            @media print {
+                                body {
+                                    padding: 0;
+                                    margin: 0;
+                                }
+                                .container {
+                                    width: 100%;
+                                    margin: 0;
+                                    padding: 10px;
+                                }
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="container">
+                            <h1><i class="bi bi-wrench"></i> Detail Servis</h1>
+                            <h5><i class="bi bi-info-circle"></i> Kendaraan: {{ $service->vehicle->license_plate }}</h5>
+                            <div class="card">
+                                <div class="card-header">Informasi Kendaraan</div>
+                                <div class="card-body">
+                                    <div class="list-group">
+                                        <div class="list-group-item">
+                                            <span><i class="bi bi-car"></i> <strong>Warna:</strong></span>
+                                            <span>{{ $service->vehicle->color }}</span>
+                                        </div>
+                                        <div class="list-group-item">
+                                            <span><i class="bi bi-calendar"></i> <strong>Tahun Produksi:</strong></span>
+                                            <span>{{ $service->vehicle->production_year }}</span>
+                                        </div>
+                                        <div class="list-group-item">
+                                            <span><i class="bi bi-hash"></i> <strong>Kode Mesin:</strong></span>
+                                            <span>{{ $service->vehicle->engine_code }}</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-            
-                        <div class="card mt-3">
-                            <div class="card-header">
-                                Sparepart yang Digunakan
-                            </div>
-                            <div class="card-body">
-                                <div class="list-group">
-                                    @foreach ($service->serviceSpareparts as $serviceSparepart)
-                                    <div class="list-group-item">
-                                        <span><i class="bi bi-gear"></i> <strong>{{ $serviceSparepart->sparepart->nama_sparepart }}</strong></span>
-                                        <span>{{ $serviceSparepart->quantity }} pcs</span>
-                                        <span>Rp. {{ number_format($serviceSparepart->sparepart->harga_jual, 0, ',', '.') }}</span>
+                            <div class="card mt-3">
+                                <div class="card-header">Informasi Pelanggan</div>
+                                <div class="card-body">
+                                    <div class="list-group">
+                                        <div class="list-group-item">
+                                            <span><i class="bi bi-person"></i> <strong>Nama:</strong></span>
+                                            <span>{{ $service->vehicle->customer->name }}</span>
+                                        </div>
+                                        <div class="list-group-item">
+                                            <span><i class="bi bi-phone"></i> <strong>Kontak:</strong></span>
+                                            <span>{{ $service->vehicle->customer->contact }}</span>
+                                        </div>
+                                        <div class="list-group-item">
+                                            <span><i class="bi bi-house"></i> <strong>Alamat:</strong></span>
+                                            <span>{{ $service->vehicle->customer->address }}</span>
+                                        </div>
                                     </div>
-                                    @endforeach
                                 </div>
                             </div>
+                            <div class="card mt-3">
+                                <div class="card-header">Informasi Servis</div>
+                                <div class="card-body">
+                                    <div class="list-group">
+                                        <div class="list-group-item">
+                                            <span><i class="bi bi-exclamation-circle"></i> <strong>Keluhan:</strong></span>
+                                            <span>{{ $service->complaint }}</span>
+                                        </div>
+                                        <div class="list-group-item">
+                                            <span><i class="bi bi-tachometer"></i> <strong>Kilometer Saat Ini:</strong></span>
+                                            <span>{{ $service->current_mileage }} km</span>
+                                        </div>
+                                        <div class="list-group-item">
+                                            <span><i class="bi bi-cash-stack"></i> <strong>Biaya Servis:</strong></span>
+                                            <span>Rp. {{ number_format($service->service_fee, 0, ',', '.') }}</span>
+                                        </div>
+                                        <div class="list-group-item">
+                                            <span><i class="bi bi-cash-coin"></i> <strong>Total Biaya:</strong></span>
+                                            <span>Rp. {{ number_format($service->total_cost, 0, ',', '.') }}</span>
+                                        </div>
+                                        <div class="list-group-item">
+                                            <span><i class="bi bi-credit-card"></i> <strong>Pembayaran Diterima:</strong></span>
+                                            <span>Rp. {{ number_format($service->payment_received, 0, ',', '.') }}</span>
+                                        </div>
+                                        <div class="list-group-item">
+                                            <span><i class="bi bi-cash"></i> <strong>Kembalian:</strong></span>
+                                            <span>Rp. {{ number_format($service->change, 0, ',', '.') }}</span>
+                                        </div>
+                                        <div class="list-group-item">
+                                            <span><i class="bi bi-wrench"></i> <strong>Jenis Servis:</strong></span>
+                                            <span>{{ ucfirst($service->service_type) }}</span>
+                                        </div>
+                                        <div class="list-group-item">
+                                            <span><i class="bi bi-calendar-event"></i> <strong>Tanggal Servis:</strong></span>
+                                            <span>{{ \Carbon\Carbon::parse($service->service_date)->format('d-m-Y') }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card mt-3">
+                                <div class="card-header">Sparepart yang Digunakan</div>
+                                <div class="card-body">
+                                    <div class="list-group">
+                                        @foreach ($service->serviceSpareparts as $serviceSparepart)
+                                        <div class="list-group-item">
+                                            <span><i class="bi bi-gear"></i> <strong>{{ $serviceSparepart->sparepart->nama_sparepart }}</strong></span>
+                                            <span>{{ $serviceSparepart->quantity }} pcs</span>
+                                            <span>Rp. {{ number_format($serviceSparepart->sparepart->harga_jual, 0, ',', '.') }}</span>
+                                        </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="total">
+                                <p><strong>Total:</strong> Rp. {{ number_format($service->total_cost, 0, ',', '.') }}</p>
+                            </div>
+                            <div class="footer">
+                                <p><i class="bi bi-emoji-smile"></i> Terima kasih atas kunjungan Anda!</p>
+                                <p>Teknisi: {{ ucfirst($service->technician_name) }}</p>
+                            </div>
                         </div>
-            
-                        <div class="total">
-                            <p><strong>Total:</strong> Rp. {{ number_format($service->total_cost, 0, ',', '.') }}</p>
-                        </div>
-            
-                        <div class="footer">
-                            <p><i class="bi bi-emoji-smile"></i> Terima kasih atas kunjungan Anda! <br> <strong>Teknisi:</strong> ${technicianName}</p>
-                        </div>
-                    </div>
-                </body>
-            </html>
-        `);
-
+                    </body>
+                </html>
+                `);
+    
                 newWindow.document.close();
                 newWindow.print();
-            } else {
-                alert("Nama teknisi tidak dapat kosong.");
-            }
+            
         });
     </script>
+    
 @endsection

@@ -1,4 +1,4 @@
-<script>
+{{-- <script>
     function toggleTheme() {
         let currentTheme = localStorage.getItem('theme') || 'light';
         let newTheme = currentTheme === 'light' ? 'dark' : 'light';
@@ -79,7 +79,7 @@
             </a>
         @endforeach
     </div>
-</li>
+</li> --}}
 
 <!-- Theme Toggle Button -->
 <li class="nav-item d-none d-lg-block">

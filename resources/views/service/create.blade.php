@@ -180,7 +180,6 @@
                             @enderror
                         </div>
                     </div>
-
                     <!-- Submit and Back Buttons -->
                     <div class="text-center mt-4">
                         <a href="{{ route('vehicle.show', $vehicle->id) }}" class="btn btn-secondary btn-md">
@@ -189,10 +188,17 @@
                         <button type="reset" class="btn btn-warning btn-md">
                             <i class="fas fa-redo"></i> Reset Form
                         </button>
-                        <button type="submit" class="btn btn-success btn-md" id="submitButton">
+                        <button type="submit" class="btn btn-success btn-md" id="submitButton"
+                            onclick="return confirmSubmit()">
                             <i class="fas fa-save"></i> Simpan Service
                         </button>
                     </div>
+
+                    <script>
+                        function confirmSubmit() {
+                            return confirm("Apakah Anda yakin ingin menyimpan data service ini?");
+                        }
+                    </script>
 
                     <!-- Scripts -->
                     {{-- <script>
