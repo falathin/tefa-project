@@ -2,17 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\SparepartTransaction;
 use App\Models\Sparepart;
-use App\Models\SparepartHistory;
 use Illuminate\Http\Request;
+use App\Models\SparepartHistory;
+use App\Models\SparepartTransaction;
+use Illuminate\Support\Facades\Gate;
 
 class TransactionController extends Controller
 {
     public function index(Request $request)
     {
+        // Admin & kasir
+        if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
+            abort(403, 'Butuh level Admin & Kasir');
+        }
         $search = $request->input('search');
-
         $transactions = SparepartTransaction::with('sparepart')
             ->when($search, function ($query, $search) {
                 return $query->whereHas('sparepart', function ($query) use ($search) {
@@ -27,6 +31,10 @@ class TransactionController extends Controller
 
     public function create()
     {
+        // Admin & kasir
+        if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
+            abort(403, 'Butuh level Admin & Kasir');
+        }
         $spareparts = Sparepart::all();
         $transactions = SparepartTransaction::all();
         return view('transactions.create', compact('spareparts', 'transactions'));
@@ -113,6 +121,10 @@ class TransactionController extends Controller
     }
     public function show($id)
     {
+        // Admin & kasir
+        if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
+            abort(403, 'Butuh level Admin & Kasir');
+        }
         $transaction = SparepartTransaction::with('sparepart')->findOrFail($id);
 
         $subtotal = $transaction->sparepart->harga_jual * $transaction->quantity;
@@ -130,6 +142,10 @@ class TransactionController extends Controller
 
     public function edit($id)
     {
+        // Admin & kasir
+        if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
+            abort(403, 'Butuh level Admin & Kasir');
+        }
         $transaction = SparepartTransaction::findOrFail($id);
         $spareparts = Sparepart::all();
         $transactionDate = \Carbon\Carbon::parse($transaction->transaction_date);

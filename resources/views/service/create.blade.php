@@ -5,7 +5,7 @@
         <div class="card shadow-lg border-0 rounded-3">
             <div class="card-body">
                 <h4 class="text-center mb-4">Tambah Service untuk Kendaraan: {{ $vehicle->license_plate }}</h4>
-                <form method="POST" action="{{ route('service.store') }}">
+                <form method="POST" action='{{ route('service.store-2') }}'>
                     @csrf
 
                     <input type="hidden" name="vehicle_id" value="{{ $vehicle->id }}">
@@ -189,13 +189,13 @@
                         <button type="reset" class="btn btn-warning btn-md">
                             <i class="fas fa-redo"></i> Reset Form
                         </button>
-                        <button type="button" class="btn btn-success btn-md" id="submitButton">
+                        <button type="submit" class="btn btn-success btn-md" id="submitButton">
                             <i class="fas fa-save"></i> Simpan Service
                         </button>
                     </div>
 
                     <!-- Scripts -->
-                    <script>
+                    {{-- <script>
                         document.getElementById('submitButton').addEventListener('click', function() {
                             const confirmAction = confirm("Apakah Anda yakin semua data sudah benar?");
 
@@ -203,7 +203,7 @@
                                 document.querySelector('form').submit();
                             }
                         });
-                    </script>
+                    </script> --}}
             </div>
         </div>
     </div>

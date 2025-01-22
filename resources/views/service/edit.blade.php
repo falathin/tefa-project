@@ -280,7 +280,7 @@
                         </button>
 
                         <!-- Save button with confirmation -->
-                        <button type="button" class="btn btn-success btn-md mb-2 mb-md-0" id="submitButton"
+                        <button type="submit" class="btn btn-success btn-md mb-2 mb-md-0" id="submitButton"
                             onclick="return confirmSubmit()">
                             <i class="fas fa-save"></i> Simpan Perubahan
                         </button>
@@ -293,7 +293,7 @@
                     </script>
 
                     <!-- Scripts -->
-                    <script>
+                    {{-- <script>
                         document.getElementById('submitButton').addEventListener('click', function() {
                             // Show a simple JavaScript confirmation alert
                             const confirmAction = confirm(
@@ -304,7 +304,7 @@
                                 document.querySelector('form').submit();
                             }
                         });
-                    </script>
+                    </script> --}}
                 </form>
 
                 <script>

@@ -18,6 +18,7 @@ class CreateSparepartsTable extends Migration
             $table->date('tanggal_masuk');
             $table->date('tanggal_keluar')->nullable();
             $table->text('deskripsi')->nullable();
+            $table->enum('jurusan', ['TSM', 'TKRO']);
             $table->timestamps();
         });
     }

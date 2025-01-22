@@ -2,16 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Customer;
-use App\Models\Vehicle;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
+use App\Models\Vehicle;
+use App\Models\Customer;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 
 class CustomerController extends Controller
 {
     public function index(Request $request)
     {
+        // Admin & kasir
+        if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
+            abort(403, 'Butuh level Admin & Kasir');
+        }
         $searchTerm = $request->input('search');
         $deletedSearch = $request->input('deletedSearch');
         
@@ -39,6 +44,10 @@ class CustomerController extends Controller
 
     public function create()
     {
+        // Admin & kasir
+        if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
+            abort(403, 'Butuh level Admin & Kasir');
+        }
         return view('customer.create');
     }
 
@@ -76,6 +85,10 @@ class CustomerController extends Controller
 
     public function edit($id)
     {
+        // Admin & kasir
+        if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
+            abort(403, 'Butuh level Admin & Kasir');
+        }
         $customer = Customer::with('vehicles')->findOrFail($id);
         return view('customer.edit', compact('customer'));
     }
@@ -97,6 +110,10 @@ class CustomerController extends Controller
 
     public function show(Request $request, $id)
     {
+        // Admin & kasir
+        if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
+            abort(403, 'Butuh level Admin & Kasir');
+        }
         $customer = Customer::findOrFail($id);
 
         $customer->contact = $customer->contact ?: 'Tidak ada data kontak';

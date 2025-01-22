@@ -12,6 +12,7 @@
         <li class="nav-item nav-category animate__animated animate__slideInLeft animate__delay-1.8s">Pengaturan</li>
 
         <!-- Program Service Menu Item -->
+        @if (Gate::allows('isAdminOrEngineer') xor Gate::allows('isKasir'))
         <li
             class="nav-item {{ request()->route()->getName() == 'service' || request()->route()->getName() == 'customer.show' ? 'active' : '' }} animate__animated animate__slideInLeft animate__delay-3.3s">
             <a class="nav-link" href="{{ route('customer.index') }}">
@@ -19,6 +20,9 @@
                 <span class="menu-title">Program Layanan</span>
             </a>
         </li>
+        @endif
+
+        @if (Gate::allows('isAdminOrEngineer') xor Gate::allows('isKasir'))
         <!-- Sparepart Menu -->
         <li
             class="nav-item {{ Request::is('sparepart.*') ? 'active' : '' }} animate__animated animate__slideInLeft animate__delay-4.8s">
@@ -41,15 +45,18 @@
                 </ul>
             </div>
         </li>
+        @endif
 
+        @if (Gate::allows('isAdminOrEngineer') xor Gate::allows('isKasir'))
         <!-- Riwayat Service Menu Item -->
         <li class="nav-item animate__animated animate__slideInLeft animate__delay-9.3s">
             <a class="nav-link {{ request()->route()->getName() == 'service.index' ? 'active' : '' }}"
-                href="{{ route('service.index') }}">
+                href='{{ route('service.index') }}'>
                 <i class="mdi mdi-history menu-icon"></i>
                 <span class="menu-title">Riwayat Layanan</span>
             </a>
         </li>
+        @endif
 
         <!-- Documentation Menu Item -->
         <li class="nav-item animate__animated animate__slideInLeft animate__delay-10.8s">

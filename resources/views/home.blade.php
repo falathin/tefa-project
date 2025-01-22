@@ -1,4 +1,10 @@
 @extends('layouts.app') @section('content')
+@if (session('statusBerhasil'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('statusBerhasil') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
     <h1 class="welcome-text" id="greeting">Selamat Pagi, <span class="fw-bold welcome-text">Halo Dunia</span></h1>
     <h3 class="welcome-sub-text">Ringkasan kinerja Anda minggu ini</h3>
     <script>
@@ -12,7 +18,7 @@
             greetingText = 'Selamat Malam';
         }
         document.getElementById('greeting').innerHTML = greetingText +
-            ', <span class="fw-bold welcome-text">Halo Dunia</span>';
+            ', <span class="fw-bold welcome-text">{{ Auth::user()->name }}</span>';
     </script> <!-- partial -->
     <div class="main-paanel">
         <div class="content-wrapper">

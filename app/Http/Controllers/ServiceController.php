@@ -5,22 +5,27 @@ namespace App\Http\Controllers;
 use App\Models\Service;
 use App\Models\Vehicle;
 use App\Models\Customer;
-use App\Models\SparepartHistory;
-use App\Models\ServiceSparepart;
 use App\Models\Sparepart;
-use App\Models\ServiceChecklist;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use App\Models\ServiceChecklist;
+use App\Models\ServiceSparepart;
+use App\Models\SparepartHistory;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class ServiceController extends Controller
 {
     public function index(Request $request)
     {
+        // Admin & kasir
+        if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
+            abort(403, 'Butuh level Admin & Kasir');
+        }
         $paymentStatus = $request->get('payment_status', 'all');
         $request->session()->put('payment_status', $paymentStatus);
-        
+
         $servicesQuery = Service::query();
-        
+
         if ($paymentStatus !== 'all') {
             $servicesQuery = $servicesQuery->when($paymentStatus === 'paid', function ($query) {
                 return $query->where('payment_received', '>=', DB::raw('total_cost'));
@@ -28,7 +33,7 @@ class ServiceController extends Controller
                 return $query->where('payment_received', '<', DB::raw('total_cost'));
             });
         }
-        
+
         // Apply search filter across multiple related tables
         if ($search = $request->get('search')) {
             $servicesQuery = $servicesQuery->where(function ($query) use ($search) {
@@ -36,43 +41,51 @@ class ServiceController extends Controller
                 $query->whereHas('vehicle', function ($query) use ($search) {
                     $query->where('license_plate', 'like', "%{$search}%");
                 })
-                ->orWhereHas('vehicle.customer', function ($query) use ($search) {
-                    $query->where('name', 'like', "%{$search}%");
-                })
-                ->orWhere('complaint', 'like', "%{$search}%")
-                ->orWhere('service_type', 'like', "%{$search}%");
+                    ->orWhereHas('vehicle.customer', function ($query) use ($search) {
+                        $query->where('name', 'like', "%{$search}%");
+                    })
+                    ->orWhere('complaint', 'like', "%{$search}%")
+                    ->orWhere('service_type', 'like', "%{$search}%");
             });
         }
-        
+
         // Apply date filter
         if ($date = $request->get('date')) {
             $servicesQuery = $servicesQuery->whereDate('created_at', $date);
         }
-        
+
         // Apply year filter
         if ($year = $request->get('year')) {
             $servicesQuery = $servicesQuery->whereYear('created_at', $year);
         }
-        
+
         // Apply day of the week filter
         if ($dayOfWeek = $request->get('day_of_week')) {
             $servicesQuery = $servicesQuery->whereRaw('DAYOFWEEK(created_at) = ?', [$dayOfWeek]);
         }
 
         $services = $servicesQuery->paginate(10);
-        
+
         return view('service.index', compact('services'));
     }
-    
+
     public function create($vehicle_id)
     {
+        // Admin & kasir
+        if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
+            abort(403, 'Butuh level Admin & Kasir');
+        }
         $vehicle = Vehicle::findOrFail($vehicle_id);
         $spareparts = Sparepart::all();
         return view('service.create', compact('vehicle', 'spareparts'));
-    }    
+    }
 
     public function edit($id)
     {
+        // Admin & kasir
+        if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
+            abort(403, 'Butuh level Admin & Kasir');
+        }
         $service = Service::findOrFail($id);
         $spareparts = Sparepart::all(); // Get all spare parts
         return view('service.edit', compact('service', 'spareparts'));
@@ -126,31 +139,31 @@ class ServiceController extends Controller
             'jumlah.*.min' => 'Jumlah sparepart minimal 1.',
             'additional_notes.max' => 'Catatan tambahan maksimal 500 karakter.',
         ]);
-    
+
         $service = Service::create($request->except('sparepart_id', 'jumlah', 'payment_proof'));
-    
+
         if ($request->hasFile('payment_proof')) {
             $paymentProof = $request->file('payment_proof')->store('payment_proofs', 'public');
             $service->update(['payment_proof' => $paymentProof]);
         }
-    
+
         $total_keuntungan = 0;
         if ($request->sparepart_id) {
             foreach ($request->sparepart_id as $index => $sparepart_id) {
                 $sparepart = Sparepart::findOrFail($sparepart_id);
-    
+
                 if ($sparepart->jumlah >= $request->jumlah[$index]) {
                     $sparepart->decrement('jumlah', $request->jumlah[$index]);
-    
+
                     SparepartHistory::create([
                         'sparepart_id' => $sparepart_id,
-                        'jumlah_changed' => -$request->jumlah[$index], 
+                        'jumlah_changed' => -$request->jumlah[$index],
                         'action' => 'subtract',
                     ]);
-    
+
                     $keuntungan_per_sparepart = $sparepart->harga_jual - $sparepart->harga_beli;
                     $total_keuntungan += $keuntungan_per_sparepart * $request->jumlah[$index];
-    
+
                     ServiceSparepart::create([
                         'service_id' => $service->id,
                         'sparepart_id' => $sparepart_id,
@@ -161,9 +174,9 @@ class ServiceController extends Controller
                 }
             }
         }
-    
+
         return redirect()->route('vehicle.show', $service->vehicle_id)
-                         ->with('success', 'Layanan berhasil dibuat!');
+            ->with('success', 'Layanan berhasil dibuat!');
     }
 
     public function update(Request $request, $id)
@@ -215,46 +228,46 @@ class ServiceController extends Controller
             'jumlah.*.min' => 'Jumlah sparepart minimal 1.',
             'additional_notes.max' => 'Catatan tambahan maksimal 500 karakter.',
         ]);
-    
+
         $service = Service::findOrFail($id);
-    
+
         foreach ($service->serviceSpareparts as $serviceSparepart) {
             $sparepart = Sparepart::findOrFail($serviceSparepart->sparepart_id);
             $sparepart->increment('jumlah', $serviceSparepart->quantity);
-    
+
             SparepartHistory::create([
                 'sparepart_id' => $sparepart->id_sparepart,
-                'jumlah_changed' => $serviceSparepart->quantity, 
+                'jumlah_changed' => $serviceSparepart->quantity,
                 'action' => 'add',
             ]);
         }
-    
+
         $service->serviceSpareparts()->delete();
-    
+
         $service->update($request->except('sparepart_id', 'jumlah', 'payment_proof'));
-    
+
         if ($request->hasFile('payment_proof')) {
             $paymentProof = $request->file('payment_proof')->store('payment_proofs', 'public');
             $service->update(['payment_proof' => $paymentProof]);
         }
-    
+
         $total_keuntungan = 0;
         if ($request->sparepart_id) {
             foreach ($request->sparepart_id as $index => $sparepart_id) {
                 $sparepart = Sparepart::findOrFail($sparepart_id);
-    
+
                 if ($sparepart->jumlah >= $request->jumlah[$index]) {
                     $sparepart->decrement('jumlah', $request->jumlah[$index]);
-    
+
                     SparepartHistory::create([
                         'sparepart_id' => $sparepart_id,
-                        'jumlah_changed' => -$request->jumlah[$index], 
+                        'jumlah_changed' => -$request->jumlah[$index],
                         'action' => 'subtract',
                     ]);
-    
+
                     $keuntungan_per_sparepart = $sparepart->harga_jual - $sparepart->harga_beli;
                     $total_keuntungan += $keuntungan_per_sparepart * $request->jumlah[$index];
-    
+
                     ServiceSparepart::create([
                         'service_id' => $service->id,
                         'sparepart_id' => $sparepart_id,
@@ -265,86 +278,90 @@ class ServiceController extends Controller
                 }
             }
         }
-    
+
         return redirect()->route('vehicle.show', $service->vehicle_id)
-                         ->with('success', 'Layanan berhasil diperbarui!');
+            ->with('success', 'Layanan berhasil diperbarui!');
     }
-    
+
     public function updateService(Request $request, $id)
-        {
-            $request->validate([
-                'sparepart_id' => 'nullable|array',
-                'sparepart_id.*' => 'exists:spareparts,id_sparepart',
-                'jumlah' => 'nullable|array',
-                'jumlah.*' => 'required|numeric|min:1',
-            ], [
-                'sparepart_id.array' => 'ID sparepart harus berupa array.',
-                'sparepart_id.*.exists' => 'Salah satu sparepart tidak ditemukan.',
-                'jumlah.array' => 'Jumlah sparepart harus berupa array.',
-                'jumlah.*.required' => 'Jumlah sparepart harus diisi.',
-                'jumlah.*.numeric' => 'Jumlah sparepart harus berupa angka.',
-                'jumlah.*.min' => 'Jumlah sparepart minimal 1.',
+    {
+        $request->validate([
+            'sparepart_id' => 'nullable|array',
+            'sparepart_id.*' => 'exists:spareparts,id_sparepart',
+            'jumlah' => 'nullable|array',
+            'jumlah.*' => 'required|numeric|min:1',
+        ], [
+            'sparepart_id.array' => 'ID sparepart harus berupa array.',
+            'sparepart_id.*.exists' => 'Salah satu sparepart tidak ditemukan.',
+            'jumlah.array' => 'Jumlah sparepart harus berupa array.',
+            'jumlah.*.required' => 'Jumlah sparepart harus diisi.',
+            'jumlah.*.numeric' => 'Jumlah sparepart harus berupa angka.',
+            'jumlah.*.min' => 'Jumlah sparepart minimal 1.',
+        ]);
+
+        $service = Service::findOrFail($id);
+
+        foreach ($service->serviceSpareparts as $serviceSparepart) {
+            $sparepart = Sparepart::findOrFail($serviceSparepart->sparepart_id);
+            $sparepart->increment('jumlah', $serviceSparepart->quantity);
+
+            SparepartHistory::create([
+                'sparepart_id' => $sparepart->id_sparepart,
+                'jumlah_changed' => $serviceSparepart->quantity,
+                'action' => 'add',
             ]);
-        
-            $service = Service::findOrFail($id);
-        
-            foreach ($service->serviceSpareparts as $serviceSparepart) {
-                $sparepart = Sparepart::findOrFail($serviceSparepart->sparepart_id);
-                $sparepart->increment('jumlah', $serviceSparepart->quantity);
-        
-                SparepartHistory::create([
-                    'sparepart_id' => $sparepart->id_sparepart,  
-                    'jumlah_changed' => $serviceSparepart->quantity, 
-                    'action' => 'add',
-                ]);
-            }
-        
-            $service->serviceSpareparts()->delete();
-        
-            $total_keuntungan = 0;
-            foreach ($request->input('sparepart_id') as $key => $sparepart_id) {
-                $sparepart = Sparepart::find($sparepart_id);
-        
-                if ($sparepart && $sparepart->jumlah >= $request->input('jumlah')[$key]) {
-                    $sparepart->decrement('jumlah', $request->input('jumlah')[$key]);
-        
-                    SparepartHistory::create([
-                        'sparepart_id' => $sparepart_id,
-                        'jumlah_changed' => -$request->input('jumlah')[$key], 
-                        'action' => 'subtract',
-                    ]);
-        
-                    $keuntungan_per_sparepart = $sparepart->harga_jual - $sparepart->harga_beli;
-                    $total_keuntungan += $keuntungan_per_sparepart * $request->input('jumlah')[$key];
-        
-                    ServiceSparepart::create([
-                        'service_id' => $service->id,
-                        'sparepart_id' => $sparepart_id,
-                        'quantity' => $request->input('jumlah')[$key],
-                    ]);
-                } else {
-                    return redirect()->back()->withErrors(['sparepart_id' => 'Stok sparepart tidak cukup untuk layanan ini.']);
-                }
-            }
-        
-            $service->update($request->all());
-        
-            return redirect()->route('services.index')->with('success', 'Layanan berhasil diperbarui!');
         }
-    
+
+        $service->serviceSpareparts()->delete();
+
+        $total_keuntungan = 0;
+        foreach ($request->input('sparepart_id') as $key => $sparepart_id) {
+            $sparepart = Sparepart::find($sparepart_id);
+
+            if ($sparepart && $sparepart->jumlah >= $request->input('jumlah')[$key]) {
+                $sparepart->decrement('jumlah', $request->input('jumlah')[$key]);
+
+                SparepartHistory::create([
+                    'sparepart_id' => $sparepart_id,
+                    'jumlah_changed' => -$request->input('jumlah')[$key],
+                    'action' => 'subtract',
+                ]);
+
+                $keuntungan_per_sparepart = $sparepart->harga_jual - $sparepart->harga_beli;
+                $total_keuntungan += $keuntungan_per_sparepart * $request->input('jumlah')[$key];
+
+                ServiceSparepart::create([
+                    'service_id' => $service->id,
+                    'sparepart_id' => $sparepart_id,
+                    'quantity' => $request->input('jumlah')[$key],
+                ]);
+            } else {
+                return redirect()->back()->withErrors(['sparepart_id' => 'Stok sparepart tidak cukup untuk layanan ini.']);
+            }
+        }
+
+        $service->update($request->all());
+
+        return redirect()->route('services.index')->with('success', 'Layanan berhasil diperbarui!');
+    }
+
     public function destroy($id)
     {
         $service = Service::findOrFail($id);
         $vehicle_id = $service->vehicle_id;
         $service->delete();
         return redirect()->route('vehicle.show', $vehicle_id)
-                         ->with('success', 'Layanan berhasil dihapus!');
-    }    
+            ->with('success', 'Layanan berhasil dihapus!');
+    }
 
     public function show($id)
     {
+        // Admin & kasir
+        if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
+            abort(403, 'Butuh level Admin & Kasir');
+        }
         $service = Service::with('checklists')->findOrFail($id);
-    
+
         return view('service.show', compact('service'));
     }
     public function addChecklist(Request $request, $id)
@@ -352,26 +369,30 @@ class ServiceController extends Controller
         $request->validate([
             'task' => 'required|string|max:255',
         ]);
-    
+
         $service = Service::findOrFail($id);
         $service->checklists()->create([
             'task' => $request->task,
             'added_at' => now(), // Menambahkan waktu sekarang
         ]);
-    
+
         return redirect()->route('service.show', $id)->with('success', 'Checklist added successfully!');
     }
-    
+
     public function updateChecklistStatus(Request $request, $id)
     {
         $checklist = ServiceChecklist::findOrFail($id);
         $checklist->is_completed = $request->has('is_completed');
         $checklist->save();
-    
+
         return redirect()->route('service.show', $checklist->service_id)->with('success', 'Checklist updated successfully!');
-    }   
+    }
     public function editChecklist($id)
     {
+        // Admin & kasir
+        if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
+            abort(403, 'Butuh level Admin & Kasir');
+        }
         $checklist = ServiceChecklist::findOrFail($id);
         return view('service.editChecklist', compact('checklist'));
     }
@@ -394,7 +415,7 @@ class ServiceController extends Controller
         $checklist = ServiceChecklist::findOrFail($id);
         $checklist->delete();
         return redirect()->route('service.show', $checklist->service_id)->with('success', 'Checklist deleted successfully!');
-    }    
+    }
 
     public function getSparepartNotifications()
     {
@@ -402,5 +423,4 @@ class ServiceController extends Controller
 
         return response()->json($spareparts);
     }
-
 }
