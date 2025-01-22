@@ -1,0 +1,2 @@
+<h1>Lainnya</h1>
+<p>Tab ini kosong saat ini, namun kami sedang mempersiapkan informasi tambahan yang akan segera tersedia. Harap tunggu beberapa saat untuk pembaruan lebih lanjut mengenai topik lainnya.</p>
