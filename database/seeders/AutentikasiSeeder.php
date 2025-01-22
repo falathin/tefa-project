@@ -47,7 +47,7 @@ class AutentikasiSeeder extends Seeder
                 'name' => 'admin tbsm',
                 'email' => 'AdminTbsm@gmail.com',
                 'level' => 'admin',
-                'jurusan' => 'TBSM',
+                'jurusan' => 'TSM',
                 'password' => bcrypt('asu12345')
             ],
         ];
@@ -62,11 +62,3 @@ class AutentikasiSeeder extends Seeder
     }
 }
 
-// Kegiatan untuk hari Kamis 
-// - Melanjutkan pembuatan halaman profil, fitur ubah password, email, dan nama. Referensi dari halaman profil template-login-breeze
-// - Buat komponen alert dialog
-// - Buat fitur tambah akun (khusus level engineer dan admin)
-// - Integrasikan komponen alert dialog ke fitur logout untuk konfirmasi logout
-
-// Catatan
-// - saat menggunakan mode handphone, tampilan foto profil tidak tampil karenanya tidak bisa mengakses halaman profil

@@ -2,19 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Notification;
 use Carbon\Carbon;
 use App\Models\Sparepart;
 use Illuminate\Http\Request;
 use App\Models\SparepartHistory;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 class SparepartController extends Controller
 {
     public function index(Request $request)
     {
-        
         // Admin & kasir
         if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
             abort(403, 'Butuh level Admin & Kasir');
@@ -86,10 +83,7 @@ class SparepartController extends Controller
         if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
             abort(403, 'Butuh level Admin & Kasir');
         }
-        $sparepartId = Sparepart::find($sparepart_id);
-        if (! Gate::allows('isSameJurusan', [$sparepartId])) {
-            abort(403, 'data tidak ditemukan!!');
-        }
+      
         $sparepart = Sparepart::findOrFail($sparepart_id);
         return view('sparepart.show', compact('sparepart'));
     }
@@ -100,10 +94,7 @@ class SparepartController extends Controller
         if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
             abort(403, 'Butuh level Admin & Kasir');
         }
-        $sparepartId = Sparepart::find($id);
-        if (! Gate::allows('isSameJurusan', [$sparepartId])) {
-            abort(403, 'data tidak ditemukan!!');
-        }
+
         $sparepart = Sparepart::findOrFail($id);
         return view('sparepart.edit', compact('sparepart'));
     }
@@ -152,6 +143,10 @@ class SparepartController extends Controller
 
     public function history($id, Request $request)
     {
+        // Admin & kasir
+        if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
+            abort(403, 'Butuh level Admin & Kasir');
+        }
         $sparepart = Sparepart::findOrFail($id);
         
         $query = SparepartHistory::where('sparepart_id', $id);

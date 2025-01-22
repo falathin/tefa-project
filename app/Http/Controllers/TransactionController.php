@@ -6,7 +6,6 @@ use App\Models\Sparepart;
 use Illuminate\Http\Request;
 use App\Models\SparepartHistory;
 use App\Models\SparepartTransaction;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 class TransactionController extends Controller
@@ -18,7 +17,6 @@ class TransactionController extends Controller
             abort(403, 'Butuh level Admin & Kasir');
         }
         $search = $request->input('search');
-        $jurusan = Auth::user()->jurusan;
 
         $transactions = SparepartTransaction::with('sparepart')
         ->when($search, function ($query, $search) {
@@ -35,6 +33,10 @@ class TransactionController extends Controller
 
     public function create()
     {
+        // Admin & kasir
+        if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
+            abort(403, 'Butuh level Admin & Kasir');
+        }
         $spareparts = Sparepart::all();
         $transactions = SparepartTransaction::all();
         return view('transactions.create', compact('spareparts', 'transactions'));
@@ -125,9 +127,9 @@ class TransactionController extends Controller
     }
     public function show($id)
     {
-        $sparepartsTransaction = SparepartTransaction::find($id);
-        if (! Gate::allows('isSameJurusan', [$sparepartsTransaction])) {
-            abort(403, 'data tidak ditemukan!!');
+        // Admin & kasir
+        if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
+            abort(403, 'Butuh level Admin & Kasir');
         }
         $transaction = SparepartTransaction::with('sparepart')->findOrFail($id);
 
@@ -146,9 +148,9 @@ class TransactionController extends Controller
 
     public function edit($id)
     {
-        $sparepartsTransaction = SparepartTransaction::find($id);
-        if (! Gate::allows('isSameJurusan', [$sparepartsTransaction])) {
-            abort(403, 'data tidak ditemukan!!');
+        // Admin & kasir
+        if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
+            abort(403, 'Butuh level Admin & Kasir');
         }
         $transaction = SparepartTransaction::findOrFail($id);
         $spareparts = Sparepart::all();

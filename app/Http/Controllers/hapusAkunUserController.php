@@ -19,12 +19,7 @@ class hapusAkunUserController extends Controller
 
     public function hapusAkun(Request $request)
     {
-        // @foreach ($users->sortBy('id') as $user)
-        // @if (! Gate::allows('isEngineer'))
-        //     @if ($user->level == 'engineer')
-        //         @continue
-        //     @endif
-        // @endif
+
         
         $data = $request->validate([
             'id' => 'required',

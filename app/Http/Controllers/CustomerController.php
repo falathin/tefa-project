@@ -6,7 +6,6 @@ use Carbon\Carbon;
 use App\Models\Vehicle;
 use App\Models\Customer;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
@@ -19,7 +18,6 @@ class CustomerController extends Controller
             abort(403, 'Butuh level Admin & Kasir');
         }
 
-        $jurusan = Auth::user()->jurusan;
         $searchTerm = $request->input('search');
         $deletedSearch = $request->input('deletedSearch');
 
@@ -92,9 +90,9 @@ class CustomerController extends Controller
 
     public function edit($id)
     {
-        $customer = Customer::find($id);
-        if (! Gate::allows('isSameJurusan', [$customer])) {
-            abort(403, 'data tidak ditemukan!!');
+        // Admin & kasir
+        if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
+            abort(403, 'Butuh level Admin & Kasir');
         }
         $customer = Customer::with('vehicles')->findOrFail($id);
         return view('customer.edit', compact('customer'));
@@ -117,11 +115,6 @@ class CustomerController extends Controller
 
     public function show(Request $request, $id)
     {
-        $customer = Customer::find($id);
-
-        if (! Gate::allows('isSameJurusan', [$customer])) {
-            abort(403, 'data tidak ditemukan!!');
-        }
         // Admin & kasir
         if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
             abort(403, 'Butuh level Admin & Kasir');

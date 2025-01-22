@@ -20,6 +20,8 @@ return new class extends Migration
             $table->enum('level', ['engineer', 'admin', 'kasir', 'bendahara'])->default('kasir');
             $table->string('password');
             $table->rememberToken();
+            $table->enum('level', ['engineer', 'admin', 'kasir', 'bendahara'])->default('kasir');
+            $table->enum('jurusan', ['TSM', 'TKRO']);
             $table->timestamps();
         });
 

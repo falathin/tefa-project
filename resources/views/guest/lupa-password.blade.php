@@ -48,8 +48,7 @@
                 <button type="submit" class="btn text-light w-100 bg-danger fw-bold">Reset Password</button>
             </div>
 
-            chat via <a href="https://wa.me/6285892819795" class="text-decoration-none text-success fw-bold">Whatsapp</a> untuk mendapatkan Emergency password
-
+            chat via <a href="https://wa.me/6285692548351" class="text-decoration-none text-success fw-bold">Whatsapp</a> untuk mendapatkan Emergency password
             @if ($errors->any())
                 <div class="alert alert-danger">
                     <ul>

@@ -16,6 +16,7 @@ class CreateCustomersTable extends Migration
             $table->string('name');
             $table->string('contact')->nullable();
             $table->text('address')->nullable();
+            $table->enum('jurusan', ['TSM', 'TKRO']);
             $table->timestamps();
         });
     }

@@ -1,11 +1,12 @@
 @extends('layouts.app') @section('content')
-    @if (session('statusBerhasil'))
+@if (session('statusBerhasil'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             {{ session('statusBerhasil') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
-    <h1 class="welcome-text" id="greeting">Selamat Pagi, <span class="fw-bold welcome-text">Traveler ~</span></h1>
+
+    <h1 class="welcome-text" id="greeting">Selamat Pagi, <span class="fw-bold welcome-text">Halo Dunia</span></h1>
     <h3 class="welcome-sub-text">Ringkasan kinerja Anda minggu ini</h3>
     <script>
         const hour = new Date().getHours();

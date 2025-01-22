@@ -11,6 +11,8 @@ use App\Http\Controllers\{
     CustomerController,
     NotificationController,
     TransactionController,
+    ForgotPasswordController,
+    AutentikasiController,
     EmergencyPasswordController,
     DaftarAkunController,
     DashboardController,
@@ -18,6 +20,9 @@ use App\Http\Controllers\{
     ProfileController,
 };
 use Illuminate\Support\Facades\Gate;
+
+// Dashboard
+Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
 // Guest
 Route::middleware('guest')->group(function () {
@@ -28,16 +33,34 @@ Route::middleware('guest')->group(function () {
     
     // lupa password
     Route::get('/lupa-password', [ForgotPasswordController::class, 'showResetForm'])->name('lupa.password');
-    Route::post('/lupa-password', [ForgotPasswordController::class, 'reset']);
-    
+    Route::post('/lupa-password', [ForgotPasswordController::class, 'reset']); 
     
 });
 
+// Dashboard
+// Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+
+/**
+ * Sparepart Routes
+ */
+// Route::prefix('sparepart')->name('sparepart.')->group(function () {
+//     Route::get('/', [SparepartController::class, 'index'])->name('index');
+//     Route::get('create', [SparepartController::class, 'create'])->name('create');
+//     Route::post('/', [SparepartController::class, 'store'])->name('store');
+//     Route::get('{id}', [SparepartController::class, 'show'])->name('show');
+//     Route::get('{id}/edit', [SparepartController::class, 'edit'])->name('edit');
+//     Route::put('{id}', [SparepartController::class, 'update'])->name('update');
+//     Route::delete('{id}', [SparepartController::class, 'destroy'])->name('destroy');
+//     Route::get('{id}/history', [SparepartController::class, 'history'])->name('history');
+    
+// });
+
 // Auth
 Route::middleware('auth')->group(function () {
-    
+
     // Dashboard
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+
 
     // Logout
     Route::get('/logout', [AutentikasiController::class, 'logout'])->name('logout');
@@ -98,13 +121,17 @@ Route::middleware('auth')->group(function () {
      * Service Checklist Routes
      */
     Route::prefix('service')->name('service.')->group(function () {
+
         Route::get('/', [ServiceController::class, 'index'])->name('index');
         Route::get('create/{vehicle_id}', [ServiceController::class, 'create'])->name('create');
+
         Route::post('/', [ServiceController::class, 'store'])->name('store');
+        Route::post('/', [ServiceController::class, 'store'])->name('store-2');
+
         Route::get('{id}', [ServiceController::class, 'show'])->name('show');
-        // Route::get('{id}/edit', [ServiceController::class, 'edit'])->name('edit');
-        // Route::put('{id}', [ServiceController::class, 'update'])->name('update');
-        // Route::delete('{id}', [ServiceController::class, 'destroy'])->name('destroy');
+        Route::get('{id}/edit', [ServiceController::class, 'edit'])->name('edit');
+        Route::put('{id}', [ServiceController::class, 'update'])->name('update');
+        Route::delete('{id}', [ServiceController::class, 'destroy'])->name('destroy');
 
         Route::post('{id}/checklist', [ServiceController::class, 'addChecklist'])->name('addChecklist');
         Route::patch('/checklist/{id}', [ServiceController::class, 'updateChecklistStatus'])->name('updateChecklistStatus');

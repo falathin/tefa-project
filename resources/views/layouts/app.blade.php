@@ -47,7 +47,7 @@
             
             <div class="main-panel flex-grow-1">
                 <div class="content-wrapper d-flex flex-column flex-grow-1">
-                    
+
                     {{-- Modal --}}
                     <div class="modal" tabindex="-1" id="exampleModal">
                         <div class="modal-dialog">
@@ -76,7 +76,6 @@
                             });
                             </script>
                     @endif
-
                     
                     <!-- Content -->
                     @yield('content')
@@ -108,17 +107,17 @@
     
     <!-- Core JS -->
     <script src="{{ asset('assets/js/off-canvas.js') }}"></script>
+    <script src="{{ asset('assets/js/template.js') }}"></script>
+    <script src="{{ asset('assets/js/settings.js') }}"></script>
+    <script src="{{ asset('assets/js/hoverable-collapse.js') }}"></script>
+    <script src="{{ asset('assets/js/todolist.js') }}"></script>
     <script src="{{ asset('assets/js/Chart.roundedBarCharts.js') }}"></script>
     <script src="{{ asset('assets/js/codemirror.js') }}"></script>
     <script src="{{ asset('assets/js/dashboard.js') }}"></script>
     <script src="{{ asset('assets/js/file-upload.js') }}"></script>
-    <script src="{{ asset('assets/js/hoverable-collapse.js') }}"></script>
     <script src="{{ asset('assets/js/jquery-file-upload.js') }}"></script>
     <script src="{{ asset('assets/js/jquery.cookie.js') }}"></script>
     <script src="{{ asset('assets/js/select2.js') }}"></script>
-    <script src="{{ asset('assets/js/settings.js') }}"></script>
-    <script src="{{ asset('assets/js/template.js') }}"></script>
-    <script src="{{ asset('assets/js/todolist.js') }}"></script>
     <script src="{{ asset('assets/js/typeahead.js') }}"></script>
 
     <!-- Init AOS for Animations -->

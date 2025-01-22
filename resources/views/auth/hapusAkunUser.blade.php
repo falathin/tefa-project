@@ -5,16 +5,16 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 @endif
-<x-nav-auth>Hapus Akun</x-nav-auth>
+<x-nav-auth>Hapus Akun {{ Auth::user()->jurusan }}</x-nav-auth>
 <form class="d-flex w-50 mt-5 container" method="POST" action="{{ route('hapusAkunUser') }}">
     @csrf
-    <input class="form-control me-2" type="number" placeholder="Masukkan ID akun" id="id" name="id"
+    <input class="form-control me-2" type="number" placeholder="Masukkan Id akun" id="id" name="id"
         autofocus required>
     <button class="btn btn-outline-danger w-25 fw-bold" type="submit">Hapus akun</button>
 </form>
 
-<table class="table mt-4 container" border="2">
-    <thead class="bg-primary">
+<table class="table mt-5 container" border="2">
+    <thead>
         <tr>
             <th scope="col">No</th>
             <th scope="col">Id</th>

@@ -40,7 +40,7 @@
                     <div class="dropdown-header text-center mt-3">
                         {{-- <img class="img-md rounded-circle" src="{{ asset('assets/images/logo-mini.svg') }}"
                             alt="Profile image" width="100px"> --}}
-                            
+
                         <h1>{{ Auth::user()->jurusan }}</h1>
                         <p class="mb-1 mt-3 fw-semibold">{{ Auth::user()->name }}</p>
                         <p class="fw-light text-muted mb-0">{{ Auth::user()->email }}</p>
@@ -56,7 +56,7 @@
                                 class="me-2" src="{{ asset('assets/images/add_account.png') }}" width="28"></img>Buat akun baru
                         </a>
                         <a class="dropdown-item " href="{{ route('hapusAkunUser') }}"><img
-                            class="me-2" src="{{ asset('assets/images/manage_account.png') }}" width="28"></img>List akun {{ Auth::user()->jurusan }}
+                            class="me-2" src="{{ asset('assets/images/manage_account.png') }}" width="28"></img>Hapus akun {{ Auth::user()->jurusan }}
                         </a>
                     @endif
                     @if (Auth::user()->level == 'engineer')

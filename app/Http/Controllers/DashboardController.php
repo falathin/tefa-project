@@ -16,6 +16,9 @@ class DashboardController extends Controller
     public function index()
     {
         $today = now()->format('Y-m-d');
+        $thisMonth = now()->format('m');
+        $thisYear = now()->format('Y');
+
 
         $totalVisitorsToday = Customer::whereDate('created_at', $today)->count();
 
@@ -30,8 +33,8 @@ class DashboardController extends Controller
         $sparepartProfit = ServiceSparepart::whereHas('service', function ($query) use ($today) {
             $query->whereDate('service_date', $today);
         })
-        ->join('spareparts', 'service_spareparts.sparepart_id', '=', 'spareparts.id_sparepart')
-        ->sum(DB::raw('service_spareparts.quantity * (spareparts.harga_jual - spareparts.harga_beli)'));
+            ->join('spareparts', 'service_spareparts.sparepart_id', '=', 'spareparts.id_sparepart')
+            ->sum(DB::raw('service_spareparts.quantity * (spareparts.harga_jual - spareparts.harga_beli)'));
 
         $totalProfit = $serviceProfit + $sparepartProfit;
 
@@ -43,10 +46,10 @@ class DashboardController extends Controller
 
         $totalUnpaid = Service::whereDate('service_date', $today)
             ->where('payment_received', '<', DB::raw('total_cost'))
-            ->sum('total_cost') - 
+            ->sum('total_cost') -
             Service::whereDate('service_date', $today)
-            ->where('payment_received', '<', DB::raw('total_cost'))
-            ->sum('payment_received');
+                ->where('payment_received', '<', DB::raw('total_cost'))
+                ->sum('payment_received');
 
         $profitPercentage = $totalProfit > 0 ? (($totalProfit / max($totalProfit, 1)) * 100) : 0;
         $expensePercentage = $totalExpense > 0 ? (($totalExpense / max($totalExpense, 1)) * 100) : 0;
@@ -77,23 +80,25 @@ class DashboardController extends Controller
 
         $vehiclesPerWeekData = [
             'labels' => ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'],
-            'datasets' => [[
-                'label' => 'Jumlah Kendaraan per Minggu',
-                'data' => [
-                    Vehicle::whereDay('created_at', 'Monday')->count(),
-                    Vehicle::whereDay('created_at', 'Tuesday')->count(),
-                    Vehicle::whereDay('created_at', 'Wednesday')->count(),
-                    Vehicle::whereDay('created_at', 'Thursday')->count(),
-                    Vehicle::whereDay('created_at', 'Friday')->count(),
-                    Vehicle::whereDay('created_at', 'Saturday')->count(),
-                    Vehicle::whereDay('created_at', 'Sunday')->count(),
-                ],
-                'backgroundColor' => 'rgba(153, 102, 255, 0.2)',
-                'borderColor' => 'rgba(153, 102, 255, 1)',
-                'borderWidth' => 3,
-                'fill' => true,
-                'tension' => 0.4
-            ]]
+            'datasets' => [
+                [
+                    'label' => 'Jumlah Kendaraan per Minggu',
+                    'data' => [
+                        Vehicle::whereDay('created_at', 'Monday')->count(),
+                        Vehicle::whereDay('created_at', 'Tuesday')->count(),
+                        Vehicle::whereDay('created_at', 'Wednesday')->count(),
+                        Vehicle::whereDay('created_at', 'Thursday')->count(),
+                        Vehicle::whereDay('created_at', 'Friday')->count(),
+                        Vehicle::whereDay('created_at', 'Saturday')->count(),
+                        Vehicle::whereDay('created_at', 'Sunday')->count(),
+                    ],
+                    'backgroundColor' => 'rgba(153, 102, 255, 0.2)',
+                    'borderColor' => 'rgba(153, 102, 255, 1)',
+                    'borderWidth' => 3,
+                    'fill' => true,
+                    'tension' => 0.4
+                ]
+            ]
         ];
 
         $spareparts = Sparepart::orderBy('created_at', 'asc')->get();
@@ -105,6 +110,23 @@ class DashboardController extends Controller
         ];
 
         $customers = Customer::with('vehicles')->get();
+        $serviceIncomeDaily = Service::whereDate('service_date', $today)->sum('total_cost');
+        $serviceIncomeMonthly = Service::whereMonth('created_at', $thisMonth)->sum('total_cost');
+        $serviceIncomeYearly = Service::whereYear('created_at', $thisYear)->sum('total_cost');
+
+        $dailyCustomerData = Service::whereDate('service_date', $today)
+        ->with(['customer', 'vehicle'])
+        ->get()
+        ->map(function ($service) {
+            return [
+                'customer_name' => $service->vehicle->customer->name ?? 'N/A',
+                'vehicle' => $service->vehicle->vehicle_type ?? 'N/A',
+                'income' => $service->total_cost,
+                'service_time' => $service->created_at->format('H:i:s'), // Add service time
+            ];
+        });    
+
+        $totalDailyIncome = $dailyCustomerData->sum('income');
 
         $userId = Auth::user()->jurusan;
         $jurusanNotif = Notification::all()->where('jurusan', 'like', $userId)->count();
@@ -114,7 +136,8 @@ class DashboardController extends Controller
             'spareparts', 'totalSpareparts', 'totalVisitorsToday', 'today', 'totalProfit', 'totalExpense', 'totalUnpaid',
             'profitPercentage', 'expensePercentage', 'unpaidPercentage', 'chartLabels', 'chartValues', 
             'totalVisitors', 'totalVehicles', 'data', 'averageVehiclesPerCustomer', 'totalSparepartsUsed', 'vehicles', 
-            'averageProfitPerCustomer', 'monthlyChartValues', 'customers', 'vehiclesPerWeekData'
-        ));
+            'averageProfitPerCustomer', 'monthlyChartValues', 'customers', 'vehiclesPerWeekData', 'serviceIncomeDaily', 
+            'serviceIncomeMonthly', 'serviceIncomeYearly', 'dailyCustomerData', 'totalDailyIncome'
+        ));        
     }
 }
