@@ -15,6 +15,8 @@ class Customer extends Model
         'name',
         'contact',
         'address',
+        // 'user_id',
+        'jurusan'
     ];
 
     public function scopeDeletedOlderThanWeek($query)
@@ -28,5 +30,10 @@ class Customer extends Model
     {
         return $this->hasMany(Vehicle::class, 'customer_id');
     }
+
+//     public function user()
+// {
+//     return $this->belongsTo(User::class);
+// }
 
 }

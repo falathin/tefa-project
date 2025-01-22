@@ -40,11 +40,11 @@
     <div class="container-scroller flex-grow-1">
         <!-- Navbar -->
         @include('partials.navbar')
-
+        
         <div class="container-fluid page-body-wrapper d-flex flex-grow-1">
             <!-- Sidebar -->
             @include('partials.sidebar')
-
+            
             <div class="main-panel flex-grow-1">
                 <div class="content-wrapper d-flex flex-column flex-grow-1">
 

@@ -63,7 +63,7 @@
 </style>
 
 <!-- Theme Selector Dropdown -->
-<li class="nav-item dropdown d-none d-lg-block">
+{{-- <li class="nav-item dropdown d-none d-lg-block">
     <a class="nav-link dropdown-bordered dropdown-toggle dropdown-toggle-split" id="themeDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false">Pilih Tema</a>
     <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list pb-0" aria-labelledby="themeDropdown">
         <a class="dropdown-item py-3">
@@ -79,7 +79,7 @@
             </a>
         @endforeach
     </div>
-</li>
+</li> --}}
 
 <!-- Theme Toggle Button -->
 <li class="nav-item d-none d-lg-block">

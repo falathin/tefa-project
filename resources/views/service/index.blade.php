@@ -112,7 +112,7 @@
                                     <div class="d-flex justify-content-between mt-3">
                                         <a href="{{ route('service.show', $service->id) }}" class="btn btn-info btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Lihat">
                                             <i class="fas fa-eye"></i> Lihat
-                                        </a>
+                                        {{-- </a>
                                         <a href="{{ route('service.edit', $service->id) }}" class="btn btn-warning btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit">
                                             <i class="fas fa-edit"></i> Edit
                                         </a>
@@ -122,7 +122,7 @@
                                             <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus servis ini?')" data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus">
                                                 <i class="fas fa-trash-alt"></i> Hapus
                                             </button>
-                                        </form>
+                                        </form> --}}
                                     </div>
                                 </div>
                             </div>

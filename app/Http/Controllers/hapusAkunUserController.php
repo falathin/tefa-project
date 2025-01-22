@@ -19,6 +19,7 @@ class hapusAkunUserController extends Controller
 
     public function hapusAkun(Request $request)
     {
+
         
         $data = $request->validate([
             'id' => 'required',

@@ -11,6 +11,7 @@ class SparepartTransaction extends Model
 
     protected $fillable = [
         'sparepart_id',
+        'jurusan',
         'quantity',
         'purchase_price',
         'total_price',

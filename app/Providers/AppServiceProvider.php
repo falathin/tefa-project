@@ -15,6 +15,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Sparepart::observe(SparepartObserver::class);
+
     
         // Daftarkan middleware global
         $this->app['router']->aliasMiddleware('role', LevelMiddleware::class);

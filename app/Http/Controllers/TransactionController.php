@@ -17,12 +17,14 @@ class TransactionController extends Controller
             abort(403, 'Butuh level Admin & Kasir');
         }
         $search = $request->input('search');
+
         $transactions = SparepartTransaction::with('sparepart')
-            ->when($search, function ($query, $search) {
+        ->when($search, function ($query, $search) {
                 return $query->whereHas('sparepart', function ($query) use ($search) {
                     $query->where('nama_sparepart', 'like', "%{$search}%");
                 });
             })
+            ->where('jurusan', 'like', $jurusan)
             ->orderBy('created_at', 'desc')
             ->paginate(5);
 
@@ -50,6 +52,7 @@ class TransactionController extends Controller
             'quantity.*' => 'required|numeric|min:1',
             'purchase_price' => 'required|array',
             'purchase_price.*' => 'required|numeric|min:0',  // Validasi harga beli dari form
+            // 'jurusan' => 'required',
         ], [
             'transaction_type.required' => 'Jenis transaksi harus dipilih.',
             'transaction_type.in' => 'Jenis transaksi tidak valid.',
@@ -73,6 +76,7 @@ class TransactionController extends Controller
 
             $purchase_price = $request->purchase_price[$index];
 
+            $userId = Auth::user()->jurusan;
             if ($request->transaction_type == 'sale') {
                 if ($sparepart->jumlah >= $request->quantity[$index]) {
                     $sparepart->decrement('jumlah', $request->quantity[$index]);
@@ -88,6 +92,7 @@ class TransactionController extends Controller
 
                     SparepartTransaction::create([
                         'sparepart_id' => $sparepart_id,
+                        'jurusan' => $userId,
                         'quantity' => $request->quantity[$index],
                         'purchase_price' => $purchase_price,
                         'total_price' => $sparepart->harga_jual * $request->quantity[$index],  // Gunakan harga jual untuk total harga
@@ -108,6 +113,7 @@ class TransactionController extends Controller
 
                 SparepartTransaction::create([
                     'sparepart_id' => $sparepart_id,
+                    'jurusan' => $userId,
                     'quantity' => $request->quantity[$index],
                     'purchase_price' => $purchase_price,  // Gunakan harga beli dari form
                     'total_price' => $purchase_price * $request->quantity[$index],  // Gunakan harga beli untuk total harga

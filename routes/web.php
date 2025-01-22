@@ -3,13 +3,14 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\{
+    AutentikasiController,
+    ForgotPasswordController,
     SparepartController,
     ServiceController,
     VehicleController,
     CustomerController,
     NotificationController,
     TransactionController,
-    
     ForgotPasswordController,
     AutentikasiController,
     EmergencyPasswordController,
@@ -18,6 +19,7 @@ use App\Http\Controllers\{
     hapusAkunUserController,
     ProfileController,
 };
+use Illuminate\Support\Facades\Gate;
 
 // Dashboard
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
@@ -179,6 +181,3 @@ Route::middleware('auth')->group(function () {
         Route::get('{id}', [VehicleController::class, 'show'])->name('show');
     });
 });
-
-
-

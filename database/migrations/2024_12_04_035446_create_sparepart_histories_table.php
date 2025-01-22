@@ -10,6 +10,7 @@ class CreateSparepartHistoriesTable extends Migration
     {
         Schema::create('sparepart_histories', function (Blueprint $table) {
             $table->id();
+            $table->string('jurusan');
             $table->unsignedBigInteger('sparepart_id');
             $table->integer('jumlah_changed'); // Positive if added, negative if subtracted
             $table->string('action'); // Add or Subtract

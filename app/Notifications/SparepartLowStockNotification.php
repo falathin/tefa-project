@@ -4,6 +4,7 @@ namespace App\Notifications;
 use App\Models\Sparepart;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Auth;
 
 class SparepartLowStockNotification extends Notification
 {
@@ -23,8 +24,10 @@ class SparepartLowStockNotification extends Notification
 
     public function toDatabase($notifiable)
     {
+        
         return [
-            'title' => 'Stok Sparepart Menipis',
+            'title' => 'Stok Sparepart Menipis !!!',
+            'jurusan' => $this->sparepart->jurusan,
             'message' => "Stok untuk {$this->sparepart->nama_sparepart} tersisa {$this->sparepart->jumlah}. Segera lakukan pengadaan!",
             'sparepart_id' => $this->sparepart->id_sparepart,
         ];

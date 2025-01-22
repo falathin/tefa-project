@@ -17,30 +17,34 @@ class CustomerController extends Controller
         if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
             abort(403, 'Butuh level Admin & Kasir');
         }
+
         $searchTerm = $request->input('search');
         $deletedSearch = $request->input('deletedSearch');
-        
+
         $customers = Customer::when($searchTerm, function ($query, $searchTerm) {
             return $query->where('name', 'like', '%' . $searchTerm . '%')
-                         ->orWhere('contact', 'like', '%' . $searchTerm . '%')
-                         ->orWhere('address', 'like', '%' . $searchTerm . '%');
+                ->orWhere('contact', 'like', '%' . $searchTerm . '%')
+                ->orWhere('address', 'like', '%' . $searchTerm . '%')
+            ;
         })
-        ->orderBy('created_at', 'desc')  // Ordering by created_at in descending order
-        ->paginate(5);
-        
+            ->where('jurusan', 'like', $jurusan)
+            ->orderBy('created_at', 'desc')  // Ordering by created_at in descending order
+            ->paginate(5);
+
         $deletedCustomers = Customer::onlyTrashed()
             ->when($deletedSearch, function ($query, $deletedSearch) {
                 return $query->where('name', 'like', '%' . $deletedSearch . '%')
-                             ->orWhere('contact', 'like', '%' . $deletedSearch . '%')
-                             ->orWhere('address', 'like', '%' . $deletedSearch . '%');
+                    ->orWhere('contact', 'like', '%' . $deletedSearch . '%')
+                    ->orWhere('address', 'like', '%' . $deletedSearch . '%');
             })
             ->orderBy('created_at', 'desc')  // Ordering by created_at in descending order
             ->paginate(5);
-        
+
         $noData = $customers->isEmpty() && $deletedCustomers->isEmpty();
-        
+        // var_dump($jurusan['']);
+
         return view('customer.index', compact('customers', 'deletedCustomers', 'noData', 'searchTerm', 'deletedSearch'));
-    }    
+    }
 
     public function create()
     {
@@ -63,9 +67,10 @@ class CustomerController extends Controller
             'vehicles.*.production_year' => 'nullable|integer|lte:' . Carbon::now()->year,
             'vehicles.*.engine_code' => 'nullable|string|max:255',
             'vehicles.*.image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'jurusan' => 'required'
         ]);
 
-        $customer = Customer::create($request->only(['name', 'contact', 'address']));
+        $customer = Customer::create($request->only(['name', 'contact', 'address', 'jurusan']));
 
         if ($request->has('vehicles')) {
             foreach ($request->vehicles as $vehicle) {
@@ -80,7 +85,7 @@ class CustomerController extends Controller
         }
 
         return redirect()->route('customer.show', $customer->id)
-                        ->with('success', 'Customer and vehicles created successfully!');
+            ->with('success', 'Customer and vehicles created successfully!');
     }
 
     public function edit($id)
@@ -105,7 +110,7 @@ class CustomerController extends Controller
         $customer->update($request->only(['name', 'contact', 'address']));
 
         return redirect()->route('customer.show', $customer->id)
-                        ->with('success', 'Customer updated successfully!');
+            ->with('success', 'Customer updated successfully!');
     }
 
     public function show(Request $request, $id)
@@ -120,13 +125,13 @@ class CustomerController extends Controller
         $customer->address = $customer->address ?: 'Tidak ada data alamat';
 
         $searchTerm = $request->input('search');
-        
+
         $vehicles = $customer->vehicles()
-                             ->when($searchTerm, function ($query, $searchTerm) {
-                                 return $query->where('license_plate', 'like', '%' . $searchTerm . '%')
-                                              ->orWhere('vehicle_type', 'like', '%' . $searchTerm . '%');
-                             })
-                             ->paginate(3);
+            ->when($searchTerm, function ($query, $searchTerm) {
+                return $query->where('license_plate', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('vehicle_type', 'like', '%' . $searchTerm . '%');
+            })
+            ->paginate(3);
 
         return view('customer.show', compact('customer', 'vehicles', 'searchTerm'));
     }

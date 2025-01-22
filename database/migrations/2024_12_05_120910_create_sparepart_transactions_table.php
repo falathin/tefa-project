@@ -10,6 +10,7 @@ class CreateSparepartTransactionsTable extends Migration
     {
         Schema::create('sparepart_transactions', function (Blueprint $table) {
             $table->id();
+            $table->string('jurusan');
             $table->unsignedBigInteger('sparepart_id');
             $table->foreign('sparepart_id')->references('id_sparepart')->on('spareparts')->onDelete('cascade');
             $table->integer('quantity');

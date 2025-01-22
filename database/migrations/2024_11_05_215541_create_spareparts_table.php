@@ -10,6 +10,7 @@ class CreateSparepartsTable extends Migration
     {
         Schema::create('spareparts', function (Blueprint $table) {
             $table->id('id_sparepart'); // Primary key
+            $table->string('jurusan');
             $table->string('nama_sparepart');
             $table->integer('jumlah');
             $table->decimal('harga_beli', 10, 2);

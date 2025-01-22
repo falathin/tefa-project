@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class CreateServiceSparepartsTable extends Migration
@@ -10,6 +11,7 @@ class CreateServiceSparepartsTable extends Migration
     {
         Schema::create('service_spareparts', function (Blueprint $table) {
             $table->id(); // Primary key (bigint)
+            $table->string('jurusan');
             $table->foreignId('service_id')
                 ->constrained('services') // Relasi ke tabel services
                 ->cascadeOnDelete();
