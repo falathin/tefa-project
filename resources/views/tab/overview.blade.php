@@ -77,7 +77,7 @@
                             Total Belum Dibayar
                         </p>
                         <h3
-                            class="rate-percentage @if ($totalUnpaid < 0) text-danger @else text-success @endif">
+                            class="rate-percentage text-danger @if ($totalUnpaid < 0) text-danger @else text-success @endif">
                             Rp. {{ number_format($totalUnpaid, 2, ',', '.') }}
                         </h3>
                         <p class="text-danger d-flex">
