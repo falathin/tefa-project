@@ -13,6 +13,7 @@ class CreateNotificationsTable extends Migration
             $table->string('title');
             $table->text('message');
             $table->boolean('is_read')->default(false);
+            $table->enum('jurusan', ['TSM', 'TKRO', 'General']);
             $table->timestamps();
         });
     }

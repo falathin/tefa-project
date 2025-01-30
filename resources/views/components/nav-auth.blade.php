@@ -4,6 +4,9 @@
         <a class="navbar-brand brand-logo" href="{{ url('/') }}">
             <img src="{{ asset('assets/images/logo.svg') }}" alt="logo" width="125px" />
         </a>
+        <a class="nav-link" href="{{ url('/') }}">
+            <span class="menu-title">Dashboard</span>
+        </a>
     </div>
 </nav>
 <h6 class="section-heading bg-body-secondary"></h6>

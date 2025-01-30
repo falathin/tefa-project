@@ -4,7 +4,7 @@
     <div class="container">
         <div class="card shadow-sm">
             <form action="{{ route('transactions.store') }}" method="POST" id="transactionForm">
-
+                
                 <div class="card-header mt-3 rounded bg-danger text-white d-flex justify-content-between align-items-center">
                     <h5 class="mb-0"><i class="fas fa-wrench"></i> &nbsp; Tambah Informasi Sparepart</h5>
                     <small class="text-right"><b>*</b> Hapus jika tidak diperlukan</small>
@@ -52,6 +52,7 @@
                         <button type="button" class="btn btn-primary" id="addRow">+ Tambah Sparepart</button>
 
                         @csrf
+                        <input type="text" value="{{ Auth::user()->jurusan }}" hidden name="jurusan" id="jurusan">
                         <div class="form-group mt-3">
                             <label for="transaction_date">
                                 <i class="bi bi-calendar-event"></i> Tanggal Transaksi
@@ -103,6 +104,7 @@
 
                         <form method="POST" action="{{ route('transactions.store') }}">
                             @csrf
+                            <input type="text" value="{{ Auth::user()->jurusan }}" hidden name="jurusan" id="jurusan">
                         
                             <div class="d-flex justify-content-between">
                                 <!-- Kembali button -->
@@ -166,7 +168,7 @@
                     <td>
                         <select name="sparepart_id[]" class="form-control sparepart_id" required>
                             <option value="">Pilih Sparepart</option>
-                            @foreach ($spareparts as $sparepart)
+                            @foreach ($spareparts->where('jurusan', Auth::user()->jurusan) as $sparepart)
                                 <option value="{{ $sparepart->id_sparepart }}" data-harga="{{ $sparepart->harga_jual }}">
                                     {{ $sparepart->nama_sparepart }}
                                 </option>                                 

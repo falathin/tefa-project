@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\Vehicle;
 use App\Models\Customer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
@@ -17,6 +18,8 @@ class CustomerController extends Controller
         if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
             abort(403, 'Butuh level Admin & Kasir');
         }
+        
+        $jurusan = Auth::user()->jurusan;
         $searchTerm = $request->input('search');
         $deletedSearch = $request->input('deletedSearch');
         
@@ -25,6 +28,7 @@ class CustomerController extends Controller
                          ->orWhere('contact', 'like', '%' . $searchTerm . '%')
                          ->orWhere('address', 'like', '%' . $searchTerm . '%');
         })
+        ->where('jurusan', 'like', $jurusan)
         ->orderBy('created_at', 'desc')  // Ordering by created_at in descending order
         ->paginate(5);
         
@@ -63,9 +67,10 @@ class CustomerController extends Controller
             'vehicles.*.production_year' => 'nullable|integer|lte:' . Carbon::now()->year,
             'vehicles.*.engine_code' => 'nullable|string|max:255',
             'vehicles.*.image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'jurusan' => 'required'
         ]);
 
-        $customer = Customer::create($request->only(['name', 'contact', 'address']));
+        $customer = Customer::create($request->only(['name', 'contact', 'address', 'jurusan']));
 
         if ($request->has('vehicles')) {
             foreach ($request->vehicles as $vehicle) {
@@ -74,6 +79,7 @@ class CustomerController extends Controller
                     if (isset($vehicle['image'])) {
                         $vehicle['image'] = $vehicle['image']->store('vehicle_images', 'public');
                     }
+                    $vehicle['jurusan'] = $customer->jurusan;
                     Vehicle::create($vehicle);
                 }
             }
@@ -85,6 +91,10 @@ class CustomerController extends Controller
 
     public function edit($id)
     {
+        $customer = Customer::find($id);
+        if (! Gate::allows('isSameJurusan', [$customer])) {
+            abort(403, 'data tidak ditemukan!!');
+        }
         // Admin & kasir
         if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
             abort(403, 'Butuh level Admin & Kasir');
@@ -110,10 +120,16 @@ class CustomerController extends Controller
 
     public function show(Request $request, $id)
     {
+        $customer = Customer::find($id);
+        if (! Gate::allows('isSameJurusan', [$customer])) {
+            abort(403, 'data tidak ditemukan!!');
+        }
+
         // Admin & kasir
         if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
             abort(403, 'Butuh level Admin & Kasir');
         }
+        
         $customer = Customer::findOrFail($id);
 
         $customer->contact = $customer->contact ?: 'Tidak ada data kontak';

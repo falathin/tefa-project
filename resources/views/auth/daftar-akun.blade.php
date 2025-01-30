@@ -9,13 +9,13 @@
         <form action="{{ route('profile.daftar') }}" method="POST">
             @csrf
             <div class="mb-3">
-                <label for="username" class="form-label">Masukkan username</label>
+                <label for="username" class="form-label">Masukkan nama</label>
                 <input type="text" class="form-control" id="username" name="username" required
                     autocomplete="username" autofocus value="{{ old('username') }}">
             </div>
 
             <div class="mb-4">
-                <label for="email" class="form-label">Masukkan Email</label>
+                <label for="email" class="form-label">Masukkan email</label>
                 <input type="email" class="form-control" id="email" name="email" placeholder="contoh@gmail.com"
                     value="{{ old('email') }}" required autocomplete="email">
             </div>
@@ -27,7 +27,7 @@
                 @endif
                 <option value="admin">Admin</option>
                 <option value="bendahara">Bendahara</option>
-                <option value="kasir" selected>Kasir</option>
+                <option value="kasir" selected >Kasir</option>
             </select>
             @if (Gate::allows('isEngineer'))
             <label for="level" class="form-label">Pilih jurusan akun</label>

@@ -7,7 +7,13 @@
         <thead class="table-dark">
             <tr>
                 <th><i class="fas fa-user me-2"></i>Nama Pelanggan</th>
-                <th><i class="fas fa-motorcycle me-2"></i>Motor</th>
+                <th><i class="fas fa-motorcycle me-2"></i>
+                    @if (Auth::user()->jurusan == 'TSM')
+                        Motor
+                    @elseif (Auth::user()->jurusan == 'TKRO')
+                        Mobil
+                    @endif
+                </th>
                 <th><i class="fas fa-coins me-2"></i>Pemasukan</th>
                 <th><i class="fas fa-clock me-2"></i>Waktu</th> <!-- Added column for time -->
                 <th><i class="fas fa-cogs me-2"></i>Aksi</th> <!-- Added column for actions -->

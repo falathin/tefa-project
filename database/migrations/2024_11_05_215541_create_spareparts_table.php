@@ -12,13 +12,13 @@ class CreateSparepartsTable extends Migration
             $table->id('id_sparepart'); // Primary key
             $table->string('nama_sparepart');
             $table->integer('jumlah');
-            $table->decimal('harga_beli', 10, 2);
-            $table->decimal('harga_jual', 10, 2);
-            $table->decimal('keuntungan', 10, 2)->computedAs('harga_jual - harga_beli');
+            $table->decimal('harga_beli', 15, 2);
+            $table->decimal('harga_jual', 15, 2);
+            $table->decimal('keuntungan', 15, 2)->computedAs('harga_jual - harga_beli');
             $table->date('tanggal_masuk');
             $table->date('tanggal_keluar')->nullable();
             $table->text('deskripsi')->nullable();
-            $table->enum('jurusan', ['TSM', 'TKRO']);
+            $table->enum('jurusan', ['TSM', 'TKRO', 'General']);
             $table->timestamps();
         });
     }

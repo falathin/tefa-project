@@ -7,8 +7,9 @@ use App\Models\Sparepart;
 use App\Observers\SparepartObserver;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
-use App\Http\Middleware\LevelMiddleware;
 use Illuminate\Database\Eloquent\Model;
+// use App\Http\Middleware\LevelMiddleware;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -17,7 +18,7 @@ class AppServiceProvider extends ServiceProvider
         Sparepart::observe(SparepartObserver::class);
     
         // Daftarkan middleware global
-        $this->app['router']->aliasMiddleware('role', LevelMiddleware::class);
+        // $this->app['router']->aliasMiddleware('role', LevelMiddleware::class);
     
         Gate::define('isAdminOrEngineer', function(User $user) {
             return $user->level == 'admin' xor $user->level == 'engineer';
@@ -37,8 +38,15 @@ class AppServiceProvider extends ServiceProvider
             return $user->level == 'kasir';
         });        
     
-        Gate::define('isSameJurusan', function (User $user, Model $model) {
-            return $user->jurusan == $model->jurusan;
+        Gate::define('isSameJurusan', function (User $user, ?Model $model) {
+            if ($model) {
+                if($user->jurusan == 'General') {
+                    return true;
+                }
+                else {
+                    return $user->jurusan == $model->jurusan;
+                }
+            }
         });
 }
 }

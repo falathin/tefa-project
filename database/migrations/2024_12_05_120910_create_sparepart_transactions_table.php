@@ -17,6 +17,7 @@ class CreateSparepartTransactionsTable extends Migration
             $table->decimal('total_price', 10, 2);
             $table->date('transaction_date');
             $table->enum('transaction_type', ['purchase', 'sale']);
+            $table->enum('jurusan', ['TSM', 'TKRO', 'General']);
             $table->timestamps();
         });
     }

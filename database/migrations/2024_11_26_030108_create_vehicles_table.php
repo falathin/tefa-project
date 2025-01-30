@@ -17,6 +17,7 @@ class CreateVehiclesTable extends Migration
             $table->integer('production_year')->nullable();
             $table->string('image')->nullable();
             $table->foreignId('customer_id')->constrained()->onDelete('cascade');
+            $table->enum('jurusan', ['TSM', 'TKRO', 'General']);
             $table->timestamps();
         });
     }

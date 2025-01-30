@@ -12,6 +12,8 @@
             <form action="{{ route('customer.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
 
+                <input type="text" value="{{ Auth::user()->jurusan }}" name="jurusan" id="jurusan" hidden>
+
                 <!-- Customer Data Section -->
                 <h4 class="mb-4"><i class="fas fa-user"></i> Data Pelanggan</h4>
                 <div class="row">
@@ -40,14 +42,23 @@
                     @enderror
                 </div>
 
-                <h4 class="mt-4 mb-4"><i class="fas fa-car"></i> Data Kendaraan</h4>
+                <h4 class="mt-4 mb-4"><i class="fas fa-car"></i> Data
+                @if (Auth::user()->jurusan == 'TKRO')
+                Mobil
+                @elseif (Auth::user()->jurusan == 'TSM')
+                    Motor
+                @endif
+                </h4>
                 <div id="vehicle-fields">
                     <div class="vehicle-group mb-3" id="vehicle-0">
                         <div class="row">
+
                             <div class="col-md-6 mb-3">
-                                <label>Jenis Kendaraan</label>
+                                <label>Merk dan model kendaraan</label>
                                 <input type="text" name="vehicles[0][vehicle_type]" class="form-control mb-2" 
-                                       value="{{ old('vehicles.0.vehicle_type') }}" placeholder="Masukkan jenis kendaraan" required>
+                                       value="{{ old('vehicles.0.vehicle_type') }}" 
+                                       placeholder=" Contoh : @if (Auth::user()->jurusan == 'TSM')Honda CBR 250RR
+                                       @elseif (Auth::user()->jurusan == 'TKRO') Daihatsu Rocky 1.2 M CVT @endif" required>
                                 @error('vehicles.0.vehicle_type')
                                     <div class="alert alert-danger mt-2">{{ $message }}</div>
                                 @enderror

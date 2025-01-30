@@ -14,11 +14,11 @@ class SparepartSeeder extends Seeder
      */
     public function run(): void
     {
-        $csvFile = fopen(base_path("database/data/spareparts.csv"),"r");
+        $csvFile = fopen(base_path("database/data/spareparts.csv"), "r");
         $firstLine = true;
         // $data = fgetcsv($csvFile,200,";");
-        while (($data = fgetcsv($csvFile,200,";")) !== FALSE) {
-            if(!$firstLine) {
+        while (($data = fgetcsv($csvFile, 200, ";")) !== FALSE) {
+            if (!$firstLine) {
                 Sparepart::create([
                     "nama_sparepart"    => $data['0'],
                     "jumlah"            => $data['1'],

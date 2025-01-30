@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Notification;
 use App\Models\Sparepart;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class NotificationController extends Controller
 {
@@ -13,13 +15,26 @@ class NotificationController extends Controller
         $search = $request->input('search');
         $notifications = Notification::query();
 
-        if ($search) {
-            $notifications = $notifications->where('message', 'like', '%' . $search . '%');
+        if (Gate::allows('isBendahara')) {
+            if ($search) {
+                $notifications = $notifications
+                    ->where('message', 'like', '%' . $search . '%');
+            }
+            $notifications = $notifications->with('sparepart')->where('is_read', false)->latest()->paginate(5);
+            return view('notifications.index', compact('notifications', 'search'));
+        } else {
+            if ($search) {
+                $notifications = $notifications
+                    ->where('jurusan', 'like', Auth::user()->jurusan)
+                    ->where('message', 'like', '%' . $search . '%');
+            }
+
+            $notifications = $notifications->with('sparepart')
+                ->where('jurusan', 'like', Auth::user()->jurusan)
+                ->where('is_read', false)->latest()->paginate(5);
+
+            return view('notifications.index', compact('notifications', 'search'));
         }
-
-        $notifications = $notifications->with('sparepart')->where('is_read', false)->latest()->paginate(5);
-
-        return view('notifications.index', compact('notifications', 'search'));
     }
 
     public function markAsRead($id)

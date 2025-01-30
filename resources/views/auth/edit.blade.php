@@ -14,15 +14,14 @@
         <form action="{{ route('profile.update') }}" method="POST" class="mt-4">
             @csrf
             <div class="mb-3 ">
-                <label for="name" class="form-label">Username</label>
+                <label for="name" class="form-label">Nama</label>
                 <input type="text" id="name" name="name" class="form-control"
                     value="{{ Auth::user()->name }}" required autocomplete="name">
             </div>
 
-            <label for="email" class="form-label">Email</label>
+            {{-- <label for="email" class="form-label">Email</label>
             <input type="email" class="form-control" value="{{ Auth::user()->email }}" required autocomplete="email"
-                id="email" name="email">
-
+                id="email" name="email"> --}}
             <div class="mt-4">
                 <button type="submit" class="btn text-light w-20 bg-danger fw-semibold">Simpan</button>
             </div>
@@ -39,7 +38,7 @@
             @csrf
             {{-- @method('put') --}}
             <div class="mb-3 ">
-                <label for="current_password" class="form-label">Password anda</label>
+                <label for="current_password" class="form-label">Password lama</label>
                 <input type="password" id="current_password" name="current_password" class="form-control" required>
                 <div class="form-check mt-1">
                     <input class="form-check-input" type="checkbox" id="show-current-password" />

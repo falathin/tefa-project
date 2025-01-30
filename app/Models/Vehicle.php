@@ -17,6 +17,7 @@ class Vehicle extends Model
         'engine_code',
         'customer_id',
         'image',
+        'jurusan'
     ];
 
     public function customer()

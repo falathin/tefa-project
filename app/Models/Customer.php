@@ -15,6 +15,7 @@ class Customer extends Model
         'name',
         'contact',
         'address',
+        'jurusan'
     ];
 
     public function scopeDeletedOlderThanWeek($query)
