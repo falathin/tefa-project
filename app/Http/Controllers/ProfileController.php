@@ -26,11 +26,11 @@ class ProfileController extends Controller
         $data = User::find(Auth::user()->id);
         $request->validate([
             'name' => ['required'],
-            'email' => ['required', 'email']
+            // 'email' => ['required', 'email']
         ]);
 
         $data->name = $request['name'];
-        $data->email = $request['email'];
+        $data->email = Auth::user()->email;
 
         $data->save();
 

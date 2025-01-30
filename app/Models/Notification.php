@@ -13,6 +13,7 @@ class Notification extends Model
         'title',
         'message',
         'is_read',
+        'jurusan'
     ];
 
     public function sparepart()

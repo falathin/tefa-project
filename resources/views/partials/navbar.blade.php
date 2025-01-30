@@ -38,12 +38,11 @@
                 </a>
                 <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="UserDropdown">
                     <div class="dropdown-header text-center mt-3">
-                        {{-- <img class="img-md rounded-circle" src="{{ asset('assets/images/logo-mini.svg') }}"
-                            alt="Profile image" width="100px"> --}}
-                        <h1>{{ Auth::user()->jurusan }}</h1>
+                        <h1>
+                            {{ Auth::user()->jurusan }}
+                        </h1>
                         <p class="mb-1 mt-3 fw-semibold">{{ Auth::user()->name }}</p>
-                        <p class="fw-light text-muted mb-0">{{ Auth::user()->email }}</p>
-                        <p class="fw-semibold text-muted mb-0">{{ Auth::user()->level }}</p>
+                        <p class="fw-semibold text-muted mb-0">{{ ucfirst(Auth::user()->level) }}</p>
                     </div>
 
                     <a class="dropdown-item" href="{{ route('profile.edit') }}"><img class="me-2"
@@ -51,21 +50,22 @@
                     </a>
 
                     @if (Auth::user()->level == 'admin' || Auth::user()->level == 'engineer')
-                        <a class="dropdown-item" href="{{ route('profile.daftar') }}"><img
-                                class="me-2" src="{{ asset('assets/images/add_account.png') }}" width="28"></img>Buat akun baru
-                        </a>
-                        <a class="dropdown-item " href="{{ route('hapusAkunUser') }}"><img
-                            class="me-2" src="{{ asset('assets/images/manage_account.png') }}" width="28"></img>Hapus akun {{ Auth::user()->jurusan }}
+                        <a class="dropdown-item" href="{{ route('profile.daftar') }}"><img class="me-2"
+                                src="{{ asset('assets/images/add_account.png') }}" width="28"></img>Buat akun baru
                         </a>
                     @endif
                     @if (Auth::user()->level == 'engineer')
-                        <a class="dropdown-item" href="{{ route('gantiEmergencyPassword') }}"><img
-                                class="me-2" src="{{ asset('assets/images/emergency_password.png') }}" width="28"></img>
+                        <a class="dropdown-item " href="{{ route('hapusAkunUser') }}"><img class="me-2"
+                                src="{{ asset('assets/images/manage_account.png') }}" width="28"></img>Hapus akun
+                            {{ Auth::user()->jurusan }}
+                        </a>
+                        <a class="dropdown-item" href="{{ route('gantiEmergencyPassword') }}"><img class="me-2"
+                                src="{{ asset('assets/images/emergency_password.png') }}" width="28"></img>
                             Ganti Emergency password</a>
                     @endif
 
-                    <a class="dropdown-item" href="{{ route('confirm.logout') }}"><img
-                            class="me-2" src="{{ asset('assets/images/logout.png') }}" width="28"></img>
+                    <a class="dropdown-item" href="{{ route('confirm.logout') }}"><img class="me-2"
+                            src="{{ asset('assets/images/logout.png') }}" width="28"></img>
                         Logout</a>
                 </div>
             </li>

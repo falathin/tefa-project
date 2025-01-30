@@ -16,6 +16,7 @@ class SparepartTransaction extends Model
         'total_price',
         'transaction_date',
         'transaction_type',
+        'jurusan'
     ];
 
     protected $casts = [

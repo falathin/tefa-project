@@ -22,7 +22,6 @@
         </li>
         @endif
 
-        @if (Gate::allows('isAdminOrEngineer') xor Gate::allows('isKasir'))
         <!-- Sparepart Menu -->
         <li
             class="nav-item {{ Request::is('sparepart.*') ? 'active' : '' }} animate__animated animate__slideInLeft animate__delay-4.8s">
@@ -35,17 +34,19 @@
             <div class="collapse" id="sparepartMenu">
                 <ul class="nav flex-column sub-menu">
                     <li
-                        class="nav-item {{ Request::routeIs('sparepart.index') ? 'active' : '' }} animate__animated animate__slideInLeft animate__delay-6.3s">
-                        <a class="nav-link" href="{{ route('sparepart.index') }}">Data Suku Cadang</a>
-                    </li>
-                    <li
+                    class="nav-item {{ Request::routeIs('sparepart.index') ? 'active' : '' }} animate__animated animate__slideInLeft animate__delay-6.3s">
+                    <a class="nav-link" href="{{ route('sparepart.index') }}">Data Suku Cadang</a>
+                </li>
+                <li
                         class="nav-item {{ Request::routeIs('transactions.index') ? 'active' : '' }} animate__animated animate__slideInLeft animate__delay-7.8s">
                         <a class="nav-link" href="{{ route('transactions.index') }}">Transaksi Suku Cadang</a>
                     </li>
                 </ul>
             </div>
         </li>
-        @endif
+        {{-- @elseif (Gate::allows('isBendahara')) --}}
+        {{-- @if (Gate::allows('isAdminOrEngineer') xor Gate::allows('isKasir')) --}}
+        {{-- @endif --}}
 
         @if (Gate::allows('isAdminOrEngineer') xor Gate::allows('isKasir'))
         <!-- Riwayat Service Menu Item -->

@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Service;
 use App\Models\Vehicle;
 use App\Models\Customer;
-use App\Models\Service;
+use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
 class VehicleController extends Controller
@@ -14,6 +15,9 @@ class VehicleController extends Controller
     public function create($customerId)
     {
         $customer = Customer::findOrFail($customerId);
+        if (! Gate::allows('isSameJurusan', [$customer])) {
+            abort(403, 'data tidak ditemukan!!');
+        }
         return view('vehicle.create', compact('customer'));
     }
 
@@ -27,6 +31,7 @@ class VehicleController extends Controller
             'year' => 'nullable|integer|min:1900|max:' . date('Y'),
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'customer_id' => 'required|exists:customers,id',
+            'jurusan' => 'required'
         ]);
 
         $imagePath = null;
@@ -42,6 +47,7 @@ class VehicleController extends Controller
             'production_year' => $request->year,
             'image' => $imagePath,
             'customer_id' => $request->customer_id,
+            'jurusan' => $request->jurusan
         ]);
 
         return redirect()->route('customer.show', $request->customer_id)
@@ -50,6 +56,10 @@ class VehicleController extends Controller
 
     public function show($id, Request $request)
     {
+        $vehicle = Vehicle::find($id);
+        if (! Gate::allows('isSameJurusan', [$vehicle])) {
+            abort(403, 'data tidak ditemukan!!');
+        }
         $vehicle = Vehicle::findOrFail($id);
         
         $services = Service::where('vehicle_id', $id)
@@ -65,6 +75,10 @@ class VehicleController extends Controller
     // Show the form to edit the vehicle data
     public function edit($id)
     {
+        $vehicleGate = Vehicle::find($id);
+        if (! Gate::allows('isSameJurusan', [$vehicleGate])) {
+            abort(403, 'data tidak ditemukan!!');
+        }
         $vehicle = Vehicle::findOrFail($id);
         return view('vehicle.edit', compact('vehicle'));
     }

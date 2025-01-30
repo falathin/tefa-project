@@ -71,6 +71,10 @@ class ServiceController extends Controller
 
     public function create($vehicle_id)
     {
+        $vehicle = Vehicle::find($vehicle_id);
+        if (! Gate::allows('isSameJurusan', [$vehicle])) {
+            abort(403, 'data tidak ditemukan!!');
+        }
         // Admin & kasir
         if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
             abort(403, 'Butuh level Admin & Kasir');
@@ -82,6 +86,11 @@ class ServiceController extends Controller
 
     public function edit($id)
     {
+        $vehicle = Vehicle::find($id);
+        if (! Gate::allows('isSameJurusan', [$vehicle])) {
+            abort(403, 'data tidak ditemukan!!');
+        }
+
         // Admin & kasir
         if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
             abort(403, 'Butuh level Admin & Kasir');
@@ -356,6 +365,10 @@ class ServiceController extends Controller
 
     public function show($id)
     {
+        $vehicle = Vehicle::find($id);
+        if (! Gate::allows('isSameJurusan', [$vehicle])) {
+            abort(403, 'data tidak ditemukan!!');
+        }
         // Admin & kasir
         if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
             abort(403, 'Butuh level Admin & Kasir');

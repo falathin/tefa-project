@@ -11,7 +11,7 @@ class hapusAkunUserController extends Controller
 {
     public function index()
     {
-        if (! Gate::allows('isAdminOrEngineer')) {
+        if (! Gate::allows('isEngineer')) {
             abort(404, 'not found');
         }
         return view('auth.hapusAkunUser', ['users' => User::latest()->get()]);

@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+
 <div class="container">
     <h1 class="mb-4">Notifikasi</h1>
 
@@ -21,7 +22,7 @@
                     <div class="card-body d-flex justify-content-between align-items-start">
                         <div class="flex-grow-1">
                             <h5 class="card-title">{{ $notification->message }}</h5>
-                            <p class="card-text"><small class="text-muted">{{ $notification->created_at->diffForHumans() }}</small></p>
+                            <p class="card-text"><small class="text-muted">{{ $notification->created_at->diffForHumans() }} | Jurusan {{ $notification->jurusan }}</small></p>
                         </div>
 
                         <!-- Check if there's a related sparepart and show the edit button -->

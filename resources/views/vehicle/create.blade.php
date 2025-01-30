@@ -13,6 +13,7 @@
                 @csrf
                 <!-- Hidden field for Customer ID -->
                 <input type="hidden" name="customer_id" value="{{ $customer->id }}">
+                <input type="hidden" name="jurusan" value="{{ Auth::user()->jurusan }}">
 
                 <!-- Vehicle Type and License Plate -->
                 <div class="row mb-4 animate__animated animate__fadeIn animate__delay-1s">

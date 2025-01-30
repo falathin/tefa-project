@@ -8,6 +8,7 @@
     <form action="{{ route('sparepart.store') }}" method="POST">
         @csrf
 
+        <input type="text" value="{{ Auth::user()->jurusan }}" name="jurusan" id="jurusan" hidden>
         <div class="card mb-3 shadow">
             <div class="card-header bg-primary text-white">
                 <h5 class="mb-0">Informasi Sparepart</h5>

@@ -19,6 +19,7 @@ class Sparepart extends Model
         'tanggal_masuk',
         'tanggal_keluar',
         'deskripsi',
+        'jurusan'
     ];
 
     public function serviceSpareparts()

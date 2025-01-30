@@ -6,27 +6,44 @@ use App\Models\Sparepart;
 use Illuminate\Http\Request;
 use App\Models\SparepartHistory;
 use App\Models\SparepartTransaction;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 class TransactionController extends Controller
 {
     public function index(Request $request)
     {
-        // Admin & kasir
-        if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
-            abort(403, 'Butuh level Admin & Kasir');
-        }
         $search = $request->input('search');
-        $transactions = SparepartTransaction::with('sparepart')
-            ->when($search, function ($query, $search) {
-                return $query->whereHas('sparepart', function ($query) use ($search) {
-                    $query->where('nama_sparepart', 'like', "%{$search}%");
-                });
-            })
-            ->orderBy('created_at', 'desc')
-            ->paginate(5);
 
-        return view('transactions.index', compact('transactions'));
+        if (Gate::allows('isBendahara')) {
+            $transactions = SparepartTransaction::with('sparepart')
+                ->when($search, function ($query, $search) {
+                    return $query->whereHas('sparepart', function ($query) use ($search) {
+                        $query->where('nama_sparepart', 'like', "%{$search}%");
+                    });
+                })
+                ->orderBy('created_at', 'desc')
+                ->paginate(5);
+
+            return view('transactions.index', compact('transactions'));
+        }
+        //  else if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
+        //     abort(403, 'Butuh level Admin & Kasir');
+        // }
+        else {
+            $jurusan = Auth::user()->jurusan;
+            $transactions = SparepartTransaction::with('sparepart')
+                ->when($search, function ($query, $search) {
+                    return $query->whereHas('sparepart', function ($query) use ($search) {
+                        $query->where('nama_sparepart', 'like', "%{$search}%");
+                    });
+                })
+                ->where('jurusan', 'like', $jurusan)
+                ->orderBy('created_at', 'desc')
+                ->paginate(5);
+
+            return view('transactions.index', compact('transactions'));
+        }
     }
 
     public function create()
@@ -49,7 +66,8 @@ class TransactionController extends Controller
             'quantity' => 'required|array',
             'quantity.*' => 'required|numeric|min:1',
             'purchase_price' => 'required|array',
-            'purchase_price.*' => 'required|numeric|min:0',  // Validasi harga beli dari form
+            'purchase_price.*' => 'required|numeric|min:0',  // Validasi harga beli dari form,
+            'jurusan' => 'required'
         ], [
             'transaction_type.required' => 'Jenis transaksi harus dipilih.',
             'transaction_type.in' => 'Jenis transaksi tidak valid.',
@@ -93,6 +111,7 @@ class TransactionController extends Controller
                         'total_price' => $sparepart->harga_jual * $request->quantity[$index],  // Gunakan harga jual untuk total harga
                         'transaction_date' => now(),
                         'transaction_type' => 'sale',
+                        'jurusan' => $request->jurusan
                     ]);
                 } else {
                     return redirect()->back()->withErrors(['sparepart_id' => 'Stok sparepart tidak cukup untuk salah satu item.']);
@@ -121,10 +140,14 @@ class TransactionController extends Controller
     }
     public function show($id)
     {
-        // Admin & kasir
-        if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
-            abort(403, 'Butuh level Admin & Kasir');
+        $sparepart = SparepartTransaction::find($id);        
+        if (! Gate::allows('isSameJurusan', [$sparepart])) {
+            abort(403, 'data tidak ditemukan!!');
         }
+        // Admin & kasir
+        // if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
+        //     abort(403, 'Butuh level Admin & Kasir');
+        // }
         $transaction = SparepartTransaction::with('sparepart')->findOrFail($id);
 
         $subtotal = $transaction->sparepart->harga_jual * $transaction->quantity;
@@ -142,6 +165,11 @@ class TransactionController extends Controller
 
     public function edit($id)
     {
+        $sparepart = SparepartTransaction::find($id);
+        if (! Gate::allows('isSameJurusan', [$sparepart])) {
+            abort(403, 'data tidak ditemukan!!');
+        }
+
         // Admin & kasir
         if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
             abort(403, 'Butuh level Admin & Kasir');

@@ -1,152 +1,180 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container py-5">
-    <!-- Title Section -->
-    <h1 class="mb-4 text-center">{{ $sparepart->nama_sparepart }}</h1>
+    <div class="container py-5">
+        <!-- Title Section -->
+        <h1 class="mb-4 text-center">{{ $sparepart->nama_sparepart }}</h1>
 
-    <!-- Card for Sparepart Details -->
-    <div class="container my-4">
-        <div class="card shadow-lg border-primary">
-            <div class="card-header bg-gradient-primary text-white text-center">
-                <h5 class="mb-0">Detail Sparepart</h5>
-            </div>
-            <div class="card-body">
-                <!-- Informasi Umum -->
-                <h5 class="card-title text-primary border-bottom pb-2 mb-3">Informasi Umum</h5>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <strong>ID:</strong> <span>{{ $sparepart->id_sparepart }}</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <strong>Jumlah:</strong> <span>{{ number_format($sparepart->jumlah, 0, ',', '.') }}</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <strong>Harga Beli:</strong> <span>Rp. {{ number_format($sparepart->harga_beli, 2, ',', '.') }}</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <strong>Harga Jual:</strong> <span>Rp. {{ number_format($sparepart->harga_jual, 2, ',', '.') }}</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <strong>Keuntungan:</strong> <span>Rp. {{ number_format($sparepart->harga_jual - $sparepart->harga_beli, 0, ',', '.') }}</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <strong>Total Keuntungan:</strong> 
-                        <span id="totalKeuntungan">Rp. {{ number_format(($sparepart->harga_jual - $sparepart->harga_beli) * $sparepart->jumlah, 0, ',', '.') }}</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <strong>Tanggal Masuk:</strong> <span>{{ \Carbon\Carbon::parse($sparepart->tanggal_masuk)->format('d-m-Y') }}</span>
-                    </li>
-                    <li class="list-group-item">
-                        <strong>Deskripsi:</strong>
-                        <p class="mt-2">{{ $sparepart->deskripsi ?? 'Tidak ada deskripsi.' }}</p>
-                    </li>
-                </ul>
-            </div>
-    
-            <!-- Tombol Aksi -->
-            <div class="card-footer d-flex flex-wrap justify-content-center gap-2">
-                <a href="{{ route('sparepart.index') }}" class="btn btn-secondary btn-sm shadow-sm hover-effect">
-                    <i class="bi bi-arrow-left-circle"></i> Kembali
-                </a>
-                <a href="{{ route('sparepart.edit', $sparepart->id_sparepart) }}" class="btn btn-warning btn-sm shadow-sm hover-effect">
-                    <i class="bi bi-pencil-square"></i> Edit
-                </a>
-                <form action="{{ route('sparepart.destroy', $sparepart->id_sparepart) }}" method="POST" style="display:inline;">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-danger btn-sm shadow-sm hover-effect" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
-                        <i class="bi bi-trash"></i> Hapus
+        <!-- Card for Sparepart Details -->
+        <div class="container my-4">
+            <div class="card shadow-lg border-primary">
+                <div class="card-header bg-gradient-primary text-white text-center">
+                    <h5 class="mb-0">Detail Sparepart</h5>
+                </div>
+                <div class="card-body">
+                    <!-- Informasi Umum -->
+                    <h5 class="card-title text-primary border-bottom pb-2 mb-3">Informasi Umum</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <strong>ID:</strong> <span>{{ $sparepart->id_sparepart }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <strong>Jumlah:</strong> <span>{{ number_format($sparepart->jumlah, 0, ',', '.') }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <strong>Harga Beli:</strong> <span>Rp.
+                                {{ number_format($sparepart->harga_beli, 2, ',', '.') }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <strong>Harga Jual:</strong> <span>Rp.
+                                {{ number_format($sparepart->harga_jual, 2, ',', '.') }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <strong>Keuntungan:</strong> <span>Rp.
+                                {{ number_format($sparepart->harga_jual - $sparepart->harga_beli, 0, ',', '.') }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <strong>Total Keuntungan:</strong>
+                            <span id="totalKeuntungan">Rp.
+                                {{ number_format(($sparepart->harga_jual - $sparepart->harga_beli) * $sparepart->jumlah, 0, ',', '.') }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <strong>Tanggal Masuk:</strong>
+                            <span>{{ \Carbon\Carbon::parse($sparepart->tanggal_masuk)->format('d-m-Y') }}</span>
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Deskripsi:</strong>
+                            <p class="mt-2">{{ $sparepart->deskripsi ?? 'Tidak ada deskripsi.' }}</p>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Tombol Aksi -->
+                <div class="card-footer d-flex flex-wrap justify-content-center gap-2">
+                    <a href="{{ route('sparepart.index') }}" class="btn btn-secondary btn-sm shadow-sm hover-effect">
+                        <i class="bi bi-arrow-left-circle"></i> Kembali
+                    </a>
+                    @if (!Gate::allows('isBendahara'))
+                        <a href="{{ route('sparepart.edit', $sparepart->id_sparepart) }}"
+                            class="btn btn-warning btn-sm shadow-sm hover-effect">
+                            <i class="bi bi-pencil-square"></i> Edit
+                        </a>
+                        <form action="{{ route('sparepart.destroy', $sparepart->id_sparepart) }}" method="POST"
+                            style="display:inline;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger btn-sm shadow-sm hover-effect"
+                                onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
+                                <i class="bi bi-trash"></i> Hapus
+                            </button>
+                        </form>
+                    @endif
+                    <button id="copyBtn" class="btn btn-info btn-sm shadow-sm hover-effect">
+                        <i class="bi bi-clipboard"></i> Salin
                     </button>
-                </form>
-                <button id="copyBtn" class="btn btn-info btn-sm shadow-sm hover-effect">
-                    <i class="bi bi-clipboard"></i> Salin
-                </button>
-                <button id="downloadBtn" class="btn btn-success btn-sm shadow-sm hover-effect">
-                    <i class="bi bi-download"></i> Download
-                </button>
-                <button id="excelBtn" class="btn btn-primary btn-sm shadow-sm hover-effect">
-                    <i class="bi bi-file-earmark-spreadsheet"></i> Export to Excel
-                </button>
-                <button id="printBtn" class="btn btn-dark btn-sm shadow-sm hover-effect">
-                    <i class="bi bi-printer"></i> Print
-                </button>
+                    <button id="downloadBtn" class="btn btn-success btn-sm shadow-sm hover-effect">
+                        <i class="bi bi-download"></i> Download
+                    </button>
+                    <button id="excelBtn" class="btn btn-primary btn-sm shadow-sm hover-effect">
+                        <i class="bi bi-file-earmark-spreadsheet"></i> Export to Excel
+                    </button>
+                    <button id="printBtn" class="btn btn-dark btn-sm shadow-sm hover-effect">
+                        <i class="bi bi-printer"></i> Print
+                    </button>
+                </div>
             </div>
         </div>
+
     </div>
-    
-</div>
 
-<!-- JavaScript for additional features -->
-<script>
-    // Copy functionality
-    document.getElementById('copyBtn').addEventListener('click', function() {
-        const text = document.querySelector('.card-body').innerText;
-        navigator.clipboard.writeText(text).then(function() {
-            alert('Informasi telah disalin ke clipboard!');
-        }).catch(function(err) {
-            alert('Gagal menyalin: ' + err);
-        });
-    });
-
-      // Download Button functionality (download as CSV)
-    document.getElementById('downloadBtn').addEventListener('click', function() {
-        const data = [
-            ['Nama Sparepart', '{{ $sparepart->nama_sparepart }}'],
-            ['Jumlah', '{{ number_format($sparepart->jumlah, 0, ',', '.') }}'],
-            ['Harga Beli', 'Rp. {{ number_format($sparepart->harga_beli, 2, ',', '.') }}'],
-            ['Harga Jual', 'Rp. {{ number_format($sparepart->harga_jual, 2, ',', '.') }}'],
-            ['Keuntungan', 'Rp. {{ number_format($sparepart->harga_jual - $sparepart->harga_beli, 0, ',', '.') }}'],
-            ['Tanggal Masuk', '{{ \Carbon\Carbon::parse($sparepart->tanggal_masuk)->format('d-m-Y') }}'],
-            ['Deskripsi', '{{ $sparepart->deskripsi ?? 'Tidak ada deskripsi.' }}']
-        ];
-
-        const csvRows = [];
-        data.forEach(row => {
-            csvRows.push('"' + row.join('","') + '"'); // Ensure proper CSV formatting
+    <!-- JavaScript for additional features -->
+    <script>
+        // Copy functionality
+        document.getElementById('copyBtn').addEventListener('click', function() {
+            const text = document.querySelector('.card-body').innerText;
+            navigator.clipboard.writeText(text).then(function() {
+                alert('Informasi telah disalin ke clipboard!');
+            }).catch(function(err) {
+                alert('Gagal menyalin: ' + err);
+            });
         });
 
-        const csvString = csvRows.join('\n');
-        const blob = new Blob([csvString], { type: 'text/csv' });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = '{{ $sparepart->nama_sparepart }}_details.csv';
-        link.click();
-    });
+        // Download Button functionality (download as CSV)
+        document.getElementById('downloadBtn').addEventListener('click', function() {
+            const data = [
+                ['Nama Sparepart', '{{ $sparepart->nama_sparepart }}'],
+                ['Jumlah', '{{ number_format($sparepart->jumlah, 0, ',', '.') }}'],
+                ['Harga Beli', 'Rp. {{ number_format($sparepart->harga_beli, 2, ',', '.') }}'],
+                ['Harga Jual', 'Rp. {{ number_format($sparepart->harga_jual, 2, ',', '.') }}'],
+                ['Keuntungan',
+                    'Rp. {{ number_format($sparepart->harga_jual - $sparepart->harga_beli, 0, ',', '.') }}'
+                ],
+                ['Tanggal Masuk', '{{ \Carbon\Carbon::parse($sparepart->tanggal_masuk)->format('d-m-Y') }}'],
+                ['Deskripsi', '{{ $sparepart->deskripsi ?? 'Tidak ada deskripsi.' }}']
+            ];
 
-    // Excel Export (using SheetJS library for demonstration)
-    document.getElementById('excelBtn').addEventListener('click', function() {
-        const wb = XLSX.utils.book_new();
-        
-        // Create worksheet with headers and data
-        const wsData = [
-            ["Nama Sparepart", "{{ $sparepart->nama_sparepart }}"],
-            ["Jumlah", "{{ number_format($sparepart->jumlah, 0, ',', '.') }}"],
-            ["Harga Beli", "Rp. {{ number_format($sparepart->harga_beli, 2, ',', '.') }}"],
-            ["Harga Jual", "Rp. {{ number_format($sparepart->harga_jual, 2, ',', '.') }}"],
-            ["Keuntungan", "Rp. {{ number_format($sparepart->harga_jual - $sparepart->harga_beli, 0, ',', '.') }}"],
-            ["Tanggal Masuk", "{{ \Carbon\Carbon::parse($sparepart->tanggal_masuk)->format('d-m-Y') }}"],
-            ["Deskripsi", "{{ $sparepart->deskripsi ?? 'Tidak ada deskripsi.' }}"]
-        ];
+            const csvRows = [];
+            data.forEach(row => {
+                csvRows.push('"' + row.join('","') + '"'); // Ensure proper CSV formatting
+            });
 
-        const ws = XLSX.utils.aoa_to_sheet(wsData);
+            const csvString = csvRows.join('\n');
+            const blob = new Blob([csvString], {
+                type: 'text/csv'
+            });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = '{{ $sparepart->nama_sparepart }}_details.csv';
+            link.click();
+        });
 
-        // Add styling to the header row
-        ws['!rows'] = [];
-        ws['!rows'][0] = { font: { bold: true, color: { rgb: 'FFFFFF' } }, fill: { fgColor: { rgb: '4F81BD' } } };
+        // Excel Export (using SheetJS library for demonstration)
+        document.getElementById('excelBtn').addEventListener('click', function() {
+            const wb = XLSX.utils.book_new();
 
-        // Append worksheet to workbook
-        XLSX.utils.book_append_sheet(wb, ws, 'Sparepart Detail');
+            // Create worksheet with headers and data
+            const wsData = [
+                ["Nama Sparepart", "{{ $sparepart->nama_sparepart }}"],
+                ["Jumlah", "{{ number_format($sparepart->jumlah, 0, ',', '.') }}"],
+                ["Harga Beli", "Rp. {{ number_format($sparepart->harga_beli, 2, ',', '.') }}"],
+                ["Harga Jual", "Rp. {{ number_format($sparepart->harga_jual, 2, ',', '.') }}"],
+                ["Keuntungan",
+                    "Rp. {{ number_format($sparepart->harga_jual - $sparepart->harga_beli, 0, ',', '.') }}"
+                ],
+                ["Tanggal Masuk", "{{ \Carbon\Carbon::parse($sparepart->tanggal_masuk)->format('d-m-Y') }}"],
+                ["Deskripsi", "{{ $sparepart->deskripsi ?? 'Tidak ada deskripsi.' }}"]
+            ];
 
-        // Write the Excel file and trigger download
-        XLSX.writeFile(wb, '{{ $sparepart->nama_sparepart }}_details.xlsx');
-    });
+            const ws = XLSX.utils.aoa_to_sheet(wsData);
 
-    document.getElementById('printBtn').addEventListener('click', function() {
-    const printContent = document.querySelector('.container').innerHTML;
-    const newWindow = window.open('', '', 'width=300,height=600');
+            // Add styling to the header row
+            ws['!rows'] = [];
+            ws['!rows'][0] = {
+                font: {
+                    bold: true,
+                    color: {
+                        rgb: 'FFFFFF'
+                    }
+                },
+                fill: {
+                    fgColor: {
+                        rgb: '4F81BD'
+                    }
+                }
+            };
 
-    newWindow.document.write(`
+            // Append worksheet to workbook
+            XLSX.utils.book_append_sheet(wb, ws, 'Sparepart Detail');
+
+            // Write the Excel file and trigger download
+            XLSX.writeFile(wb, '{{ $sparepart->nama_sparepart }}_details.xlsx');
+        });
+
+        document.getElementById('printBtn').addEventListener('click', function() {
+            const printContent = document.querySelector('.container').innerHTML;
+            const newWindow = window.open('', '', 'width=300,height=600');
+
+            newWindow.document.write(`
         <html>
             <head>
                 <title>Struk</title>
@@ -280,10 +308,10 @@
         </html>
     `);
 
-    newWindow.document.close();
-    newWindow.print();
+            newWindow.document.close();
+            newWindow.print();
 
-    
-});
-</script>
+
+        });
+    </script>
 @endsection
