@@ -18,7 +18,7 @@
             class="nav-item {{ request()->route()->getName() == 'service' || request()->route()->getName() == 'customer.show' ? 'active' : '' }} animate__animated animate__slideInLeft animate__delay-3.3s">
             <a class="nav-link" href="{{ route('customer.index') }}">
                 <i class="mdi mdi-cog-outline menu-icon"></i>
-                <span class="menu-title">Program Layanan</span>
+                <span class="menu-title">Program Servis</span>
             </a>
         </li>
         @endif
@@ -54,7 +54,7 @@
             <a class="nav-link {{ request()->route()->getName() == 'service.index' ? 'active' : '' }}"
                 href='{{ route('service.index') }}'>
                 <i class="mdi mdi-history menu-icon"></i>
-                <span class="menu-title">Riwayat Layanan</span>
+                <span class="menu-title">Riwayat Servis</span>
             </a>
         </li>
         

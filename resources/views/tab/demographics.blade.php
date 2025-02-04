@@ -1,6 +1,6 @@
 <div class="container mt-4">
     <h2 class="text-center mb-4">
-        <i class="fas fa-file-invoice-dollar me-2"></i>Laporan Harian Pemasukan
+        <i class="fas fa-file-invoice-dollar me-2"></i>Laporan Harian Pemasukan Servis
     </h2>
 
     @if (Gate::allows('isBendahara'))
@@ -19,6 +19,32 @@
     </form>
     @endif
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let activeTab = localStorage.getItem("activeTab");
+    
+            if (activeTab) {
+                let tabElement = new bootstrap.Tab(document.querySelector(`[href="${activeTab}"]`));
+                tabElement.show();
+            }
+    
+            // Simpan tab yang diklik ke localStorage
+            document.querySelectorAll('a[data-bs-toggle="tab"]').forEach(tab => {
+                tab.addEventListener("shown.bs.tab", function (event) {
+                    localStorage.setItem("activeTab", event.target.getAttribute("href"));
+                });
+            });
+    
+            // Jika form filter dikirim, tetap di tab "demographics"
+            let filterJurusan = document.getElementById("filterJurusan");
+            if (filterJurusan) {
+                filterJurusan.addEventListener("change", function () {
+                    localStorage.setItem("activeTab", "#demographics");
+                });
+            }
+        });
+    </script>
+    
     <table class="table table-bordered table-hover" id="incomeTable">
         <thead class="table-dark">
             <tr>
@@ -85,11 +111,9 @@
 </div>
 <script>
     function printTable() {
-        // Mengambil data dari tabel
         let table = document.getElementById('incomeTable');
         let rows = table.getElementsByTagName('tr');
 
-        // Memulai pembuatan konten untuk laporan
         let content = `
             <div class="report-container">
                 <h2>Laporan Harian Pemasukan Bengkel</h2>

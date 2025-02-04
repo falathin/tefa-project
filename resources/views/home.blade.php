@@ -33,21 +33,11 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" id="profile-tab" data-bs-toggle="tab" href="#audiences" role="tab" aria-selected="false">
-                                        <i class="fas fa-users"></i> Audiens
+                                    <a class="nav-link" id="contact-tab" data-bs-toggle="tab" href="#demographics" role="tab" aria-controls="demographics" aria-selected="false">
+                                        <i class="fas fa-chart-line"></i> Laporan Harian Servis
                                     </a>
                                 </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" id="contact-tab" data-bs-toggle="tab" href="#demographics" role="tab" aria-selected="false">
-                                        <i class="fas fa-chart-bar"></i> Demografi
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link border-0" id="more-tab" data-bs-toggle="tab" href="#more" role="tab" aria-selected="false">
-                                        <i class="fas fa-ellipsis-h"></i> Lainnya
-                                    </a>
-                                </li>
-                            </ul>                            
+                            </ul>
                             <div>
                                 <div class="btn-wrapper">
                                     <a href="#" class="btn btn-outline-dark align-items-center" id="shareBtn">
@@ -56,83 +46,83 @@
                                     <a href="#" class="btn btn-outline-dark" id="printBtn">
                                         <i class="icon-printer"></i> Cetak
                                     </a>
-                                    <a href="#" class="btn btn-primary text-white me-0" id="exportBtn"
-                                        style="text-decoration: line-through;">
-                                        <i class="icon-download"></i> Ekspor</span>
-                                    </a>
-                                    <a href="#" class="btn btn-info text-white" style="text-decoration: line-through;"
-                                        id="screenshotBtn">
-                                        <i class="icon-camera"></i> Screenshot</span>
-                                    </a>
-                                </div>
-
-                                <script>
-                                    document.getElementById('screenshotBtn').addEventListener('click', function(event) {
-                                        event.preventDefault();
-                                        alert('📸 Fitur screenshot belum tersedia.');
-                                    });
-
-                                    document.getElementById('exportBtn').addEventListener('click', function(event) {
-                                        event.preventDefault();
-                                        alert('📤 Fitur ekspor belum tersedia.');
-                                    });
-                                    document.addEventListener("DOMContentLoaded", function() {
-                                        const shareBtn = document.getElementById("shareBtn");
-                                        shareBtn.addEventListener("click", function(e) {
-                                            e.preventDefault();
-                                            if (navigator.share) {
-                                                navigator.share({
-                                                    title: document.title,
-                                                    text: "Check this page out!",
-                                                    url: window.location.href
-                                                }).then(() => {
-                                                    console.log("Page shared successfully");
-                                                }).catch((err) => {
-                                                    console.log("Error sharing page", err);
-                                                });
-                                            } else {
-                                                alert("Web Share API is not supported in this browser.");
-                                            }
-                                        });
-
-                                        const printBtn = document.getElementById("printBtn");
-                                        printBtn.addEventListener("click", function() {
+                                    
+                                    <script>
+                                        document.getElementById("printBtn").addEventListener("click", function() {
                                             const userName = prompt("Masukkan nama Anda:");
                                             const footerContent = userName ? `Nama: ${userName}` : "Nama tidak diberikan";
-
+                                            
+                                            const dailyIncome = "Rp. {{ number_format($serviceIncomeDaily, 2, ',', '.') }}";
+                                            const monthlyIncome = "Rp. {{ number_format($serviceIncomeMonthly, 2, ',', '.') }}";
+                                            const totalUnpaid = "Rp. {{ number_format($totalUnpaid, 2, ',', '.') }}";
+                                            const yearlyIncome = "Rp. {{ number_format($serviceIncomeYearly, 2, ',', '.') }}";
+                                            
+                                            const printContent = `
+                                                <h2 style="text-align:center; color:#007bff; font-size:24px; font-weight:700; margin:0;">Detail Cetak</h2>
+                                                <img src="{{ asset('assets/images/logo-mini.svg')}}" alt="Logo" style="display:block; margin:0 auto; width:150px; height:auto; margin-top:10px;">
+                                                <div style="margin: 20px 0; padding: 10px; text-align:center; font-size: 16px; border-bottom: 2px dashed #007bff;">
+                                                    <strong>Nama Pengguna</strong>: ${userName}
+                                                </div>
+                                                <table style="width:100%; border: none; margin-top:10px; font-size:14px;">
+                                                    <tr style="border-bottom: 1px solid #ddd;">
+                                                        <td style="padding:10px; text-align:left;">Nama Pengguna</td>
+                                                        <td style="padding:10px; text-align:right;">${userName}</td>
+                                                    </tr>
+                                                    <tr style="border-bottom: 1px solid #ddd;">
+                                                        <td style="padding:10px; text-align:left;">Footer</td>
+                                                        <td style="padding:10px; text-align:right;">${footerContent}</td>
+                                                    </tr>
+                                                    <tr style="border-bottom: 1px solid #ddd;">
+                                                        <td style="padding:10px; text-align:left;">Pemasukan Hari Ini</td>
+                                                        <td style="padding:10px; text-align:right;">${dailyIncome}</td>
+                                                    </tr>
+                                                    <tr style="border-bottom: 1px solid #ddd;">
+                                                        <td style="padding:10px; text-align:left;">Pemasukkan Bulanan</td>
+                                                        <td style="padding:10px; text-align:right;">${monthlyIncome}</td>
+                                                    </tr>
+                                                    <tr style="border-bottom: 1px solid #ddd;">
+                                                        <td style="padding:10px; text-align:left;">Total Belum Dibayar</td>
+                                                        <td style="padding:10px; text-align:right;">${totalUnpaid}</td>
+                                                    </tr>
+                                                    <tr style="border-bottom: 1px solid #ddd;">
+                                                        <td style="padding:10px; text-align:left;">Pemasukkan Tahunan</td>
+                                                        <td style="padding:10px; text-align:right;">${yearlyIncome}</td>
+                                                    </tr>
+                                                </table>
+                                                <div style="margin-top: 20px; padding: 10px; font-size: 14px; text-align:center; border-top: 2px dashed #007bff;">
+                                                    Terima Kasih atas kunjungan Anda!
+                                                </div>
+                                            `;
+                                    
                                             const printWindow = window.open('', '', 'height=1130,width=850');
-                                            printWindow.document.write('<html><head><title>Print Preview</title>');
-                                            printWindow.document.write(
-                                                '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">'
-                                                );
-                                            printWindow.document.write('<style>');
-                                            printWindow.document.write('@page { size: A4; margin: 0; padding: 0; }');
-                                            printWindow.document.write(
-                                                'body { font-family: "Roboto", sans-serif; margin: 20px; padding: 20px; background-color: #f5f5f5; }'
-                                                );
-                                            printWindow.document.write(
-                                                'h2 { text-align: center; color: #4CAF50; font-size: 28px; font-weight: 700; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; }'
-                                                );
-                                            printWindow.document.write(
-                                                'table { width: 100%; border-collapse: collapse; margin-top: 20px; }');
-                                            printWindow.document.write(
-                                                'th, td { padding: 12px; text-align: center; border: 1px solid #ddd; font-size: 14px; color: #333; }'
-                                                );
-                                            printWindow.document.write(
-                                                'th { background-color: #4CAF50; color: white; font-weight: 500; }');
-                                            printWindow.document.write('tr:nth-child(even) { background-color: #f9f9f9; }');
-                                            printWindow.document.write(
-                                                '.statistics-details { padding: 15px; font-size: 14px; background-color: #fff; border-radius: 8px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); margin-top: 20px; }'
-                                                );
-                                            printWindow.document.write('</style>');
-                                            printWindow.document.write('</head><body>');
-                                            printWindow.document.write(printContent);
-                                            printWindow.document.write('</body></html>');
+                                            printWindow.document.write(`
+                                                <html><head><title>Print Preview</title>
+                                                <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+                                                <style>
+                                                    body { font-family: "Roboto", sans-serif; margin:0; padding: 0; width: 210mm; height: 297mm; background-color:#f5f5f5; }
+                                                    h2 { color:#007bff; font-size:24px; font-weight:700; margin: 0; text-align:center; }
+                                                    img { display:block; margin:0 auto; width:150px; height:auto; margin-top:10px; }
+                                                    table { width:100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }
+                                                    td { padding:10px; text-align:left; }
+                                                    th, td { border-bottom: 1px solid #ddd; }
+                                                    td:last-child { text-align:right; }
+                                                    .footer { margin-top: 20px; padding: 10px; font-size: 14px; text-align:center; }
+                                                    .footer strong { font-weight:700; }
+                                                    @media print {
+                                                        body { width: 100%; height: auto; }
+                                                        h2 { font-size: 20px; }
+                                                        .footer { font-size: 12px; }
+                                                        table { width: 100%; }
+                                                    }
+                                                </style></head>
+                                                <body>${printContent}</body></html>
+                                            `);
                                             printWindow.document.close();
                                             printWindow.print();
                                         });
-                                    });
-                                </script>
+                                    </script>
+                                </div>
+
                             </div>
                         </div> <br>
                         <div class="tab-content tab-content-basic">
