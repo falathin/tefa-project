@@ -20,6 +20,12 @@
                     value="{{ old('email') }}" required autocomplete="email">
             </div>
 
+            <div class="mb-4">
+                <label for="phone_number" class="form-label">Masukkan telepon</label>
+                <input type="tel" class="form-control" id="phone_number" name="phone_number"
+                    value="{{ old('phone_number') }}" required autocomplete="phone_number">
+            </div>
+
             <label for="level" class="form-label">Pilih level akun</label>
             <select class="col-6 form-select mb-4" aria-label="Pilih level akun" id="level" name="level" required>
                 @if (Gate::allows('isEngineer'))

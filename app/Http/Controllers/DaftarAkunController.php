@@ -34,6 +34,7 @@ class DaftarAkunController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class],
             'level' => ['required'],
             'jurusan' => ['required'],
+            'phone_number' => ['required'],
             'new_password' => ['required', 'confirmed'],
         ]);
 
@@ -48,6 +49,7 @@ class DaftarAkunController extends Controller
             'jurusan' => $request->jurusan,
             'level' => $request->level,
             'password' => Hash::make($request->new_password),
+            'phone_number' => $request->phone_number,
         ]);
 
         return redirect(route('dashboard'))->with('statusBerhasil', 'Daftar akun ' . $request->username . ' berhasil!');

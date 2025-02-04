@@ -20,6 +20,7 @@ class AutentikasiSeeder extends Seeder
                 'email' => 'iteens.tefa@gmail.com',
                 'level' => 'engineer',
                 'jurusan' => 'General',
+                'phone_number' => '666',
                 'password' => bcrypt('asu12345')
             ],
             [
@@ -27,6 +28,7 @@ class AutentikasiSeeder extends Seeder
                 'email' => 'admin@gmail.com',
                 'level' => 'admin',
                 'jurusan' => 'TKRO',
+                'phone_number' => '666',
                 'password' => bcrypt('asu12345')
             ],
             [
@@ -41,6 +43,7 @@ class AutentikasiSeeder extends Seeder
                 'email' => 'kasir@gmail.com',
                 'level' => 'kasir',
                 'jurusan' => 'TKRO',
+                'phone_number' => '666',
                 'password' => bcrypt('asu12345')
             ],
             [
@@ -48,6 +51,7 @@ class AutentikasiSeeder extends Seeder
                 'email' => 'adminTbsm@gmail.com',
                 'level' => 'admin',
                 'jurusan' => 'TSM',
+                'phone_number' => '666',
                 'password' => bcrypt('asu12345')
             ],
         ];

@@ -5,7 +5,8 @@
             <img src="{{ asset('assets/images/logo.svg') }}" alt="logo" width="125px" />
         </a>
         <a class="nav-link" href="{{ url('/') }}">
-            <span class="menu-title">Dashboard</span>
+            <i class=""></i>
+                <span class="menu-title">Dashboard</span>
         </a>
     </div>
 </nav>

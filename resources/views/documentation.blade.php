@@ -1,8 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-
-<!-- Laporan Pelatihan Kerja -->
+    <!-- Laporan Pelatihan Kerja -->
 
     <style>
         body {
@@ -11,7 +10,7 @@
             padding: 0;
             background-color: #f4f4f4;
         }
-    
+
         .container {
             width: 80%;
             margin: 0 auto;
@@ -19,47 +18,47 @@
             padding: 20px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
-    
+
         h2 {
             font-size: 1.5rem;
             color: #333;
             margin-bottom: 10px;
         }
-    
+
         h2 i {
             margin-right: 10px;
         }
-    
+
         p {
             font-size: 1rem;
             line-height: 1.6;
             margin-bottom: 15px;
             color: #555;
         }
-    
+
         strong {
             font-weight: bold;
         }
-    
+
         .text-primary {
             color: #007bff;
         }
-    
+
         .section-heading {
             border-bottom: 2px solid #007bff;
             padding-bottom: 10px;
             margin-bottom: 20px;
         }
-    
+
         .mb-4 {
             margin-bottom: 1.5rem;
         }
-    
+
         .fas {
             font-size: 1.2rem;
         }
     </style>
-    
+
     <!-- Pendahuluan -->
     <section class="container mb-4">
         <br><br>
@@ -67,159 +66,292 @@
             <i class="fas fa-file-alt text-primary fs-1"></i>
             <span class="d-block mt-3 font-weight-bold text-dark">Laporan Pelatihan Kerja</span>
             <span class="d-block text-muted">Dokumentasi Aplikasi Web</span>
-        </h1>        <br><br><br>
+        </h1> <br><br><br>
         <h2 class="section-heading text-primary">
             <i class="fas fa-book-open"></i> Pendahuluan
         </h2>
         <p>
-            Assalamualaikum warahmatullahi wabarakatuh, 
+            Assalamualaikum warahmatullahi wabarakatuh,
         </p>
         <p>
-            Laporan ini merupakan dokumentasi dari aplikasi web yang dikembangkan selama pelatihan kerja di <strong>Teaching Factory Bengkel TKRO dan TBSM</strong> di <strong>PT Inovindo Digital Media</strong>, menggunakan framework <strong>Laravel</strong>. Aplikasi ini bertujuan untuk mengelola berbagai aspek yang berkaitan dengan kegiatan operasional di bengkel, khususnya dalam manajemen kendaraan, sparepart, serta transaksi pembayaran yang terjadi dalam proses perawatan dan servis kendaraan.
+            Laporan ini merupakan dokumentasi dari aplikasi web yang dikembangkan selama pelatihan kerja di <strong>Teaching
+                Factory Bengkel TKRO dan TBSM</strong> di <strong>PT Inovindo Digital Media</strong>, menggunakan framework
+            <strong>Laravel</strong>. Aplikasi ini bertujuan untuk mengelola berbagai aspek yang berkaitan dengan kegiatan
+            operasional di bengkel, khususnya dalam manajemen kendaraan, sparepart, serta transaksi pembayaran yang terjadi
+            dalam proses perawatan dan servis kendaraan.
         </p>
         <p>
-            Dalam lingkungan bengkel yang melayani berbagai jenis kendaraan, terutama dalam bidang Teknik Kendaraan Ringan Otomotif (TKRO) dan Teknik Bisnis Sepeda Motor (TBSM), pengelolaan data yang efisien dan cepat menjadi sangat penting. Oleh karena itu, aplikasi ini dirancang dengan tujuan untuk mempercepat dan mempermudah proses pencatatan, pengelolaan, dan pelaporan data yang berkaitan dengan kendaraan, sparepart, dan transaksi. Dengan begitu, proses bisnis dapat berjalan lebih lancar dan lebih terstruktur.
+            Dalam lingkungan bengkel yang melayani berbagai jenis kendaraan, terutama dalam bidang Teknik Kendaraan Ringan
+            Otomotif (TKRO) dan Teknik Bisnis Sepeda Motor (TBSM), pengelolaan data yang efisien dan cepat menjadi sangat
+            penting. Oleh karena itu, aplikasi ini dirancang dengan tujuan untuk mempercepat dan mempermudah proses
+            pencatatan, pengelolaan, dan pelaporan data yang berkaitan dengan kendaraan, sparepart, dan transaksi. Dengan
+            begitu, proses bisnis dapat berjalan lebih lancar dan lebih terstruktur.
         </p>
         <p>
-            Aplikasi ini memiliki beberapa fitur utama, di antaranya adalah pengelolaan data kendaraan, pengelolaan sparepart, serta pengelolaan transaksi layanan dan pembayaran yang terkait dengan pekerjaan yang dilakukan di bengkel. Semua data yang dimasukkan ke dalam sistem akan langsung tercatat dalam basis data yang terintegrasi, memungkinkan akses yang mudah dan akurat bagi para pengguna. Selain itu, sistem juga mendukung pembuatan laporan yang dapat membantu manajer bengkel dalam mengambil keputusan berbasis data.
+            Aplikasi ini memiliki beberapa fitur utama, di antaranya adalah pengelolaan data kendaraan, pengelolaan
+            sparepart, serta pengelolaan transaksi layanan dan pembayaran yang terkait dengan pekerjaan yang dilakukan di
+            bengkel. Semua data yang dimasukkan ke dalam sistem akan langsung tercatat dalam basis data yang terintegrasi,
+            memungkinkan akses yang mudah dan akurat bagi para pengguna. Selain itu, sistem juga mendukung pembuatan laporan
+            yang dapat membantu manajer bengkel dalam mengambil keputusan berbasis data.
         </p>
         <p>
-            Salah satu fitur unggulan aplikasi ini adalah kemampuannya untuk mengotomatisasi alur kerja di bengkel. Misalnya, setiap kali terjadi transaksi atau pengadaan sparepart baru, sistem secara otomatis akan memperbarui stok, menghitung keuntungan, serta mengirimkan notifikasi kepada pihak terkait, seperti manajer bengkel atau kepala teknisi. Dengan adanya fitur ini, manajemen bengkel dapat lebih fokus pada pengambilan keputusan strategis tanpa harus terjebak dalam pekerjaan administratif yang memakan waktu.
+            Salah satu fitur unggulan aplikasi ini adalah kemampuannya untuk mengotomatisasi alur kerja di bengkel.
+            Misalnya, setiap kali terjadi transaksi atau pengadaan sparepart baru, sistem secara otomatis akan memperbarui
+            stok, menghitung keuntungan, serta mengirimkan notifikasi kepada pihak terkait, seperti manajer bengkel atau
+            kepala teknisi. Dengan adanya fitur ini, manajemen bengkel dapat lebih fokus pada pengambilan keputusan
+            strategis tanpa harus terjebak dalam pekerjaan administratif yang memakan waktu.
         </p>
         <p>
-            Aplikasi ini juga dirancang dengan antarmuka yang sederhana namun fungsional. Tampilan yang responsif dan user-friendly memungkinkan siapa saja, baik itu administrator, teknisi, maupun pelanggan, untuk menggunakannya tanpa kesulitan. Pengguna hanya perlu mengikuti alur yang sudah disusun dalam aplikasi untuk menyelesaikan tugas mereka dengan cepat dan efektif. Fitur-fitur ini dirancang dengan prinsip kemudahan akses dan efisiensi waktu sebagai fokus utama.
+            Aplikasi ini juga dirancang dengan antarmuka yang sederhana namun fungsional. Tampilan yang responsif dan
+            user-friendly memungkinkan siapa saja, baik itu administrator, teknisi, maupun pelanggan, untuk menggunakannya
+            tanpa kesulitan. Pengguna hanya perlu mengikuti alur yang sudah disusun dalam aplikasi untuk menyelesaikan tugas
+            mereka dengan cepat dan efektif. Fitur-fitur ini dirancang dengan prinsip kemudahan akses dan efisiensi waktu
+            sebagai fokus utama.
         </p>
         <p>
-            Di sisi lain, aplikasi ini juga memperhatikan aspek keamanan. Semua data yang dimasukkan dan diproses dalam aplikasi dijaga kerahasiaannya dengan sistem keamanan yang handal, serta kontrol akses untuk memastikan bahwa hanya pihak yang berwenang yang dapat mengakses informasi sensitif. Dengan sistem ini, aplikasi tidak hanya mempermudah pekerjaan, tetapi juga menjaga kepercayaan dan integritas data pelanggan dan bengkel.
+            Di sisi lain, aplikasi ini juga memperhatikan aspek keamanan. Semua data yang dimasukkan dan diproses dalam
+            aplikasi dijaga kerahasiaannya dengan sistem keamanan yang handal, serta kontrol akses untuk memastikan bahwa
+            hanya pihak yang berwenang yang dapat mengakses informasi sensitif. Dengan sistem ini, aplikasi tidak hanya
+            mempermudah pekerjaan, tetapi juga menjaga kepercayaan dan integritas data pelanggan dan bengkel.
         </p>
         <p>
-            Secara keseluruhan, tujuan utama dari aplikasi ini adalah untuk meningkatkan produktivitas, efisiensi, dan akurasi dalam pengelolaan data dan transaksi di bengkel. Kami berharap aplikasi ini dapat memberikan manfaat jangka panjang bagi operasional bengkel, membantu meningkatkan kualitas layanan kepada pelanggan, serta memudahkan pengelolaan dan pelaporan secara lebih transparan dan terorganisir.
+            Secara keseluruhan, tujuan utama dari aplikasi ini adalah untuk meningkatkan produktivitas, efisiensi, dan
+            akurasi dalam pengelolaan data dan transaksi di bengkel. Kami berharap aplikasi ini dapat memberikan manfaat
+            jangka panjang bagi operasional bengkel, membantu meningkatkan kualitas layanan kepada pelanggan, serta
+            memudahkan pengelolaan dan pelaporan secara lebih transparan dan terorganisir.
         </p>
         <p>
-            Kami juga berharap bahwa aplikasi ini dapat berkembang lebih lanjut, dengan fitur-fitur tambahan yang lebih inovatif, sesuai dengan kebutuhan pengguna dan perkembangan teknologi yang terus berubah. Oleh karena itu, masukan dan umpan balik dari semua pihak yang terlibat sangat dihargai untuk meningkatkan kualitas dan fungsionalitas aplikasi ini di masa mendatang.
+            Kami juga berharap bahwa aplikasi ini dapat berkembang lebih lanjut, dengan fitur-fitur tambahan yang lebih
+            inovatif, sesuai dengan kebutuhan pengguna dan perkembangan teknologi yang terus berubah. Oleh karena itu,
+            masukan dan umpan balik dari semua pihak yang terlibat sangat dihargai untuk meningkatkan kualitas dan
+            fungsionalitas aplikasi ini di masa mendatang.
         </p>
         <p>
-            Semoga aplikasi ini dapat memberikan manfaat yang optimal, memperlancar alur kerja di bengkel, dan menjadi bagian dari kemajuan dunia industri yang semakin mengandalkan teknologi dalam operasional sehari-hari. 
+            Semoga aplikasi ini dapat memberikan manfaat yang optimal, memperlancar alur kerja di bengkel, dan menjadi
+            bagian dari kemajuan dunia industri yang semakin mengandalkan teknologi dalam operasional sehari-hari.
         </p>
     </section>
-    
+
     <!-- Tujuan Pelatihan -->
     <section class="container mb-4">
         <h2 class="section-heading text-primary">
             <i class="fas fa-bullseye"></i> Tujuan Pelatihan
         </h2>
         <p>
-            Tujuan utama dari pelatihan ini adalah untuk memberikan pemahaman yang mendalam mengenai pengembangan aplikasi web menggunakan framework Laravel serta memperkenalkan praktik terbaik dalam pengelolaan proyek perangkat lunak. Pelatihan ini juga bertujuan untuk meningkatkan keterampilan teknis peserta dalam pengembangan aplikasi web, mulai dari perencanaan hingga implementasi.
+            Tujuan utama dari pelatihan ini adalah untuk memberikan pemahaman yang mendalam mengenai pengembangan aplikasi
+            web menggunakan framework Laravel serta memperkenalkan praktik terbaik dalam pengelolaan proyek perangkat lunak.
+            Pelatihan ini juga bertujuan untuk meningkatkan keterampilan teknis peserta dalam pengembangan aplikasi web,
+            mulai dari perencanaan hingga implementasi.
         </p>
         <p>
-            Dalam pelatihan ini, peserta juga dibekali dengan pengetahuan mengenai metodologi pengembangan perangkat lunak, serta keterampilan dalam bekerja dalam tim untuk menghasilkan produk perangkat lunak yang berkualitas.
+            Dalam pelatihan ini, peserta juga dibekali dengan pengetahuan mengenai metodologi pengembangan perangkat lunak,
+            serta keterampilan dalam bekerja dalam tim untuk menghasilkan produk perangkat lunak yang berkualitas.
         </p>
     </section>
-    
+
     <!-- Proses Pengembangan Aplikasi -->
     <section class="container mb-4">
         <h2 class="section-heading text-primary">
             <i class="fas fa-cogs"></i> Proses Pengembangan Aplikasi
         </h2>
         <p>
-            Aplikasi ini dikembangkan melalui beberapa tahap penting yang meliputi perencanaan, desain, pengembangan, pengujian, dan implementasi. Setiap tahap dijalani dengan kolaborasi antara tim pengembang dan pengujian yang intensif, dengan pemahaman yang jelas mengenai tujuan aplikasi dan kebutuhan pengguna.
+            Aplikasi ini dikembangkan melalui beberapa tahap penting yang meliputi perencanaan, desain, pengembangan,
+            pengujian, dan implementasi. Setiap tahap dijalani dengan kolaborasi antara tim pengembang dan pengujian yang
+            intensif, dengan pemahaman yang jelas mengenai tujuan aplikasi dan kebutuhan pengguna.
         </p>
-    
+
         <p>
             <strong>Fase 1: Pembuatan Diagram dan Perencanaan Desain</strong><br>
-            Proses dimulai dengan analisis kebutuhan sistem dan pembuatan diagram alur kerja serta diagram entitas-relasi (ERD) untuk memvisualisasikan struktur data aplikasi. Langkah ini sangat penting untuk memastikan bahwa sistem yang akan dibangun memiliki fondasi yang kokoh. Setelah itu, desain antarmuka pengguna (UI/UX) dimulai, dengan fokus pada pengalaman pengguna yang mudah diakses dan responsif di berbagai perangkat. Desain mockup dan wireframe dibuat menggunakan alat seperti Figma, yang kemudian dikaji ulang dengan tim UI/UX dan stakeholder untuk mendapatkan umpan balik awal.
+            Proses dimulai dengan analisis kebutuhan sistem dan pembuatan diagram alur kerja serta diagram entitas-relasi
+            (ERD) untuk memvisualisasikan struktur data aplikasi. Langkah ini sangat penting untuk memastikan bahwa sistem
+            yang akan dibangun memiliki fondasi yang kokoh. Setelah itu, desain antarmuka pengguna (UI/UX) dimulai, dengan
+            fokus pada pengalaman pengguna yang mudah diakses dan responsif di berbagai perangkat. Desain mockup dan
+            wireframe dibuat menggunakan alat seperti Figma, yang kemudian dikaji ulang dengan tim UI/UX dan stakeholder
+            untuk mendapatkan umpan balik awal.
         </p>
-    
+
         <p>
             <strong>Fase 2: Pengembangan Fitur Utama dan Backend</strong><br>
-            Setelah fase desain, pengembangan aplikasi dimulai dengan membangun backend menggunakan Laravel. Pada fase ini, pengembang menyiapkan struktur database, pengelolaan autentikasi pengguna, serta implementasi logika bisnis untuk manajemen pelanggan, kendaraan, sparepart, dan transaksi. Pengembangan frontend dilakukan secara bersamaan, dengan fokus pada implementasi antarmuka yang sudah disepakati pada tahap desain. Laravel menjadi pilihan untuk mempermudah pengelolaan rute dan middleware aplikasi, serta memastikan sistem backend yang aman dan efisien.
+            Setelah fase desain, pengembangan aplikasi dimulai dengan membangun backend menggunakan Laravel. Pada fase ini,
+            pengembang menyiapkan struktur database, pengelolaan autentikasi pengguna, serta implementasi logika bisnis
+            untuk manajemen pelanggan, kendaraan, sparepart, dan transaksi. Pengembangan frontend dilakukan secara
+            bersamaan, dengan fokus pada implementasi antarmuka yang sudah disepakati pada tahap desain. Laravel menjadi
+            pilihan untuk mempermudah pengelolaan rute dan middleware aplikasi, serta memastikan sistem backend yang aman
+            dan efisien.
         </p>
-    
+
         <p>
             <strong>Fase 3: Pengujian, Debugging, dan Penyempurnaan UI/UX</strong><br>
-            Setelah fitur utama selesai, tim pengujian melakukan pengujian menyeluruh untuk memastikan bahwa setiap bagian dari aplikasi berfungsi sesuai dengan spesifikasi. Pengujian ini meliputi pengujian unit, pengujian fungsional, dan pengujian UI untuk memastikan bahwa antarmuka pengguna tidak hanya fungsional, tetapi juga mudah digunakan. Setiap bug atau masalah yang ditemukan selama pengujian akan diperbaiki sebelum melanjutkan ke fase berikutnya. Pada fase ini, perbaikan desain UI/UX juga dilakukan berdasarkan umpan balik dari pengujian pengguna untuk meningkatkan pengalaman pengguna secara keseluruhan.
+            Setelah fitur utama selesai, tim pengujian melakukan pengujian menyeluruh untuk memastikan bahwa setiap bagian
+            dari aplikasi berfungsi sesuai dengan spesifikasi. Pengujian ini meliputi pengujian unit, pengujian fungsional,
+            dan pengujian UI untuk memastikan bahwa antarmuka pengguna tidak hanya fungsional, tetapi juga mudah digunakan.
+            Setiap bug atau masalah yang ditemukan selama pengujian akan diperbaiki sebelum melanjutkan ke fase berikutnya.
+            Pada fase ini, perbaikan desain UI/UX juga dilakukan berdasarkan umpan balik dari pengujian pengguna untuk
+            meningkatkan pengalaman pengguna secara keseluruhan.
         </p>
-    
+
         <p>
             <strong>Fase 4: Implementasi dan Optimasi</strong><br>
-            Setelah aplikasi siap untuk diluncurkan, fitur tambahan seperti grafik analisis data dan halaman kontak pelanggan ditambahkan. Pengujian lebih lanjut dilakukan untuk memastikan semua fitur berjalan lancar. Setelah itu, optimasi dilakukan untuk memastikan aplikasi dapat berjalan dengan baik di berbagai perangkat dan platform, termasuk melakukan pengujian kecepatan dan pengoptimalan kinerja aplikasi. Aplikasi kemudian dipublikasikan dan siap untuk digunakan oleh pelanggan.
+            Setelah aplikasi siap untuk diluncurkan, fitur tambahan seperti grafik analisis data dan halaman kontak
+            pelanggan ditambahkan. Pengujian lebih lanjut dilakukan untuk memastikan semua fitur berjalan lancar. Setelah
+            itu, optimasi dilakukan untuk memastikan aplikasi dapat berjalan dengan baik di berbagai perangkat dan platform,
+            termasuk melakukan pengujian kecepatan dan pengoptimalan kinerja aplikasi. Aplikasi kemudian dipublikasikan dan
+            siap untuk digunakan oleh pelanggan.
         </p>
-    
-        <p>
-            Setiap fase di atas dipandu oleh prinsip-prinsip <strong>Agile Development</strong>, di mana umpan balik dari pengguna dan stakeholder diterima dengan cepat untuk meningkatkan kualitas aplikasi. Iterasi dan pembaruan dilakukan secara berkelanjutan untuk memastikan aplikasi memenuhi kebutuhan pengguna dan dapat berfungsi dengan baik pada berbagai perangkat.
-        </p>
-    </section>
-    
 
-<div class="container mb-4">
-    <!-- Fitur Utama -->
-    <section class="mb-4">
-        <h2 class="h3 text-primary">
-            <i class="fas fa-list-alt"></i> Fitur Utama
-        </h2>
-        <ul class="list-group">
-            <li class="list-group-item"><i class="fas fa-users"></i> Manajemen pelanggan (CRUD untuk pelanggan).</li>
-            <li class="list-group-item"><i class="fas fa-car"></i> Manajemen Kendaraan dan Sparepart.</li>
-            <li class="list-group-item"><i class="fas fa-credit-card"></i> Transaksi dan Pembayaran.</li>
-            <li class="list-group-item"><i class="fas fa-chart-line"></i> Grafik untuk analisis data.</li>
-            <li class="list-group-item"><i class="fas fa-envelope"></i> Halaman kontak untuk pertanyaan pelanggan.</li>
-        </ul>
         <p>
-            Setiap fitur aplikasi ini dikembangkan dengan memprioritaskan kemudahan penggunaan dan kestabilan sistem. Sistem manajemen pelanggan memungkinkan admin untuk memantau dan mengelola data pelanggan dengan mudah, sementara fitur transaksi dan pembayaran memungkinkan pelanggan melakukan transaksi secara aman dan efisien.
+            Setiap fase di atas dipandu oleh prinsip-prinsip <strong>Agile Development</strong>, di mana umpan balik dari
+            pengguna dan stakeholder diterima dengan cepat untuk meningkatkan kualitas aplikasi. Iterasi dan pembaruan
+            dilakukan secara berkelanjutan untuk memastikan aplikasi memenuhi kebutuhan pengguna dan dapat berfungsi dengan
+            baik pada berbagai perangkat.
         </p>
     </section>
-    
-    <!-- Teknologi yang Digunakan -->
-    <section class="mb-4">
-        <h2 class="h3 text-primary">
-            <i class="fas fa-laptop-code"></i> Teknologi yang Digunakan
-        </h2>
-        <p>Aplikasi ini dibangun menggunakan teknologi berikut:</p>
-        <ul class="list-group">
-            <li class="list-group-item"><strong>Laravel:</strong> Framework PHP untuk back-end development.</li>
-            <li class="list-group-item"><strong>MySQL:</strong> Database untuk menyimpan data aplikasi.</li>
-            <li class="list-group-item"><strong>Bootstrap:</strong> Framework CSS untuk desain responsif dan modern.</li>
-            <li class="list-group-item"><strong>JavaScript:</strong> Digunakan untuk interaksi dan manipulasi DOM.</li>
-            <li class="list-group-item"><strong>Git:</strong> Sistem version control untuk mengelola pengembangan aplikasi secara kolaboratif.</li>
-        </ul>
-        <p>
-            Penggunaan Laravel mempermudah pengembangan aplikasi ini, terutama dalam hal pengelolaan rute, middleware, serta manajemen autentikasi dan otorisasi pengguna. Dengan menggunakan MySQL sebagai database, aplikasi dapat menangani penyimpanan dan pengambilan data dengan cepat dan efisien.
-        </p>
-    </section>
-    
-    <!-- Instruksi Instalasi -->
-    <section class="mb-4">
-        <h2 class="h3 text-primary">
-            <i class="fas fa-download"></i> Instruksi Instalasi
-        </h2>
-        <p>Untuk menginstal aplikasi ini secara lokal, Anda dapat mengikuti langkah-langkah berikut:</p>
-        <ol class="list-group list-group-numbered">
-            <li class="list-group-item">Clone repository <a style="text-decoration: none" class="text-danger" href="https://github.com/falathin/tefa-project.git"><code>git clone https://github.com/falathin/tefa-project.git</code></a> dari GitHub.</li>
-            <li class="list-group-item">Jalankan perintah <code>composer install</code> untuk menginstal dependensi.</li>
-            <li class="list-group-item">Atur file .env untuk konfigurasi database dan lainnya.</li>
-            <li class="list-group-item">Jalankan perintah <code>php artisan key:generate</code> untuk menghasilkan aplikasi key yang diperlukan.</li>
-            <li class="list-group-item">Jalankan perintah <code>php artisan migrate</code> untuk menjalankan migrasi database.</li>
-            <li class="list-group-item">Jalankan perintah <code>php artisan storage:link</code> untuk mengkoneksikan gambar.</li>
-            <li class="list-group-item">Jalankan aplikasi menggunakan perintah <code>php artisan serve</code>.</li>
-        </ol>
-        <p>
-            Pastikan Anda telah menginstal Composer dan PHP di perangkat Anda. Jika Anda belum familiar dengan pengaturan Laravel, Anda bisa mengunjungi dokumentasi resmi Laravel untuk panduan lebih lengkap mengenai instalasi dan konfigurasi.
-        </p>
-    </section>    
-    <section class="mb-4">
-        <h2 class="h3 text-primary">
-            <i class="fas fa-clipboard-list"></i> Instruksi Pengguna
-        </h2>
-        <p>
-            Setelah aplikasi berhasil dijalankan, Anda dapat mengakses berbagai fitur yang tersedia, seperti manajemen pelanggan, kendaraan, sparepart, dan transaksi. Setiap bagian memiliki antarmuka yang sederhana dan mudah digunakan.
-        </p>
-        <p>
-            Pengguna dapat login untuk mengakses panel admin atau menggunakan tampilan pelanggan untuk melakukan transaksi, memantau status kendaraan, atau bertanya mengenai produk melalui halaman kontak. Aplikasi ini memberikan kemudahan bagi pengguna dalam mengelola semua aspek yang berhubungan dengan kendaraan dan sparepart.
-        </p>
-    </section>
-    
-    <!-- Informasi Commit di GitHub -->
-    <section class="mb-4">
+
+
+    <div class="container mb-4">
+        <!-- Fitur Utama -->
+        <section class="mb-4">
+            <h2 class="h3 text-primary">
+                <i class="fas fa-list-alt"></i> Fitur Utama
+            </h2>
+            <ul class="list-group">
+                <li class="list-group-item"><i class="fas fa-users"></i> Manajemen pelanggan (CRUD untuk pelanggan).</li>
+                <li class="list-group-item"><i class="fas fa-car"></i> Manajemen Kendaraan dan Sparepart.</li>
+                <li class="list-group-item"><i class="fas fa-credit-card"></i> Transaksi dan Pembayaran.</li>
+                <li class="list-group-item"><i class="fas fa-chart-line"></i> Grafik untuk analisis data.</li>
+                <li class="list-group-item"><i class="fas fa-envelope"></i> Halaman kontak untuk pertanyaan pelanggan.</li>
+            </ul>
+            <p>
+                Setiap fitur aplikasi ini dikembangkan dengan memprioritaskan kemudahan penggunaan dan kestabilan sistem.
+                Sistem manajemen pelanggan memungkinkan admin untuk memantau dan mengelola data pelanggan dengan mudah,
+                sementara fitur transaksi dan pembayaran memungkinkan pelanggan melakukan transaksi secara aman dan efisien.
+            </p>
+        </section>
+
+        <!-- Teknologi yang Digunakan -->
+        <section class="mb-4">
+            <h2 class="h3 text-primary">
+                <i class="fas fa-laptop-code"></i> Teknologi yang Digunakan
+            </h2>
+            <p>Aplikasi ini dibangun menggunakan teknologi berikut:</p>
+            <ul class="list-group">
+                <li class="list-group-item"><strong>Laravel:</strong> Framework PHP untuk back-end development.</li>
+                <li class="list-group-item"><strong>MySQL:</strong> Database untuk menyimpan data aplikasi.</li>
+                <li class="list-group-item"><strong>Bootstrap:</strong> Framework CSS untuk desain responsif dan modern.
+                </li>
+                <li class="list-group-item"><strong>JavaScript:</strong> Digunakan untuk interaksi dan manipulasi DOM.</li>
+                <li class="list-group-item"><strong>Git:</strong> Sistem version control untuk mengelola pengembangan
+                    aplikasi secara kolaboratif.</li>
+            </ul>
+            <p>
+                Penggunaan Laravel mempermudah pengembangan aplikasi ini, terutama dalam hal pengelolaan rute, middleware,
+                serta manajemen autentikasi dan otorisasi pengguna. Dengan menggunakan MySQL sebagai database, aplikasi
+                dapat menangani penyimpanan dan pengambilan data dengan cepat dan efisien.
+            </p>
+        </section>
+
+        <!-- Instruksi Instalasi -->
+        <section class="mb-4">
+            <h2 class="h3 text-primary">
+                <i class="fas fa-download"></i> Instruksi Instalasi
+            </h2>
+            <p>Untuk menginstal aplikasi ini secara lokal, Anda dapat mengikuti langkah-langkah berikut:</p>
+            <ol class="list-group list-group-numbered">
+                <li class="list-group-item">Clone repository <a style="text-decoration: none" class="text-danger"
+                        href="https://github.com/falathin/tefa-project.git"><code>git clone
+                            https://github.com/falathin/tefa-project.git</code></a> dari GitHub.</li>
+                <li class="list-group-item">Jalankan perintah <code>composer install</code> untuk menginstal dependensi.
+                </li>
+                <li class="list-group-item">Atur file .env untuk konfigurasi database dan lainnya.</li>
+                <li class="list-group-item">Jalankan perintah <code>php artisan key:generate</code> untuk menghasilkan
+                    aplikasi key yang diperlukan.</li>
+                <li class="list-group-item">Jalankan perintah <code>php artisan migrate</code> untuk menjalankan migrasi
+                    database.</li>
+                <li class="list-group-item">Jalankan perintah <code>php artisan storage:link</code> untuk mengkoneksikan
+                    gambar.</li>
+                <li class="list-group-item">Jalankan aplikasi menggunakan perintah <code>php artisan serve</code>.</li>
+            </ol>
+            <p>
+                Pastikan Anda telah menginstal Composer dan PHP di perangkat Anda. Jika Anda belum familiar dengan
+                pengaturan Laravel, Anda bisa mengunjungi dokumentasi resmi Laravel untuk panduan lebih lengkap mengenai
+                instalasi dan konfigurasi.
+            </p>
+        </section>
+        <section class="mb-4">
+            <h2 class="h3 text-primary">
+                <i class="fas fa-clipboard-list"></i> Instruksi Pengguna
+            </h2>
+            <p>
+                Setelah aplikasi berhasil dijalankan, Anda dapat mengakses berbagai fitur yang tersedia, seperti manajemen
+                pelanggan, kendaraan, sparepart, dan transaksi. Setiap bagian memiliki antarmuka yang sederhana dan mudah
+                digunakan.
+            </p>
+            <p>
+                Pengguna dapat login untuk mengakses panel admin atau menggunakan tampilan pelanggan untuk melakukan
+                transaksi, memantau status kendaraan, atau bertanya mengenai produk melalui halaman kontak. Aplikasi ini
+                memberikan kemudahan bagi pengguna dalam mengelola semua aspek yang berhubungan dengan kendaraan dan
+                sparepart.
+            </p>
+        </section>
+
+        <section class="mb-4" id="emergency_password">
+            
+            <!-- Main Content -->
+            <div class="container">
+                <h2 class="h3 text-primary">
+                    <i class="fa-solid fa-phone"></i> Instruksi mendapatkan emergency password
+                </h2>
+                <p>
+                    Jika pengguna lupa password akun pengguna, pengguna dapat memulihkannya menggunakan Emergency Password.
+                    Berikut adalah langkah-langkahnya :
+                </p>
+                <!-- Emergency Password Section -->
+                <div id="emergency-password-section">
+                    <ol class="fs-6">
+                        <li>
+                            <strong>Masuk ke halaman lupa password </strong><br>
+                            Pada bagian bawah tombol Reset Password, klik WhatsApp untuk menghubungi tim iteens
+                        </li>
+                        <li>
+                            <strong>Hubungi tim iteens</strong><br>
+                            Kirim pesan WhatsApp ke nomor tim iteens kami melalui <strong>nomor Anda</strong> yang terdaftar di akun Anda dengan format berikut ( copy jika perlu ) :
+                            <pre>
+    Permintaan Emergency Password
+    Nama: [Nama Lengkap Anda]
+    Email Terdaftar: [Email yang Anda gunakan untuk mendaftar]
+    </pre>
+                        </li>
+                        <li>
+                            <strong>Tunggu Balasan</strong><br>
+                            Tim tim iteens akan memverifikasi data Anda dan mengirimkan <strong>Emergency Password</strong>
+                            ke
+                            email
+                            atau WhatsApp Anda.
+                        </li>
+                        <li>
+                            <strong>Gunakan Emergency Password</strong><br>
+                            - Masuk ke halaman login.<br>
+                            - Klik opsi <strong>Lupa Password</strong>.<br>
+                            - Masukkan <strong>Emergency Password</strong>.<br>
+                            - Ikuti instruksi selanjutnya untuk membuat password baru.
+                        </li>
+                        <li>
+                            <strong>Login dengan Password Baru</strong><br>
+                            Setelah berhasil membuat password baru, Anda bisa login ke akun Anda seperti biasa.
+                        </li>
+                    </ol>
+                    <div class="alert alert-info">
+                        <strong>Catatan:</strong><br>
+                        - Pastikan data yang Anda berikan (nama, email, dan username) sesuai dengan data terdaftar.<br>
+                        - Jika Anda mengalami kendala, jangan ragu untuk menghubungi pihak Iteens kembali.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Informasi Commit di GitHub -->
+        {{-- <section class="mb-4">
         <h2 class="h3 text-primary">
             <i class="fas fa-code"></i> Riwayat Commit
         </h2>
@@ -236,10 +368,10 @@
         </ul>
         <p>Silakan kunjungi repository untuk melihat lebih lanjut mengenai pengembangan aplikasi ini.</p>
     </section>
-</div>
+</div> --}}
 
-    <!-- Tim Pengembang -->
-    <section class="mb-4">
+        <!-- Tim Pengembang -->
+        {{-- <section class="mb-4">
         <div class="container py-5">
             <h2 class="h3 text-primary">
                 <i class="fas fa-users"></i> Tim Pengembang
@@ -337,42 +469,58 @@
                 </div>
             </div>
         </div>                                
-    </section<br>
+    </section<br> --}}
 
-    <!-- Kesimpulan -->
-    <section class=" container mb-4 mt-3">
-        <h2 class="h3 text-primary">
-            <i class="fas fa-clipboard-check"></i> Kesimpulan
-        </h2>
-        <p>
-            Aplikasi web yang telah dikembangkan ini merupakan hasil kerja keras dan kolaborasi yang erat antara seluruh tim pengembang, mulai dari pengumpulan kebutuhan, perencanaan desain, hingga tahap implementasi dan pengujian. Setiap tahap pengembangan dilakukan dengan penuh perhatian dan kehati-hatian, dengan tujuan utama untuk menyediakan solusi yang efektif dan efisien bagi PT Inovindo Digital Media.
-        </p>
-        <p>
-            Dalam pengembangan aplikasi ini, kami menerapkan metodologi pengembangan perangkat lunak yang terstruktur, mengikuti prinsip-prinsip Agile Development, yang memungkinkan kami untuk beradaptasi dengan cepat terhadap perubahan kebutuhan dan memperbaiki masalah yang muncul dengan responsif. Tim pengembang, yang terdiri dari berbagai keahlian, bekerja dengan semangat kolaboratif, memastikan bahwa setiap fitur dikembangkan dengan baik, serta diuji dengan cermat.
-        </p>
-        <p>
-            Aplikasi ini tidak hanya bertujuan untuk memenuhi kebutuhan fungsional saat ini, tetapi juga dirancang dengan mempertimbangkan skalabilitas dan keberlanjutan di masa depan. Setiap aspek dari aplikasi ini—dari manajemen pelanggan, transaksi, hingga analisis data—diharapkan dapat membantu PT Inovindo Digital Media dalam meningkatkan efisiensi operasional dan memberikan layanan yang lebih baik kepada pelanggan.
-        </p>
-        <p>
-            Meskipun aplikasi ini telah melewati berbagai tahap pengembangan yang ketat, kami menyadari bahwa kesempurnaan hanyalah milik Tuhan. Beberapa tantangan dan bug mungkin masih ada, dan kami berkomitmen untuk terus melakukan pemeliharaan, pembaruan, dan perbaikan demi memberikan pengalaman terbaik bagi penggunanya. Setiap umpan balik dan kritik yang konstruktif akan diterima dengan baik, dan kami akan terus meningkatkan kualitas aplikasi ini.
-        </p>
-        <p>
-            Kami juga berharap, dengan adanya dokumentasi ini, pengembang yang akan datang dapat dengan mudah memahami struktur dan alur kerja aplikasi, serta dapat melanjutkan pengembangan lebih lanjut dengan lebih efisien. Kami berharap aplikasi ini dapat terus berkembang, memberikan manfaat yang lebih besar, dan berkontribusi pada kemajuan PT Inovindo Digital Media di masa yang akan datang.
-        </p>
-        <p>
-            Terima kasih atas dukungan, pengertian, dan kerja keras semua pihak yang telah berkontribusi dalam pengembangan aplikasi ini. Semoga aplikasi ini dapat bermanfaat dan memberikan solusi terbaik bagi perusahaan dan para penggunanya.
-        </p>
-        <p>
-            Wassalamualaikum Wr. Wb.
-        </p>
-        <!-- WhatsApp Button for Bugs -->
-        <div class="mt-4 mb-4 ml-3">
-            <a href="https://wa.me/6285719443650" class="btn btn-success btn-md" target="_blank">
-                <i class="fab fa-whatsapp"></i>&nbsp; Chat Laporkan (Jika ada Bug)
-            </a>
-        </div>
-    </section>
-
-
-
-@endsection
+        <!-- Kesimpulan -->
+        <section class=" container mb-4 mt-3">
+            <h2 class="h3 text-primary">
+                <i class="fas fa-clipboard-check"></i> Kesimpulan
+            </h2>
+            <p>
+                Aplikasi web yang telah dikembangkan ini merupakan hasil kerja keras dan kolaborasi yang erat antara seluruh
+                tim pengembang, mulai dari pengumpulan kebutuhan, perencanaan desain, hingga tahap implementasi dan
+                pengujian. Setiap tahap pengembangan dilakukan dengan penuh perhatian dan kehati-hatian, dengan tujuan utama
+                untuk menyediakan solusi yang efektif dan efisien bagi PT Inovindo Digital Media.
+            </p>
+            <p>
+                Dalam pengembangan aplikasi ini, kami menerapkan metodologi pengembangan perangkat lunak yang terstruktur,
+                mengikuti prinsip-prinsip Agile Development, yang memungkinkan kami untuk beradaptasi dengan cepat terhadap
+                perubahan kebutuhan dan memperbaiki masalah yang muncul dengan responsif. Tim pengembang, yang terdiri dari
+                berbagai keahlian, bekerja dengan semangat kolaboratif, memastikan bahwa setiap fitur dikembangkan dengan
+                baik, serta diuji dengan cermat.
+            </p>
+            <p>
+                Aplikasi ini tidak hanya bertujuan untuk memenuhi kebutuhan fungsional saat ini, tetapi juga dirancang
+                dengan mempertimbangkan skalabilitas dan keberlanjutan di masa depan. Setiap aspek dari aplikasi ini—dari
+                manajemen pelanggan, transaksi, hingga analisis data—diharapkan dapat membantu PT Inovindo Digital Media
+                dalam meningkatkan efisiensi operasional dan memberikan layanan yang lebih baik kepada pelanggan.
+            </p>
+            <p>
+                Meskipun aplikasi ini telah melewati berbagai tahap pengembangan yang ketat, kami menyadari bahwa
+                kesempurnaan hanyalah milik Tuhan. Beberapa tantangan dan bug mungkin masih ada, dan kami berkomitmen untuk
+                terus melakukan pemeliharaan, pembaruan, dan perbaikan demi memberikan pengalaman terbaik bagi penggunanya.
+                Setiap umpan balik dan kritik yang konstruktif akan diterima dengan baik, dan kami akan terus meningkatkan
+                kualitas aplikasi ini.
+            </p>
+            <p>
+                Kami juga berharap, dengan adanya dokumentasi ini, pengembang yang akan datang dapat dengan mudah memahami
+                struktur dan alur kerja aplikasi, serta dapat melanjutkan pengembangan lebih lanjut dengan lebih efisien.
+                Kami berharap aplikasi ini dapat terus berkembang, memberikan manfaat yang lebih besar, dan berkontribusi
+                pada kemajuan PT Inovindo Digital Media di masa yang akan datang.
+            </p>
+            <p>
+                Terima kasih atas dukungan, pengertian, dan kerja keras semua pihak yang telah berkontribusi dalam
+                pengembangan aplikasi ini. Semoga aplikasi ini dapat bermanfaat dan memberikan solusi terbaik bagi
+                perusahaan dan para penggunanya.
+            </p>
+            <p>
+                Wassalamualaikum Wr. Wb.
+            </p>
+            <!-- WhatsApp Button for Bugs -->
+            <div class="mt-4 mb-4 ml-3">
+                <a href="https://wa.me/6285781457014" class="btn btn-success btn-md" target="_blank">
+                    <i class="fab fa-whatsapp"></i>&nbsp; Chat Laporkan (Jika ada Bug)
+                </a>
+            </div>
+        </section>
+    @endsection

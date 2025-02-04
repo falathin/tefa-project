@@ -23,6 +23,7 @@ class CreateServicesTable extends Migration
             $table->text('additional_notes')->nullable(); // Deskripsi tambahan terkait servis
             $table->string('technician_name')->nullable(); // Nama teknisi yang menangani
             $table->string('payment_proof')->nullable(); // Path bukti pembayaran
+            $table->enum('jurusan', ['TSM', 'TKRO', 'General']);
             $table->timestamps();
         });
     }

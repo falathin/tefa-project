@@ -11,6 +11,7 @@ use App\Models\ServiceChecklist;
 use App\Models\ServiceSparepart;
 use App\Models\SparepartHistory;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 class ServiceController extends Controller
@@ -18,20 +19,27 @@ class ServiceController extends Controller
     public function index(Request $request)
     {
         // Admin & kasir
-        if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
-            abort(403, 'Butuh level Admin & Kasir');
-        }
+        // if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
+        //     abort(403, 'Butuh level Admin & Kasir');
+        // }
+
         $paymentStatus = $request->get('payment_status', 'all');
         $request->session()->put('payment_status', $paymentStatus);
 
-        $servicesQuery = Service::query();
+        if (Auth::user()->jurusan == 'General') {
+            $servicesQuery = Service::query();
+        } else {
+            $servicesQuery = Service::query()->where('jurusan', 'like', Auth::user()->jurusan);
+        }
 
         if ($paymentStatus !== 'all') {
             $servicesQuery = $servicesQuery->when($paymentStatus === 'paid', function ($query) {
                 return $query->where('payment_received', '>=', DB::raw('total_cost'));
-            })->when($paymentStatus === 'unpaid', function ($query) {
-                return $query->where('payment_received', '<', DB::raw('total_cost'));
-            });
+            })
+                ->where('Jurusan', 'like', 'TSM')
+                ->when($paymentStatus === 'unpaid', function ($query) {
+                    return $query->where('payment_received', '<', DB::raw('total_cost'));
+                });
         }
 
         // Apply search filter across multiple related tables
@@ -86,8 +94,8 @@ class ServiceController extends Controller
 
     public function edit($id)
     {
-        $vehicle = Vehicle::find($id);
-        if (! Gate::allows('isSameJurusan', [$vehicle])) {
+        $service = Service::find($id);
+        if (! Gate::allows('isSameJurusan', [$service])) {
             abort(403, 'data tidak ditemukan!!');
         }
 
@@ -365,13 +373,9 @@ class ServiceController extends Controller
 
     public function show($id)
     {
-        $vehicle = Vehicle::find($id);
-        if (! Gate::allows('isSameJurusan', [$vehicle])) {
+        $serviceId = Service::find($id);
+        if (! Gate::allows('isSameJurusan', [$serviceId])) {
             abort(403, 'data tidak ditemukan!!');
-        }
-        // Admin & kasir
-        if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
-            abort(403, 'Butuh level Admin & Kasir');
         }
         $service = Service::with('checklists')->findOrFail($id);
 
