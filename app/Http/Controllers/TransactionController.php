@@ -65,9 +65,8 @@ class TransactionController extends Controller
             'sparepart_id.*' => 'exists:spareparts,id_sparepart',
             'quantity' => 'required|array',
             'quantity.*' => 'required|numeric|min:1',
-            'purchase_price' => 'required|array',
-            'purchase_price.*' => 'required|numeric|min:0',  // Validasi harga beli dari form,
-            'jurusan' => 'required'
+            'purchase_price' => $request->transaction_type == 'purchase' ? 'required|array' : 'nullable|array',  // Only required for purchases
+            'jurusan' => 'required',
         ], [
             'transaction_type.required' => 'Jenis transaksi harus dipilih.',
             'transaction_type.in' => 'Jenis transaksi tidak valid.',
@@ -82,7 +81,7 @@ class TransactionController extends Controller
             'purchase_price.required' => 'Harga beli harus diisi.',
             'purchase_price.*.numeric' => 'Harga beli harus berupa angka.',
             'purchase_price.*.min' => 'Harga beli tidak boleh kurang dari 0.',
-        ]);
+        ]);        
 
         $total_profit = 0;
 

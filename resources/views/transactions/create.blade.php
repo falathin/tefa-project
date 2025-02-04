@@ -69,6 +69,20 @@
                                 <option value="sale" {{ old('transaction_type') == 'sale' ? 'selected' : '' }}>Penjualan</option>
                             </select>
                         </div>
+                        <div class="form-group mt-3">
+                            <label for="purchase_price">
+                                <i class="bi bi-credit-card"></i> Uang Masuk
+                            </label>
+                            <input 
+                                type="number" 
+                                name="purchase_price[]" 
+                                id="purchase_price" 
+                                class="form-control" 
+                                min="0" 
+                                value="{{ old('purchase_price', 0) }}" 
+                                required
+                            >
+                        </div>                        
 
                         <div class="form-group mt-3">
                             <label for="total_cost">
@@ -78,46 +92,23 @@
                         </div>
 
                         <div class="form-group mt-3">
-                            <label for="purchase_price">
-                                <i class="bi bi-credit-card"></i> Uang Masuk
-                            </label>
-                            @foreach($spareparts as $index => $sparepart)
-                                <input 
-                                    type="number" 
-                                    name="purchase_price[]" 
-                                    id="purchase_price_{{ $index }}" 
-                                    class="form-control mb-2" 
-                                    min="0" 
-                                    value="{{ old('purchase_price.' . $index, 0) }}" 
-                                    required
-                                >
-                            @endforeach
-                        </div>
-                        
-
-                        <div class="form-group mt-3">
                             <label for="change">
                                 <i class="bi bi-cash-coin"></i> Kembalian
                             </label>
                             <input type="text" id="change" class="form-control" readonly>
                         </div>
 
-                        <form method="POST" action="{{ route('transactions.store') }}">
-                            @csrf
-                            <input type="text" value="{{ Auth::user()->jurusan }}" hidden name="jurusan" id="jurusan">
-                        
-                            <div class="d-flex justify-content-between">
-                                <!-- Kembali button -->
-                                <a href="{{ route('transactions.index') }}" class="btn btn-secondary mt-4">
-                                    <i class="bi bi-arrow-left"></i> Kembali
-                                </a>
-                        
-                                <!-- Submit button with confirmation -->
-                                <button type="submit" class="btn btn-success mt-4" onclick="return confirmSubmit()">
-                                    <i class="bi bi-save"></i> Simpan Transaksi
-                                </button>
-                            </div>
-                        </form>
+                        <div class="d-flex justify-content-between">
+                            <!-- Kembali button -->
+                            <a href="{{ route('transactions.index') }}" class="btn btn-secondary mt-4">
+                                <i class="bi bi-arrow-left"></i> Kembali
+                            </a>
+                
+                            <!-- Submit button with confirmation -->
+                            <button type="submit" class="btn btn-success mt-4" onclick="return confirmSubmit()">
+                                <i class="bi bi-save"></i> Simpan Transaksi
+                            </button>
+                        </div>
                         
                         <script>
                             function confirmSubmit() {
@@ -130,114 +121,101 @@
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const transactionDateInput = document.getElementById('transaction_date');
-            if (!transactionDateInput.value) {
-                const today = new Date().toISOString().split('T')[0];
-                transactionDateInput.value = today;
-            }
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const transactionDateInput = document.getElementById('transaction_date');
+    if (!transactionDateInput.value) {
+        const today = new Date().toISOString().split('T')[0];
+        transactionDateInput.value = today;
+    }
 
-            function calculateSubtotal(row) {
-                const price = parseFloat(row.querySelector('.harga').value) || 0;
-                const quantity = parseFloat(row.querySelector('.jumlah').value) || 0;
-                const subtotal = price * quantity;
-                row.querySelector('.subtotal').value = subtotal.toFixed(2);
-                updateTotalCost();
-            }
+    function calculateSubtotal(row) {
+        const price = parseFloat(row.querySelector('.harga').value) || 0;
+        const quantity = parseFloat(row.querySelector('.jumlah').value) || 0;
+        const subtotal = price * quantity;
+        row.querySelector('.subtotal').value = subtotal.toFixed(2);
+        updateTotalCost();
+    }
 
-            function updateTotalCost() {
-                const totalSparepart = Array.from(document.querySelectorAll('#sparepartTable tbody tr')).reduce((sum, row) => {
-                    const price = parseFloat(row.querySelector('.harga').value.replace(/[^0-9.-]+/g, "")) || 0;
-                    const quantity = parseInt(row.querySelector('.jumlah').value) || 0;
-                    return sum + (price * quantity);
-                }, 0);
-                document.getElementById('total_cost').value = totalSparepart.toFixed(2);
-            }
+    function updateTotalCost() {
+        const totalSparepart = Array.from(document.querySelectorAll('#sparepartTable tbody tr')).reduce((sum, row) => {
+            const price = parseFloat(row.querySelector('.harga').value.replace(/[^0-9.-]+/g, "")) || 0;
+            const quantity = parseInt(row.querySelector('.jumlah').value) || 0;
+            return sum + (price * quantity);
+        }, 0);
+        document.getElementById('total_cost').value = totalSparepart.toFixed(2);
+        updateChange(); // Call updateChange when total cost changes
+    }
 
-            function updateChange() {
-                const paymentReceived = parseFloat(document.getElementById('purchase_price_{{$index}}').value) || 0;
-                const totalCost = parseFloat(document.getElementById('total_cost').value) || 0;
-                document.getElementById('change').value = (paymentReceived - totalCost).toFixed(2);
-            }
+    function updateChange() {
+        const paymentReceived = parseFloat(document.getElementById('purchase_price').value) || 0;
+        const totalCost = parseFloat(document.getElementById('total_cost').value) || 0;
+        const change = paymentReceived - totalCost;
+        document.getElementById('change').value = change >= 0 ? change.toFixed(2) : 0;
+    }
 
-            document.getElementById('addRow').addEventListener('click', function() {
-                const tableBody = document.querySelector('#sparepartTable tbody');
-                const row = tableBody.insertRow();
-                row.innerHTML = `
-                    <td>
-                        <select name="sparepart_id[]" class="form-control sparepart_id" required>
-                            <option value="">Pilih Sparepart</option>
-                            @foreach ($spareparts->where('jurusan', Auth::user()->jurusan) as $sparepart)
-                                <option value="{{ $sparepart->id_sparepart }}" data-harga="{{ $sparepart->harga_jual }}">
-                                    {{ $sparepart->nama_sparepart }}
-                                </option>                                 
-                            @endforeach
-                        </select>
-                    </td>
-                    <td><input type="text" class="form-control harga" readonly></td>
-                    <td><input type="number" name="quantity[]" class="form-control jumlah" min="1" required></td>
-                    <td><input type="text" class="form-control subtotal" readonly></td>
-                    <td><button type="button" class="btn btn-danger remove-row">Hapus</button></td>
-                `;
-                const newRow = tableBody.lastElementChild;
-                newRow.querySelector('.sparepart_id').addEventListener('change', function() {
-                    const price = this.options[this.selectedIndex].getAttribute('data-harga') || 0;
-                    newRow.querySelector('.harga').value = parseFloat(price).toFixed(2);
-                    calculateSubtotal(newRow);
-                });
-                newRow.querySelector('.jumlah').addEventListener('input', function() {
-                    calculateSubtotal(newRow);
-                });
-
-                updateTotalCost();
-            });
-
-            document.querySelector('#sparepartTable').addEventListener('click', function(event) {
-                if (event.target.classList.contains('remove-row')) {
-                    event.target.closest('tr').remove();
-                    updateTotalCost();
-                }
-            });
-
-            document.querySelector('#sparepartTable').addEventListener('change', function(event) {
-                if (event.target.classList.contains('sparepart_id')) {
-                    const harga = parseFloat(event.target.selectedOptions[0].dataset.harga) || 0;
-                    event.target.closest('tr').querySelector('.harga').value = harga.toFixed(2);
-                    calculateSubtotal(event.target.closest('tr'));
-                    updateTotalCost();
-                }
-            });
-
-            document.querySelector('#sparepartTable').addEventListener('input', function(event) {
-                if (event.target.classList.contains('jumlah') || event.target.classList.contains('harga')) {
-                    calculateSubtotal(event.target.closest('tr'));
-                    updateTotalCost();
-                }
-            });
-
-            updateTotalCost();
-            document.getElementById('purchase_price_{{$index}}').addEventListener('input', updateChange);
-
-            // Validasi saat submit form
-            document.getElementById('transactionForm').addEventListener('submit', function(e) {
-                let valid = true;
-                document.querySelectorAll('select[name="sparepart_id[]"]').forEach(function(select) {
-                    if (!select.value) {
-                        alert('Kolom ID sparepart harus diisi.');
-                        valid = false;
-                    }
-                });
-                document.querySelectorAll('input[name="quantity[]"]').forEach(function(input) {
-                    if (!input.value || input.value <= 0) {
-                        alert('Kolom jumlah harus diisi dan lebih dari 0.');
-                        valid = false;
-                    }
-                });
-                if (!valid) {
-                    e.preventDefault();
-                }
-            });
+    document.getElementById('addRow').addEventListener('click', function() {
+        const tableBody = document.querySelector('#sparepartTable tbody');
+        const row = tableBody.insertRow();
+        row.innerHTML = `
+            <td>
+                <select name="sparepart_id[]" class="form-control sparepart_id" required>
+                    <option value="">Pilih Sparepart</option>
+                    @foreach ($spareparts->where('jurusan', Auth::user()->jurusan) as $sparepart)
+                        <option value="{{ $sparepart->id_sparepart }}" data-harga="{{ $sparepart->harga_jual }}">
+                            {{ $sparepart->nama_sparepart }}
+                        </option>                                 
+                    @endforeach
+                </select>
+            </td>
+            <td><input type="text" class="form-control harga" readonly></td>
+            <td><input type="number" name="quantity[]" class="form-control jumlah" min="1" required></td>
+            <td><input type="text" class="form-control subtotal" readonly></td>
+            <td><button type="button" class="btn btn-danger remove-row">Hapus</button></td>
+        `;
+        const newRow = tableBody.lastElementChild;
+        newRow.querySelector('.sparepart_id').addEventListener('change', function() {
+            const price = this.options[this.selectedIndex].getAttribute('data-harga') || 0;
+            newRow.querySelector('.harga').value = parseFloat(price).toFixed(2);
+            calculateSubtotal(newRow);
         });
-    </script>
+        newRow.querySelector('.jumlah').addEventListener('input', function() {
+            calculateSubtotal(newRow);
+        });
+
+        updateTotalCost();
+    });
+
+    document.querySelector('#sparepartTable').addEventListener('click', function(event) {
+        if (event.target.classList.contains('remove-row')) {
+            event.target.closest('tr').remove();
+            updateTotalCost();
+        }
+    });
+
+    document.getElementById('purchase_price').addEventListener('input', updateChange);
+
+    // Validasi saat submit form
+    document.getElementById('transactionForm').addEventListener('submit', function(e) {
+        let valid = true;
+        document.querySelectorAll('select[name="sparepart_id[]"]').forEach(function(select) {
+            if (!select.value) {
+                alert('Kolom ID sparepart harus diisi.');
+                valid = false;
+            }
+        });
+        document.querySelectorAll('input[name="quantity[]"]').forEach(function(input) {
+            if (!input.value || input.value <= 0) {
+                alert('Kolom jumlah harus diisi dan lebih dari 0.');
+                valid = false;
+            }
+        });
+        if (!valid) {
+            e.preventDefault();
+        }
+    });
+});
+
+</script>
+
 @endsection
