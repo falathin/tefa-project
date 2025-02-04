@@ -31,33 +31,19 @@ Route::middleware('guest')->group(function () {
     
     // lupa password
     Route::get('/lupa-password', [ForgotPasswordController::class, 'showResetForm'])->name('lupa.password');
-    Route::post('/lupa-password', [ForgotPasswordController::class, 'reset']); 
+    Route::post('/lupa-password', [ForgotPasswordController::class, 'reset']);
+
+    // dokumentasi emergency password
+    Route::get('/documentationGuest',  fn() => view('guest.documentation-guest'))->name('documentationGuest');
     
 });
-
-// Dashboard
-// Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-
-/**
- * Sparepart Routes
- */
-// Route::prefix('sparepart')->name('sparepart.')->group(function () {
-//     Route::get('/', [SparepartController::class, 'index'])->name('index');
-//     Route::get('create', [SparepartController::class, 'create'])->name('create');
-//     Route::post('/', [SparepartController::class, 'store'])->name('store');
-//     Route::get('{id}', [SparepartController::class, 'show'])->name('show');
-//     Route::get('{id}/edit', [SparepartController::class, 'edit'])->name('edit');
-//     Route::put('{id}', [SparepartController::class, 'update'])->name('update');
-//     Route::delete('{id}', [SparepartController::class, 'destroy'])->name('destroy');
-//     Route::get('{id}/history', [SparepartController::class, 'history'])->name('history');
-    
-// });
 
 // Auth
 Route::middleware('auth')->group(function () {
 
     // Dashboard
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    // Route::get('/filter', [DashboardController::class, 'filterJurusan'])->name('filterJurusan');
 
 
     // Logout

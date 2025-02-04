@@ -33,7 +33,7 @@
                             <p><strong>Tahun Produksi:</strong> {{ $service->vehicle->production_year }}</p>
                             <p><strong>Kode Mesin:</strong> {{ $service->vehicle->engine_code }}</p>
                         </div>
-                
+
                         <!-- Informasi Pelanggan -->
                         <div class="border p-3 rounded shadow-sm bg-white mt-4 animate__animated animate__fadeInLeft"
                             style="animation-duration: 1.5s; animation-delay: 0.7s; border-color: #e3e6f0;">
@@ -43,7 +43,7 @@
                             <p><strong>Alamat:</strong> {{ $service->vehicle->customer->address }}</p>
                         </div>
                     </div>
-                
+
                     <!-- Kolom Kanan -->
                     <div class="col-12 col-md-6 mb-4 mb-md-0">
                         <!-- Informasi Servis -->
@@ -65,7 +65,8 @@
                                 </span>
                             </p>
                             <p><strong>Tanggal Servis:</strong>
-                                <span class="text-muted">{{ \Carbon\Carbon::parse($service->service_date)->format('d-m-Y') }}</span>
+                                <span
+                                    class="text-muted">{{ \Carbon\Carbon::parse($service->service_date)->format('d-m-Y') }}</span>
                             </p>
                             <p><strong>Status Pembayaran:</strong>
                                 <span class="badge"
@@ -73,22 +74,25 @@
                                     {{ $service->isPaid() ? 'Lunas' : 'Belum Lunas' }}
                                 </span>
                             </p>
-                
+
                             <!-- Informasi Teknisi -->
                             <p><strong>Nama Teknisi:</strong> {{ $service->technician_name }}</p>
-                
+
                             <!-- Informasi Bukti Pembayaran -->
-                            @if($service->payment_proof)
-                                <p><strong>Bukti Pembayaran:</strong> <a href="{{ asset('storage/' . $service->payment_proof) }}" target="_blank">Lihat Bukti Pembayaran</a></p>
+                            @if ($service->payment_proof)
+                                <p><strong>Bukti Pembayaran:</strong> <a
+                                        href="{{ asset('storage/' . $service->payment_proof) }}" target="_blank">Lihat
+                                        Bukti Pembayaran</a></p>
                             @else
                                 <p><strong>Bukti Pembayaran:</strong> <span class="text-muted">Belum tersedia</span></p>
                             @endif
-                
+
                             <!-- Catatan Tambahan -->
-                            <p><strong>Catatan Tambahan:</strong> {{ $service->additional_notes ?? 'Tidak ada catatan tambahan' }}</p>
+                            <p><strong>Catatan Tambahan:</strong>
+                                {{ $service->additional_notes ?? 'Tidak ada catatan tambahan' }}</p>
                         </div>
                     </div>
-                </div>                
+                </div>
 
                 <div class="border p-3 rounded shadow-sm bg-white animate__animated animate__fadeIn animate__delay-1s"
                     style="animation-duration: 1.5s; background-color: white; border-color: #e3e6f0;">
@@ -97,17 +101,19 @@
                             <i class="fas fa-tasks"></i> Pekerjaan
                         </h6>
 
-                        <!-- Form Tambah Item Pekerjaan -->
-                        <form action="{{ route('service.addChecklist', $service->id) }}" method="POST" class="mb-4">
-                            @csrf
-                            <div class="mb-3">
-                                <input type="text" name="task" class="form-control form-control-sm"
-                                    placeholder="Tambah item pekerjaan baru" required>
-                            </div>
-                            <button type="submit" class="btn btn-primary btn-sm">
-                                <i class="fas fa-plus-circle"></i> Tambah Pekerjaan
-                            </button>
-                        </form>
+                        @if (!Gate::allows('isBendahara'))
+                            <!-- Form Tambah Item Pekerjaan -->
+                            <form action="{{ route('service.addChecklist', $service->id) }}" method="POST" class="mb-4">
+                                @csrf
+                                <div class="mb-3">
+                                    <input type="text" name="task" class="form-control form-control-sm"
+                                        placeholder="Tambah item pekerjaan baru" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-plus-circle"></i> Tambah Pekerjaan
+                                </button>
+                            </form>
+                        @endif
 
                         <!-- Daftar Checklist -->
                         <ul class="list-group mt-4" id="checklist-list">
@@ -121,6 +127,7 @@
                                 </li>
 
                                 <!-- Checklist Items for the Date -->
+
                                 @foreach ($checklists as $checklist)
                                     <li class="list-group-item d-flex justify-content-between align-items-center">
                                         <div class="d-flex align-items-center w-100">
@@ -129,9 +136,11 @@
                                                 method="POST" class="d-flex align-items-center w-100">
                                                 @csrf
                                                 @method('PATCH')
-                                                <input type="checkbox" name="is_completed" onchange="this.form.submit()"
-                                                    class="form-check-input me-3"
-                                                    {{ $checklist->is_completed ? 'checked' : '' }}>
+                                                @if (!Gate::allows('isBendahara'))
+                                                    <input type="checkbox" name="is_completed" onchange="this.form.submit()"
+                                                        class="form-check-input me-3"
+                                                        {{ $checklist->is_completed ? 'checked' : '' }}>
+                                                @endif
 
                                                 <span
                                                     class="flex-grow-1 {{ $checklist->is_completed ? 'text-decoration-line-through text-muted' : '' }}">
@@ -140,6 +149,7 @@
                                             </form>
                                         </div>
 
+
                                         <!-- Status Badge (Hidden on Small Screens) -->
                                         <span
                                             class="badge {{ $checklist->is_completed ? 'bg-success' : 'bg-danger' }} d-none d-sm-inline-block">
@@ -147,38 +157,39 @@
                                                 class="fas {{ $checklist->is_completed ? 'fa-check-circle' : 'fa-times-circle' }}"></i>
                                             {{ $checklist->is_completed ? 'Selesai' : 'Tertunda' }}
                                         </span>
-
                                         <!-- Time and Actions -->
-                                        <div class="ms-3 text-end">
-                                            <small class="text-muted">Ditambahkan:
-                                                {{ $checklist->created_at->format('H:i') }}</small>
-                                            <div class="dropdown d-inline-block ms-2">
-                                                <button class="btn btn-sm btn-light" type="button"
-                                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                                    <i class="fas fa-ellipsis-v"></i>
-                                                </button>
-                                                <ul class="dropdown-menu dropdown-menu-end">
-                                                    <li>
-                                                        <button class="dropdown-item edit-btn text-warning"
-                                                            data-id="{{ $checklist->id }}">
-                                                            <i class="fas fa-edit"></i> Edit
-                                                        </button>
-                                                    </li>
-                                                    <li>
-                                                        <form
-                                                            action="{{ route('service.deleteChecklist', $checklist->id) }}"
-                                                            method="POST">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit" class="dropdown-item text-danger"
-                                                                onclick="return confirm('Apakah Anda yakin ingin menghapus item ini?')">
-                                                                <i class="fas fa-trash-alt"></i> Hapus
+                                        @if (!Gate::allows('isBendahara'))
+                                            <div class="ms-3 text-end">
+                                                <small class="text-muted">Ditambahkan:
+                                                    {{ $checklist->created_at->format('H:i') }}</small>
+                                                <div class="dropdown d-inline-block ms-2">
+                                                    <button class="btn btn-sm btn-light" type="button"
+                                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <i class="fas fa-ellipsis-v"></i>
+                                                    </button>
+                                                    <ul class="dropdown-menu dropdown-menu-end">
+                                                        <li>
+                                                            <button class="dropdown-item edit-btn text-warning"
+                                                                data-id="{{ $checklist->id }}">
+                                                                <i class="fas fa-edit"></i> Edit
                                                             </button>
-                                                        </form>
-                                                    </li>
-                                                </ul>
+                                                        </li>
+                                                        <li>
+                                                            <form
+                                                                action="{{ route('service.deleteChecklist', $checklist->id) }}"
+                                                                method="POST">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit" class="dropdown-item text-danger"
+                                                                    onclick="return confirm('Apakah Anda yakin ingin menghapus item ini?')">
+                                                                    <i class="fas fa-trash-alt"></i> Hapus
+                                                                </button>
+                                                            </form>
+                                                        </li>
+                                                    </ul>
+                                                </div>
                                             </div>
-                                        </div>
+                                        @endif
                                     </li>
 
                                     <!-- Form Edit (Hidden by Default) -->
@@ -270,12 +281,6 @@
                 <!-- Action Buttons -->
                 <div class="mt-3 d-flex flex-wrap gap-2 align-items-center animate__animated animate__fadeInUp"
                     style="animation-duration: 1.5s; animation-delay: 1s;">
-                    <!-- Kembali ke Kendaraan -->
-                    @if ($service->vehicle)
-                        <a href="{{ route('vehicle.show', $service->vehicle->id) }}" class="btn btn-dark btn-sm">
-                            <i class="mdi mdi-car me-2"></i> Kembali
-                        </a>
-                    @endif
 
                     <!-- Cetak Button -->
                     <button id="printBtn" class="btn btn-primary btn-sm">
@@ -287,21 +292,31 @@
                         <i class="mdi mdi-content-copy me-2"></i> Salin Laporan
                     </button>
 
-                    <!-- Edit Button -->
-                    <a href="{{ route('service.edit', $service->id) }}" class="btn btn-warning btn-sm">
-                        <i class="mdi mdi-pencil me-2"></i> Edit
-                    </a>
+                    @if (!Gate::allows('isBendahara'))
+                        <!-- Kembali ke Kendaraan -->
+                        @if ($service->vehicle)
+                            <a href="{{ route('vehicle.show', $service->vehicle->id) }}" class="btn btn-dark btn-sm">
+                                <i class="mdi mdi-car me-2"></i> Detail kendaraan
+                            </a>
+                        @endif
 
-                    <!-- Hapus Button -->
-                    <form action="{{ route('service.destroy', $service->id) }}" method="POST" class="d-inline-block">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger btn-sm"
-                            onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
-                            <i class="mdi mdi-delete me-2"></i> Hapus
-                        </button>
-                    </form>
+                        <!-- Edit Button -->
+                        <a href="{{ route('service.edit', $service->id) }}" class="btn btn-warning btn-sm">
+                            <i class="mdi mdi-pencil me-2"></i> Edit
+                        </a>
+
+                        <!-- Hapus Button -->
+                        <form action="{{ route('service.destroy', $service->id) }}" method="POST"
+                            class="d-inline-block">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger btn-sm"
+                                onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
+                                <i class="mdi mdi-delete me-2"></i> Hapus
+                            </button>
+                        </form>
                 </div>
+                @endif
 
             </div>
         </div>
@@ -309,61 +324,60 @@
     <script>
         document.getElementById('copyReportBtn').addEventListener('click', function() {
             var vehicleInfo =
-                `**🚗 Informasi Kendaraan:**\nNomor Polisi: ${'{{ $service->vehicle->license_plate }}'} (${{
-                    $service->vehicle->vehicle_type }})\nWarna: ${'{{ $service->vehicle->color }}'}\nTahun Produksi: ${
+                `**🚗 Informasi Kendaraan:**\nNomor Polisi: ${'{{ $service->vehicle->license_plate }}'} (${{ $service->vehicle->vehicle_type }})\nWarna: ${'{{ $service->vehicle->color }}'}\nTahun Produksi: ${
                     '{{ $service->vehicle->production_year }}'}\nKode Mesin: ${'{{ $service->vehicle->engine_code }}'}`;
-        
+
             var customerInfo =
                 `**👤 Informasi Pelanggan:**\nNama: ${'{{ $service->vehicle->customer->name }}'}\nKontak: ${'{{ $service->vehicle->customer->contact }}'}\nAlamat: ${'{{ $service->vehicle->customer->address }}'}`;
-        
+
             var serviceInfo =
                 `**🛠️ Informasi Servis:**\nKeluhan: ${'{{ $service->complaint }}'}\nKilometer Saat Ini: ${'{{ $service->current_mileage }}'} km\nBiaya Servis: Rp. ${'{{ number_format($service->service_fee, 0, ',', '.') }}'}\nTotal Biaya: Rp. ${'{{ number_format($service->total_cost, 0, ',', '.') }}'}\nPembayaran Diterima: Rp. ${'{{ number_format($service->payment_received, 0, ',', '.') }}'}\nKembalian: Rp. ${'{{ number_format($service->change, 0, ',', '.') }}'}\nJenis Servis: ${'{{ ucfirst($service->service_type) }}'}\nTanggal Servis: ${'{{ \Carbon\Carbon::parse($service->service_date)->format('d-m-Y') }}'}`;
-        
+
             var sparepartsInfo = '**🔧 Sparepart yang Digunakan:**\n';
-        
+
             // Loop through the service spareparts dynamically
             @foreach ($service->serviceSpareparts as $serviceSparepart)
                 sparepartsInfo +=
                     `Nama: **${'{{ $serviceSparepart->sparepart->nama_sparepart }}'}** | Jumlah: ${'{{ $serviceSparepart->quantity }}'} | Harga: Rp. ${'{{ number_format($serviceSparepart->sparepart->harga_jual, 0, ',', '.') }}'}\n`;
             @endforeach
-        
+
             var checklistInfo = '**📝 Pekerjaan yang Dikerjakan:**\n';
-        
+
             // Loop through the service checklists dynamically
             @foreach ($service->checklists as $checklist)
                 checklistInfo +=
                     `- **${'{{ $checklist->task }}'}** ${'{{ $checklist->is_completed ? '✅ Selesai' : '❌ Tertunda' }}'}\n`;
             @endforeach
-        
+
             // Adding Additional Notes and Technician Name
             var additionalNotes = `**📝 Catatan Tambahan:**\n${'{{ $service->additional_notes }}'}`;
             var technicianName = `**👨‍🔧 Nama Teknisi:**\n${'{{ $service->technician_name }}'}`;
-        
+
             var linkInfo = `\nAda masalah? Telepon via WhatsApp: [Chat dengan Jamat](https://wa.me/6285715467500)`;
-        
+
             var fullReport =
                 `${vehicleInfo}\n\n${customerInfo}\n\n${serviceInfo}\n\n${sparepartsInfo}\n\n${checklistInfo}\n\n${additionalNotes}\n\n${technicianName}${linkInfo}`;
-        
+
             var textarea = document.createElement('textarea');
             textarea.value = fullReport;
             document.body.appendChild(textarea);
-        
+
             textarea.select();
             document.execCommand('copy');
-        
+
             document.body.removeChild(textarea);
-        
+
             alert('Laporan berhasil disalin ke clipboard! 📋');
         });
     </script>
-    
+
     <script>
         document.getElementById('printBtn').addEventListener('click', function() {
-    
-                const printContent = document.querySelector('.container').innerHTML;
-                const newWindow = window.open('', '', 'width=300,height=600');
-    
-                newWindow.document.write(`
+
+            const printContent = document.querySelector('.container').innerHTML;
+            const newWindow = window.open('', '', 'width=300,height=600');
+
+            newWindow.document.write(`
                 <html>
                     <head>
                         <title>Detail Servis</title>
@@ -559,11 +573,10 @@
                     </body>
                 </html>
                 `);
-    
-                newWindow.document.close();
-                newWindow.print();
-            
+
+            newWindow.document.close();
+            newWindow.print();
+
         });
     </script>
-    
 @endsection

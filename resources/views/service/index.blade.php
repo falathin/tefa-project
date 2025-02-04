@@ -107,12 +107,16 @@
                                         @else
                                             <span class="badge bg-warning">Belum Lunas</span>
                                         @endif
-                                    </p>                        
+                                    </p>
+                                    @if (Gate::allows('isBendahara'))
+                                    <p>{{ $service->jurusan}}</p>                        
+                                    @endif
             
                                     <div class="d-flex justify-content-between mt-3">
                                         <a href="{{ route('service.show', $service->id) }}" class="btn btn-info btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Lihat">
                                             <i class="fas fa-eye"></i> Lihat
                                         </a>
+                                        @if (! Gate::allows('isBendahara'))
                                         <a href="{{ route('service.edit', $service->id) }}" class="btn btn-warning btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit">
                                             <i class="fas fa-edit"></i> Edit
                                         </a>
@@ -123,6 +127,8 @@
                                                 <i class="fas fa-trash-alt"></i> Hapus
                                             </button>
                                         </form>
+                                            
+                                        @endif
                                     </div>
                                 </div>
                             </div>

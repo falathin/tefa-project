@@ -8,6 +8,7 @@
                 <form method="POST" action='{{ route('service.store-2') }}'>
                     @csrf
 
+                    <input type="hidden" name="jurusan" id="jurusan" value="{{ Auth::user()->jurusan }}">
                     <input type="hidden" name="vehicle_id" value="{{ $vehicle->id }}">
                     <div class="row">
                         <!-- Kategori Informasi Servis -->

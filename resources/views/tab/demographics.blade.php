@@ -3,19 +3,43 @@
         <i class="fas fa-file-invoice-dollar me-2"></i>Laporan Harian Pemasukan
     </h2>
 
+    @if (Gate::allows('isBendahara'))
+    <form method="GET" action="{{ route('dashboard') }}" class="mb-3 row g-3">
+        <div class="col-12 col-md-3 mb-4">
+            <!-- Filter jurusan with Icon -->
+            <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-credit-card"></i></span>
+                <select name="filterJurusan" id="filterJurusan" class="form-select" onchange="this.form.submit()">
+                    <option value="semua" {{ session('filterJurusan') === 'semua' ? 'selected' : '' }}>Filter semua jurusan</option>
+                    <option value="TSM" {{ session('filterJurusan') === 'TSM' ? 'selected' : '' }}>Filter jurusan TSM</option>
+                    <option value="TKRO" {{ session('filterJurusan') === 'TKRO' ? 'selected' : '' }}>Filter jurusan TKRO</option>
+                </select>
+            </div>
+        </div>
+    </form>
+    @endif
+
     <table class="table table-bordered table-hover" id="incomeTable">
         <thead class="table-dark">
             <tr>
                 <th><i class="fas fa-user me-2"></i>Nama Pelanggan</th>
-                <th><i class="fas fa-motorcycle me-2"></i>
+                <th>
                     @if (Auth::user()->jurusan == 'TSM')
+                        <i class="fas fa-motorcycle me-2"></i>
                         Motor
                     @elseif (Auth::user()->jurusan == 'TKRO')
+                        <i class="fa-solid fa-car"></i>
                         Mobil
+                    @elseif (Auth::user()->jurusan == 'General')
+                        <i class="fa-solid fa-car"></i>
+                        Kendaraan
                     @endif
                 </th>
                 <th><i class="fas fa-coins me-2"></i>Pemasukan</th>
                 <th><i class="fas fa-clock me-2"></i>Waktu</th> <!-- Added column for time -->
+                {{-- @if (Gate::allows('isBendahara'))
+                    <th><i class="fas fa-clock me-2"></i>Jurusan</th>
+                @endif --}}
                 <th><i class="fas fa-cogs me-2"></i>Aksi</th> <!-- Added column for actions -->
             </tr>
         </thead>
@@ -26,16 +50,25 @@
                     <td>{{ $data['vehicle'] }}</td>
                     <td class="text-success fw-bold">Rp {{ number_format($data['income'], 0, ',', '.') }}</td>
                     <td>{{ $data['service_time'] }}</td> <!-- Display the service time -->
+                    {{-- @if (Gate::allows('isBendahara'))
+                        <td>{{ $services[$loop->index]['jurusan'] }}</td>
+                    @endif --}}
                     <td>
-                        <button class="btn btn-primary btn-sm text-light">
-                            <i class="fas fa-eye"></i> Detail
-                        </button>
+                        <a href="{{ route('service.show', $services[$data['id'] - 1]['id']) }}">
+                            <button class="btn btn-primary btn-sm text-light">
+                                <i class="fas fa-eye"></i> Detail
+                            </button>
+                        </a>
                     </td>
                 </tr>
             @endforeach
         </tbody>
         <tfoot>
             <tr class="table-secondary">
+                {{-- @if (Gate::allows('isBendahara'))
+                    <td colspan="4" class="text-end fw-bold">Total Pemasukan:</td>
+                @else
+                @endif --}}
                 <td colspan="3" class="text-end fw-bold">Total Pemasukan:</td>
                 <td class="text-success fw-bold">Rp {{ number_format($totalDailyIncome, 0, ',', '.') }}</td>
                 <td></td> <!-- Empty cell for footer action column -->

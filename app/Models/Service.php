@@ -22,6 +22,7 @@ class Service extends Model
         'status',
         'additional_notes',
         'technician_name',
+        'jurusan'
     ];
 
     public function customer()

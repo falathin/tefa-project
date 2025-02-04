@@ -1,3 +1,4 @@
+
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
     <ul class="nav flex-column">
         <!-- Dashboard Menu Item -->
@@ -48,7 +49,6 @@
         {{-- @if (Gate::allows('isAdminOrEngineer') xor Gate::allows('isKasir')) --}}
         {{-- @endif --}}
 
-        @if (Gate::allows('isAdminOrEngineer') xor Gate::allows('isKasir'))
         <!-- Riwayat Service Menu Item -->
         <li class="nav-item animate__animated animate__slideInLeft animate__delay-9.3s">
             <a class="nav-link {{ request()->route()->getName() == 'service.index' ? 'active' : '' }}"
@@ -57,7 +57,7 @@
                 <span class="menu-title">Riwayat Layanan</span>
             </a>
         </li>
-        @endif
+        
 
         <!-- Documentation Menu Item -->
         <li class="nav-item animate__animated animate__slideInLeft animate__delay-10.8s">

@@ -60,6 +60,10 @@ class VehicleController extends Controller
         if (! Gate::allows('isSameJurusan', [$vehicle])) {
             abort(403, 'data tidak ditemukan!!');
         }
+        // Admin & kasir
+        if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
+            abort(403, 'Butuh level Admin & Kasir');
+        }
         $vehicle = Vehicle::findOrFail($id);
         
         $services = Service::where('vehicle_id', $id)

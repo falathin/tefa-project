@@ -20,6 +20,7 @@ return new class extends Migration
             $table->rememberToken();
             $table->enum('level', ['engineer', 'admin', 'kasir', 'bendahara'])->default('kasir');
             $table->enum('jurusan', ['TSM', 'TKRO', 'General']);
+            $table->string('phone_number', 20)->nullable();
             $table->timestamps();
         });
 
