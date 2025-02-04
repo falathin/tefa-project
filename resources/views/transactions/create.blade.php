@@ -52,7 +52,7 @@
                         <button type="button" class="btn btn-primary" id="addRow">+ Tambah Sparepart</button>
 
                         @csrf
-                        <input type="text" value="{{ Auth::user()->jurusan }}" hidden name="jurusan" id="jurusan">
+                        <input type="text" value="{{ Auth::user()->jurusan }}" name="jurusan" id="jurusan" hidden>
                         <div class="form-group mt-3">
                             <label for="transaction_date">
                                 <i class="bi bi-calendar-event"></i> Tanggal Transaksi
@@ -75,7 +75,7 @@
                             </label>
                             <input 
                                 type="number" 
-                                name="purchase_price[]" 
+                                name="purchase_price" 
                                 id="purchase_price" 
                                 class="form-control" 
                                 min="0" 

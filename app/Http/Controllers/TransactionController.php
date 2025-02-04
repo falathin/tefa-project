@@ -61,7 +61,8 @@ class TransactionController extends Controller
             'sparepart_id.*' => 'exists:spareparts,id_sparepart',
             'quantity' => 'required|array',
             'quantity.*' => 'required|numeric|min:1',
-            'purchase_price' => $request->transaction_type == 'purchase' ? 'required|array' : 'nullable|array',  // Only required for purchases
+            // 'purchase_price' => $request->transaction_type == 'purchase' ? 'required|array' : 'nullable|array',  // Only required for purchases
+            'purchase_price' => 'required',
             'jurusan' => 'required',
         ], [
             'transaction_type.required' => 'Jenis transaksi harus dipilih.',
@@ -80,16 +81,17 @@ class TransactionController extends Controller
         ]);
 
         $total_profit = 0;
-
+        
         foreach ($request->sparepart_id as $index => $sparepart_id) {
             // Ensure that the index exists in the quantity and purchase_price arrays
-            if (!isset($request->quantity[$index]) || !isset($request->purchase_price[$index])) {
+            if (!isset($request->quantity[$index]) || !isset($request->purchase_price)) {
+                // return " request->quantity[index] = {$request->quantity[$index]} dan request->purchase_price[index] = {$request->purchase_price[$index - 1]} dan index = $index";
                 return redirect()->back()->withErrors(['quantity' => 'Jumlah atau harga beli tidak valid.']);
             }
 
             $sparepart = Sparepart::where('id_sparepart', $sparepart_id)->firstOrFail();
 
-            $purchase_price = $request->purchase_price[$index];
+            $purchase_price = $request->purchase_price;
 
             if ($request->transaction_type == 'sale') {
                 if ($sparepart->jumlah >= $request->quantity[$index]) {
@@ -132,6 +134,7 @@ class TransactionController extends Controller
                     'total_price' => $purchase_price * $request->quantity[$index],  // Gunakan harga beli untuk total harga
                     'transaction_date' => now(),
                     'transaction_type' => 'purchase',
+                    'jurusan' => $request->jurusan
                 ]);
             }
         }
