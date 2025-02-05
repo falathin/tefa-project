@@ -15,9 +15,9 @@
                         <i class="fas fa-print"></i> Print
                     </button>
                     @if (! Gate::allows('isBendahara'))    
-                    <a href="{{ route('transactions.edit', $transaction->id) }}" class="btn btn-warning btn-sm">
+                    {{-- <a href="{{ route('transactions.edit', $transaction->id) }}" class="btn btn-warning btn-sm">
                         <i class="fas fa-edit"></i> Edit
-                    </a>
+                    </a> --}}
                     <button class="btn btn-danger btn-sm" onclick="confirmDelete({{ $transaction->id }})">
                         <i class="fas fa-trash"></i> Hapus
                     </button>

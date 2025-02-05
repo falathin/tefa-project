@@ -59,16 +59,25 @@
                                                 @endforeach
                                             </select>
                                         </td>
-                                        <td><input type="text" class="form-control harga"
-                                                value="{{ $sparepart->harga_jual ?? 0 }}" readonly></td>
-                                        <td><input type="number" name="quantity[]" class="form-control jumlah"
-                                                value="{{ $sparepart->pivot->quantity ?? 1 }}" min="1" required></td>
-                                        <td><input type="text" class="form-control subtotal"
-                                                value="{{ ($sparepart->harga_jual ?? 0) * ($sparepart->pivot->quantity ?? 1) }}" readonly></td>
-                                        <td><button type="button" class="btn btn-danger remove-row">Hapus</button></td>
+                                        <td>
+                                            <input type="text" class="form-control harga"
+                                                   value="{{ $sparepart->harga_jual }}" readonly>
+                                        </td>
+                                        <td>
+                                            <input type="number" name="quantity[]" class="form-control jumlah"
+                                                   value="{{ $sparepart->pivot->quantity }}" min="1" required>
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control subtotal"
+                                                   value="{{ $sparepart->harga_jual * $sparepart->pivot->quantity }}" readonly>
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-danger remove-row">Hapus</button>
+                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>
+                            
                         </table>
                     </div>
                         <br>
