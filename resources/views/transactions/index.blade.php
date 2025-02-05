@@ -101,10 +101,10 @@
                                                 <i class="bi bi-eye"></i> Detail
                                             </a>
                                             @if (Gate::allows('isKasir') xor Gate::allows('isAdminOrEngineer'))
-                                                <a href="{{ route('transactions.edit', $transaction->id) }}"
+                                                {{-- <a href="{{ route('transactions.edit', $transaction->id) }}"
                                                     class="btn btn-warning btn-sm">
                                                     <i class="bi bi-pencil"></i> Edit
-                                                </a>
+                                                </a> --}}
                                                 <form action="{{ route('transactions.destroy', $transaction->id) }}"
                                                     method="POST" class="d-inline">
                                                     @csrf

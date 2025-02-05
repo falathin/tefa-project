@@ -16,43 +16,44 @@ class AutentikasiSeeder extends Seeder
     {
         $userData = [
             [
-                'name' => 'Nama orang',
+                'name' => 'Annida',
                 'email' => 'iteens.tefa@gmail.com',
                 'level' => 'engineer',
-                'jurusan' => 'General',
-                'phone_number' => '666',
-                'password' => bcrypt('asu12345')
+                'jurusan' => 'TSM',
+                'phone_number' => '087712134885',
+                'password' => bcrypt('admin123')
             ],
             [
-                'name' => 'Nama orang',
+                'name' => 'Ibrahim',
                 'email' => 'admin@gmail.com',
                 'level' => 'admin',
                 'jurusan' => 'TKRO',
-                'phone_number' => '666',
-                'password' => bcrypt('asu12345')
+                'phone_number' => '087712134885',
+                'password' => bcrypt('admin123')
             ],
             [
-                'name' => 'Nama orang',
+                'name' => 'Bayu',
                 'email' => 'bendahara@gmail.com',
                 'level' => 'bendahara',
                 'jurusan' => 'General',
-                'password' => bcrypt('asu12345')
+                'phone_number' => '086656789002',
+                'password' => bcrypt('admin123')
             ],
             [
-                'name' => 'Nama orang',
+                'name' => 'Seno',
                 'email' => 'kasir@gmail.com',
                 'level' => 'kasir',
                 'jurusan' => 'TKRO',
-                'phone_number' => '666',
-                'password' => bcrypt('asu12345')
+                'phone_number' => '086543320087',
+                'password' => bcrypt('admin123')
             ],
             [
-                'name' => 'Nama orang',
+                'name' => 'Yani',
                 'email' => 'adminTbsm@gmail.com',
                 'level' => 'admin',
                 'jurusan' => 'TSM',
-                'phone_number' => '666',
-                'password' => bcrypt('asu12345')
+                'phone_number' => '087544346666',
+                'password' => bcrypt('admin123')
             ],
         ];
 
@@ -61,8 +62,7 @@ class AutentikasiSeeder extends Seeder
         }
 
         EmergencyPassword::create([
-            'emergency_password' => 'SUPER4060$1000;VS{StallerJade};'
+            'emergency_password' => 'theMostPowerfulIntel'
         ]);
     }
 }
-
