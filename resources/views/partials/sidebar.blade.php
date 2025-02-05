@@ -18,7 +18,7 @@
             class="nav-item {{ request()->route()->getName() == 'service' || request()->route()->getName() == 'customer.show' ? 'active' : '' }} animate__animated animate__slideInLeft animate__delay-3.3s">
             <a class="nav-link" href="{{ route('customer.index') }}">
                 <i class="mdi mdi-cog-outline menu-icon"></i>
-                <span class="menu-title">Program Servis</span>
+                <span class="menu-title">Layanan Servis</span>
             </a>
         </li>
         @endif
@@ -29,18 +29,18 @@
             <a class="nav-link" data-bs-toggle="collapse" href="#sparepartMenu"
                 aria-expanded="{{ Request::is('sparepart*') ? 'true' : 'false' }}" aria-controls="sparepartMenu">
                 <i class="mdi mdi-toolbox-outline menu-icon"></i>
-                <span class="menu-title">Suku Cadang</span>
+                <span class="menu-title">Sparepart</span>
                 <i class="menu-arrow"></i>
             </a>
             <div class="collapse" id="sparepartMenu">
                 <ul class="nav flex-column sub-menu">
                     <li
                     class="nav-item {{ Request::routeIs('sparepart.index') ? 'active' : '' }} animate__animated animate__slideInLeft animate__delay-6.3s">
-                    <a class="nav-link" href="{{ route('sparepart.index') }}">Data Suku Cadang</a>
+                    <a class="nav-link" href="{{ route('sparepart.index') }}">Data Sparepart</a>
                 </li>
                 <li
                         class="nav-item {{ Request::routeIs('transactions.index') ? 'active' : '' }} animate__animated animate__slideInLeft animate__delay-7.8s">
-                        <a class="nav-link" href="{{ route('transactions.index') }}">Transaksi Suku Cadang</a>
+                        <a class="nav-link" href="{{ route('transactions.index') }}">Transaksi Sparepart</a>
                     </li>
                 </ul>
             </div>

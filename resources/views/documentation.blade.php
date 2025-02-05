@@ -277,30 +277,70 @@
                 instalasi dan konfigurasi.
             </p>
         </section>
-        <section class="mb-4">
+        <section class="mb-4 container">
             <h2 class="h3 text-primary">
                 <i class="fas fa-clipboard-list"></i> Instruksi Pengguna
-            </h2>
-            <p>
-                Setelah aplikasi berhasil dijalankan, Anda dapat mengakses berbagai fitur yang tersedia, seperti manajemen
-                pelanggan, kendaraan, sparepart, dan transaksi. Setiap bagian memiliki antarmuka yang sederhana dan mudah
-                digunakan.
-            </p>
-            <p>
-                Pengguna dapat login untuk mengakses panel admin atau menggunakan tampilan pelanggan untuk melakukan
-                transaksi, memantau status kendaraan, atau bertanya mengenai produk melalui halaman kontak. Aplikasi ini
-                memberikan kemudahan bagi pengguna dalam mengelola semua aspek yang berhubungan dengan kendaraan dan
-                sparepart.
-            </p>
+            </h2><br>
+            <ul class="fs-6 mt-3" >
+                <a href="{{ route('dashboard') }}" class="text-decoration-none"><li><strong>Dashboard</strong><br></a>
+                    <ul>
+                        <li>
+                            Demografi Keuangan<br>&nbsp;
+                            Terdapat rekapan data keuangan dalam kurun waktu harian hingga tahunan, terdapat grafik keuangan
+                            untuk
+                            meninjau masuk dan keluarnya uang
+                        </li>
+                        <li>
+                            Print<br>&nbsp;
+                            Untuk membuat laporan harian keuangan dalam bentuk fisik
+                        </li>
+                    </ul><br>
+
+                <a href="{{ route('customer.index') }}" class="text-decoration-none"><li><strong>Layanan Servis</strong><br></a>
+                    <ul>
+                        <li>
+                            Manajemen Data Pelanggan<br>&nbsp;
+                            Untuk membuat, mengedit, dan menghapus data pelanggan
+                        </li>
+                        <li>
+                            Manajemen Data Kendaraan<br>&nbsp;
+                            Untuk membuat, mengedit, dan menghapus data kendaraan
+                        </li>
+                        <li>
+                            Manajemen Data Servis<br>&nbsp;
+                            Untuk membuat, mengedit, dan menghapus data servis
+                        </li>
+                    </ul>
+                    <br>
+                </li>
+
+                <a href="{{ route('sparepart.index') }}" class="text-decoration-none"><li><strong>Sparepart</strong><br></a>
+                    <ul>
+                        <li>Manajemen Data Sparepart<br>&nbsp;
+                            Untuk menambah, mengedit, dan menghapus data sparepart, data sparepart akan otomatis berkurang
+                            jika ada
+                            yang melakukan service.
+                        </li>
+                        <li>Transaksi Sparepart<br>&nbsp;
+                            Fitur ini di gunakan untuk pelanggan yang ingin membeli sparepart tanpa melakukan service
+                            kendaraan.
+                        </li>
+                    </ul><br>
+                </li>
+
+                <a href="{{ route('service.index') }}" class="text-decoration-none"><li><strong>Riwayat Service</strong><br></a>
+                    Fitur ini di gunakan untuk melihat dan mencari riwayat service pelanggan,
+                </li>
+            </ul>
         </section>
 
         <section class="mb-4" id="emergency_password">
-            
+
             <!-- Main Content -->
             <div class="container">
                 <h2 class="h3 text-primary">
                     <i class="fa-solid fa-phone"></i> Instruksi mendapatkan emergency password
-                </h2>
+                </h2><br>
                 <p>
                     Jika pengguna lupa password akun pengguna, pengguna dapat memulihkannya menggunakan Emergency Password.
                     Berikut adalah langkah-langkahnya :
@@ -314,7 +354,8 @@
                         </li>
                         <li>
                             <strong>Hubungi tim iteens</strong><br>
-                            Kirim pesan WhatsApp ke nomor tim iteens kami melalui <strong>nomor Anda</strong> yang terdaftar di akun Anda dengan format berikut ( copy jika perlu ) :
+                            Kirim pesan WhatsApp ke nomor tim iteens kami melalui <strong>nomor Anda</strong> yang terdaftar
+                            di akun Anda dengan format berikut ( copy jika perlu ) :
                             <pre>
     Permintaan Emergency Password
     Nama: [Nama Lengkap Anda]
@@ -350,8 +391,63 @@
         </section>
 
 
-        <!-- Informasi Commit di GitHub -->
-        {{-- <section class="mb-4">
+        <!-- Kesimpulan -->
+        <section class=" container mb-4 mt-3">
+            <h2 class="h3 text-primary">
+                <i class="fas fa-clipboard-check"></i> Kesimpulan
+            </h2>
+            <p>
+                Aplikasi web yang telah dikembangkan ini merupakan hasil kerja keras dan kolaborasi yang erat antara seluruh
+                tim pengembang, mulai dari pengumpulan kebutuhan, perencanaan desain, hingga tahap implementasi dan
+                pengujian. Setiap tahap pengembangan dilakukan dengan penuh perhatian dan kehati-hatian, dengan tujuan utama
+                untuk menyediakan solusi yang efektif dan efisien bagi PT Inovindo Digital Media.
+            </p>
+            <p>
+                Dalam pengembangan aplikasi ini, kami menerapkan metodologi pengembangan perangkat lunak yang terstruktur,
+                mengikuti prinsip-prinsip Agile Development, yang memungkinkan kami untuk beradaptasi dengan cepat terhadap
+                perubahan kebutuhan dan memperbaiki masalah yang muncul dengan responsif. Tim pengembang, yang terdiri dari
+                berbagai keahlian, bekerja dengan semangat kolaboratif, memastikan bahwa setiap fitur dikembangkan dengan
+                baik, serta diuji dengan cermat.
+            </p>
+            <p>
+                Aplikasi ini tidak hanya bertujuan untuk memenuhi kebutuhan fungsional saat ini, tetapi juga dirancang
+                dengan mempertimbangkan skalabilitas dan keberlanjutan di masa depan. Setiap aspek dari aplikasi ini—dari
+                manajemen pelanggan, transaksi, hingga analisis data—diharapkan dapat membantu PT Inovindo Digital Media
+                dalam meningkatkan efisiensi operasional dan memberikan layanan yang lebih baik kepada pelanggan.
+            </p>
+            <p>
+                Meskipun aplikasi ini telah melewati berbagai tahap pengembangan yang ketat, kami menyadari bahwa
+                kesempurnaan hanyalah milik Tuhan. Beberapa tantangan dan bug mungkin masih ada, dan kami berkomitmen untuk
+                terus melakukan pemeliharaan, pembaruan, dan perbaikan demi memberikan pengalaman terbaik bagi penggunanya.
+                Setiap umpan balik dan kritik yang konstruktif akan diterima dengan baik, dan kami akan terus meningkatkan
+                kualitas aplikasi ini.
+            </p>
+            <p>
+                Kami juga berharap, dengan adanya dokumentasi ini, pengembang yang akan datang dapat dengan mudah memahami
+                struktur dan alur kerja aplikasi, serta dapat melanjutkan pengembangan lebih lanjut dengan lebih efisien.
+                Kami berharap aplikasi ini dapat terus berkembang, memberikan manfaat yang lebih besar, dan berkontribusi
+                pada kemajuan PT Inovindo Digital Media di masa yang akan datang.
+            </p>
+            <p>
+                Terima kasih atas dukungan, pengertian, dan kerja keras semua pihak yang telah berkontribusi dalam
+                pengembangan aplikasi ini. Semoga aplikasi ini dapat bermanfaat dan memberikan solusi terbaik bagi
+                perusahaan dan para penggunanya.
+            </p>
+            <p>
+                Wassalamualaikum Wr. Wb.
+            </p>
+            <!-- WhatsApp Button for Bugs -->
+            <div class="mt-4 mb-4 ml-3">
+                <a href="https://wa.me/6285781457014" class="btn btn-success btn-md" target="_blank">
+                    <i class="fab fa-whatsapp"></i>&nbsp; Chat Laporkan (Jika ada Bug)
+                </a>
+            </div>
+        </section>
+    @endsection
+
+
+    <!-- Informasi Commit di GitHub -->
+    {{-- <section class="mb-4">
         <h2 class="h3 text-primary">
             <i class="fas fa-code"></i> Riwayat Commit
         </h2>
@@ -370,8 +466,8 @@
     </section>
 </div> --}}
 
-        <!-- Tim Pengembang -->
-        {{-- <section class="mb-4">
+    <!-- Tim Pengembang -->
+    {{-- <section class="mb-4">
         <div class="container py-5">
             <h2 class="h3 text-primary">
                 <i class="fas fa-users"></i> Tim Pengembang
@@ -470,57 +566,3 @@
             </div>
         </div>                                
     </section<br> --}}
-
-        <!-- Kesimpulan -->
-        <section class=" container mb-4 mt-3">
-            <h2 class="h3 text-primary">
-                <i class="fas fa-clipboard-check"></i> Kesimpulan
-            </h2>
-            <p>
-                Aplikasi web yang telah dikembangkan ini merupakan hasil kerja keras dan kolaborasi yang erat antara seluruh
-                tim pengembang, mulai dari pengumpulan kebutuhan, perencanaan desain, hingga tahap implementasi dan
-                pengujian. Setiap tahap pengembangan dilakukan dengan penuh perhatian dan kehati-hatian, dengan tujuan utama
-                untuk menyediakan solusi yang efektif dan efisien bagi PT Inovindo Digital Media.
-            </p>
-            <p>
-                Dalam pengembangan aplikasi ini, kami menerapkan metodologi pengembangan perangkat lunak yang terstruktur,
-                mengikuti prinsip-prinsip Agile Development, yang memungkinkan kami untuk beradaptasi dengan cepat terhadap
-                perubahan kebutuhan dan memperbaiki masalah yang muncul dengan responsif. Tim pengembang, yang terdiri dari
-                berbagai keahlian, bekerja dengan semangat kolaboratif, memastikan bahwa setiap fitur dikembangkan dengan
-                baik, serta diuji dengan cermat.
-            </p>
-            <p>
-                Aplikasi ini tidak hanya bertujuan untuk memenuhi kebutuhan fungsional saat ini, tetapi juga dirancang
-                dengan mempertimbangkan skalabilitas dan keberlanjutan di masa depan. Setiap aspek dari aplikasi ini—dari
-                manajemen pelanggan, transaksi, hingga analisis data—diharapkan dapat membantu PT Inovindo Digital Media
-                dalam meningkatkan efisiensi operasional dan memberikan layanan yang lebih baik kepada pelanggan.
-            </p>
-            <p>
-                Meskipun aplikasi ini telah melewati berbagai tahap pengembangan yang ketat, kami menyadari bahwa
-                kesempurnaan hanyalah milik Tuhan. Beberapa tantangan dan bug mungkin masih ada, dan kami berkomitmen untuk
-                terus melakukan pemeliharaan, pembaruan, dan perbaikan demi memberikan pengalaman terbaik bagi penggunanya.
-                Setiap umpan balik dan kritik yang konstruktif akan diterima dengan baik, dan kami akan terus meningkatkan
-                kualitas aplikasi ini.
-            </p>
-            <p>
-                Kami juga berharap, dengan adanya dokumentasi ini, pengembang yang akan datang dapat dengan mudah memahami
-                struktur dan alur kerja aplikasi, serta dapat melanjutkan pengembangan lebih lanjut dengan lebih efisien.
-                Kami berharap aplikasi ini dapat terus berkembang, memberikan manfaat yang lebih besar, dan berkontribusi
-                pada kemajuan PT Inovindo Digital Media di masa yang akan datang.
-            </p>
-            <p>
-                Terima kasih atas dukungan, pengertian, dan kerja keras semua pihak yang telah berkontribusi dalam
-                pengembangan aplikasi ini. Semoga aplikasi ini dapat bermanfaat dan memberikan solusi terbaik bagi
-                perusahaan dan para penggunanya.
-            </p>
-            <p>
-                Wassalamualaikum Wr. Wb.
-            </p>
-            <!-- WhatsApp Button for Bugs -->
-            <div class="mt-4 mb-4 ml-3">
-                <a href="https://wa.me/6285781457014" class="btn btn-success btn-md" target="_blank">
-                    <i class="fab fa-whatsapp"></i>&nbsp; Chat Laporkan (Jika ada Bug)
-                </a>
-            </div>
-        </section>
-    @endsection

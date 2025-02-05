@@ -96,8 +96,10 @@ Route::middleware('auth')->group(function () {
         Route::get('create', [TransactionController::class, 'create'])->name('create'); // Form tambah transaksi baru
         Route::post('/', [TransactionController::class, 'store'])->name('store'); // Menyimpan transaksi baru
         Route::get('{id}', [TransactionController::class, 'show'])->name('show'); // Menampilkan detail transaksi
-        Route::get('{id}/edit', [TransactionController::class, 'edit'])->name('edit'); // Form edit transaksi
-        Route::put('{id}', [TransactionController::class, 'update'])->name('update'); // Memperbarui transaksi
+
+        // Route::get('{id}/edit', [TransactionController::class, 'edit'])->name('edit'); // Form edit transaksi
+        // Route::put('{id}', [TransactionController::class, 'update'])->name('update'); // Memperbarui transaksi
+        
         Route::delete('{id}', [TransactionController::class, 'destroy'])->name('destroy'); // Menghapus transaksi
     });
 
