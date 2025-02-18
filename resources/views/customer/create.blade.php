@@ -132,11 +132,10 @@
         newVehicleGroup.classList.add('vehicle-group', 'mb-3', 'card', 'shadow-sm', 'p-3');
         newVehicleGroup.id = `vehicle-${vehicleIndex}`;
         
-        // Use template literals to dynamically populate the fields
         newVehicleGroup.innerHTML = `
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <label>Jenis Kendaraan</label>
+                    <label>Merk Kendaraan</label>
                     <input type="text" name="vehicles[${vehicleIndex}][vehicle_type]" class="form-control mb-2" 
                            value="{{ old('vehicles.${vehicleIndex}.vehicle_type') }}" placeholder="Masukkan jenis kendaraan" required>
                     @error('vehicles.${vehicleIndex}.vehicle_type')

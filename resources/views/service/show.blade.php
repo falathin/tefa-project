@@ -393,7 +393,7 @@
                                 display: flex;
                                 justify-content: center;
                                 align-items: center;
-                                height: 100vh;
+                                height: auto;
                                 text-align: center;
                             }
                             h1 {
@@ -510,6 +510,36 @@
                                 </div>
                             </div>
                             <div class="card mt-3">
+                                <div class="card-header">Sparepart yang Digunakan</div>
+                                <div class="card-body">
+                                    <div class="list-group">
+                                        @foreach ($service->serviceSpareparts as $serviceSparepart)
+                                        <div class="list-group-item">
+                                            <span><i class="bi bi-gear"></i> <strong>{{ $serviceSparepart->sparepart->nama_sparepart }}</strong></span>
+                                            <span>{{ $serviceSparepart->quantity }} pcs</span>
+                                            <span>Rp. {{ number_format($serviceSparepart->sparepart->harga_jual, 0, ',', '.') }}</span>
+                                        </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card mt-3">
+                                <div class="card-header">Informasi Pekerjaan</div>
+                                <div class="card-body">
+                                    <div class="list-group">
+                                        <ol>
+                                        @foreach ($service->checklists as $checklist)
+                                        <div class="list-group-item">
+                                            <li>
+                                            <span>{{ $checklist->task}}</span>
+                                            </li>
+                                        </div>
+                                        @endforeach
+                                        </ol>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card mt-3">
                                 <div class="card-header">Informasi Servis</div>
                                 <div class="card-body">
                                     <div class="list-group">
@@ -545,20 +575,6 @@
                                             <span><i class="bi bi-calendar-event"></i> <strong>Tanggal Servis:</strong></span>
                                             <span>{{ \Carbon\Carbon::parse($service->service_date)->format('d-m-Y') }}</span>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card mt-3">
-                                <div class="card-header">Sparepart yang Digunakan</div>
-                                <div class="card-body">
-                                    <div class="list-group">
-                                        @foreach ($service->serviceSpareparts as $serviceSparepart)
-                                        <div class="list-group-item">
-                                            <span><i class="bi bi-gear"></i> <strong>{{ $serviceSparepart->sparepart->nama_sparepart }}</strong></span>
-                                            <span>{{ $serviceSparepart->quantity }} pcs</span>
-                                            <span>Rp. {{ number_format($serviceSparepart->sparepart->harga_jual, 0, ',', '.') }}</span>
-                                        </div>
-                                        @endforeach
                                     </div>
                                 </div>
                             </div>
