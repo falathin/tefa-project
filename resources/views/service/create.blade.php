@@ -120,7 +120,7 @@
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
                                 <input type="number" name="service_fee" class="form-control" id="service_fee"
-                                    placeholder="Masukkan Biaya Jasa" value="{{ old('service_fee') }}" required>
+                                    placeholder="Masukkan Biaya Jasa" value="{{ old('service_fee') }}">
                             </div>
                             @error('service_fee')
                                 <div class="text-danger">{{ $message }}</div>
@@ -132,7 +132,7 @@
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-calculator"></i></span>
                                 <input type="number" name="total_cost" id="total_cost" class="form-control" readonly
-                                    placeholder="Total biaya" value="{{ old('total_cost') }}" required>
+                                    placeholder="Total biaya" value="{{ old('total_cost') }}">
                             </div>
                             @error('total_cost')
                                 <div class="text-danger">{{ $message }}</div>
@@ -145,7 +145,7 @@
                                 <span class="input-group-text"><i class="fas fa-credit-card"></i></span>
                                 <input type="number" name="payment_received" id="payment_received" class="form-control"
                                     placeholder="Jumlah pembayaran diterima" value="{{ old('payment_received') }}"
-                                    required>
+                                >
                             </div>
                             @error('payment_received')
                                 <div class="text-danger">{{ $message }}</div>
@@ -157,7 +157,7 @@
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
                                 <input type="number" name="change" id="change" class="form-control" readonly
-                                    placeholder="Kembalian" value="{{ old('change') }}" required>
+                                    placeholder="Kembalian" value="{{ old('change') }}">
                             </div>
                             @error('change')
                                 <div class="text-danger">{{ $message }}</div>
@@ -291,34 +291,52 @@
                 const tableBody = document.querySelector('#sparepartTable tbody');
                 const row = tableBody.insertRow();
                 row.innerHTML = `
-                <td>
-                    <select name="sparepart_id[]" class="form-control sparepart_id">
-                        <option value="">Pilih Sparepart</option>
-                        @foreach ($spareparts as $sparepart)
-                            <option value="{{ $sparepart->id_sparepart }}" data-harga="{{ $sparepart->harga_jual }}">
-                                {{ $sparepart->nama_sparepart }}
-                            </option>                                      
-                        @endforeach
-                    </select>
-                </td>
-                <td><input type="text" class="form-control harga" readonly></td>
-                <td><input type="number" name="jumlah[]" class="form-control jumlah" min="1"></td>
-                <td><input type="text" class="form-control subtotal" readonly></td>
-                <td><button type="button" class="btn btn-danger remove-row">Hapus</button></td>
-            `;
+    <td>
+        <select name="sparepart_id[]" class="form-control sparepart_id select2">
+            <option value="">Pilih Sparepart</option>
+            @foreach ($spareparts as $sparepart)
+                <option value="{{ $sparepart->id_sparepart }}" data-harga="{{ $sparepart->harga_jual }}">
+                    {{ $sparepart->nama_sparepart }}
+                </option>                                      
+            @endforeach
+        </select>
+    </td>
+    <td><input type="text" class="form-control harga" readonly></td>
+    <td><input type="number" name="jumlah[]" class="form-control jumlah" min="1"></td>
+    <td><input type="text" class="form-control subtotal" readonly></td>
+    <td><button type="button" class="btn btn-danger remove-row">Hapus</button></td>
+    `;
+
                 // Re-add event listeners for the new row
                 const newRow = tableBody.lastElementChild;
                 validateSparepartFields(newRow);
-                newRow.querySelector('.sparepart_id').addEventListener('change', function() {
-                    const price = this.options[this.selectedIndex].getAttribute('data-harga') || 0;
-                    newRow.querySelector('.harga').value = parseFloat(price).toFixed(2);
+
+                // Initialize select2
+                $(newRow).find('.select2').select2();
+
+                // Use select2:select event instead of change event
+                $(newRow).find('.sparepart_id').on('select2:select', function() {
+                    const selectedOption = $(this).find('option:selected');
+                    const price = selectedOption.data('harga') || 0;
+                    $(newRow).find('.harga').val(parseFloat(price).toFixed(2));
                     calculateSubtotal(newRow);
                 });
-                newRow.querySelector('.jumlah').addEventListener('input', function() {
+
+                $(newRow).find('.jumlah').on('input', function() {
                     calculateSubtotal(newRow);
                 });
 
                 updateTotalBiaya();
+            });
+
+            // Initialize select2 on existing select elements
+            $(document).ready(function() {
+                $('.select2').select2();
+                $('.select2').on('select2:select', function() {
+                    const selectedOption = $(this).find('option:selected');
+                    const price = selectedOption.data('harga') || 0;
+                    $(this).closest('tr').find('.harga').val(parseFloat(price).toFixed(2));
+                });
             });
 
             // Handle remove row

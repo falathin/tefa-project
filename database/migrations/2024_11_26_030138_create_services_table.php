@@ -19,7 +19,8 @@ class CreateServicesTable extends Migration
             $table->decimal('payment_received', 10, 2); // Pembayaran diterima
             $table->decimal('change', 10, 2); // Kembalian pembayaran
             $table->enum('service_type', ['light', 'medium', 'heavy'])->default('light'); // Jenis servis
-            $table->string('status')->default('in progress'); // Status servis: 'in progress', 'completed', 'pending'
+            // $table->string('status')->default('in progress'); // Status servis: 'in progress', 'completed', 'pending'
+            $table->boolean('status')->default(false); // false = in progress, true = completed
             $table->text('additional_notes')->nullable(); // Deskripsi tambahan terkait servis
             $table->string('technician_name')->nullable(); // Nama teknisi yang menangani
             $table->string('payment_proof')->nullable(); // Path bukti pembayaran

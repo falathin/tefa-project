@@ -22,6 +22,9 @@
                             <strong>Jumlah:</strong> <span>{{ number_format($sparepart->jumlah, 0, ',', '.') }}</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <strong>Spesifikasi:</strong> <span>{{$sparepart->spek}}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
                             <strong>Harga Beli:</strong> <span>Rp.
                                 {{ number_format($sparepart->harga_beli, 2, ',', '.') }}</span>
                         </li>

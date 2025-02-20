@@ -16,7 +16,7 @@ class VehicleController extends Controller
     {
         $customer = Customer::findOrFail($customerId);
         if (! Gate::allows('isSameJurusan', [$customer])) {
-            abort(403, 'data tidak ditemukan!!');
+            abort(403, 'Data tidak ditemukan!!');
         }
         return view('vehicle.create', compact('customer'));
     }
@@ -26,12 +26,18 @@ class VehicleController extends Controller
         $request->validate([
             'license_plate' => 'required|string|max:255|unique:vehicles',
             'vehicle_type' => 'required|string|max:255',
+            'brand' => 'required|string|max:255',
             'engine_code' => 'nullable|string|max:255',
             'color' => 'nullable|string|max:255',
             'year' => 'nullable|integer|min:1900|max:' . date('Y'),
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'customer_id' => 'required|exists:customers,id',
             'jurusan' => 'required'
+        ], [
+            'license_plate.required' => 'Plat nomor kendaraan wajib diisi.',
+            'license_plate.unique' => 'Plat nomor kendaraan sudah terdaftar.',
+            'vehicle_type.required' => 'Nama kendaraan wajib diisi.',
+            'brand.required' => 'Merek kendaraan wajib diisi.',
         ]);
 
         $imagePath = null;
@@ -42,6 +48,7 @@ class VehicleController extends Controller
         Vehicle::create([
             'license_plate' => $request->license_plate,
             'vehicle_type' => $request->vehicle_type,
+            'brand' => $request->brand,
             'engine_code' => $request->engine_code,
             'color' => $request->color,
             'production_year' => $request->year,
@@ -58,9 +65,8 @@ class VehicleController extends Controller
     {
         $vehicle = Vehicle::find($id);
         if (! Gate::allows('isSameJurusan', [$vehicle])) {
-            abort(403, 'data tidak ditemukan!!');
+            abort(403, 'Data tidak ditemukan!!');
         }
-        // Admin & kasir
         if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
             abort(403, 'Butuh level Admin & Kasir');
         }
@@ -70,24 +76,22 @@ class VehicleController extends Controller
                             ->when($request->search, function($query) use ($request) {
                                 return $query->where('service_type', 'like', '%' . $request->search . '%');
                             })
-                            ->orderBy('created_at', 'desc') // Order by latest services first
+                            ->orderBy('created_at', 'desc')
                             ->paginate(2);
     
         return view('vehicle.show', compact('vehicle', 'services'));
     }    
 
-    // Show the form to edit the vehicle data
     public function edit($id)
     {
         $vehicleGate = Vehicle::find($id);
         if (! Gate::allows('isSameJurusan', [$vehicleGate])) {
-            abort(403, 'data tidak ditemukan!!');
+            abort(403, 'Data tidak ditemukan!!');
         }
         $vehicle = Vehicle::findOrFail($id);
         return view('vehicle.edit', compact('vehicle'));
     }
 
-    // Update vehicle data
     public function update(Request $request, $id)
     {
         $vehicle = Vehicle::findOrFail($id);
@@ -95,25 +99,29 @@ class VehicleController extends Controller
         $request->validate([
             'license_plate' => 'required|string|max:255|unique:vehicles,license_plate,' . $vehicle->id,
             'vehicle_type' => 'required|string|max:255',
+            'brand' => 'required|string|max:255',
             'engine_code' => 'nullable|string|max:255',
             'color' => 'nullable|string|max:255',
             'year' => 'nullable|integer|min:1900|max:' . date('Y'),
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ], [
+            'license_plate.required' => 'Plat nomor kendaraan wajib diisi.',
+            'license_plate.unique' => 'Plat nomor kendaraan sudah terdaftar.',
+            'vehicle_type.required' => 'Nama kendaraan wajib diisi.',
+            'brand.required' => 'Merek kendaraan wajib diisi.',
         ]);
 
-        // Handle image upload if exists
         if ($request->hasFile('image')) {
-            // Delete old image if it exists
             if ($vehicle->image) {
                 Storage::disk('public')->delete($vehicle->image);
             }
             $vehicle->image = $request->file('image')->store('vehicle_images', 'public');
         }
 
-        // Update the vehicle data
         $vehicle->update([
             'license_plate' => $request->license_plate,
             'vehicle_type' => $request->vehicle_type,
+            'brand' => $request->brand,
             'engine_code' => $request->engine_code,
             'color' => $request->color,
             'production_year' => $request->year,
@@ -123,12 +131,10 @@ class VehicleController extends Controller
             ->with('success', 'Data kendaraan berhasil diperbarui!');
     }
 
-    // Delete vehicle data
     public function destroy($id)
     {
         $vehicle = Vehicle::findOrFail($id);
 
-        // Delete image if exists
         if ($vehicle->image) {
             Storage::disk('public')->delete($vehicle->image);
         }

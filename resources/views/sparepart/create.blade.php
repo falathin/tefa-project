@@ -26,6 +26,16 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="spek"><i class="bi bi-wrench"></i>&nbsp; Spesifikasi Sparepart:</label>
+                    <input type="text" name="spek" id="spek" class="form-control @error('spek') is-invalid @enderror" value="{{ old('spek') }}">
+                    @error('spek')
+                        <div class="alert alert-danger mt-2">
+                            <strong>Error:</strong> Spesifikasi sparepart harus diisi dan tidak boleh melebihi 255 karakter.
+                        </div>
+                    @enderror
+                </div>
+
+                <div class="form-group">
                     <label for="jumlah"><i class="bi bi-stack"></i>&nbsp; Jumlah:</label>
                     <input type="number" name="jumlah" id="jumlah" class="form-control @error('jumlah') is-invalid @enderror" value="{{ old('jumlah') }}" min="1">
                     @error('jumlah')

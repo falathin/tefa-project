@@ -14,40 +14,47 @@
         </div>
 
         <div class="row g-3 mt-3">
-            <div class="col-md-6 animate__animated animate__slideInLeft animate__delay-1s">
+            <div class="col-md-4 animate__animated animate__slideInLeft animate__delay-1s">
+                <label for="brand" class="form-label">
+                    <i class="bi bi-tags"></i> Merek Kendaraan
+                </label>
+                <input type="text" class="form-control" id="brand" value="{{ $vehicle->brand }}" disabled>
+            </div>
+            <div class="col-md-4 animate__animated animate__slideInDown animate__delay-2s">
                 <label for="jenisKendaraan" class="form-label">
                     <i class="bi bi-car-front"></i> Jenis Kendaraan
                 </label>
                 <input type="text" class="form-control" id="jenisKendaraan" value="{{ $vehicle->vehicle_type }}" disabled>
             </div>
-            <div class="col-md-6 animate__animated animate__slideInRight animate__delay-2s">
+            <div class="col-md-4 animate__animated animate__slideInRight animate__delay-3s">
                 <label for="kodeMesin" class="form-label">
                     <i class="bi bi-gear-wide"></i> Kode Mesin
                 </label>
                 <input type="text" class="form-control" id="kodeMesin" value="{{ $vehicle->engine_code }}" disabled>
             </div>
-            <div class="col-md-6 animate__animated animate__slideInLeft animate__delay-3s">
+            <div class="col-md-4 animate__animated animate__slideInLeft animate__delay-4s">
                 <label for="noPolisi" class="form-label">
                     <i class="bi bi-key"></i> No Polisi
                 </label>
                 <input type="text" class="form-control" id="noPolisi" value="{{ $vehicle->license_plate }}" disabled>
             </div>
-            <div class="col-md-6 animate__animated animate__slideInRight animate__delay-4s">
+            <div class="col-md-4 animate__animated animate__slideInUp animate__delay-3s">
                 <label for="tahunProduksi" class="form-label">
                     <i class="bi bi-calendar-event"></i> Tahun Produksi
                 </label>
                 <input type="text" class="form-control" id="tahunProduksi" value="{{ $vehicle->production_year }}" disabled>
             </div>
-            <div class="col-md-6 animate__animated animate__slideInLeft animate__delay-5s">
+            <div class="col-md-4 animate__animated animate__slideInLeft animate__delay-6s">
                 <label for="warna" class="form-label">
                     <i class="bi bi-palette"></i> Warna
                 </label>
                 <input type="text" class="form-control" id="warna" value="{{ $vehicle->color }}" disabled>
             </div>
-            <div class="col-md-6 animate__animated animate__slideInRight animate__delay-6s">
+            <div class="col-md-12 animate__animated animate__slideInDown animate__delay-3s text-center">
                 <label for="image" class="form-label">
                     <i class="bi bi-image"></i> Gambar Kendaraan
                 </label>
+                <br>
                 @if($vehicle->image)
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#vehicleImageModal">
                         <i class="bi bi-image"></i> Lihat Gambar
@@ -64,15 +71,11 @@
         <div class="row mb-3">
             <div class="col-12 d-flex justify-content-center">
                 <form action="{{ route('vehicle.show', $vehicle->id) }}" method="GET" class="d-flex align-items-center">
-                    <!-- Search Input -->
                     <input type="text" name="search" value="{{ request('search') }}" class="form-control form-control-sm" placeholder="Search services..." aria-label="Search services">
-                    
-                    <!-- Search Button -->
                     <button type="submit" class="btn btn-outline-primary btn-sm ms-2">
                         <i class="bi bi-search"></i> Search
                     </button>
     
-                    <!-- Close Button (Resets Search) -->
                     @if(request('search'))
                         <a href="{{ route('vehicle.show', $vehicle->id) }}" class="btn btn-outline-danger btn-sm ms-2" aria-label="Close">
                             <i class="bi bi-x-circle"></i> Close
@@ -89,6 +92,13 @@
             </div>
         @endif
 
+        
+        <div class="text-center mt-3">
+            <a href="{{ route('service.create', $vehicle->id) }}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Tambah Service
+            </a>
+        </div>
+        <br>
         <div class="container mt-3">
             <!-- Services List -->
             <div class="row text-center">
@@ -100,6 +110,7 @@
                             <div class="card-body text-white">
                                 <h6 class="text-muted text-light">
                                     <i class="bi bi-tools"></i> {{ $service->service_type }}
+                                    {{ $service->status }}
                                 </h6>
             
                                 <!-- Service Info -->
@@ -144,12 +155,6 @@
                     {{ $services->links('vendor.pagination.simple-bootstrap-5') }}
                 </nav>
             </div>
-        </div>
-        
-        <div class="text-center mt-3">
-            <a href="{{ route('service.create', $vehicle->id) }}" class="btn btn-primary">
-                <i class="bi bi-plus-circle"></i> Tambah Service
-            </a>
         </div>
     </div>
 </div>

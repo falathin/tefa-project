@@ -54,18 +54,20 @@ class SparepartController extends Controller
         $request->validate([
             'nama_sparepart' => 'required|string|max:255',
             'jumlah' => 'required|integer|min:1',
+            'spek' => 'required|string|max:255',
             'harga_beli' => 'required|numeric',
             'harga_jual' => 'required|numeric',
             'tanggal_masuk' => 'required|date',
             'deskripsi' => 'nullable|string',
             'jurusan' => 'required'
         ]);
-
+    
         $keuntungan = $request->harga_jual - $request->harga_beli;
-
+    
         $sparepart = Sparepart::create([
             'nama_sparepart' => $request->nama_sparepart,
             'jumlah' => $request->jumlah,
+            'spek' => $request->spek,
             'harga_beli' => $request->harga_beli,
             'harga_jual' => $request->harga_jual,
             'keuntungan' => $keuntungan,
@@ -73,7 +75,7 @@ class SparepartController extends Controller
             'deskripsi' => $request->deskripsi,
             'jurusan' => $request->jurusan
         ]);
-
+    
         // Insert into SparepartHistory
         SparepartHistory::create([
             'sparepart_id' => $sparepart->id_sparepart,
@@ -82,9 +84,53 @@ class SparepartController extends Controller
             'remaining_stock' => $sparepart->jumlah, // Add the remaining stock here
             'description' => 'Menambah stok sebanyak ' . $request->jumlah . ' unit.',
         ]);
-
+    
         return redirect()->route('sparepart.index')->with('success', 'Sparepart berhasil ditambahkan.');
     }
+    
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'nama_sparepart' => 'required|string|max:255',
+            'jumlah' => 'required|integer|min:1',
+            'spek' => 'required|string|max:255',
+            'harga_beli' => 'required|numeric',
+            'harga_jual' => 'required|numeric',
+            'tanggal_masuk' => 'required|date',
+            'deskripsi' => 'nullable|string',
+        ]);
+    
+        $sparepart = Sparepart::findOrFail($id);
+    
+        $old_quantity = $sparepart->jumlah;
+        $new_quantity = $request->jumlah;
+        $quantity_changed = $new_quantity - $old_quantity;
+    
+        $sparepart->update([
+            'nama_sparepart' => $request->nama_sparepart,
+            'jumlah' => $request->jumlah,
+            'spek' => $request->spek,
+            'harga_beli' => $request->harga_beli,
+            'harga_jual' => $request->harga_jual,
+            'keuntungan' => $request->harga_jual - $request->harga_beli,
+            'tanggal_masuk' => $request->tanggal_masuk,
+            'deskripsi' => $request->deskripsi,
+        ]);
+    
+        if ($quantity_changed != 0) {
+            $action = $quantity_changed > 0 ? 'add' : 'use';
+            SparepartHistory::create([
+                'sparepart_id' => $sparepart->id_sparepart,
+                'jumlah_changed' => $quantity_changed,
+                'action' => $action,
+                'description' => $action == 'add' ?
+                    'Menambah stok sebanyak ' . abs($quantity_changed) . ' unit.' :
+                    'Mengurangi stok sebanyak ' . abs($quantity_changed) . ' unit.',
+            ]);
+        }
+    
+        return redirect()->route('sparepart.index')->with('success', 'Sparepart berhasil diperbarui.');
+    }    
 
     public function show($sparepart_id)
     {
@@ -113,40 +159,6 @@ class SparepartController extends Controller
         }
         $sparepart = Sparepart::findOrFail($id);
         return view('sparepart.edit', compact('sparepart'));
-    }
-
-    public function update(Request $request, $id)
-    {
-        $request->validate([
-            'nama_sparepart' => 'required|string|max:255',
-            'jumlah' => 'required|integer|min:1',
-            'harga_beli' => 'required|numeric',
-            'harga_jual' => 'required|numeric',
-            'tanggal_masuk' => 'required|date',
-            'deskripsi' => 'nullable|string',
-        ]);
-
-        $sparepart = Sparepart::findOrFail($id);
-
-        $old_quantity = $sparepart->jumlah;
-        $new_quantity = $request->jumlah;
-        $quantity_changed = $new_quantity - $old_quantity;
-
-        $sparepart->update($request->all());
-
-        if ($quantity_changed != 0) {
-            $action = $quantity_changed > 0 ? 'add' : 'use';
-            SparepartHistory::create([
-                'sparepart_id' => $sparepart->id_sparepart,
-                'jumlah_changed' => $quantity_changed,
-                'action' => $action,
-                'description' => $action == 'add' ?
-                    'Menambah stok sebanyak ' . abs($quantity_changed) . ' unit.' :
-                    'Mengurangi stok sebanyak ' . abs($quantity_changed) . ' unit.',
-            ]);
-        }
-
-        return redirect()->route('sparepart.index')->with('success', 'Sparepart berhasil diperbarui.');
     }
 
     public function destroy($id)

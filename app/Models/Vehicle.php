@@ -12,6 +12,7 @@ class Vehicle extends Model
     protected $fillable = [
         'license_plate',
         'vehicle_type',
+        'brand',
         'color',
         'production_year',
         'engine_code',

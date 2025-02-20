@@ -30,6 +30,18 @@
                         </tr>
 
                         <tr>
+                            <td><label for="spek"><i class="bi bi-stack"></i>&nbsp; Spesifikasi:</label></td>
+                            <td>
+                                <input type="text" name="spek" id="spek" class="form-control @error('spek') is-invalid @enderror" value="{{ old('spek', $sparepart->spek) }}" min="1">
+                                @error('spek')
+                                    <div class="alert alert-danger mt-2">
+                                        <strong>Error:</strong> Spesifikasi harus berupa angka dan minimal bernilai 1.
+                                    </div>
+                                @enderror
+                            </td>
+                        </tr>
+
+                        <tr>
                             <td><label for="jumlah"><i class="bi bi-stack"></i>&nbsp; Jumlah:</label></td>
                             <td>
                                 <input type="number" name="jumlah" id="jumlah" class="form-control @error('jumlah') is-invalid @enderror" value="{{ old('jumlah', $sparepart->jumlah) }}" min="1">

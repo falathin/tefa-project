@@ -361,43 +361,83 @@
 
                         // Handle service_fee change
                         document.getElementById('service_fee').addEventListener('input', updateTotalBiaya);
+                        $(document).ready(function() {
+    $('.sparepart_id').select2();
 
-                        // Handle addRow
-                        document.getElementById('addRow').addEventListener('click', function() {
-                            const tableBody = document.querySelector('#sparepartTable tbody');
-                            const row = tableBody.insertRow();
-                            row.innerHTML = `
-                            <td>
-                                <select name="sparepart_id[]" class="form-control sparepart_id">
-                                    <option value="">Pilih Sparepart</option>
-                                    @foreach ($spareparts as $sparepart)
-                                        <option value="{{ $sparepart->id_sparepart }}" data-harga="{{ $sparepart->harga_jual }}">
-                                            {{ $sparepart->nama_sparepart }}
-                                        </option>                                      
-                                    @endforeach
-                                </select>
-                            </td>
-                            <td><input type="text" class="form-control harga" readonly></td>
-                            <td><input type="number" name="jumlah[]" class="form-control jumlah" min="1"></td>
-                            <td><input type="text" class="form-control subtotal" readonly></td>
-                            <td><button type="button" class="btn btn-danger remove-row">Hapus</button></td>
-                        `;
-                            const newRow = tableBody.lastElementChild;
-                            newRow.querySelector('.sparepart_id').addEventListener('change', function() {
-                                const price = this.options[this.selectedIndex].getAttribute('data-harga') || 0;
-                                newRow.querySelector('.harga').value = parseFloat(price).toFixed(2);
-                                calculateSubtotal(newRow);
-                            });
-                            newRow.querySelector('.jumlah').addEventListener('input', function() {
-                                calculateSubtotal(newRow);
-                            });
-                            newRow.querySelector('.remove-row').addEventListener('click', function() {
-                                newRow.remove();
-                                updateTotalBiaya();
-                            });
-                        });
+    $('#addRow').on('click', function() {
+        const tableBody = $('#sparepartTable tbody');
+        const newRow = $(`
+            <tr>
+                <td>
+                    <select name="sparepart_id[]" class="form-control sparepart_id">
+                        <option value="">Pilih Sparepart</option>
+                        @foreach ($spareparts as $sparepart)
+                            <option value="{{ $sparepart->id_sparepart }}" data-harga="{{ $sparepart->harga_jual }}">
+                                {{ $sparepart->nama_sparepart }}
+                            </option>
+                        @endforeach
+                    </select>
+                </td>
+                <td><input type="text" class="form-control harga" readonly></td>
+                <td><input type="number" name="jumlah[]" class="form-control jumlah" min="1" value="1"></td>
+                <td><input type="text" class="form-control subtotal" readonly></td>
+                <td><button type="button" class="btn btn-danger remove-row"><i class="fas fa-trash-alt"></i></button></td>
+            </tr>
+        `);
 
-                        // Handle row removal
+        // Tambahkan row ke dalam tabel
+        tableBody.append(newRow);
+
+        // Terapkan Select2 ke elemen yang baru dibuat
+        newRow.find('.sparepart_id').select2();
+
+        // Event listener untuk perubahan pada dropdown sparepart
+        newRow.find('.sparepart_id').on('change', function() {
+            const selectedOption = $(this).find('option:selected');
+            const price = selectedOption.attr('data-harga') || 0; // Ambil harga sparepart dengan attr()
+            newRow.find('.harga').val(parseFloat(price).toFixed(2)); // Tampilkan harga
+            calculateSubtotal(newRow);
+        });
+
+        // Event listener untuk input jumlah
+        newRow.find('.jumlah').on('input', function() {
+            calculateSubtotal(newRow);
+        });
+
+        // Event listener untuk tombol hapus baris
+        newRow.find('.remove-row').on('click', function() {
+            newRow.remove();
+            updateTotalBiaya();
+        });
+    });
+
+    // Fungsi untuk menghitung subtotal
+    function calculateSubtotal(row) {
+        const price = parseFloat(row.find('.harga').val()) || 0;
+        const quantity = parseInt(row.find('.jumlah').val()) || 1;
+        const subtotal = price * quantity;
+        row.find('.subtotal').val(subtotal.toFixed(2));
+        updateTotalBiaya();
+    }
+
+    // Fungsi untuk update total biaya
+    function updateTotalBiaya() {
+        let total = 0;
+        $('.subtotal').each(function() {
+            total += parseFloat($(this).val()) || 0;
+        });
+        $('#totalBiaya').text(total.toFixed(2));
+    }
+
+    // Event listener untuk tombol hapus pada elemen yang sudah ada
+    $(document).on('click', '.remove-row', function() {
+        $(this).closest('tr').remove();
+        updateTotalBiaya();
+    });
+
+    updateTotalBiaya();
+});
+
                         document.querySelectorAll('.removeRow').forEach(function(button) {
                             button.addEventListener('click', function() {
                                 const row = button.closest('tr');
@@ -406,7 +446,6 @@
                             });
                         });
 
-                        // Initialize total biaya
                         updateTotalBiaya();
                     });
                 </script>

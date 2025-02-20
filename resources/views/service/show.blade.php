@@ -78,14 +78,14 @@
                             <!-- Informasi Teknisi -->
                             <p><strong>Nama Teknisi:</strong> {{ $service->technician_name }}</p>
 
-                            <!-- Informasi Bukti Pembayaran -->
+                            {{-- <!-- Informasi Bukti Pembayaran -->
                             @if ($service->payment_proof)
                                 <p><strong>Bukti Pembayaran:</strong> <a
                                         href="{{ asset('storage/' . $service->payment_proof) }}" target="_blank">Lihat
                                         Bukti Pembayaran</a></p>
                             @else
                                 <p><strong>Bukti Pembayaran:</strong> <span class="text-muted">Belum tersedia</span></p>
-                            @endif
+                            @endif --}}
 
                             <!-- Catatan Tambahan -->
                             <p><strong>Catatan Tambahan:</strong>
@@ -277,6 +277,65 @@
                         </tbody>
                     </table>
                 </div>
+
+                <h6 class="mb-3 mt-3 animate__animated animate__fadeInUp"
+                    style="animation-duration: 1.5s; animation-delay: 0.8s; color: #6c757d;">
+                    <i class="mdi mdi-cash"></i> Informasi Pembayaran
+                </h6>
+                <div class="table-responsive border p-3 rounded shadow-sm bg-white">
+                    <div class="row gx-3">
+                        <div class="col-md-6 col-sm-12 mb-3">
+                            <label for="service_fee" class="form-label">Jasa Pelayanan</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
+                                <input type="number" name="service_fee" class="form-control" id="service_fee"
+                                    placeholder="Masukkan Biaya Jasa" value="{{ old('service_fee') }}" required>
+                            </div>
+                            @error('service_fee')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                
+                        <div class="col-md-6 col-sm-12 mb-3">
+                            <label for="total_cost" class="form-label">Total Biaya</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-calculator"></i></span>
+                                <input type="number" name="total_cost" id="total_cost" class="form-control" readonly
+                                    placeholder="Total biaya" value="{{ old('total_cost') }}" required>
+                            </div>
+                            @error('total_cost')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                
+                    <div class="row gx-3">
+                        <div class="col-md-6 col-sm-12 mb-3">
+                            <label for="payment_received" class="form-label">Pembayaran Diterima</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-credit-card"></i></span>
+                                <input type="number" name="payment_received" id="payment_received" class="form-control"
+                                    placeholder="Jumlah pembayaran diterima" value="{{ old('payment_received') }}" required>
+                            </div>
+                            @error('payment_received')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                
+                        <div class="col-md-6 col-sm-12 mb-3">
+                            <label for="change" class="form-label">Kembalian</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
+                                <input type="number" name="change" id="change" class="form-control" readonly
+                                    placeholder="Kembalian" value="{{ old('change') }}" required>
+                            </div>
+                            @error('change')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+                
                 <br><br>
                 <!-- Action Buttons -->
                 <div class="mt-3 d-flex flex-wrap gap-2 align-items-center animate__animated animate__fadeInUp"
@@ -531,7 +590,7 @@
                                         @foreach ($service->checklists as $checklist)
                                         <div class="list-group-item">
                                             <li>
-                                            <span>{{ $checklist->task}}</span>
+                                            <span>{{ $checklist->task }}</span>
                                             </li>
                                         </div>
                                         @endforeach
