@@ -121,6 +121,8 @@ class DashboardController extends Controller
 
             $monthlyChartValues = $monthlyChartData->pluck('total_profit')->toArray();
 
+            
+
             $vehiclesPerWeekData = [
                 'labels' => ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'],
                 'datasets' => [
@@ -182,6 +184,7 @@ class DashboardController extends Controller
             }
 
             $totalDailyIncome = $dailyCustomerData->sum('income');
+            $totalMonthlyIncome = $monthlyCustomerData->sum('income');
         } else {
             $jurusanUser = Auth::user()->jurusan;
             $totalSpareparts = Sparepart::where('jurusan', 'like', $jurusanUser)->count();
@@ -286,6 +289,20 @@ class DashboardController extends Controller
                     ];
                 });
 
+                $monthlyIncome = Service::whereDate('service_date', $thisMonth)
+                ->with(['customer', 'vehicle'])
+                ->where('jurusan', 'like', $jurusanUser)
+                ->get()
+                ->map(function ($service) {
+                    return [
+                        'customer_name' => $service->vehicle->customer->name ?? 'N/A',
+                        'vehicle' => $service->vehicle->vehicle_type ?? 'N/A',
+                        'income' => $service->total_cost,
+                        'service_time' => $service->created_at->format('H:i:s'), // Add service time
+                        'id' => $service->id
+                    ];
+                });
+
             $totalDailyIncome = $dailyCustomerData->sum('income');
         }
 
@@ -332,7 +349,8 @@ class DashboardController extends Controller
             'serviceIncomeYearly',
             'dailyCustomerData',
             'totalDailyIncome',
-            'services'
+            'services',
+            'monthlyIncome',
         ));
     }
 }

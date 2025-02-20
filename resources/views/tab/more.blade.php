@@ -103,7 +103,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <tfoot>
                 <tr class="table-secondary">
                     <td class="text-end fw-bold">Total Keseluruhan:</td>
-                    <td class="text-success fw-bold">Rp {{ number_format($totalMonthlyIncome, 0, ',', '.') }}</td>
+                    {{-- <td class="text-success fw-bold">Rp {{ number_format($totalMonthlyIncome, 0, ',', '.') }}</td> --}}
                 </tr>
             </tfoot>
         </table>
