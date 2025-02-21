@@ -59,11 +59,6 @@
                             <p><strong>Pembayaran Diterima:</strong> <span style="color: #17a2b8;">Rp.
                                     {{ number_format($service->payment_received, 0, ',', '.') }}</span></p>
                             <p><strong>Kembalian:</strong> Rp. {{ number_format($service->change, 0, ',', '.') }}</p>
-                            <p><strong>Tipe Servis:</strong>
-                                <span class="badge" style="background-color: #28a745; color: #fff;">
-                                    {{ ucfirst($service->service_type == 'light' ? 'ringan' : ($service->service_type == 'medium' ? 'sedang' : 'berat')) }}
-                                </span>
-                            </p>
                             <p><strong>Tanggal Servis:</strong>
                                 <span
                                     class="text-muted">{{ \Carbon\Carbon::parse($service->service_date)->format('d-m-Y') }}</span>
@@ -74,7 +69,18 @@
                                     {{ $service->isPaid() ? 'Lunas' : 'Belum Lunas' }}
                                 </span>
                             </p>
-
+                            <p><strong>Status Servis:</strong>
+                                <span class="badge"
+                                    style="background-color: {{ $service->status ? '#28a745' : '#FBA518' }}; color: #fff;">
+                                    {{ $service->status ? 'Selesai' : 'Belum selesai' }}
+                                </span>
+                            </p>
+                            <p><strong>Tipe Servis:</strong>
+                                <span class="badge" style="background-color: #28a745; color: #fff;">
+                                    {{ ucfirst($service->service_type == 'light' ? 'ringan' : ($service->service_type == 'medium' ? 'sedang' : 'berat')) }}
+                                </span>
+                            </p>
+                            
                             <!-- Informasi Teknisi -->
                             <p><strong>Nama Teknisi:</strong> {{ $service->technician_name }}</p>
 

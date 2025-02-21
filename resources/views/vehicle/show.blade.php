@@ -1,3 +1,4 @@
+
 @extends('layouts.app')
 
 @section('content')
@@ -22,7 +23,7 @@
             </div>
             <div class="col-md-4 animate__animated animate__slideInDown animate__delay-2s">
                 <label for="jenisKendaraan" class="form-label">
-                    <i class="bi bi-car-front"></i> Jenis Kendaraan
+                    <i class="bi bi-car-front"></i> tipe Kendaraan
                 </label>
                 <input type="text" class="form-control" id="jenisKendaraan" value="{{ $vehicle->vehicle_type }}" disabled>
             </div>
@@ -114,6 +115,12 @@
                                 </h6>
             
                                 <!-- Service Info -->
+                                @if ($service->status == 0)
+                                <p>status servis : belum selesai</p>
+                                @else
+                                <p>status servis : selesai</p>
+                                @endif
+                                
                                 <p class="text-muted text-light">Total Biaya</p>
                                 <p class="fw-bold">Rp. {{ number_format($service->total_cost, 0, ',', '.') }}</p>
             

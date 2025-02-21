@@ -13,11 +13,11 @@ class CreateServicesTable extends Migration
             $table->foreignId('vehicle_id')->constrained('vehicles')->cascadeOnDelete();
             $table->text('complaint'); // Keluhan servis
             $table->integer('current_mileage'); // Kilometer saat servis
-            $table->decimal('service_fee', 10, 2); // Biaya servis
+            $table->decimal('service_fee', 10, 2)->nullable(); // Biaya servis
             $table->date('service_date'); // Tanggal servis
-            $table->decimal('total_cost', 10, 2); // Total biaya
-            $table->decimal('payment_received', 10, 2); // Pembayaran diterima
-            $table->decimal('change', 10, 2); // Kembalian pembayaran
+            $table->decimal('total_cost', 10, 2)->nullable(); // Total biaya
+            $table->decimal('payment_received', 10, 2)->nullable(); // Pembayaran diterima
+            $table->decimal('change', 10, 2)->nullable(); // Kembalian pembayaran
             $table->enum('service_type', ['light', 'medium', 'heavy'])->default('light'); // Jenis servis
             // $table->string('status')->default('in progress'); // Status servis: 'in progress', 'completed', 'pending'
             $table->boolean('status')->default(false); // false = in progress, true = completed

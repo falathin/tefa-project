@@ -64,6 +64,7 @@ class DashboardController extends Controller
 
     public function index(Request $request)
     {
+        
         $today = now()->format('Y-m-d');
         $thisMonth = now()->format('m');
         $thisYear = now()->format('Y');
@@ -173,6 +174,7 @@ class DashboardController extends Controller
 
                 $monthlyCustomerData = Service::selectRaw('MONTH(service_date) as month, SUM(total_cost) as total_income')
                     ->whereYear('service_date', request('filterTahun', date('Y')))
+                    ->where('jurusan', 'like', $filterJurusan)
                     ->groupByRaw('MONTH(service_date)')
                     ->orderByRaw('MONTH(service_date)')
                     ->get()
@@ -308,6 +310,7 @@ class DashboardController extends Controller
                 });
 
                 $monthlyCustomerData = Service::selectRaw('MONTH(service_date) as month, SUM(total_cost) as total_income')
+                ->where('jurusan', 'like', $jurusanUser)
                 ->whereYear('service_date', request('filterTahun', date('Y')))
                 ->groupByRaw('MONTH(service_date)')
                 ->orderByRaw('MONTH(service_date)')
