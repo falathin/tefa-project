@@ -17,48 +17,50 @@ class DashboardController extends Controller
 
     public function filterJurusan(Request $request)
     {
-        // $paymentStatus = $request->get('payment_status', 'all');
-        // $request->session()->put('payment_status', $paymentStatus);
-
-        $jurusanUser = Auth::user()->jurusan;
-        $services = Service::all();
         $today = now()->format('Y-m-d');
-        $filterJurusan = $request->get('filterJurusan', 'semua');
-        $request->session()->put('filterJurusan', $filterJurusan);
-
-        if ($filterJurusan != 'semua') {
-            $dailyCustomerData = Service::whereDate('service_date', $today)
-                ->with(['customer', 'vehicle'])
-                ->where('jurusan', 'like', $filterJurusan)
-                ->get()
-                ->map(function ($service) {
-                    return [
-                        'customer_name' => $service->vehicle->customer->name ?? 'N/A',
-                        'vehicle' => $service->vehicle->vehicle_type ?? 'N/A',
-                        'income' => $service->total_cost,
-                        'service_time' => $service->created_at->format('H:i:s'), // Add service time
-                        'id' => $service->id
-                    ];
-                });
-        } else {
-            $dailyCustomerData = Service::whereDate('service_date', $today)
-                ->with(['customer', 'vehicle'])
-                ->get()
-                ->map(function ($service) {
-                    return [
-                        'customer_name' => $service->vehicle->customer->name ?? 'N/A',
-                        'vehicle' => $service->vehicle->vehicle_type ?? 'N/A',
-                        'income' => $service->total_cost,
-                        'service_time' => $service->created_at->format('H:i:s'), // Add service time
-                        'id' => $service->id
-                    ];
-                });
+        $selectedMonth = $request->get('filterBulan', now()->format('Y-m'));
+        $selectedYear = date('Y', strtotime($selectedMonth));
+        $selectedJurusan = $request->get('filterJurusan', 'semua');
+    
+        $request->session()->put('filterJurusan', $selectedJurusan);
+        $request->session()->put('filterBulan', $selectedMonth);
+    
+        // Query untuk data harian
+        $dailyQuery = Service::whereDate('service_date', $today)
+            ->with(['customer', 'vehicle']);
+    
+        // Query untuk data bulanan
+        $monthlyQuery = Service::whereYear('service_date', $selectedYear)
+            ->whereMonth('service_date', date('m', strtotime($selectedMonth)));
+    
+        // Terapkan filter jurusan jika tidak "semua"
+        if ($selectedJurusan !== 'semua') {
+            $dailyQuery->where('jurusan', $selectedJurusan);
+            $monthlyQuery->where('jurusan', $selectedJurusan);
         }
-
+    
+        // Ambil data harian
+        $dailyCustomerData = $dailyQuery->get()->map(function ($service) {
+            return [
+                'customer_name' => $service->vehicle->customer->name ?? 'N/A',
+                'vehicle' => $service->vehicle->vehicle_type ?? 'N/A',
+                'income' => $service->total_cost,
+                'service_time' => $service->created_at->format('H:i:s'),
+                'id' => $service->id
+            ];
+        });
+    
         $totalDailyIncome = $dailyCustomerData->sum('income');
-
-        return view('tab/demographics', compact('dailyCustomerData', 'totalDailyIncome', 'services'));
-    }
+    
+        // Ambil data bulanan dan kelompokkan per bulan
+        $filteredMonthlyCustomerData = $monthlyQuery->get()->groupBy(function ($service) {
+            return date('m', strtotime($service->service_date));
+        })->map(function ($services) {
+            return $services->sum('total_cost');
+        });
+    
+        return view('tab/demographics', compact('dailyCustomerData', 'totalDailyIncome', 'filteredMonthlyCustomerData', 'selectedYear'));
+    }    
 
     public function index(Request $request)
     {
@@ -168,6 +170,14 @@ class DashboardController extends Controller
                             'id' => $service->id
                         ];
                     });
+
+                $monthlyCustomerData = Service::selectRaw('MONTH(service_date) as month, SUM(total_cost) as total_income')
+                    ->whereYear('service_date', request('filterTahun', date('Y')))
+                    ->groupByRaw('MONTH(service_date)')
+                    ->orderByRaw('MONTH(service_date)')
+                    ->get()
+                    ->keyBy('month');
+                
             } else {
                 $dailyCustomerData = Service::whereDate('service_date', $today)
                     ->with(['customer', 'vehicle'])
@@ -181,6 +191,14 @@ class DashboardController extends Controller
                             'id' => $service->id
                         ];
                     });
+
+                $monthlyCustomerData = Service::selectRaw('MONTH(service_date) as month, SUM(total_cost) as total_income')
+                    ->whereYear('service_date', request('filterTahun', date('Y')))
+                    ->groupByRaw('MONTH(service_date)')
+                    ->orderByRaw('MONTH(service_date)')
+                    ->get()
+                    ->keyBy('month');
+                
             }
 
             $totalDailyIncome = $dailyCustomerData->sum('income');
@@ -289,21 +307,15 @@ class DashboardController extends Controller
                     ];
                 });
 
-                $monthlyIncome = Service::whereDate('service_date', $thisMonth)
-                ->with(['customer', 'vehicle'])
-                ->where('jurusan', 'like', $jurusanUser)
+                $monthlyCustomerData = Service::selectRaw('MONTH(service_date) as month, SUM(total_cost) as total_income')
+                ->whereYear('service_date', request('filterTahun', date('Y')))
+                ->groupByRaw('MONTH(service_date)')
+                ->orderByRaw('MONTH(service_date)')
                 ->get()
-                ->map(function ($service) {
-                    return [
-                        'customer_name' => $service->vehicle->customer->name ?? 'N/A',
-                        'vehicle' => $service->vehicle->vehicle_type ?? 'N/A',
-                        'income' => $service->total_cost,
-                        'service_time' => $service->created_at->format('H:i:s'), // Add service time
-                        'id' => $service->id
-                    ];
-                });
+                ->keyBy('month');                   
 
             $totalDailyIncome = $dailyCustomerData->sum('income');
+            $totalMonthlyIncome = $monthlyCustomerData->sum('income');
         }
 
         $totalSparepartsUsed = ServiceSparepart::whereHas('service', function ($query) use ($today) {
@@ -348,9 +360,11 @@ class DashboardController extends Controller
             'serviceIncomeMonthly',
             'serviceIncomeYearly',
             'dailyCustomerData',
+            'monthlyCustomerData',
             'totalDailyIncome',
+            'totalMonthlyIncome',
             'services',
-            'monthlyIncome',
+            // 'monthlyIncome'
         ));
     }
 }

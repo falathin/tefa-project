@@ -1,5 +1,5 @@
 @extends('layouts.app') @section('content')
-@if (session('statusBerhasil'))
+    @if (session('statusBerhasil'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             {{ session('statusBerhasil') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -28,38 +28,64 @@
                         <div class="d-sm-flex align-items-center justify-content-between border-bottom">
                             <ul class="nav nav-tabs" role="tablist">
                                 <li class="nav-item">
-                                    <a class="nav-link active ps-0" id="home-tab" data-bs-toggle="tab" href="#overview" role="tab" aria-controls="overview" aria-selected="true">
+                                    <a class="nav-link active ps-0" id="home-tab" data-bs-toggle="tab" href="#overview"
+                                        role="tab" aria-controls="overview" aria-selected="true">
                                         <i class="fas fa-home"></i> Gambaran Umum
                                     </a>
                                 </li>
-                                <li class="nav-item">
+                                {{-- <li class="nav-item">
                                     <a class="nav-link" id="contact-tab" data-bs-toggle="tab" href="#demographics" role="tab" aria-controls="demographics" aria-selected="false">
                                         <i class="fas fa-chart-line"></i> Laporan Harian Servis
+                                    </a>
+                                </li> --}}
+                                <li class="nav-item">
+                                    <a class="nav-link" id="contact-tab" data-bs-toggle="tab" href="#more" role="tab"
+                                        aria-controls="more" aria-selected="false">
+                                        <i class="fas fa-chart-line"></i> Laporan Servis
                                     </a>
                                 </li>
                             </ul>
                             <div>
                                 <div class="btn-wrapper">
                                     <a href="#" class="btn btn-outline-dark align-items-center" id="shareBtn">
-                                        <i class="icon-share"></i> Bagikan
+                                        <i class="fas fa-share-alt"></i> Bagikan
                                     </a>
+                                    <script>
+                                        document.getElementById('shareBtn').addEventListener('click', function() {
+                                            const url = window.location.href; // Mengambil URL halaman saat ini
+                                            if (navigator.share) {
+                                                navigator.share({
+                                                    title: document.title,
+                                                    text: 'Lihat laporan pemasukan servis ini!',
+                                                    url: url
+                                                }).then(() => {
+                                                    console.log('Berhasil dibagikan!');
+                                                }).catch((error) => {
+                                                    console.log('Gagal membagikan:', error);
+                                                });
+                                            } else {
+                                                // Jika browser tidak mendukung Web Share API
+                                                prompt('Salin link ini untuk dibagikan:', url);
+                                            }
+                                        });
+                                    </script>
                                     <a href="#" class="btn btn-outline-dark" id="printBtn">
                                         <i class="icon-printer"></i> Cetak
                                     </a>
-                                    
+
                                     <script>
                                         document.getElementById("printBtn").addEventListener("click", function() {
                                             const userName = prompt("Masukkan nama Anda:");
                                             const footerContent = userName ? `Nama: ${userName}` : "Nama tidak diberikan";
-                                            
+
                                             const dailyIncome = "Rp. {{ number_format($serviceIncomeDaily, 2, ',', '.') }}";
                                             const monthlyIncome = "Rp. {{ number_format($serviceIncomeMonthly, 2, ',', '.') }}";
                                             const totalUnpaid = "Rp. {{ number_format($totalUnpaid, 2, ',', '.') }}";
                                             const yearlyIncome = "Rp. {{ number_format($serviceIncomeYearly, 2, ',', '.') }}";
-                                            
+
                                             const printContent = `
                                                 <h2 style="text-align:center; color:#007bff; font-size:24px; font-weight:700; margin:0;">Detail Cetak</h2>
-                                                <img src="{{ asset('assets/images/logo-mini.svg')}}" alt="Logo" style="display:block; margin:0 auto; width:150px; height:auto; margin-top:10px;">
+                                                <img src="{{ asset('assets/images/logo-mini.svg') }}" alt="Logo" style="display:block; margin:0 auto; width:150px; height:auto; margin-top:10px;">
                                                 <div style="margin: 20px 0; padding: 10px; text-align:center; font-size: 16px; border-bottom: 2px dashed #007bff;">
                                                     <strong>Nama Pengguna</strong>: ${userName}
                                                 </div>
@@ -93,7 +119,7 @@
                                                     Terima Kasih atas kunjungan Anda!
                                                 </div>
                                             `;
-                                    
+
                                             const printWindow = window.open('', '', 'height=1130,width=850');
                                             printWindow.document.write(`
                                                 <html><head><title>Print Preview</title>
