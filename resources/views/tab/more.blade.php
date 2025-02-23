@@ -1,47 +1,43 @@
-<div class="container animate__animated animate__fadeIn">
+<div class="container">
     <h2 class="text-center mb-4">
-        <i class="fas fa-file-invoice-dollar me-2"></i> Laporan Pemasukan Servis
+        <i class="fas fa-file-invoice-dollar me-2"></i>Laporan Pemasukan Servis
     </h2>
 
     @if (Gate::allows('isBendahara'))
         <form method="GET" action="{{ route('dashboard') }}" class="mb-3 row g-3">
-            <div class="col-md-3 mb-4 animate__animated animate__fadeInLeft">
+            <div class="col-12 col-md-3 mb-4">
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-credit-card"></i></span>
-                    <select name="filterJurusan" class="form-select" onchange="this.form.submit()">
-                        <option value="semua" {{ request('filterJurusan', 'semua') === 'semua' ? 'selected' : '' }}>🔄
-                            Semua Jurusan</option>
-                        <option value="TSM" {{ request('filterJurusan') === 'TSM' ? 'selected' : '' }}>🏍️ TSM
-                        </option>
-                        <option value="TKRO" {{ request('filterJurusan') === 'TKRO' ? 'selected' : '' }}>🚗 TKRO
-                        </option>
+                    <select name="filterJurusan" id="filterJurusan" class="form-select" onchange="this.form.submit()">
+                        <option value="semua" {{ session('filterJurusan') === 'semua' ? 'selected' : '' }}>Semua
+                            Jurusan</option>
+                        <option value="TSM" {{ session('filterJurusan') === 'TSM' ? 'selected' : '' }}>TSM</option>
+                        <option value="TKRO" {{ session('filterJurusan') === 'TKRO' ? 'selected' : '' }}>TKRO</option>
                     </select>
                 </div>
             </div>
-            <div class="col-md-3 mb-4 animate__animated animate__fadeInRight">
+            <div class="col-12 col-md-3 mb-4">
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
-                    <input type="month" name="filterBulan" class="form-control"
-                        value="{{ request('filterBulan', now()->format('Y-m')) }}" onchange="this.form.submit()">
+                    <input type="month" name="filterBulan" id="filterBulan" class="form-control"
+                        value="{{ session('filterBulan', now()->format('Y-m')) }}" onchange="this.form.submit()">
                 </div>
             </div>
         </form>
     @endif
 
-    <ul class="nav nav-tabs mb-3 animate__animated animate__bounce">
+    <ul class="nav nav-tabs mb-3">
         <li class="nav-item">
-            <a class="nav-link active" data-bs-toggle="tab" href="#daily"><i class="fas fa-calendar-day"></i>
-                Harian</a>
+            <a class="nav-link active" data-bs-toggle="tab" href="#daily">Harian</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="tab" href="#monthly"><i class="fas fa-calendar-alt"></i> Bulanan</a>
+            <a class="nav-link" data-bs-toggle="tab" href="#monthly">Bulanan</a>
         </li>
     </ul>
 
     <div class="tab-content">
-        <!-- TABEL HARIAN -->
         <div class="tab-pane fade show active" id="daily">
-            <table class="table table-bordered table-hover animate__animated animate__fadeInUp">
+            <table class="table table-bordered table-hover">
                 <thead class="table-dark">
                     <tr>
                         <th>Nama Pelanggan</th>
@@ -58,8 +54,12 @@
                             <td>{{ $data['vehicle'] }}</td>
                             <td class="text-success fw-bold">Rp {{ number_format($data['income'], 0, ',', '.') }}</td>
                             <td>{{ $data['service_time'] }}</td>
-                            <td><a href="{{ route('service.show', $data['id']) }}" class="btn btn-primary btn-sm"><i
-                                        class="fas fa-eye"></i> Detail</a></td>
+                            <td>
+                                <a href="{{ route('service.show', $data['id']) }}"
+                                    class="btn btn-primary text-light btn-sm">
+                                    <i class="fas fa-eye"></i> Detail
+                                </a>
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -72,10 +72,8 @@
                 </tfoot>
             </table>
         </div>
-
-        <!-- TABEL BULANAN -->
         <div class="tab-pane fade" id="monthly">
-            <table class="table table-bordered table-hover animate__animated animate__fadeInUp">
+            <table class="table table-bordered table-hover">
                 <thead class="table-dark">
                     <tr>
                         <th>Bulan</th>
@@ -84,10 +82,6 @@
                 </thead>
                 <tbody>
                     @php
-                        $selectedYear = request('filterBulan')
-                            ? date('Y', strtotime(request('filterBulan')))
-                            : date('Y');
-                        $totalAllMonths = 0;
                         $allMonths = [
                             'Januari',
                             'Februari',
@@ -102,18 +96,24 @@
                             'November',
                             'Desember',
                         ];
+                        $totalAllMonths = 0; // Variabel untuk menghitung total pemasukan tahunan
+                        $selectedYear = request()->input('filterTahun', date('Y')); // Ambil tahun dari request atau default tahun sekarang
                     @endphp
+
                     @foreach ($allMonths as $index => $month)
                         @php
-                            $monthKey = str_pad($index + 1, 2, '0', STR_PAD_LEFT);
-                            $income = $filteredMonthlyCustomerData[$monthKey] ?? 0;
-                            $totalAllMonths += $income;
+                            $monthKey = $index + 1; // Bulan dalam format 1-12
+                            $income = $monthlyCustomerData[$monthKey]->total_income ?? 0;
+                            $totalAllMonths += $income; // Tambahkan income ke total tahunan
                         @endphp
                         <tr>
-                            <td>📆 {{ $month }} {{ $selectedYear }}</td>
-                            <td class="text-success fw-bold">Rp {{ number_format($income, 0, ',', '.') }}</td>
+                            <td>{{ $month }} {{ $selectedYear }}</td>
+                            <td class="{{ $income > 0 ? 'text-success fw-bold' : 'text-muted' }}">
+                                Rp {{ number_format($income, 0, ',', '.') }}
+                            </td>
                         </tr>
                     @endforeach
+
 
                 </tbody>
                 <tfoot>
@@ -124,11 +124,13 @@
                 </tfoot>
             </table>
         </div>
+
+
     </div>
 
-    <div class="d-flex justify-content-end mt-3 animate__animated animate__zoomIn">
-        <button onclick="printTable()" class="btn btn-success text-light animate__animated animate__rubberBand">
-            <i class="fas fa-print me-2"></i> Cetak
+    <div class="d-flex justify-content-end mt-3">
+        <button onclick="printTable()" class="btn btn-success text-light">
+            <i class="fas fa-print me-2"></i>Cetak
         </button>
     </div>
 </div>
