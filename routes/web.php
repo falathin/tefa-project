@@ -111,8 +111,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [ServiceController::class, 'index'])->name('index');
         Route::get('create/{vehicle_id}', [ServiceController::class, 'create'])->name('create');
 
-        Route::post('/', [ServiceController::class, 'store'])->name('store');
-        Route::post('/', [ServiceController::class, 'store'])->name('store-2');
+        Route::post('/', [ServiceController::class, 'store'])->name('storeServis');
+        Route::post('/s', [ServiceController::class, 'storePayment'])->name('storePayment');
 
         Route::get('{id}', [ServiceController::class, 'show'])->name('show');
         Route::get('{id}/edit', [ServiceController::class, 'edit'])->name('edit');

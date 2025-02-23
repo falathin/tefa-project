@@ -80,7 +80,7 @@
                                     {{ ucfirst($service->service_type == 'light' ? 'ringan' : ($service->service_type == 'medium' ? 'sedang' : 'berat')) }}
                                 </span>
                             </p>
-                            
+
                             <!-- Informasi Teknisi -->
                             <p><strong>Nama Teknisi:</strong> {{ $service->technician_name }}</p>
 
@@ -284,64 +284,82 @@
                     </table>
                 </div>
 
+                {{-- informasi pembayaran --}}
                 <h6 class="mb-3 mt-3 animate__animated animate__fadeInUp"
                     style="animation-duration: 1.5s; animation-delay: 0.8s; color: #6c757d;">
                     <i class="mdi mdi-cash"></i> Informasi Pembayaran
                 </h6>
-                <div class="table-responsive border p-3 rounded shadow-sm bg-white">
-                    <div class="row gx-3">
-                        <div class="col-md-6 col-sm-12 mb-3">
-                            <label for="service_fee" class="form-label">Jasa Pelayanan</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
-                                <input type="number" name="service_fee" class="form-control" id="service_fee"
-                                    placeholder="Masukkan Biaya Jasa" value="{{ old('service_fee') }}" required>
+                <form action={{ route('service.storePayment', $service->id) }} method="POST">
+                    @csrf
+                    @method('PUT')
+                    <div class="table-responsive border p-3 rounded shadow-sm bg-white">
+                        <div class="row gx-3">
+                            <div class="col-md-6 col-sm-12 mb-3">
+                                <label for="service_fee" class="form-label">Jasa Pelayanan</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
+                                    <input type="text" class="form-control" id="service_fee"
+                                        placeholder="Masukkan Biaya Jasa" value="{{ old('service_fee') }}">
+                                    {{-- buat controller php --}}
+                                    <input type="hidden" name="service_fee" id="service_fee_asli">
+                                </div>
+                                @error('service_fee')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
-                            @error('service_fee')
-                                <div class="text-danger">{{ $message }}</div>
-                            @enderror
+
+                            <div class="col-md-6 col-sm-12 mb-3">
+                                <label for="total_cost" class="form-label">Total Biaya</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-calculator"></i></span>
+                                    <input type="text" id="total_cost" class="form-control" readonly
+                                        placeholder="Total biaya" value="{{ old('total_cost') }}">
+                                    {{-- buat controller php --}}
+                                    <input type="hidden" name="total_cost" id="total_cost_asli">
+                                </div>
+                                @error('total_cost')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
                         </div>
-                
-                        <div class="col-md-6 col-sm-12 mb-3">
-                            <label for="total_cost" class="form-label">Total Biaya</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-calculator"></i></span>
-                                <input type="number" name="total_cost" id="total_cost" class="form-control" readonly
-                                    placeholder="Total biaya" value="{{ old('total_cost') }}" required>
+
+                        <div class="row gx-3">
+                            <div class="col-md-6 col-sm-12 mb-3">
+                                <label for="payment_received" class="form-label">Pembayaran Diterima</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-credit-card"></i></span>
+                                    <input type="text" name="payment_received" id="payment_received"
+                                        class="form-control" placeholder="Jumlah pembayaran diterima"
+                                        value="{{ old('payment_received') }}">
+                                    {{-- buat controller php --}}
+                                    <input type="hidden" name="payment_received" id="payment_received_asli">
+                                </div>
+                                @error('payment_received')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
-                            @error('total_cost')
-                                <div class="text-danger">{{ $message }}</div>
-                            @enderror
+
+                            <div class="col-md-6 col-sm-12 mb-3">
+                                <label for="change" class="form-label">Kembalian</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
+                                    <input type="text" name="change" id="change" class="form-control" readonly
+                                        placeholder="Kembalian" value="{{ old('change') }}">
+                                    {{-- buat controller php --}}
+                                    <input type="hidden" name="change" id="change_asli">
+                                </div>
+                                @error('change')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <button type="submit">Kirim</button>
                         </div>
                     </div>
-                
-                    <div class="row gx-3">
-                        <div class="col-md-6 col-sm-12 mb-3">
-                            <label for="payment_received" class="form-label">Pembayaran Diterima</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-credit-card"></i></span>
-                                <input type="number" name="payment_received" id="payment_received" class="form-control"
-                                    placeholder="Jumlah pembayaran diterima" value="{{ old('payment_received') }}" required>
-                            </div>
-                            @error('payment_received')
-                                <div class="text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-                
-                        <div class="col-md-6 col-sm-12 mb-3">
-                            <label for="change" class="form-label">Kembalian</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
-                                <input type="number" name="change" id="change" class="form-control" readonly
-                                    placeholder="Kembalian" value="{{ old('change') }}" required>
-                            </div>
-                            @error('change')
-                                <div class="text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-                </div>
-                
+                </form>
+
+                {{-- Menampilkan Total Harga Sparepart --}}
+                {{-- <h4>Total Sparepart: Rp {{ number_format($totalSparepart, 0, ',', '.') }}</h4> --}}
+
                 <br><br>
                 <!-- Action Buttons -->
                 <div class="mt-3 d-flex flex-wrap gap-2 align-items-center animate__animated animate__fadeInUp"
@@ -386,6 +404,88 @@
             </div>
         </div>
     </div>
+
+    <script>
+        let spareparts = @json($service->serviceSpareparts);
+
+        let totalSparepart = spareparts.reduce((total, item) => {
+            return total + (item.sparepart.harga_jual * item.quantity);
+        }, 0);
+
+        // console.log("Total Harga Sparepart:", totalSparepart);
+
+        function formatRibuan(angka) {
+            return new Intl.NumberFormat("id-ID").format(angka);
+        }
+
+        function total_cost() {
+            let inputJasa = document.getElementById("service_fee").value.replace(/\D/g, "") || 0;
+            let inputSparepart = totalSparepart;
+
+            let total = parseInt(inputJasa) + parseInt(inputSparepart);
+            document.getElementById("total_cost").value = formatRibuan(total);
+        }
+
+        function 
+
+        document.getElementById("service_fee").addEventListener("input", function() {
+            this.value = formatRibuan(this.value.replace(/\D/g, ""));
+            total_cost();
+        });
+
+        // document.getElementById("payment_received").addEventListener("input", function() {
+        // this.value = formatRibuan(this.value.replace(/\D/g, ""));
+        // hitungTotal();
+        // });
+    </script>
+
+    {{-- contoh untuk kirim data buat controller --}}
+    {{--     
+    <input type="text" id="angka" placeholder="Masukkan angka">
+    <input type="hidden" id="angkaAsli" name="angka">
+
+    <script>
+        document.getElementById("angka").addEventListener("input", function() {
+            let angka = this.value.replace(/\D/g, ""); // Hapus semua selain angka
+            let angkaFormatted = new Intl.NumberFormat("id-ID").format(angka); // Format ribuan
+            this.value = angkaFormatted;
+
+            // Simpan angka tanpa titik ke input hidden untuk dikirim ke backend
+            document.getElementById("angkaAsli").value = angka;
+        });
+    </script>
+ --}}
+
+    {{-- contoh buat 2 input --}}
+    {{-- 
+    <input type="text" id="angka1" placeholder="Masukkan angka 1">
+    <input type="text" id="angka2" placeholder="Masukkan angka 2">
+    <input type="text" id="hasil" placeholder="Hasil" readonly>
+
+    <script>
+        function formatRibuan(angka) {
+            return new Intl.NumberFormat("id-ID").format(angka);
+        }
+
+        function hitungTotal() {
+            let angka1 = document.getElementById("angka1").value.replace(/\D/g, "") || 0;
+            let angka2 = document.getElementById("angka2").value.replace(/\D/g, "") || 0;
+
+            let total = parseInt(angka1) + parseInt(angka2);
+            document.getElementById("hasil").value = formatRibuan(total);
+        }
+
+        document.getElementById("angka1").addEventListener("input", function() {
+            this.value = formatRibuan(this.value.replace(/\D/g, ""));
+            hitungTotal();
+        });
+
+        document.getElementById("angka2").addEventListener("input", function() {
+            this.value = formatRibuan(this.value.replace(/\D/g, ""));
+            hitungTotal();
+        });
+    </script>
+ --}}
     <script>
         document.getElementById('copyReportBtn').addEventListener('click', function() {
             var vehicleInfo =
