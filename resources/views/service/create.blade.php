@@ -5,7 +5,7 @@
         <div class="card shadow-lg border-0 rounded-3">
             <div class="card-body">
                 <h4 class="text-center mb-4">Tambah Service untuk Kendaraan: {{ $vehicle->license_plate }}</h4>
-                <form method="POST" action='{{ route('service.store-2') }}'>
+                <form method="POST" action='{{ route('service.storeServis') }}'>
                     @csrf
 
                     <input type="hidden" name="jurusan" id="jurusan" value="{{ Auth::user()->jurusan }}">
@@ -231,7 +231,7 @@
                 row.querySelector('.subtotal').value = subtotal.toFixed(2);
                 updateTotalBiaya();
             }
-
+ 
             // Show modal with custom message
             function showModalMessage(message) {
                 const validationMessage = document.getElementById('validationMessage');

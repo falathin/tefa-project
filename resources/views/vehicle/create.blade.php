@@ -20,13 +20,12 @@
                         <div class="col-md-6">
                             <label for="brand" class="form-label">Merk</label>
                             <input type="text" class="form-control @error('brand') is-invalid @enderror" id="brand"
-                                name="brand" value="{{ old('brand') }}">
-                            @error('brand')
+                                name="brand" value="{{ old('brand') }}"> @error('brand')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
                         <div class="col-md-6">
-                            <label for="vehicle_type" class="form-label">Jenis Kendaraan</label>
+                            <label for="vehicle_type" class="form-label">Tipe Kendaraan</label>
                             <input type="text" class="form-control @error('vehicle_type') is-invalid @enderror"
                                 id="vehicle_type" name="vehicle_type" value="{{ old('vehicle_type') }}" required>
                             @error('vehicle_type')

@@ -72,6 +72,8 @@
                 </tfoot>
             </table>
         </div>
+
+        
         <div class="tab-pane fade" id="monthly">
             <table class="table table-bordered table-hover">
                 <thead class="table-dark">
@@ -143,7 +145,7 @@
     document.addEventListener("DOMContentLoaded", function() {
         let activeTab = localStorage.getItem("activeTab");
         if (activeTab) {
-            let tabElement = new bootstrap.Tab(document.querySelector(`[href="${activeTab}"]`));
+            let tabElement = new bootstrap.Tab(document.querySelector([href="${activeTab}"]));
             tabElement.show();
         }
         document.querySelectorAll('a[data-bs-toggle="tab"]').forEach(tab => {

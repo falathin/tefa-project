@@ -362,11 +362,11 @@
                         // Handle service_fee change
                         document.getElementById('service_fee').addEventListener('input', updateTotalBiaya);
                         $(document).ready(function() {
-    $('.sparepart_id').select2();
+                            $('.sparepart_id').select2();
 
-    $('#addRow').on('click', function() {
-        const tableBody = $('#sparepartTable tbody');
-        const newRow = $(`
+                            $('#addRow').on('click', function() {
+                                const tableBody = $('#sparepartTable tbody');
+                                const newRow = $(`
             <tr>
                 <td>
                     <select name="sparepart_id[]" class="form-control sparepart_id">
@@ -385,58 +385,60 @@
             </tr>
         `);
 
-        // Tambahkan row ke dalam tabel
-        tableBody.append(newRow);
+                                // Tambahkan row ke dalam tabel
+                                tableBody.append(newRow);
 
-        // Terapkan Select2 ke elemen yang baru dibuat
-        newRow.find('.sparepart_id').select2();
+                                // Terapkan Select2 ke elemen yang baru dibuat
+                                newRow.find('.sparepart_id').select2();
 
-        // Event listener untuk perubahan pada dropdown sparepart
-        newRow.find('.sparepart_id').on('change', function() {
-            const selectedOption = $(this).find('option:selected');
-            const price = selectedOption.attr('data-harga') || 0; // Ambil harga sparepart dengan attr()
-            newRow.find('.harga').val(parseFloat(price).toFixed(2)); // Tampilkan harga
-            calculateSubtotal(newRow);
-        });
+                                // Event listener untuk perubahan pada dropdown sparepart
+                                newRow.find('.sparepart_id').on('change', function() {
+                                    const selectedOption = $(this).find('option:selected');
+                                    const price = selectedOption.attr('data-harga') ||
+                                        0; // Ambil harga sparepart dengan attr()
+                                    newRow.find('.harga').val(parseFloat(price).toFixed(
+                                        2)); // Tampilkan harga
+                                    calculateSubtotal(newRow);
+                                });
 
-        // Event listener untuk input jumlah
-        newRow.find('.jumlah').on('input', function() {
-            calculateSubtotal(newRow);
-        });
+                                // Event listener untuk input jumlah
+                                newRow.find('.jumlah').on('input', function() {
+                                    calculateSubtotal(newRow);
+                                });
 
-        // Event listener untuk tombol hapus baris
-        newRow.find('.remove-row').on('click', function() {
-            newRow.remove();
-            updateTotalBiaya();
-        });
-    });
+                                // Event listener untuk tombol hapus baris
+                                newRow.find('.remove-row').on('click', function() {
+                                    newRow.remove();
+                                    updateTotalBiaya();
+                                });
+                            });
 
-    // Fungsi untuk menghitung subtotal
-    function calculateSubtotal(row) {
-        const price = parseFloat(row.find('.harga').val()) || 0;
-        const quantity = parseInt(row.find('.jumlah').val()) || 1;
-        const subtotal = price * quantity;
-        row.find('.subtotal').val(subtotal.toFixed(2));
-        updateTotalBiaya();
-    }
+                            // Fungsi untuk menghitung subtotal
+                            function calculateSubtotal(row) {
+                                const price = parseFloat(row.find('.harga').val()) || 0;
+                                const quantity = parseInt(row.find('.jumlah').val()) || 1;
+                                const subtotal = price * quantity;
+                                row.find('.subtotal').val(subtotal.toFixed(2));
+                                updateTotalBiaya();
+                            }
 
-    // Fungsi untuk update total biaya
-    function updateTotalBiaya() {
-        let total = 0;
-        $('.subtotal').each(function() {
-            total += parseFloat($(this).val()) || 0;
-        });
-        $('#totalBiaya').text(total.toFixed(2));
-    }
+                            // Fungsi untuk update total biaya
+                            function updateTotalBiaya() {
+                                let total = 0;
+                                $('.subtotal').each(function() {
+                                    total += parseFloat($(this).val()) || 0;
+                                });
+                                $('#totalBiaya').text(total.toFixed(2));
+                            }
 
-    // Event listener untuk tombol hapus pada elemen yang sudah ada
-    $(document).on('click', '.remove-row', function() {
-        $(this).closest('tr').remove();
-        updateTotalBiaya();
-    });
+                            // Event listener untuk tombol hapus pada elemen yang sudah ada
+                            $(document).on('click', '.remove-row', function() {
+                                $(this).closest('tr').remove();
+                                updateTotalBiaya();
+                            });
 
-    updateTotalBiaya();
-});
+                            updateTotalBiaya();
+                        });
 
                         document.querySelectorAll('.removeRow').forEach(function(button) {
                             button.addEventListener('click', function() {
