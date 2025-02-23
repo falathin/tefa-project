@@ -107,6 +107,29 @@ class ServiceController extends Controller
         $spareparts = Sparepart::all(); // Get all spare parts
         return view('service.edit', compact('service', 'spareparts'));
     }
+
+    public function storePayment(Request $request)
+    {
+        $request->validate([
+            'vehicle_id' => 'required|exists:vehicles,id',
+            'service_fee' => 'required|numeric',
+            'total_cost' => 'required|numeric',
+            'payment_received' => 'required|numeric',
+            'change' => 'required|numeric',
+        ], [
+            'vehicle_id.required' => 'ID kendaraan harus dipilih.',
+            'vehicle_id.exists' => 'Kendaraan tidak ditemukan.',
+            'service_fee.required' => 'Biaya layanan harus diisi.',
+            'service_fee.numeric' => 'Biaya layanan harus berupa angka.',
+            'total_cost.required' => 'Biaya total harus diisi.',
+            'total_cost.numeric' => 'Biaya total harus berupa angka.',
+            'payment_received.required' => 'Pembayaran yang diterima harus diisi.',
+            'payment_received.numeric' => 'Pembayaran yang diterima harus berupa angka.',
+            'change.required' => 'Kembalian harus diisi.',
+            'change.numeric' => 'Kembalian harus berupa angka.',
+        ]);
+    }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -194,28 +217,6 @@ class ServiceController extends Controller
 
         return redirect()->route('vehicle.show', $service->vehicle_id)
             ->with('success', 'Layanan berhasil dibuat!');
-    }
-
-    public function storePayment(Request $request)
-    {
-        $request->validate([
-            'vehicle_id' => 'required|exists:vehicles,id',
-            'service_fee' => 'required|numeric',
-            'total_cost' => 'required|numeric',
-            'payment_received' => 'required|numeric',
-            'change' => 'required|numeric',
-        ], [
-            'vehicle_id.required' => 'ID kendaraan harus dipilih.',
-            'vehicle_id.exists' => 'Kendaraan tidak ditemukan.',
-            'service_fee.required' => 'Biaya layanan harus diisi.',
-            'service_fee.numeric' => 'Biaya layanan harus berupa angka.',
-            'total_cost.required' => 'Biaya total harus diisi.',
-            'total_cost.numeric' => 'Biaya total harus berupa angka.',
-            'payment_received.required' => 'Pembayaran yang diterima harus diisi.',
-            'payment_received.numeric' => 'Pembayaran yang diterima harus berupa angka.',
-            'change.required' => 'Kembalian harus diisi.',
-            'change.numeric' => 'Kembalian harus berupa angka.',
-        ]);
     }
 
     public function update(Request $request, $id)

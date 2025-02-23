@@ -3,10 +3,10 @@
 @section('content')
     <div class="container mt-5">
         <!-- Card Container -->
-        <div class="card shadow-lg border-0 animate__animated animate__fadeIn animate__delay-1s"
+        <div class="card shadow-lg border-0 animate_animated animatefadeIn animate_delay-1s"
             style="animation-duration: 1.5s; background-color: #f9fafb;">
             <!-- Card Header -->
-            <div class="card-header text-white text-center py-3 animate__animated animate__fadeInDown"
+            <div class="card-header text-white text-center py-3 animate_animated animate_fadeInDown"
                 style="animation-duration: 1.5s; animation-delay: 0.2s; background-color: #007bff;">
                 <h4 class="mb-0"><i class="mdi mdi-wrench"></i> Detail Servis</h4>
             </div>
@@ -14,7 +14,7 @@
             <!-- Card Body -->
             <div class="card-body">
                 <!-- Informasi Kendaraan -->
-                <h5 class="card-title text-center mb-4 animate__animated animate__zoomIn"
+                <h5 class="card-title text-center mb-4 animate_animated animate_zoomIn"
                     style="animation-duration: 1.5s; color: #007bff; font-weight: bold;">
                     Kendaraan: <strong>{{ $service->vehicle->license_plate }}</strong>
                     <span class="badge" style="background-color: #17a2b8; color: #fff; font-size: 0.9em;">
@@ -26,7 +26,7 @@
                     <!-- Kolom Kiri -->
                     <div class="col-12 col-md-6 mb-4 mb-md-0">
                         <!-- Informasi Kendaraan -->
-                        <div class="border p-3 rounded shadow-sm bg-white animate__animated animate__fadeInLeft"
+                        <div class="border p-3 rounded shadow-sm bg-white animate_animated animate_fadeInLeft"
                             style="animation-duration: 1.5s; animation-delay: 0.5s; border-color: #e3e6f0;">
                             <h6 class="text-muted"><i class="mdi mdi-car"></i> Informasi Kendaraan</h6>
                             <p><strong>Warna:</strong> {{ $service->vehicle->color }}</p>
@@ -35,7 +35,7 @@
                         </div>
 
                         <!-- Informasi Pelanggan -->
-                        <div class="border p-3 rounded shadow-sm bg-white mt-4 animate__animated animate__fadeInLeft"
+                        <div class="border p-3 rounded shadow-sm bg-white mt-4 animate_animated animate_fadeInLeft"
                             style="animation-duration: 1.5s; animation-delay: 0.7s; border-color: #e3e6f0;">
                             <h6 class="text-muted"><i class="mdi mdi-account"></i> Informasi Pelanggan</h6>
                             <p><strong>Nama:</strong> {{ $service->vehicle->customer->name }}</p>
@@ -47,7 +47,7 @@
                     <!-- Kolom Kanan -->
                     <div class="col-12 col-md-6 mb-4 mb-md-0">
                         <!-- Informasi Servis -->
-                        <div class="border p-3 rounded shadow-sm bg-white animate__animated animate__fadeInRight"
+                        <div class="border p-3 rounded shadow-sm bg-white animate_animated animate_fadeInRight"
                             style="animation-duration: 1.5s; animation-delay: 0.5s; border-color: #e3e6f0;">
                             <h6 class="text-muted"><i class="mdi mdi-information"></i> Informasi Servis</h6>
                             <p><strong>Keluhan:</strong> {{ $service->complaint }}</p>
@@ -100,7 +100,7 @@
                     </div>
                 </div>
 
-                <div class="border p-3 rounded shadow-sm bg-white animate__animated animate__fadeIn animate__delay-1s"
+                <div class="border p-3 rounded shadow-sm bg-white animate_animated animatefadeIn animate_delay-1s"
                     style="animation-duration: 1.5s; background-color: white; border-color: #e3e6f0;">
                     <div class="card-body">
                         <h6 class="mb-4 text-muted">
@@ -235,7 +235,9 @@
                             document.querySelectorAll('.edit-btn').forEach(button => {
                                 button.addEventListener('click', function() {
                                     const checklistId = this.getAttribute('data-id');
-                                    const formContainer = document.getElementById(`edit-form-container-${checklistId}`);
+                                    const formContainer = document.getElementById(edit - form - container - $ {
+                                        checklistId
+                                    });
                                     formContainer.style.display = formContainer.style.display === 'none' ? 'block' : 'none';
                                 });
                             });
@@ -243,7 +245,9 @@
                             document.querySelectorAll('.cancel-edit-btn').forEach(button => {
                                 button.addEventListener('click', function() {
                                     const checklistId = this.getAttribute('data-id');
-                                    const formContainer = document.getElementById(`edit-form-container-${checklistId}`);
+                                    const formContainer = document.getElementById(edit - form - container - $ {
+                                        checklistId
+                                    });
                                     formContainer.style.display = 'none';
                                 });
                             });
@@ -254,12 +258,12 @@
 
                 <br>
                 <!-- Informasi Sparepart -->
-                <h6 class="mb-3 mt-3 animate__animated animate__fadeInUp"
+                <h6 class="mb-3 mt-3 animate_animated animate_fadeInUp"
                     style="animation-duration: 1.5s; animation-delay: 0.8s; color: #6c757d;">
                     <i class="mdi mdi-tools"></i> Sparepart yang Digunakan
                 </h6>
                 <div class="table-responsive border p-3 rounded shadow-sm bg-white">
-                    <table class="table table-hover animate__animated animate__zoomIn"
+                    <table class="table table-hover animate_animated animate_zoomIn"
                         style="animation-duration: 1.5s; animation-delay: 0.9s;">
                         <thead style="background-color: #007bff; color: #fff;">
                             <tr>
@@ -270,7 +274,7 @@
                         </thead>
                         <tbody>
                             @forelse($service->serviceSpareparts as $serviceSparepart)
-                                <tr class="animate__animated animate__flipInX">
+                                <tr class="animate_animated animate_flipInX">
                                     <td>{{ $serviceSparepart->sparepart->nama_sparepart }}</td>
                                     <td>{{ $serviceSparepart->quantity }}</td>
                                     <td>Rp. {{ number_format($serviceSparepart->sparepart->harga_jual, 0, ',', '.') }}</td>
@@ -285,84 +289,124 @@
                 </div>
 
                 {{-- informasi pembayaran --}}
-                <h6 class="mb-3 mt-3 animate__animated animate__fadeInUp"
+                <h6 class="mb-3 mt-3 animate_animated animate_fadeInUp"
                     style="animation-duration: 1.5s; animation-delay: 0.8s; color: #6c757d;">
                     <i class="mdi mdi-cash"></i> Informasi Pembayaran
                 </h6>
-                <form action={{ route('service.storePayment', $service->id) }} method="POST">
+                <form action="{{ route('service.storePayment', $service->id) }}" method="POST" class="p-4 border rounded shadow bg-white">
                     @csrf
                     @method('PUT')
-                    <div class="table-responsive border p-3 rounded shadow-sm bg-white">
-                        <div class="row gx-3">
-                            <div class="col-md-6 col-sm-12 mb-3">
-                                <label for="service_fee" class="form-label">Jasa Pelayanan</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
-                                    <input type="text" class="form-control" id="service_fee"
-                                        placeholder="Masukkan Biaya Jasa" value="{{ old('service_fee') }}">
-                                    {{-- buat controller php --}}
-                                    <input type="hidden" name="service_fee" id="service_fee_asli">
-                                </div>
-                                @error('service_fee')
-                                    <div class="text-danger">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="col-md-6 col-sm-12 mb-3">
-                                <label for="total_cost" class="form-label">Total Biaya</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-calculator"></i></span>
-                                    <input type="text" id="total_cost" class="form-control" readonly
-                                        placeholder="Total biaya" value="{{ old('total_cost') }}">
-                                    {{-- buat controller php --}}
-                                    <input type="hidden" name="total_cost" id="total_cost_asli">
-                                </div>
-                                @error('total_cost')
-                                    <div class="text-danger">{{ $message }}</div>
-                                @enderror
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="service_fee" class="form-label fw-bold text-primary">Jasa Pelayanan</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-primary text-white"><i class="fas fa-dollar-sign"></i></span>
+                                <input type="text" class="form-control border-primary" id="service_fee" placeholder="Masukkan Biaya Jasa" value="{{ old('service_fee') }}">
+                                <input type="hidden" name="service_fee" id="service_fee_asli">
                             </div>
                         </div>
-
-                        <div class="row gx-3">
-                            <div class="col-md-6 col-sm-12 mb-3">
-                                <label for="payment_received" class="form-label">Pembayaran Diterima</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-credit-card"></i></span>
-                                    <input type="text" name="payment_received" id="payment_received"
-                                        class="form-control" placeholder="Jumlah pembayaran diterima"
-                                        value="{{ old('payment_received') }}">
-                                    {{-- buat controller php --}}
-                                    <input type="hidden" name="payment_received" id="payment_received_asli">
-                                </div>
-                                @error('payment_received')
-                                    <div class="text-danger">{{ $message }}</div>
-                                @enderror
+                        <div class="col-md-6">
+                            <label for="discount" class="form-label fw-bold text-danger">Diskon (%)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-danger text-white"><i class="fas fa-percentage"></i></span>
+                                <input type="text" class="form-control border-danger" id="discount" name="discount" placeholder="Masukkan Diskon" value="{{ old('discount') }}">
+                                <input type="hidden" name="discount" id="discount_asli">
                             </div>
-
-                            <div class="col-md-6 col-sm-12 mb-3">
-                                <label for="change" class="form-label">Kembalian</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
-                                    <input type="text" name="change" id="change" class="form-control" readonly
-                                        placeholder="Kembalian" value="{{ old('change') }}">
-                                    {{-- buat controller php --}}
-                                    <input type="hidden" name="change" id="change_asli">
-                                </div>
-                                @error('change')
-                                    <div class="text-danger">{{ $message }}</div>
-                                @enderror
+                        </div>
+                        <div class="col-md-6">
+                            <label for="total_cost" class="form-label fw-bold text-success">Total Biaya</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-success text-white"><i class="fas fa-calculator"></i></span>
+                                <input type="text" id="total_cost" class="form-control border-success" readonly>
+                                <input type="hidden" name="total_cost" id="total_cost_asli">
                             </div>
-                            <button type="submit">Kirim</button>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="payment_received" class="form-label fw-bold text-warning">Pembayaran Diterima</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-warning text-white"><i class="fas fa-credit-card"></i></span>
+                                <input type="text" name="payment_received" id="payment_received" class="form-control border-warning">
+                                <input type="hidden" name="payment_received" id="payment_received_asli">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="change" class="form-label fw-bold text-info">Kembalian</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-info text-white"><i class="fas fa-money-bill-wave"></i></span>
+                                <input type="text" name="change" id="change" class="form-control border-info" readonly>
+                                <input type="hidden" name="change" id="change_asli">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="payment_method" class="form-label fw-bold text-dark">Metode Pembayaran</label>
+                            <select name="payment_method" id="payment_method" class="form-select border-dark">
+                                <option value="cash" class="text-dark">Bayar Cash</option>
+                                <option value="cooperative" class="text-dark">Kooperasi</option>
+                                <option value="administration" class="text-dark">Tata Usaha</option>
+                            </select>
                         </div>
                     </div>
-                </form>
-
-                {{-- Menampilkan Total Harga Sparepart --}}
-                {{-- <h4>Total Sparepart: Rp {{ number_format($totalSparepart, 0, ',', '.') }}</h4> --}}
+                    <button type="submit" class="btn btn-primary mt-3 w-100">Kirim Pembayaran</button>
+                </form>                
+                
+                <script>
+                    document.addEventListener("DOMContentLoaded", function() {
+                        let spareparts = @json($service->serviceSpareparts);
+                        let totalSparepart = spareparts.reduce((total, item) => total + (item.sparepart.harga_jual * item.quantity), 0);
+                
+                        function formatRibuan(angka) {
+                            return new Intl.NumberFormat("id-ID").format(angka);
+                        }
+                
+                        function unformat(angka) {
+                            return parseInt(angka.replace(/\D/g, "")) || 0;
+                        }
+                
+                        function updateTotalCost() {
+                            let serviceFee = unformat(document.getElementById("service_fee").value);
+                            let discount = unformat(document.getElementById("discount").value) / 100;
+                            let total = (serviceFee + totalSparepart) * (1 - discount);
+                
+                            document.getElementById("total_cost").value = formatRibuan(total);
+                            document.getElementById("total_cost_asli").value = total;
+                            updateChange();
+                        }
+                
+                        function updateChange() {
+                            let totalCost = unformat(document.getElementById("total_cost").value);
+                            let paymentReceived = unformat(document.getElementById("payment_received").value);
+                            let change = paymentReceived - totalCost;
+                
+                            document.getElementById("change").value = formatRibuan(change);
+                            document.getElementById("change_asli").value = change;
+                        }
+                
+                        document.getElementById("service_fee").addEventListener("input", function() {
+                            this.value = formatRibuan(this.value.replace(/\D/g, ""));
+                            document.getElementById("service_fee_asli").value = unformat(this.value);
+                            updateTotalCost();
+                        });
+                
+                        document.getElementById("discount").addEventListener("input", function() {
+                            this.value = formatRibuan(this.value.replace(/\D/g, ""));
+                            document.getElementById("discount_asli").value = unformat(this.value);
+                            updateTotalCost();
+                        });
+                
+                        document.getElementById("payment_received").addEventListener("input", function() {
+                            this.value = formatRibuan(this.value.replace(/\D/g, ""));
+                            document.getElementById("payment_received_asli").value = unformat(this.value);
+                            updateChange();
+                        });
+                
+                        updateTotalCost();
+                    });
+                </script>
+                
 
                 <br><br>
                 <!-- Action Buttons -->
-                <div class="mt-3 d-flex flex-wrap gap-2 align-items-center animate__animated animate__fadeInUp"
+                <div class="mt-3 d-flex flex-wrap gap-2 align-items-center animate_animated animate_fadeInUp"
                     style="animation-duration: 1.5s; animation-delay: 1s;">
 
                     <!-- Cetak Button -->
@@ -406,134 +450,121 @@
     </div>
 
     <script>
-        let spareparts = @json($service->serviceSpareparts);
-
-        let totalSparepart = spareparts.reduce((total, item) => {
-            return total + (item.sparepart.harga_jual * item.quantity);
-        }, 0);
-
-        // console.log("Total Harga Sparepart:", totalSparepart);
-
-        function formatRibuan(angka) {
-            return new Intl.NumberFormat("id-ID").format(angka);
-        }
-
-        function total_cost() {
-            let inputJasa = document.getElementById("service_fee").value.replace(/\D/g, "") || 0;
-            let inputSparepart = totalSparepart;
-
-            let total = parseInt(inputJasa) + parseInt(inputSparepart);
-            document.getElementById("total_cost").value = formatRibuan(total);
-        }
-
-        function 
-
-        document.getElementById("service_fee").addEventListener("input", function() {
-            this.value = formatRibuan(this.value.replace(/\D/g, ""));
-            total_cost();
-        });
-
-        // document.getElementById("payment_received").addEventListener("input", function() {
-        // this.value = formatRibuan(this.value.replace(/\D/g, ""));
-        // hitungTotal();
-        // });
-    </script>
-
-    {{-- contoh untuk kirim data buat controller --}}
-    {{--     
-    <input type="text" id="angka" placeholder="Masukkan angka">
-    <input type="hidden" id="angkaAsli" name="angka">
-
-    <script>
-        document.getElementById("angka").addEventListener("input", function() {
-            let angka = this.value.replace(/\D/g, ""); // Hapus semua selain angka
-            let angkaFormatted = new Intl.NumberFormat("id-ID").format(angka); // Format ribuan
-            this.value = angkaFormatted;
-
-            // Simpan angka tanpa titik ke input hidden untuk dikirim ke backend
-            document.getElementById("angkaAsli").value = angka;
-        });
-    </script>
- --}}
-
-    {{-- contoh buat 2 input --}}
-    {{-- 
-    <input type="text" id="angka1" placeholder="Masukkan angka 1">
-    <input type="text" id="angka2" placeholder="Masukkan angka 2">
-    <input type="text" id="hasil" placeholder="Hasil" readonly>
-
-    <script>
-        function formatRibuan(angka) {
-            return new Intl.NumberFormat("id-ID").format(angka);
-        }
-
-        function hitungTotal() {
-            let angka1 = document.getElementById("angka1").value.replace(/\D/g, "") || 0;
-            let angka2 = document.getElementById("angka2").value.replace(/\D/g, "") || 0;
-
-            let total = parseInt(angka1) + parseInt(angka2);
-            document.getElementById("hasil").value = formatRibuan(total);
-        }
-
-        document.getElementById("angka1").addEventListener("input", function() {
-            this.value = formatRibuan(this.value.replace(/\D/g, ""));
-            hitungTotal();
-        });
-
-        document.getElementById("angka2").addEventListener("input", function() {
-            this.value = formatRibuan(this.value.replace(/\D/g, ""));
-            hitungTotal();
-        });
-    </script>
- --}}
-    <script>
         document.getElementById('copyReportBtn').addEventListener('click', function() {
-            var vehicleInfo =
-                `**🚗 Informasi Kendaraan:**\nNomor Polisi: ${'{{ $service->vehicle->license_plate }}'} (${{ $service->vehicle->vehicle_type }})\nWarna: ${'{{ $service->vehicle->color }}'}\nTahun Produksi: ${
+                    var vehicleInfo =
+                        `*🚗 Informasi Kendaraan:*\nNomor Polisi: ${'{{ $service->vehicle->license_plate }}'} (${{ $service->vehicle->vehicle_type }})\nWarna: ${'{{ $service->vehicle->color }}'}\nTahun Produksi: ${
                     '{{ $service->vehicle->production_year }}'}\nKode Mesin: ${'{{ $service->vehicle->engine_code }}'}`;
 
-            var customerInfo =
-                `**👤 Informasi Pelanggan:**\nNama: ${'{{ $service->vehicle->customer->name }}'}\nKontak: ${'{{ $service->vehicle->customer->contact }}'}\nAlamat: ${'{{ $service->vehicle->customer->address }}'}`;
+                    var customerInfo = **
+                        👤Informasi Pelanggan: ** \nNama: $ {
+                            '{{ $service->vehicle->customer->name }}'
+                        }\
+                    nKontak: $ {
+                        '{{ $service->vehicle->customer->contact }}'
+                    }\
+                    nAlamat: $ {
+                        '{{ $service->vehicle->customer->address }}'
+                    };
 
-            var serviceInfo =
-                `**🛠️ Informasi Servis:**\nKeluhan: ${'{{ $service->complaint }}'}\nKilometer Saat Ini: ${'{{ $service->current_mileage }}'} km\nBiaya Servis: Rp. ${'{{ number_format($service->service_fee, 0, ',', '.') }}'}\nTotal Biaya: Rp. ${'{{ number_format($service->total_cost, 0, ',', '.') }}'}\nPembayaran Diterima: Rp. ${'{{ number_format($service->payment_received, 0, ',', '.') }}'}\nKembalian: Rp. ${'{{ number_format($service->change, 0, ',', '.') }}'}\nJenis Servis: ${'{{ ucfirst($service->service_type) }}'}\nTanggal Servis: ${'{{ \Carbon\Carbon::parse($service->service_date)->format('d-m-Y') }}'}`;
+                    var serviceInfo = **
+                        🛠Informasi Servis: ** \nKeluhan: $ {
+                            '{{ $service->complaint }}'
+                        }\
+                    nKilometer Saat Ini: $ {
+                        '{{ $service->current_mileage }}'
+                    }
+                    km\ nBiaya Servis: Rp.$ {
+                        '{{ number_format($service->service_fee, 0, ',', '.') }}'
+                    }\
+                    nTotal Biaya: Rp.$ {
+                        '{{ number_format($service->total_cost, 0, ',', '.') }}'
+                    }\
+                    nPembayaran Diterima: Rp.$ {
+                        '{{ number_format($service->payment_received, 0, ',', '.') }}'
+                    }\
+                    nKembalian: Rp.$ {
+                        '{{ number_format($service->change, 0, ',', '.') }}'
+                    }\
+                    nJenis Servis: $ {
+                        '{{ ucfirst($service->service_type) }}'
+                    }\
+                    nTanggal Servis: $ {
+                        '{{ \Carbon\Carbon::parse($service->service_date)->format('d-m-Y') }}'
+                    };
 
-            var sparepartsInfo = '**🔧 Sparepart yang Digunakan:**\n';
+                    var sparepartsInfo = '🔧 Sparepart yang Digunakan:\n';
 
-            // Loop through the service spareparts dynamically
-            @foreach ($service->serviceSpareparts as $serviceSparepart)
-                sparepartsInfo +=
-                    `Nama: **${'{{ $serviceSparepart->sparepart->nama_sparepart }}'}** | Jumlah: ${'{{ $serviceSparepart->quantity }}'} | Harga: Rp. ${'{{ number_format($serviceSparepart->sparepart->harga_jual, 0, ',', '.') }}'}\n`;
-            @endforeach
+                    // Loop through the service spareparts dynamically
+                    @foreach ($service->serviceSpareparts as $serviceSparepart)
+                        sparepartsInfo +=
+                            Nama: ** $ {
+                                '{{ $serviceSparepart->sparepart->nama_sparepart }}'
+                            } ** | Jumlah: $ {
+                                '{{ $serviceSparepart->quantity }}'
+                            } | Harga: Rp.$ {
+                                '{{ number_format($serviceSparepart->sparepart->harga_jual, 0, ',', '.') }}'
+                            }\
+                        n;
+                    @endforeach
 
-            var checklistInfo = '**📝 Pekerjaan yang Dikerjakan:**\n';
+                    var checklistInfo = '📝 Pekerjaan yang Dikerjakan:\n';
 
-            // Loop through the service checklists dynamically
-            @foreach ($service->checklists as $checklist)
-                checklistInfo +=
-                    `- **${'{{ $checklist->task }}'}** ${'{{ $checklist->is_completed ? '✅ Selesai' : '❌ Tertunda' }}'}\n`;
-            @endforeach
+                    // Loop through the service checklists dynamically
+                    @foreach ($service->checklists as $checklist)
+                        checklistInfo +=
+                            - ** $ {
+                                '{{ $checklist->task }}'
+                            } ** $ {
+                                '{{ $checklist->is_completed ? '✅ Selesai' : '❌ Tertunda' }}'
+                            }\
+                        n;
+                    @endforeach
 
-            // Adding Additional Notes and Technician Name
-            var additionalNotes = `**📝 Catatan Tambahan:**\n${'{{ $service->additional_notes }}'}`;
-            var technicianName = `**👨‍🔧 Nama Teknisi:**\n${'{{ $service->technician_name }}'}`;
+                    // Adding Additional Notes and Technician Name
+                    var additionalNotes = ** 📝Catatan Tambahan: ** \n$ {
+                        '{{ $service->additional_notes }}'
+                    };
+                    var technicianName = ** 👨‍🔧Nama Teknisi: ** \n$ {
+                        '{{ $service->technician_name }}'
+                    };
 
-            var linkInfo = `\nAda masalah? Telepon via WhatsApp: [Chat dengan Jamat](https://wa.me/6285715467500)`;
+                    var linkInfo = \nAda masalah ? Telepon via WhatsApp : [Chat dengan Jamat](https: //wa.me/6285715467500);
 
-            var fullReport =
-                `${vehicleInfo}\n\n${customerInfo}\n\n${serviceInfo}\n\n${sparepartsInfo}\n\n${checklistInfo}\n\n${additionalNotes}\n\n${technicianName}${linkInfo}`;
+                        var fullReport =
+                            $ {
+                                vehicleInfo
+                            }\
+                        n\ n$ {
+                            customerInfo
+                        }\
+                        n\ n$ {
+                            serviceInfo
+                        }\
+                        n\ n$ {
+                            sparepartsInfo
+                        }\
+                        n\ n$ {
+                            checklistInfo
+                        }\
+                        n\ n$ {
+                            additionalNotes
+                        }\
+                        n\ n$ {
+                            technicianName
+                        }
+                        $ {
+                            linkInfo
+                        };
 
-            var textarea = document.createElement('textarea');
-            textarea.value = fullReport;
-            document.body.appendChild(textarea);
+                        var textarea = document.createElement('textarea'); textarea.value = fullReport; document.body
+                        .appendChild(textarea);
 
-            textarea.select();
-            document.execCommand('copy');
+                        textarea.select(); document.execCommand('copy');
 
-            document.body.removeChild(textarea);
+                        document.body.removeChild(textarea);
 
-            alert('Laporan berhasil disalin ke clipboard! 📋');
-        });
+                        alert('Laporan berhasil disalin ke clipboard! 📋');
+                    });
     </script>
 
     <script>

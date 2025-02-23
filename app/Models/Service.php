@@ -22,7 +22,9 @@ class Service extends Model
         'status',
         'additional_notes',
         'technician_name',
-        'jurusan'
+        'jurusan',
+        'diskon',
+        'payment_method'
     ];
 
     public function customer()
