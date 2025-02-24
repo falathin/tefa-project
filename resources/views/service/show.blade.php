@@ -75,11 +75,36 @@
                                     class="text-muted">{{ \Carbon\Carbon::parse($service->service_date)->format('d-m-Y') }}</span>
                             </p>
                             <p><strong><i class="fas fa-check-circle text-success"></i> Status Pembayaran:</strong>
-                                <span class="badge"
-                                    style="background-color: {{ $service->isPaid() ? '#28a745' : '#dc3545' }}; color: #fff;">
-                                    {{ $service->isPaid() ? 'Lunas' : 'Belum Lunas' }}
+                                <span id="payment-status" class="badge" style="color: #fff;">
+                                    {{ $service->change > 0 ? 'Lunas' : ($service->change < 0 ? 'Hutang' : 'Belum Bayar') }}
                                 </span>
                             </p>
+                            
+                            <script>
+                                document.addEventListener("DOMContentLoaded", function () {
+                                    let change = {{ $service->change }};
+                                    let isPaid = {{ $service->isPaid() ? 'true' : 'false' }}; // Cek dari backend apakah pembayaran sudah dilakukan
+                                    let paymentStatus = document.getElementById("payment-status");
+                            
+                                    if (change > 0) {
+                                        paymentStatus.innerText = "Lunas";
+                                        paymentStatus.style.backgroundColor = "#28a745"; // Hijau
+                                    } else if (change < 0) {
+                                        paymentStatus.innerText = "Hutang";
+                                        paymentStatus.style.backgroundColor = "#dc3545"; // Merah
+                                    } else {
+                                        // Jika change == 0, cek apakah memang sudah dibayar atau belum
+                                        if (isPaid) {
+                                            paymentStatus.innerText = "Lunas";
+                                            paymentStatus.style.backgroundColor = "#28a745"; // Hijau
+                                        } else {
+                                            paymentStatus.innerText = "Belum Bayar";
+                                            paymentStatus.style.backgroundColor = "#ffc107"; // Kuning
+                                        }
+                                    }
+                                });
+                            </script>
+                            
                             <p><strong><i class="fas fa-tools text-warning"></i> Status Servis:</strong>
                                 <span class="badge"
                                     style="background-color: {{ $service->status ? '#28a745' : '#FBA518' }}; color: #fff;">

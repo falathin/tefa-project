@@ -7,9 +7,9 @@
                 <h4 class="text-center mb-4">Tambah Service untuk Kendaraan: {{ $vehicle->license_plate }}</h4>
                 <form method="POST" action='{{ route('service.storeServis') }}'>
                     @csrf
-
                     <input type="hidden" name="jurusan" id="jurusan" value="{{ Auth::user()->jurusan }}">
                     <input type="hidden" name="vehicle_id" value="{{ $vehicle->id }}">
+
                     <div class="row">
                         <!-- Kategori Informasi Servis -->
                         <div class="col-md-12 mb-3">

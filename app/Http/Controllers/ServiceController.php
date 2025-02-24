@@ -87,8 +87,10 @@ class ServiceController extends Controller
         if (!Gate::allows('isAdminOrEngineer') && !Gate::allows('isKasir')) {
             abort(403, 'Butuh level Admin & Kasir');
         }
+
+        $auth = Auth::user()->jurusan;
         $vehicle = Vehicle::findOrFail($vehicle_id);
-        $spareparts = Sparepart::all();
+        $spareparts = Sparepart::all()->where('jurusan', 'like', $auth);
         return view('service.create', compact('vehicle', 'spareparts'));
     }
 
@@ -103,8 +105,9 @@ class ServiceController extends Controller
         if (!Gate::allows('isAdminOrEngineer') && !Gate::allows('isKasir')) {
             abort(403, 'Butuh level Admin & Kasir');
         }
+        $auth = Auth::user()->jurusan;
         $service = Service::findOrFail($id);
-        $spareparts = Sparepart::all(); // Get all spare parts
+        $spareparts = Sparepart::all()->where('jurusan', 'like', $auth);
         return view('service.edit', compact('service', 'spareparts'));
     }
 
@@ -165,6 +168,7 @@ class ServiceController extends Controller
             'sparepart_id' => 'nullable|array',
             'sparepart_id.*' => 'exists:spareparts,id_sparepart',
             'jumlah' => 'nullable|array',
+            'jurusan' => 'required',
             'jumlah.*' => 'required|numeric|min:1',
             'additional_notes' => 'nullable|string|max:500',
         ], [
@@ -191,6 +195,7 @@ class ServiceController extends Controller
             'service_date' => $request->service_date,
             'service_type' => $request->service_type,
             'technician_name' => $request->technician_name,
+            'jurusan' => $request->jurusan,
             'additional_notes' => $request->additional_notes,
         ]);
 

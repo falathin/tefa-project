@@ -190,11 +190,13 @@
                                             @endif
                                         </tbody>
                                     </table>
+                                    <br>
+                                    <button type="button" class="btn btn-primary" id="addRow">+ Tambah
+                                        Sparepart</button>
                                 @endif
 
                             </div>
-                            <br>
-                            <button type="button" class="btn btn-primary" id="addRow">+ Tambah Sparepart</button>
+
                         </div>
 
                         <div class="text-end">
