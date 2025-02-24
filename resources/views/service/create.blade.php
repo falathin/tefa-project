@@ -302,8 +302,8 @@
         </select>
     </td>
     <td><input type="text" class="form-control harga" readonly></td>
-    <td><input type="number" name="jumlah[]" class="form-control jumlah" min="1"></td>
-    <td><input type="text" class="form-control subtotal" readonly></td>
+    <td><input type="number" name="jumlah[]" class="form-control jumlah" min="1" style="width:100px"></td>
+    <td><input type="text" class="form-control subtotal" style="width:250px" readonly></td>
     <td><button type="button" class="btn btn-danger remove-row">Hapus</button></td>
     `;
 

@@ -21,24 +21,24 @@ class DashboardController extends Controller
         $selectedMonth = $request->get('filterBulan', now()->format('Y-m'));
         $selectedYear = date('Y', strtotime($selectedMonth));
         $selectedJurusan = $request->get('filterJurusan', 'semua');
-    
+
         $request->session()->put('filterJurusan', $selectedJurusan);
         $request->session()->put('filterBulan', $selectedMonth);
-    
+
         // Query untuk data harian
         $dailyQuery = Service::whereDate('service_date', $today)
             ->with(['customer', 'vehicle']);
-    
+
         // Query untuk data bulanan
         $monthlyQuery = Service::whereYear('service_date', $selectedYear)
             ->whereMonth('service_date', date('m', strtotime($selectedMonth)));
-    
+
         // Terapkan filter jurusan jika tidak "semua"
         if ($selectedJurusan !== 'semua') {
             $dailyQuery->where('jurusan', $selectedJurusan);
             $monthlyQuery->where('jurusan', $selectedJurusan);
         }
-    
+
         // Ambil data harian
         $dailyCustomerData = $dailyQuery->get()->map(function ($service) {
             return [
@@ -49,22 +49,22 @@ class DashboardController extends Controller
                 'id' => $service->id
             ];
         });
-    
+
         $totalDailyIncome = $dailyCustomerData->sum('income');
-    
+
         // Ambil data bulanan dan kelompokkan per bulan
         $filteredMonthlyCustomerData = $monthlyQuery->get()->groupBy(function ($service) {
             return date('m', strtotime($service->service_date));
         })->map(function ($services) {
             return $services->sum('total_cost');
         });
-    
+
         return view('tab/demographics', compact('dailyCustomerData', 'totalDailyIncome', 'filteredMonthlyCustomerData', 'selectedYear'));
-    }    
+    }
 
     public function index(Request $request)
     {
-        
+
         $today = now()->format('Y-m-d');
         $thisMonth = now()->format('m');
         $thisYear = now()->format('Y');
@@ -96,8 +96,8 @@ class DashboardController extends Controller
                 ->where('payment_received', '<', DB::raw('total_cost'))
                 ->sum('total_cost') -
                 Service::whereDate('service_date', $today)
-                ->where('payment_received', '<', DB::raw('total_cost'))
-                ->sum('payment_received');
+                    ->where('payment_received', '<', DB::raw('total_cost'))
+                    ->sum('payment_received');
 
             $profitPercentage = $totalProfit > 0 ? (($totalProfit / max($totalProfit, 1)) * 100) : 0;
             $expensePercentage = $totalExpense > 0 ? (($totalExpense / max($totalExpense, 1)) * 100) : 0;
@@ -123,8 +123,6 @@ class DashboardController extends Controller
                 ->get();
 
             $monthlyChartValues = $monthlyChartData->pluck('total_profit')->toArray();
-
-            
 
             $vehiclesPerWeekData = [
                 'labels' => ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'],
@@ -179,7 +177,7 @@ class DashboardController extends Controller
                     ->orderByRaw('MONTH(service_date)')
                     ->get()
                     ->keyBy('month');
-                
+
             } else {
                 $dailyCustomerData = Service::whereDate('service_date', $today)
                     ->with(['customer', 'vehicle'])
@@ -200,7 +198,7 @@ class DashboardController extends Controller
                     ->orderByRaw('MONTH(service_date)')
                     ->get()
                     ->keyBy('month');
-                
+
             }
 
             $totalDailyIncome = $dailyCustomerData->sum('income');
@@ -233,9 +231,9 @@ class DashboardController extends Controller
                 ->where('jurusan', 'like', $jurusanUser)
                 ->sum('total_cost') -
                 Service::whereDate('service_date', $today)
-                ->where('payment_received', '<', DB::raw('total_cost'))
-                ->where('jurusan', 'like', $jurusanUser)
-                ->sum('payment_received');
+                    ->where('payment_received', '<', DB::raw('total_cost'))
+                    ->where('jurusan', 'like', $jurusanUser)
+                    ->sum('payment_received');
 
             $profitPercentage = $totalProfit > 0 ? (($totalProfit / max($totalProfit, 1)) * 100) : 0;
             $expensePercentage = $totalExpense > 0 ? (($totalExpense / max($totalExpense, 1)) * 100) : 0;
@@ -309,13 +307,13 @@ class DashboardController extends Controller
                     ];
                 });
 
-                $monthlyCustomerData = Service::selectRaw('MONTH(service_date) as month, SUM(total_cost) as total_income')
+            $monthlyCustomerData = Service::selectRaw('MONTH(service_date) as month, SUM(total_cost) as total_income')
                 ->where('jurusan', 'like', $jurusanUser)
                 ->whereYear('service_date', request('filterTahun', date('Y')))
                 ->groupByRaw('MONTH(service_date)')
                 ->orderByRaw('MONTH(service_date)')
                 ->get()
-                ->keyBy('month');                   
+                ->keyBy('month');
 
             $totalDailyIncome = $dailyCustomerData->sum('income');
             $totalMonthlyIncome = $monthlyCustomerData->sum('income');
@@ -332,6 +330,7 @@ class DashboardController extends Controller
             'service_date' => $today,
             'total_profit' => $totalProfit,
         ];
+
 
         $services = Service::all();
 

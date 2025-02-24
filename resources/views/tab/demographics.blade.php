@@ -70,7 +70,8 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($dailyCustomerData as $data)
+            
+            @foreach ($dailyCustomerData as $key => $data)
                 <tr>
                     <td>{{ $data['customer_name'] }}</td>
                     <td>{{ $data['vehicle'] }}</td>
@@ -80,7 +81,7 @@
                         <td>{{ $services[$loop->index]['jurusan'] }}</td>
                     @endif --}}
                     <td>
-                        <a href="{{ route('service.show', $services[$data['id'] - 1]['id']) }}">
+                        <a href="{{ route('service.show', $services[$key]['id']) }}">
                             <button class="btn btn-primary btn-sm text-light">
                                 <i class="fas fa-eye"></i> Detail
                             </button>
@@ -89,6 +90,7 @@
                 </tr>
             @endforeach
         </tbody>
+        
         <tfoot>
             <tr class="table-secondary">
                 {{-- @if (Gate::allows('isBendahara'))

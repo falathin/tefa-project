@@ -171,6 +171,7 @@
             </div>
         </div>
         <script>
+
             const chartLabels = @json($chartLabels);
             const chartValues = @json($chartValues);
             const monthlyChartValues = @json($monthlyChartValues);
@@ -229,6 +230,7 @@
                         });
                     });
                 </script>
+                
                 <div class="col-md-6 col-lg-12 grid-margin stretch-card">
                     <div class="card card-rounded hover-effect"
                         style="background-image: url('https://st3.depositphotos.com/4080643/17799/i/450/depositphotos_177995342-stock-photo-fuji-mountain-and-cherry-blossoms.jpg'); background-size: cover; background-position: center; color: white; border-radius: 20px; overflow: hidden; transition: transform 0.5s ease, box-shadow 0.5s ease, filter 0.3s ease; height: 160px; width: 100%;"
@@ -321,6 +323,7 @@
         </div>
     </div>
     <script>
+        
         function printDailyReport() {
             const reportContent = `
             <html>
@@ -432,12 +435,15 @@
 
 </div>
 
+
 <div class="tab-pane fade" id="audiences" role="tabpanel" aria-labelledby="profile-tab">
     @include('tab.audiences')
+    
 </div>
-<div class="tab-pane fade" id="demographics" role="tabpanel" aria-labelledby="contact-tab">
+{{-- <div class="tab-pane fade" id="demographics" role="tabpanel" aria-labelledby="contact-tab">
     @include('tab.demographics')
-</div>
+    
+</div> --}}
 <div class="tab-pane fade" id="more" role="tabpanel" aria-labelledby="more-tab">
     @include('tab.more')
 </div>

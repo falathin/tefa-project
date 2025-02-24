@@ -21,6 +21,7 @@
             ', <span class="fw-bold welcome-text">{{ Auth::user()->name }}</span>';
     </script> <!-- partial -->
     <div class="main-paanel">
+
         <div class="content-wrapper">
             <div class="row">
                 <div class="col-sm-12">
@@ -152,6 +153,7 @@
                             </div>
                         </div> <br>
                         <div class="tab-content tab-content-basic">
+                            
                             @include('tab.overview')
                         </div>
                     </div>

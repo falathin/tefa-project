@@ -57,10 +57,11 @@
                         <div class="col-md-6">
                             <label for="year" class="form-label"><i class="fas fa-calendar-alt"></i> Tahun Kendaraan</label>
                             <input type="number" class="form-control @error('year') is-invalid @enderror" id="year"
-                                name="year" value="{{ old('year', $vehicle->year) }}" placeholder="Masukkan tahun kendaraan">
+                                name="year" value="{{ old('year', $vehicle->production_year) }}" placeholder="Masukkan tahun kendaraan">
                             @error('year')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
+                            {{-- @json($vehicle) --}}
                         </div>
                         <div class="col-md-6">
                             <label for="license_plate" class="form-label"><i class="fas fa-id-card"></i> Nomor Plat Kendaraan</label>
