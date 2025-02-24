@@ -79,13 +79,14 @@
                                     {{ $service->change > 0 ? 'Lunas' : ($service->change < 0 ? 'Hutang' : 'Belum Bayar') }}
                                 </span>
                             </p>
-                            
+
                             <script>
-                                document.addEventListener("DOMContentLoaded", function () {
+                                document.addEventListener("DOMContentLoaded", function() {
                                     let change = {{ $service->change }};
-                                    let isPaid = {{ $service->isPaid() ? 'true' : 'false' }}; // Cek dari backend apakah pembayaran sudah dilakukan
+                                    let isPaid =
+                                    {{ $service->isPaid() ? 'true' : 'false' }}; // Cek dari backend apakah pembayaran sudah dilakukan
                                     let paymentStatus = document.getElementById("payment-status");
-                            
+
                                     if (change > 0) {
                                         paymentStatus.innerText = "Lunas";
                                         paymentStatus.style.backgroundColor = "#28a745"; // Hijau
@@ -104,7 +105,7 @@
                                     }
                                 });
                             </script>
-                            
+
                             <p><strong><i class="fas fa-tools text-warning"></i> Status Servis:</strong>
                                 <span class="badge"
                                     style="background-color: {{ $service->status ? '#28a745' : '#FBA518' }}; color: #fff;">
@@ -360,6 +361,17 @@
                                     value="{{ old('diskon', $service->diskon) }}">
                             </div>
                         </div>
+
+                        <script>
+                            document.getElementById('diskon').addEventListener('input', function() {
+                                let diskon = parseFloat(this.value.replace(/\D/g, '')) || 0; // Hanya angka
+                                if (diskon > 100) {
+                                    diskon = 100;
+                                }
+                                this.value = diskon;
+                                document.getElementById('diskon_asli').value = diskon;
+                            });
+                        </script>
                         <div class="col-md-6">
                             <label for="total_cost" class="form-label fw-bold text-success">Total Biaya</label>
                             <div class="input-group">
