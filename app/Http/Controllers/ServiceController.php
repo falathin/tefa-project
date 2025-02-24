@@ -135,15 +135,16 @@ class ServiceController extends Controller
 
         // Hitung total biaya setelah diskon
         $diskon = $request->diskon ?? 0;
-        $totalCostAfterDiscount = $request->total_cost - ($request->total_cost * ($diskon / 100));
+        // $totalCostAfterDiscount = $request->total_cost - ($request->total_cost * ($diskon / 100));
 
         // Hitung kembalian
-        $change = $request->payment_received - $totalCostAfterDiscount;
+        // $change = $request->payment_received - $totalCostAfterDiscount;
+        $change = $request->payment_received;
 
         // Perbarui hanya data pembayaran tanpa mengubah vehicle_id
         $service->update([
             'service_fee' => $request->service_fee,
-            'total_cost' => $totalCostAfterDiscount,
+            'total_cost' => $request->total_cost,
             'diskon' => $diskon,
             'payment_received' => $request->payment_received,
             'change' => $change,
