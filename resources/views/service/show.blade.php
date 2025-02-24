@@ -50,54 +50,58 @@
                         <div class="border p-3 rounded shadow-sm bg-white animate_animated animate_fadeInRight"
                             style="animation-duration: 1.5s; animation-delay: 0.5s; border-color: #e3e6f0;">
                             <h6 class="text-muted"><i class="mdi mdi-information"></i> Informasi Servis</h6>
-                            <p><strong>Keluhan:</strong> {{ $service->complaint }}</p>
-                            <p><strong>Jarak Tempuh:</strong> {{ $service->current_mileage }} km</p>
-                            <p><strong>Jasa Pelayanan:</strong> <span style="color: #28a745;">Rp.
+                            <p><strong><i class="fas fa-exclamation-circle text-warning"></i> Keluhan:</strong>
+                                {{ $service->complaint }}</p>
+                            <p><strong><i class="fas fa-tachometer-alt text-info"></i> Jarak Tempuh:</strong>
+                                {{ $service->current_mileage }} km</p>
+                            <p><strong><i class="fas fa-wrench text-primary"></i> Jasa Pelayanan:</strong> <span
+                                    style="color: #28a745;">Rp.
                                     {{ number_format($service->service_fee, 0, ',', '.') }}</span></p>
-                            <p><strong>Total Biaya:</strong> <span style="color: #dc3545;">Rp.
+
+                            <!-- Kolom Diskon -->
+                            <p><strong><i class="fas fa-tags text-danger"></i> Diskon:</strong> <span
+                                    style="color: #dc3545;">{{ number_format($service->diskon, 0, ',', '.') }}%</span></p>
+
+                            <p><strong><i class="fas fa-receipt text-success"></i> Total Biaya:</strong> <span
+                                    style="color: #dc3545;">Rp.
                                     {{ number_format($service->total_cost, 0, ',', '.') }}</span></p>
-                            <p><strong>Pembayaran Diterima:</strong> <span style="color: #17a2b8;">Rp.
+                            <p><strong><i class="fas fa-cash-register text-warning"></i> Pembayaran Diterima:</strong> <span
+                                    style="color: #17a2b8;">Rp.
                                     {{ number_format($service->payment_received, 0, ',', '.') }}</span></p>
-                            <p><strong>Kembalian:</strong> Rp. {{ number_format($service->change, 0, ',', '.') }}</p>
-                            <p><strong>Tanggal Servis:</strong>
+                            <p><strong><i class="fas fa-hand-holding-usd text-success"></i> Kembalian:</strong> Rp.
+                                {{ number_format($service->change, 0, ',', '.') }}</p>
+                            <p><strong><i class="fas fa-calendar-alt text-primary"></i> Tanggal Servis:</strong>
                                 <span
                                     class="text-muted">{{ \Carbon\Carbon::parse($service->service_date)->format('d-m-Y') }}</span>
                             </p>
-                            <p><strong>Status Pembayaran:</strong>
+                            <p><strong><i class="fas fa-check-circle text-success"></i> Status Pembayaran:</strong>
                                 <span class="badge"
                                     style="background-color: {{ $service->isPaid() ? '#28a745' : '#dc3545' }}; color: #fff;">
                                     {{ $service->isPaid() ? 'Lunas' : 'Belum Lunas' }}
                                 </span>
                             </p>
-                            <p><strong>Status Servis:</strong>
+                            <p><strong><i class="fas fa-tools text-warning"></i> Status Servis:</strong>
                                 <span class="badge"
                                     style="background-color: {{ $service->status ? '#28a745' : '#FBA518' }}; color: #fff;">
                                     {{ $service->status ? 'Selesai' : 'Belum selesai' }}
                                 </span>
                             </p>
-                            <p><strong>Tipe Servis:</strong>
+                            <p><strong><i class="fas fa-cogs text-secondary"></i> Tipe Servis:</strong>
                                 <span class="badge" style="background-color: #28a745; color: #fff;">
-                                    {{ ucfirst($service->service_type == 'light' ? 'ringan' : ($service->service_type == 'medium' ? 'sedang' : 'berat')) }}
+                                    {{ ucfirst($service->service_type == 'light' ? 'Ringan' : ($service->service_type == 'medium' ? 'Sedang' : 'Berat')) }}
                                 </span>
                             </p>
 
                             <!-- Informasi Teknisi -->
-                            <p><strong>Nama Teknisi:</strong> {{ $service->technician_name }}</p>
-
-                            {{-- <!-- Informasi Bukti Pembayaran -->
-                            @if ($service->payment_proof)
-                                <p><strong>Bukti Pembayaran:</strong> <a
-                                        href="{{ asset('storage/' . $service->payment_proof) }}" target="_blank">Lihat
-                                        Bukti Pembayaran</a></p>
-                            @else
-                                <p><strong>Bukti Pembayaran:</strong> <span class="text-muted">Belum tersedia</span></p>
-                            @endif --}}
+                            <p><strong><i class="fas fa-user-cog text-dark"></i> Nama Teknisi:</strong>
+                                {{ $service->technician_name }}</p>
 
                             <!-- Catatan Tambahan -->
-                            <p><strong>Catatan Tambahan:</strong>
+                            <p><strong><i class="fas fa-sticky-note text-info"></i> Catatan Tambahan:</strong>
                                 {{ $service->additional_notes ?? 'Tidak ada catatan tambahan' }}</p>
                         </div>
                     </div>
+
                 </div>
 
                 <div class="border p-3 rounded shadow-sm bg-white animate_animated animatefadeIn animate_delay-1s"
@@ -207,8 +211,9 @@
                                             @method('PATCH')
 
                                             <!-- Input for Task -->
-                                            <input type="text" name="task" class="form-control form-control-sm me-3"
-                                                value="{{ $checklist->task }}" required style="font-size: 0.875rem;">
+                                            <input type="text" name="task"
+                                                class="form-control form-control-sm me-3" value="{{ $checklist->task }}"
+                                                required style="font-size: 0.875rem;">
 
                                             <!-- Save Button -->
                                             <button type="submit" class="btn btn-sm btn-success me-2"
@@ -309,8 +314,9 @@
                         <div class="col-md-6">
                             <label for="service_fee" class="form-label fw-bold text-primary">Jasa Pelayanan</label>
                             <div class="input-group">
-                                <span class="input-group-text bg-primary text-white"><i class="fas fa-dollar-sign"></i></span>
-                                <input type="text" class="form-control border-primary" id="service_fee" 
+                                <span class="input-group-text bg-primary text-white"><i
+                                        class="fas fa-dollar-sign"></i></span>
+                                <input type="text" class="form-control border-primary" id="service_fee"
                                     placeholder="Masukkan Biaya Jasa"
                                     value="{{ old('service_fee', number_format($service->service_fee, 0, ',', '.')) }}">
                                 <input type="hidden" name="service_fee" id="service_fee_asli"
@@ -320,9 +326,10 @@
                         <div class="col-md-6">
                             <label for="diskon" class="form-label fw-bold text-danger">Diskon (%)</label>
                             <div class="input-group">
-                                <span class="input-group-text bg-danger text-white"><i class="fas fa-percentage"></i></span>
+                                <span class="input-group-text bg-danger text-white"><i
+                                        class="fas fa-percentage"></i></span>
                                 <input type="text" class="form-control border-danger" id="diskon" name="diskon"
-                                    placeholder="Masukkan Diskon" 
+                                    placeholder="Masukkan Diskon"
                                     value="{{ old('diskon', number_format($service->diskon, 0, ',', '.')) }}">
                                 <input type="hidden" name="diskon" id="diskon_asli"
                                     value="{{ old('diskon', $service->diskon) }}">
@@ -331,7 +338,8 @@
                         <div class="col-md-6">
                             <label for="total_cost" class="form-label fw-bold text-success">Total Biaya</label>
                             <div class="input-group">
-                                <span class="input-group-text bg-success text-white"><i class="fas fa-calculator"></i></span>
+                                <span class="input-group-text bg-success text-white"><i
+                                        class="fas fa-calculator"></i></span>
                                 <input type="text" id="total_cost" class="form-control border-success" readonly
                                     value="{{ old('total_cost', number_format($service->total_cost, 0, ',', '.')) }}">
                                 <input type="hidden" name="total_cost" id="total_cost_asli"
@@ -339,9 +347,11 @@
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <label for="payment_received" class="form-label fw-bold text-warning">Pembayaran Diterima</label>
+                            <label for="payment_received" class="form-label fw-bold text-warning">Pembayaran
+                                Diterima</label>
                             <div class="input-group">
-                                <span class="input-group-text bg-warning text-white"><i class="fas fa-credit-card"></i></span>
+                                <span class="input-group-text bg-warning text-white"><i
+                                        class="fas fa-credit-card"></i></span>
                                 <input type="text" name="payment_received" id="payment_received"
                                     class="form-control border-warning"
                                     value="{{ old('payment_received', number_format($service->payment_received, 0, ',', '.')) }}">
@@ -352,7 +362,8 @@
                         <div class="col-md-6">
                             <label for="change" class="form-label fw-bold text-info">Kembalian</label>
                             <div class="input-group">
-                                <span class="input-group-text bg-info text-white"><i class="fas fa-money-bill-wave"></i></span>
+                                <span class="input-group-text bg-info text-white"><i
+                                        class="fas fa-money-bill-wave"></i></span>
                                 <input type="text" name="change" id="change" class="form-control border-info"
                                     readonly value="{{ old('change', number_format($service->change, 0, ',', '.')) }}">
                                 <input type="hidden" name="change" id="change_asli"
@@ -363,16 +374,19 @@
                             <label for="payment_method" class="form-label fw-bold text-dark">Metode Pembayaran</label>
                             <select name="payment_method" id="payment_method" class="form-select border-dark">
                                 <option value="cash" class="text-dark"
-                                    {{ old('payment_method', $service->payment_method) == 'cash' ? 'selected' : '' }}>Bayar Cash</option>
+                                    {{ old('payment_method', $service->payment_method) == 'cash' ? 'selected' : '' }}>Bayar
+                                    Cash</option>
                                 <option value="cooperative" class="text-dark"
-                                    {{ old('payment_method', $service->payment_method) == 'cooperative' ? 'selected' : '' }}>Kooperasi</option>
+                                    {{ old('payment_method', $service->payment_method) == 'cooperative' ? 'selected' : '' }}>
+                                    Kooperasi</option>
                                 <option value="administration" class="text-dark"
-                                    {{ old('payment_method', $service->payment_method) == 'administration' ? 'selected' : '' }}>Tata Usaha</option>
+                                    {{ old('payment_method', $service->payment_method) == 'administration' ? 'selected' : '' }}>
+                                    Tata Usaha</option>
                             </select>
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary mt-3 w-100">Update Pembayaran</button>
-                </form>                
+                </form>
 
                 <script>
                     document.addEventListener("DOMContentLoaded", function() {
@@ -430,36 +444,36 @@
                 </script>
 
                 <script>
-                        document.addEventListener("DOMContentLoaded", function() {
-                            function formatRibuan(angka) {
-                                return new Intl.NumberFormat("id-ID").format(angka);
+                    document.addEventListener("DOMContentLoaded", function() {
+                        function formatRibuan(angka) {
+                            return new Intl.NumberFormat("id-ID").format(angka);
+                        }
+
+                        function unformat(angka) {
+                            return parseInt(angka.replace(/\./g, "")) || 0;
+                        }
+
+                        function updateFormattedInput(inputId, hiddenId) {
+                            let input = document.getElementById(inputId);
+                            let hiddenInput = document.getElementById(hiddenId);
+
+                            if (input && hiddenInput) {
+                                input.value = formatRibuan(hiddenInput.value);
+                                input.addEventListener("input", function() {
+                                    let rawValue = unformat(this.value);
+                                    hiddenInput.value = rawValue;
+                                    this.value = formatRibuan(rawValue);
+                                });
                             }
+                        }
 
-                            function unformat(angka) {
-                                return parseInt(angka.replace(/\./g, "")) || 0;
-                            }
-
-                            function updateFormattedInput(inputId, hiddenId) {
-                                let input = document.getElementById(inputId);
-                                let hiddenInput = document.getElementById(hiddenId);
-
-                                if (input && hiddenInput) {
-                                    input.value = formatRibuan(hiddenInput.value);
-                                    input.addEventListener("input", function() {
-                                        let rawValue = unformat(this.value);
-                                        hiddenInput.value = rawValue;
-                                        this.value = formatRibuan(rawValue);
-                                    });
-                                }
-                            }
-
-                            // Format angka saat halaman dimuat
-                            updateFormattedInput("service_fee", "service_fee_asli");
-                            updateFormattedInput("diskon", "diskon_asli");
-                            updateFormattedInput("total_cost", "total_cost_asli");
-                            updateFormattedInput("payment_received", "payment_received_asli");
-                            updateFormattedInput("change", "change_asli");
-                        });
+                        // Format angka saat halaman dimuat
+                        updateFormattedInput("service_fee", "service_fee_asli");
+                        updateFormattedInput("diskon", "diskon_asli");
+                        updateFormattedInput("total_cost", "total_cost_asli");
+                        updateFormattedInput("payment_received", "payment_received_asli");
+                        updateFormattedInput("change", "change_asli");
+                    });
                 </script>
 
                 <br><br>

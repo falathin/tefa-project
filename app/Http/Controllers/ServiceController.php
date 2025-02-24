@@ -139,7 +139,7 @@ class ServiceController extends Controller
 
         // Hitung kembalian
         // $change = $request->payment_received - $totalCostAfterDiscount;
-        $change = $request->payment_received;
+        // $change = $request->payment_received;
 
         // Perbarui hanya data pembayaran tanpa mengubah vehicle_id
         $service->update([
@@ -147,7 +147,7 @@ class ServiceController extends Controller
             'total_cost' => $request->total_cost,
             'diskon' => $diskon,
             'payment_received' => $request->payment_received,
-            'change' => $change,
+            'change' => $request->change,
             'payment_method' => $request->payment_method,
         ]);
 
