@@ -114,6 +114,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/', [ServiceController::class, 'store'])->name('storeServis');
         // Route::post('/s', [ServiceController::class, 'storePayment'])->name('storePayment');
         Route::put('/service/{id}/update-payment', [ServiceController::class, 'updatePayment'])->name('updatePayment');
+        Route::put('/service/{id}/complete', [ServiceController::class, 'completeService'])->name('complete');
 
         Route::get('{id}', [ServiceController::class, 'show'])->name('show');
         Route::get('{id}/edit', [ServiceController::class, 'edit'])->name('edit');

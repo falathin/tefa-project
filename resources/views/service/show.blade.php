@@ -84,7 +84,7 @@
                                 document.addEventListener("DOMContentLoaded", function() {
                                     let change = {{ $service->change }};
                                     let isPaid =
-                                    {{ $service->isPaid() ? 'true' : 'false' }}; // Cek dari backend apakah pembayaran sudah dilakukan
+                                        {{ $service->isPaid() ? 'true' : 'false' }}; // Cek dari backend apakah pembayaran sudah dilakukan
                                     let paymentStatus = document.getElementById("payment-status");
 
                                     if (change > 0) {
@@ -112,6 +112,60 @@
                                     {{ $service->status ? 'Selesai' : 'Belum selesai' }}
                                 </span>
                             </p>
+
+                            <script>
+                                document.addEventListener("DOMContentLoaded", function() {
+                                    // Cek apakah ada checklist atau pembayaran
+                                    let hasChecklist = @json($service->checklists->count() > 0);
+                                    let hasPayment = @json($service->total_cost > 0 || $service->payment_received > 0);
+
+                                    // Tombol submit
+                                    let completeButton = document.getElementById("completeServiceButton");
+
+                                    // Aktifkan tombol jika ada salah satu syarat terpenuhi
+                                    if (hasChecklist || hasPayment) {
+                                        completeButton.removeAttribute("disabled");
+                                    }
+                                });
+
+                                function confirmCompletion() {
+                                    if (confirm("Apakah kamu yakin ingin menyelesaikan servis ini?")) {
+                                        document.getElementById("completeServiceForm").submit();
+                                    }
+                                }
+                            </script>
+
+                            </p>
+
+
+
+                            <!-- Modal Konfirmasi -->
+                            <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog"
+                                aria-labelledby="confirmModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="confirmModalLabel">Konfirmasi</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Apakah kamu yakin ingin menyelesaikan servis ini?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-dismiss="modal">Batal</button>
+                                            <form action="{{ route('service.complete', $service->id) }}" method="POST">
+                                                @csrf
+                                                @method('PUT')
+                                                <button type="submit" class="btn btn-success">Ya, Selesaikan</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <p><strong><i class="fas fa-cogs text-secondary"></i> Tipe Servis:</strong>
                                 <span class="badge" style="background-color: #28a745; color: #fff;">
                                     {{ ucfirst($service->service_type == 'light' ? 'Ringan' : ($service->service_type == 'medium' ? 'Sedang' : 'Berat')) }}
@@ -173,8 +227,8 @@
                                                 @csrf
                                                 @method('PATCH')
                                                 @if (!Gate::allows('isBendahara'))
-                                                    <input type="checkbox" name="is_completed" onchange="this.form.submit()"
-                                                        class="form-check-input me-3"
+                                                    <input type="checkbox" name="is_completed"
+                                                        onchange="this.form.submit()" class="form-check-input me-3"
                                                         {{ $checklist->is_completed ? 'checked' : '' }}>
                                                 @endif
 
@@ -285,7 +339,6 @@
                         </script>
                     </div>
                 </div>
-
 
                 <br>
                 <!-- Informasi Sparepart -->
@@ -518,41 +571,59 @@
                 <div class="mt-3 d-flex flex-wrap gap-2 align-items-center animate_animated animate_fadeInUp"
                     style="animation-duration: 1.5s; animation-delay: 1s;">
 
-                    <!-- Cetak Button -->
-                    <button id="printBtn" class="btn btn-primary btn-sm">
-                        <i class="mdi mdi-printer me-2"></i> Cetak
-                    </button>
+                    <!-- Tombol lainnya (Cetak, Salin, Kembali, Edit, Hapus) -->
+                    <div class="action-buttons-left d-flex gap-2">
+                        <!-- Cetak Button -->
+                        <button id="printBtn" class="btn btn-primary btn-sm">
+                            <i class="mdi mdi-printer me-2"></i> Cetak
+                        </button>
 
-                    <!-- Salin Laporan Button -->
-                    <button id="copyReportBtn" class="btn btn-secondary btn-sm">
-                        <i class="mdi mdi-content-copy me-2"></i> Salin Laporan
-                    </button>
+                        <!-- Salin Laporan Button -->
+                        <button id="copyReportBtn" class="btn btn-secondary btn-sm">
+                            <i class="mdi mdi-content-copy me-2"></i> Salin Laporan
+                        </button>
 
-                    @if (!Gate::allows('isBendahara'))
-                        <!-- Kembali ke Kendaraan -->
-                        @if ($service->vehicle)
-                            <a href="{{ route('vehicle.show', $service->vehicle->id) }}" class="btn btn-dark btn-sm">
-                                <i class="mdi mdi-car me-2"></i> Detail kendaraan
+                        @if (!Gate::allows('isBendahara'))
+                            <!-- Kembali ke Kendaraan -->
+                            @if ($service->vehicle)
+                                <a href="{{ route('vehicle.show', $service->vehicle->id) }}" class="btn btn-dark btn-sm">
+                                    <i class="mdi mdi-car me-2"></i> Detail kendaraan
+                                </a>
+                            @endif
+
+                            <!-- Edit Button -->
+                            <a href="{{ route('service.edit', $service->id) }}" class="btn btn-warning btn-sm">
+                                <i class="mdi mdi-pencil me-2"></i> Edit
                             </a>
+
+                            <!-- Hapus Button -->
+                            <form action="{{ route('service.destroy', $service->id) }}" method="POST"
+                                class="d-inline-block">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-sm"
+                                    onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
+                                    <i class="mdi mdi-delete me-2"></i> Hapus
+                                </button>
+                            </form>
                         @endif
+                    </div>
 
-                        <!-- Edit Button -->
-                        <a href="{{ route('service.edit', $service->id) }}" class="btn btn-warning btn-sm">
-                            <i class="mdi mdi-pencil me-2"></i> Edit
-                        </a>
-
-                        <!-- Hapus Button -->
-                        <form action="{{ route('service.destroy', $service->id) }}" method="POST"
-                            class="d-inline-block">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm"
-                                onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
-                                <i class="mdi mdi-delete me-2"></i> Hapus
-                            </button>
-                        </form>
+                    <!-- Tombol untuk menyelesaikan servis di kanan -->
+                    @if (!$service->status)
+                        <div class="action-buttons-right ms-auto">
+                            <form id="completeServiceForm" action="{{ route('service.complete', $service->id) }}"
+                                method="POST" style="display: inline;">
+                                @csrf
+                                @method('PUT')
+                                <button type="button" id="completeServiceButton" class="btn btn-success conbtn-sm mt-2"
+                                    onclick="confirmCompletion()" disabled>
+                                    <i class="fas fa-check-circle"></i> Selesaikan Servis
+                                </button>
+                            </form>
+                        </div>
+                    @endif
                 </div>
-                @endif
 
             </div>
         </div>
@@ -857,6 +928,10 @@
                                         <div class="list-group-item">
                                             <span><i class="bi bi-cash-stack"></i> <strong>Biaya Servis:</strong></span>
                                             <span>Rp. {{ number_format($service->service_fee, 0, ',', '.') }}</span>
+                                        </div>
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            <span><i class="fas fa-percent text-danger"></i> <strong>Diskon:</strong></span>
+                                            <span class="text-danger"> {{ number_format($service->diskon, 0, ',', '.') }}%</span>
                                         </div>
                                         <div class="list-group-item">
                                             <span><i class="bi bi-cash-coin"></i> <strong>Total Biaya:</strong></span>

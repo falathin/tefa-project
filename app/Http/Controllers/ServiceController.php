@@ -156,6 +156,17 @@ class ServiceController extends Controller
 
         return redirect()->back()->with('success', 'Pembayaran berhasil diperbarui.');
     }
+
+    public function completeService($id)
+    {
+        $service = Service::findOrFail($id);
+        
+        // Ubah status menjadi selesai
+        $service->status = 1; 
+        $service->save();
+
+        return redirect()->back()->with('success', 'Servis telah diselesaikan!');
+    }
     public function store(Request $request)
     {
         $request->validate([
