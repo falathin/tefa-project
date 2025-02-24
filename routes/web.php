@@ -112,7 +112,8 @@ Route::middleware('auth')->group(function () {
         Route::get('create/{vehicle_id}', [ServiceController::class, 'create'])->name('create');
 
         Route::post('/', [ServiceController::class, 'store'])->name('storeServis');
-        Route::post('/s', [ServiceController::class, 'storePayment'])->name('storePayment');
+        // Route::post('/s', [ServiceController::class, 'storePayment'])->name('storePayment');
+        Route::put('/service/{id}/update-payment', [ServiceController::class, 'updatePayment'])->name('updatePayment');
 
         Route::get('{id}', [ServiceController::class, 'show'])->name('show');
         Route::get('{id}/edit', [ServiceController::class, 'edit'])->name('edit');

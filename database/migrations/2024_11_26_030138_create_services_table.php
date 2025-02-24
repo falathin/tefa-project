@@ -13,7 +13,7 @@ class CreateServicesTable extends Migration
             $table->foreignId('vehicle_id')->constrained('vehicles')->cascadeOnDelete();
             $table->text('complaint'); // Keluhan servis
             $table->integer('current_mileage'); // Kilometer saat servis
-            $table->decimal('service_fee', 10, 2)->nullable(); // Biaya servis
+            $table->decimal('service_fee', 10, 2)->nullable()->default(0);
             $table->date('service_date'); // Tanggal servis
             $table->decimal('total_cost', 10, 2)->nullable(); // Total biaya
             $table->decimal('payment_received', 10, 2)->nullable(); // Pembayaran diterima
@@ -25,7 +25,7 @@ class CreateServicesTable extends Migration
             $table->string('payment_proof')->nullable(); // Path bukti pembayaran
             $table->enum('jurusan', ['TSM', 'TKRO', 'General']);
             $table->integer('diskon')->default(0); // Diskon dalam bentuk nominal (bukan persentase)
-            $table->string('payment_method'); // Metode pembayaran
+            $table->string('payment_method')->default('cash');
             $table->timestamps();
         });
     }

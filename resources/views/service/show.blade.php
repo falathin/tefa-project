@@ -293,7 +293,16 @@
                     style="animation-duration: 1.5s; animation-delay: 0.8s; color: #6c757d;">
                     <i class="mdi mdi-cash"></i> Informasi Pembayaran
                 </h6>
-                <form action="{{ route('service.storePayment', $service->id) }}" method="POST" class="p-4 border rounded shadow bg-white">
+
+                @if (session('success'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        {{ session('success') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+
+                <form action="{{ route('service.updatePayment', $service->id) }}" method="POST"
+                    class="p-4 border rounded shadow bg-white">
                     @csrf
                     @method('PUT')
                     <div class="row g-3">
@@ -301,108 +310,160 @@
                             <label for="service_fee" class="form-label fw-bold text-primary">Jasa Pelayanan</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-primary text-white"><i class="fas fa-dollar-sign"></i></span>
-                                <input type="text" class="form-control border-primary" id="service_fee" placeholder="Masukkan Biaya Jasa" value="{{ old('service_fee') }}">
-                                <input type="hidden" name="service_fee" id="service_fee_asli">
+                                <input type="text" class="form-control border-primary" id="service_fee" 
+                                    placeholder="Masukkan Biaya Jasa"
+                                    value="{{ old('service_fee', number_format($service->service_fee, 0, ',', '.')) }}">
+                                <input type="hidden" name="service_fee" id="service_fee_asli"
+                                    value="{{ old('service_fee', $service->service_fee) }}">
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <label for="discount" class="form-label fw-bold text-danger">Diskon (%)</label>
+                            <label for="diskon" class="form-label fw-bold text-danger">Diskon (%)</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-danger text-white"><i class="fas fa-percentage"></i></span>
-                                <input type="text" class="form-control border-danger" id="discount" name="discount" placeholder="Masukkan Diskon" value="{{ old('discount') }}">
-                                <input type="hidden" name="discount" id="discount_asli">
+                                <input type="text" class="form-control border-danger" id="diskon" name="diskon"
+                                    placeholder="Masukkan Diskon" 
+                                    value="{{ old('diskon', number_format($service->diskon, 0, ',', '.')) }}">
+                                <input type="hidden" name="diskon" id="diskon_asli"
+                                    value="{{ old('diskon', $service->diskon) }}">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <label for="total_cost" class="form-label fw-bold text-success">Total Biaya</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-success text-white"><i class="fas fa-calculator"></i></span>
-                                <input type="text" id="total_cost" class="form-control border-success" readonly>
-                                <input type="hidden" name="total_cost" id="total_cost_asli">
+                                <input type="text" id="total_cost" class="form-control border-success" readonly
+                                    value="{{ old('total_cost', number_format($service->total_cost, 0, ',', '.')) }}">
+                                <input type="hidden" name="total_cost" id="total_cost_asli"
+                                    value="{{ old('total_cost', $service->total_cost) }}">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <label for="payment_received" class="form-label fw-bold text-warning">Pembayaran Diterima</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-warning text-white"><i class="fas fa-credit-card"></i></span>
-                                <input type="text" name="payment_received" id="payment_received" class="form-control border-warning">
-                                <input type="hidden" name="payment_received" id="payment_received_asli">
+                                <input type="text" name="payment_received" id="payment_received"
+                                    class="form-control border-warning"
+                                    value="{{ old('payment_received', number_format($service->payment_received, 0, ',', '.')) }}">
+                                <input type="hidden" name="payment_received" id="payment_received_asli"
+                                    value="{{ old('payment_received', $service->payment_received) }}">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <label for="change" class="form-label fw-bold text-info">Kembalian</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-info text-white"><i class="fas fa-money-bill-wave"></i></span>
-                                <input type="text" name="change" id="change" class="form-control border-info" readonly>
-                                <input type="hidden" name="change" id="change_asli">
+                                <input type="text" name="change" id="change" class="form-control border-info"
+                                    readonly value="{{ old('change', number_format($service->change, 0, ',', '.')) }}">
+                                <input type="hidden" name="change" id="change_asli"
+                                    value="{{ old('change', $service->change) }}">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <label for="payment_method" class="form-label fw-bold text-dark">Metode Pembayaran</label>
                             <select name="payment_method" id="payment_method" class="form-select border-dark">
-                                <option value="cash" class="text-dark">Bayar Cash</option>
-                                <option value="cooperative" class="text-dark">Kooperasi</option>
-                                <option value="administration" class="text-dark">Tata Usaha</option>
+                                <option value="cash" class="text-dark"
+                                    {{ old('payment_method', $service->payment_method) == 'cash' ? 'selected' : '' }}>Bayar Cash</option>
+                                <option value="cooperative" class="text-dark"
+                                    {{ old('payment_method', $service->payment_method) == 'cooperative' ? 'selected' : '' }}>Kooperasi</option>
+                                <option value="administration" class="text-dark"
+                                    {{ old('payment_method', $service->payment_method) == 'administration' ? 'selected' : '' }}>Tata Usaha</option>
                             </select>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-primary mt-3 w-100">Kirim Pembayaran</button>
+                    <button type="submit" class="btn btn-primary mt-3 w-100">Update Pembayaran</button>
                 </form>                
-                
+
                 <script>
                     document.addEventListener("DOMContentLoaded", function() {
                         let spareparts = @json($service->serviceSpareparts);
-                        let totalSparepart = spareparts.reduce((total, item) => total + (item.sparepart.harga_jual * item.quantity), 0);
-                
+                        let totalSparepart = spareparts.reduce((total, item) => total + (item.sparepart.harga_jual * item
+                            .quantity), 0);
+
                         function formatRibuan(angka) {
                             return new Intl.NumberFormat("id-ID").format(angka);
                         }
-                
+
                         function unformat(angka) {
                             return parseInt(angka.replace(/\D/g, "")) || 0;
                         }
-                
+
                         function updateTotalCost() {
                             let serviceFee = unformat(document.getElementById("service_fee").value);
-                            let discount = unformat(document.getElementById("discount").value) / 100;
-                            let total = (serviceFee + totalSparepart) * (1 - discount);
-                
+                            let diskon = unformat(document.getElementById("diskon").value) / 100;
+                            let total = (serviceFee + totalSparepart) * (1 - diskon);
+
                             document.getElementById("total_cost").value = formatRibuan(total);
                             document.getElementById("total_cost_asli").value = total;
                             updateChange();
                         }
-                
+
                         function updateChange() {
                             let totalCost = unformat(document.getElementById("total_cost").value);
                             let paymentReceived = unformat(document.getElementById("payment_received").value);
                             let change = paymentReceived - totalCost;
-                
+
                             document.getElementById("change").value = formatRibuan(change);
                             document.getElementById("change_asli").value = change;
                         }
-                
+
                         document.getElementById("service_fee").addEventListener("input", function() {
                             this.value = formatRibuan(this.value.replace(/\D/g, ""));
                             document.getElementById("service_fee_asli").value = unformat(this.value);
                             updateTotalCost();
                         });
-                
-                        document.getElementById("discount").addEventListener("input", function() {
+
+                        document.getElementById("diskon").addEventListener("input", function() {
                             this.value = formatRibuan(this.value.replace(/\D/g, ""));
-                            document.getElementById("discount_asli").value = unformat(this.value);
+                            document.getElementById("diskon_asli").value = unformat(this.value);
                             updateTotalCost();
                         });
-                
+
                         document.getElementById("payment_received").addEventListener("input", function() {
                             this.value = formatRibuan(this.value.replace(/\D/g, ""));
                             document.getElementById("payment_received_asli").value = unformat(this.value);
                             updateChange();
                         });
-                
+
                         updateTotalCost();
                     });
                 </script>
-                
+
+                <script>
+                    <script script >
+                        document.addEventListener("DOMContentLoaded", function() {
+                            function formatRibuan(angka) {
+                                return new Intl.NumberFormat("id-ID").format(angka);
+                            }
+
+                            function unformat(angka) {
+                                return parseInt(angka.replace(/\./g, "")) || 0;
+                            }
+
+                            function updateFormattedInput(inputId, hiddenId) {
+                                let input = document.getElementById(inputId);
+                                let hiddenInput = document.getElementById(hiddenId);
+
+                                if (input && hiddenInput) {
+                                    input.value = formatRibuan(hiddenInput.value);
+                                    input.addEventListener("input", function() {
+                                        let rawValue = unformat(this.value);
+                                        hiddenInput.value = rawValue;
+                                        this.value = formatRibuan(rawValue);
+                                    });
+                                }
+                            }
+
+                            // Format angka saat halaman dimuat
+                            updateFormattedInput("service_fee", "service_fee_asli");
+                            updateFormattedInput("diskon", "diskon_asli");
+                            updateFormattedInput("total_cost", "total_cost_asli");
+                            updateFormattedInput("payment_received", "payment_received_asli");
+                            updateFormattedInput("change", "change_asli");
+                        });
+                </script>
+
+                </script>
 
                 <br><br>
                 <!-- Action Buttons -->
@@ -455,10 +516,9 @@
                         `*🚗 Informasi Kendaraan:*\nNomor Polisi: ${'{{ $service->vehicle->license_plate }}'} (${{ $service->vehicle->vehicle_type }})\nWarna: ${'{{ $service->vehicle->color }}'}\nTahun Produksi: ${
                     '{{ $service->vehicle->production_year }}'}\nKode Mesin: ${'{{ $service->vehicle->engine_code }}'}`;
 
-                    var customerInfo = **
-                        👤Informasi Pelanggan: ** \nNama: $ {
-                            '{{ $service->vehicle->customer->name }}'
-                        }\
+                    var customerInfo = ** 👤Informasi Pelanggan: ** \nNama: $ {
+                        '{{ $service->vehicle->customer->name }}'
+                    }\
                     nKontak: $ {
                         '{{ $service->vehicle->customer->contact }}'
                     }\
@@ -466,10 +526,9 @@
                         '{{ $service->vehicle->customer->address }}'
                     };
 
-                    var serviceInfo = **
-                        🛠Informasi Servis: ** \nKeluhan: $ {
-                            '{{ $service->complaint }}'
-                        }\
+                    var serviceInfo = ** 🛠Informasi Servis: ** \nKeluhan: $ {
+                        '{{ $service->complaint }}'
+                    }\
                     nKilometer Saat Ini: $ {
                         '{{ $service->current_mileage }}'
                     }

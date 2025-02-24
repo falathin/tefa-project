@@ -111,7 +111,7 @@
                         </div>
 
                         <!-- Kategori Informasi Pembayaran -->
-                        <div class="col-md-12 mb-3">
+                        {{-- <div class="col-md-12 mb-3">
                             <h5 class="fw-bold">Informasi Pembayaran</h5>
                         </div>
 
@@ -162,7 +162,7 @@
                             @error('change')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
-                        </div>
+                        </div> --}}
 
                         <!-- Kategori Catatan Tambahan -->
                         <div class="col-md-12 mb-3">
