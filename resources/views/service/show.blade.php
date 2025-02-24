@@ -430,7 +430,6 @@
                 </script>
 
                 <script>
-                    <script script >
                         document.addEventListener("DOMContentLoaded", function() {
                             function formatRibuan(angka) {
                                 return new Intl.NumberFormat("id-ID").format(angka);
@@ -461,8 +460,6 @@
                             updateFormattedInput("payment_received", "payment_received_asli");
                             updateFormattedInput("change", "change_asli");
                         });
-                </script>
-
                 </script>
 
                 <br><br>
