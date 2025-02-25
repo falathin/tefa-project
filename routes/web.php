@@ -9,7 +9,7 @@ use App\Http\Controllers\{
     CustomerController,
     NotificationController,
     TransactionController,
-    
+    ServiceReportController,
     ForgotPasswordController,
     AutentikasiController,
     EmergencyPasswordController,
@@ -168,7 +168,6 @@ Route::middleware('auth')->group(function () {
         Route::delete('destroy/{id}', [VehicleController::class, 'destroy'])->name('destroy');
         Route::get('{id}', [VehicleController::class, 'show'])->name('show');
     });
+    Route::get('/export-service/{category}', [ServiceReportController::class, 'export'])->name('export.service');
+
 });
-
-
-

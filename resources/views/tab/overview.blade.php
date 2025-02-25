@@ -291,7 +291,7 @@
                         </div>
                         <!-- Tombol dengan ikon -->
                         <button class="btn btn-warning text-white" onclick="printDailyReport()">
-                            <i class="fa fa-print"></i> Print Laporan Harian
+                            <i class="fa fa-print"></i> Print Laporan Umum
                         </button>
                     </div>
                     <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
@@ -301,7 +301,7 @@
                                 <tr>
                                     <th>Tanggal</th>
                                     <th>Pengunjung Hari Ini</th>
-                                    <th>Jumlah Sparepart</th>
+                                    <th>Jumlah Jenis Sparepart</th>
                                     <th>Pertumbuhan</th>
                                     <th colspan="3" class="text-center">Rata-rata Jumlah Kendaraan per Pelanggan
                                     </th>
@@ -389,7 +389,7 @@
                 <div class="nota-container">
                     <div class="nota-header">
                         <img src="{{ asset('assets/images/logo-mini.svg') }}" alt="Logo Laporan">
-                        <h3>Laporan Servis Harian</h3>
+                        <h3>Laporan Servis Umum</h3>
                         <p>Tanggal: {{ $today }}</p>
                     </div>
                     <table>

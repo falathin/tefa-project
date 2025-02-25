@@ -70,9 +70,12 @@
                                             }
                                         });
                                     </script>
-                                    <a href="#" class="btn btn-outline-dark" id="printBtn">
+                                    {{-- <a href="{{route('export.service')}}" class="btn btn-outline-dark" id="printBtn">
                                         <i class="icon-printer"></i> Cetak
-                                    </a>
+                                    </a> --}}
+                                    {{-- <a href="#" class="btn btn-outline-dark" id="printBtn">
+                                        <i class="icon-printer"></i> Cetak
+                                    </a> --}}
 
                                     <script>
                                         document.getElementById("printBtn").addEventListener("click", function() {
