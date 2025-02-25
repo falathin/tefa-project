@@ -956,9 +956,6 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="total">
-                                <p><strong>Total:</strong> Rp. {{ number_format($service->total_cost, 0, ',', '.') }}</p>
-                            </div>
                             <div class="footer">
                                 <p><i class="bi bi-emoji-smile"></i> Terima kasih atas kunjungan Anda!</p>
                                 <p>Teknisi: {{ ucfirst($service->technician_name) }}</p>
