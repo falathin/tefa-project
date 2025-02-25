@@ -34,11 +34,6 @@
                                         <i class="fas fa-home"></i> Gambaran Umum
                                     </a>
                                 </li>
-                                {{-- <li class="nav-item">
-                                    <a class="nav-link" id="contact-tab" data-bs-toggle="tab" href="#demographics" role="tab" aria-controls="demographics" aria-selected="false">
-                                        <i class="fas fa-chart-line"></i> Laporan Harian Servis
-                                    </a>
-                                </li> --}}
                                 <li class="nav-item">
                                     <a class="nav-link" id="contact-tab" data-bs-toggle="tab" href="#more" role="tab"
                                         aria-controls="more" aria-selected="false">

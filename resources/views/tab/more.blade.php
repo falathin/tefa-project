@@ -2,33 +2,31 @@
     <h2 class="text-center mb-4">
         <i class="fas fa-file-invoice-dollar text-warning me-2"></i> Laporan Pemasukan Servis
     </h2>
-
     @if (Gate::allows('isBendahara'))
-        <form method="GET" action="{{ route('dashboard') }}" class="mb-3 row g-3">
-            <div class="col-12 col-md-3">
-                <div class="input-group shadow-sm">
-                    <span class="input-group-text bg-primary text-light">
-                        <i class="fas fa-credit-card"></i>
-                    </span>
-                    <select name="filterJurusan" id="filterJurusan" class="form-select" onchange="this.form.submit()">
-                        <option value="semua" {{ session('filterJurusan') === 'semua' ? 'selected' : '' }}>Semua Jurusan</option>
-                        <option value="TSM" {{ session('filterJurusan') === 'TSM' ? 'selected' : '' }}>TSM</option>
-                        <option value="TKRO" {{ session('filterJurusan') === 'TKRO' ? 'selected' : '' }}>TKRO</option>
-                    </select>
-                </div>
+    <form method="GET" action="{{ route('dashboard') }}" class="mb-3 row g-3">
+        <div class="col-12 col-md-3">
+            <div class="input-group shadow-sm">
+                <span class="input-group-text bg-primary text-light">
+                    <i class="fas fa-credit-card"></i>
+                </span>
+                <select name="filterJurusan" id="filterJurusan" class="form-select" onchange="this.form.submit()">
+                    <option value="semua" {{ request('filterJurusan', 'semua') === 'semua' ? 'selected' : '' }}>Semua Jurusan</option>
+                    <option value="TSM" {{ request('filterJurusan') === 'TSM' ? 'selected' : '' }}>TSM</option>
+                    <option value="TKRO" {{ request('filterJurusan') === 'TKRO' ? 'selected' : '' }}>TKRO</option>
+                </select>
             </div>
-            <div class="col-12 col-md-3">
-                <div class="input-group shadow-sm">
-                    <span class="input-group-text bg-success text-light">
-                        <i class="fas fa-calendar-alt"></i>
-                    </span>
-                    <input type="month" name="filterBulan" id="filterBulan" class="form-control"
-                        value="{{ session('filterBulan', now()->format('Y-m')) }}" onchange="this.form.submit()">
-                </div>
+        </div>
+        <div class="col-12 col-md-3">
+            <div class="input-group shadow-sm">
+                <span class="input-group-text bg-success text-light">
+                    <i class="fas fa-calendar-alt"></i>
+                </span>
+                <input type="month" name="filterBulan" id="filterBulan" class="form-control"
+                    value="{{ request('filterBulan', now()->format('Y-m')) }}" onchange="this.form.submit()">
             </div>
-        </form>
-    @endif
-
+        </div>
+    </form>
+@endif
     <ul class="nav nav-tabs mb-3">
         <li class="nav-item">
             <a class="nav-link active text-dark fw-bold" data-bs-toggle="tab" href="#daily">
@@ -153,18 +151,18 @@
         </button>
     </form>
 </div>
-
 <script>
-    function printTable() {
-        window.print();
-    }
-
     document.addEventListener("DOMContentLoaded", function() {
+        // Menyimpan tab yang terakhir diklik
         let activeTab = localStorage.getItem("activeTab");
         if (activeTab) {
-            let tabElement = new bootstrap.Tab(document.querySelector([href="${activeTab}"]));
-            tabElement.show();
+            let tabElement = document.querySelector(`a[href='${activeTab}']`);
+            if (tabElement) {
+                let tab = new bootstrap.Tab(tabElement);
+                tab.show();
+            }
         }
+
         document.querySelectorAll('a[data-bs-toggle="tab"]').forEach(tab => {
             tab.addEventListener("shown.bs.tab", function(event) {
                 localStorage.setItem("activeTab", event.target.getAttribute("href"));
