@@ -118,7 +118,8 @@
         </div>
     </div>
 
-    <form action="{{ route('export.service', ['category' => 'tkro']) }}" method="GET" class="mt-4 p-3 shadow-sm border rounded">
+    <form action="{{ route('export.service', ['category' => 'TKRO
+    ']) }}" method="GET" class="mt-4 p-3 shadow-sm border rounded">
         <h5><i class="fas fa-download text-success"></i> Download Laporan TKRO</h5>
         <div class="row g-3">
             <div class="col-md-6">
@@ -135,7 +136,7 @@
         </button>
     </form>
 
-    <form action="{{ route('export.service', ['category' => 'tbsm']) }}" method="GET" class="mt-4 p-3 shadow-sm border rounded">
+    <form action="{{ route('export.service', ['category' => 'TSM']) }}" method="GET" class="mt-4 p-3 shadow-sm border rounded">
         <h5><i class="fas fa-download text-primary"></i> Download Laporan TBSM</h5>
         <div class="row g-3">
             <div class="col-md-6">
