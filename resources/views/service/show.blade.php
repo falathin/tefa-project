@@ -75,18 +75,19 @@
                                     class="text-muted">{{ \Carbon\Carbon::parse($service->service_date)->format('d-m-Y') }}</span>
                             </p>
                             <p><strong><i class="fas fa-check-circle text-success"></i> Status Pembayaran:</strong>
-                                <span id="payment-status" class="badge" style="color: #fff; background-color: 
+                                <span id="payment-status" class="badge"
+                                    style="color: #fff; background-color: 
                                     {{ $service->change > 0 ? '#28a745' : ($service->change < 0 ? '#dc3545' : '#ffc107') }};">
                                     {{ $service->change > 0 ? 'Lunas' : ($service->change < 0 ? 'Hutang' : 'Belum Bayar') }}
                                 </span>
                             </p>
-                            
+
                             <script>
                                 document.addEventListener("DOMContentLoaded", function() {
                                     let change = {{ $service->change }};
                                     let isPaid = {{ $service->isPaid() ? 'true' : 'false' }};
                                     let paymentStatus = document.getElementById("payment-status");
-                            
+
                                     if (change > 0) {
                                         paymentStatus.innerText = "Lunas";
                                         paymentStatus.style.backgroundColor = "#28a745"; // Hijau
@@ -104,9 +105,10 @@
                                     }
                                 });
                             </script>
-                            
 
-                            <p><strong><i class="fas fa-tools text-warning"></i> Status Servis:</strong>
+
+                            <p>
+                                <strong><i class="fas fa-tools text-warning"></i> Status Servis:</strong>
                                 <span class="badge"
                                     style="background-color: {{ $service->status ? '#28a745' : '#FBA518' }}; color: #fff;">
                                     {{ $service->status ? 'Selesai' : 'Belum selesai' }}
@@ -114,11 +116,11 @@
                             </p>
 
                             <script>
-                                document.addEventListener("DOMContentLoaded", function () {
+                                document.addEventListener("DOMContentLoaded", function() {
                                     let checkboxes = document.querySelectorAll(".checklist-item");
                                     let paymentForm = document.getElementById("paymentForm"); // Form pembayaran jika ada
                                     let completeButton = document.getElementById("completeServiceButton");
-                            
+
                                     // Cek apakah ada checklist yang sudah dicentang atau pembayaran sudah dilakukan
                                     let totalChecklist = @json($service->checklists->count());
                                     let hasChecklist = @json($service->checklists->where('is_completed', true)->count());
@@ -126,11 +128,11 @@
                                     // let hasPayment = @json($service->payment_received >= $service->total_cost);
                                     let hasPayment = @json($service->payment_received > 0 && $service->payment_received >= $service->total_cost);
                                     console.log(hasPayment);
-                            
+
                                     function updateButtonState() {
                                         let isAnyChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
                                         let isPaymentCompleted = hasPayment;
-                                        if(hasChecklist == totalChecklist) {
+                                        if (hasChecklist == totalChecklist) {
                                             if ((isAnyChecked || hasChecklist) && isPaymentCompleted) {
                                                 completeButton.removeAttribute("disabled");
                                             } else {
@@ -141,27 +143,26 @@
                                         }
 
                                     }
-                            
+
                                     checkboxes.forEach(checkbox => {
                                         checkbox.addEventListener("change", updateButtonState);
                                     });
-                            
+
                                     if (paymentForm) {
-                                        paymentForm.addEventListener("submit", function () {
+                                        paymentForm.addEventListener("submit", function() {
                                             setTimeout(updateButtonState, 500); // Tunggu sebentar setelah submit untuk update state
                                         });
                                     }
-                            
+
                                     updateButtonState(); // Pastikan state awal sesuai
                                 });
-                            
+
                                 function confirmCompletion() {
                                     if (confirm("Apakah kamu yakin ingin menyelesaikan servis ini?")) {
                                         document.getElementById("completeServiceForm").submit();
                                     }
                                 }
                             </script>
-                            
                             </p>
 
 
@@ -219,18 +220,22 @@
                         </h6>
 
                         @if (!Gate::allows('isBendahara'))
-                            <!-- Form Tambah Item Pekerjaan -->
-                            <form action="{{ route('service.addChecklist', $service->id) }}" method="POST" class="mb-4">
-                                @csrf
-                                <div class="mb-3">
-                                    <input type="text" name="task" class="form-control form-control-sm"
-                                        placeholder="Tambah item pekerjaan baru" required>
-                                </div>
-                                <button type="submit" class="btn btn-primary btn-sm">
-                                    <i class="fas fa-plus-circle"></i> Tambah Pekerjaan
-                                </button>
-                            </form>
+                            @if ($service->status == false)
+                                <!-- Form Tambah Item Pekerjaan -->
+                                <form action="{{ route('service.addChecklist', $service->id) }}" method="POST"
+                                    class="mb-4">
+                                    @csrf
+                                    <div class="mb-3">
+                                        <input type="text" name="task" class="form-control form-control-sm"
+                                            placeholder="Tambah item pekerjaan baru" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-plus-circle"></i> Tambah Pekerjaan
+                                    </button>
+                                </form>
+                            @endif
                         @endif
+
 
                         <!-- Daftar Checklist -->
                         <ul class="list-group mt-4" id="checklist-list">
@@ -276,36 +281,39 @@
                                         </span>
                                         <!-- Time and Actions -->
                                         @if (!Gate::allows('isBendahara'))
-                                            <div class="ms-3 text-end">
-                                                <small class="text-muted">Ditambahkan:
-                                                    {{ $checklist->created_at->format('H:i') }}</small>
-                                                <div class="dropdown d-inline-block ms-2">
-                                                    <button class="btn btn-sm btn-light" type="button"
-                                                        data-bs-toggle="dropdown" aria-expanded="false">
-                                                        <i class="fas fa-ellipsis-v"></i>
-                                                    </button>
-                                                    <ul class="dropdown-menu dropdown-menu-end">
-                                                        <li>
-                                                            <button class="dropdown-item edit-btn text-warning"
-                                                                data-id="{{ $checklist->id }}">
-                                                                <i class="fas fa-edit"></i> Edit
-                                                            </button>
-                                                        </li>
-                                                        <li>
-                                                            <form
-                                                                action="{{ route('service.deleteChecklist', $checklist->id) }}"
-                                                                method="POST">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button type="submit" class="dropdown-item text-danger"
-                                                                    onclick="return confirm('Apakah Anda yakin ingin menghapus item ini?')">
-                                                                    <i class="fas fa-trash-alt"></i> Hapus
+                                            @if ($service->status == false)
+                                                <div class="ms-3 text-end">
+                                                    <small class="text-muted">Ditambahkan:
+                                                        {{ $checklist->created_at->format('H:i') }}</small>
+                                                    <div class="dropdown d-inline-block ms-2">
+                                                        <button class="btn btn-sm btn-light" type="button"
+                                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                                            <i class="fas fa-ellipsis-v"></i>
+                                                        </button>
+                                                        <ul class="dropdown-menu dropdown-menu-end">
+                                                            <li>
+                                                                <button class="dropdown-item edit-btn text-warning"
+                                                                    data-id="{{ $checklist->id }}">
+                                                                    <i class="fas fa-edit"></i> Edit
                                                                 </button>
-                                                            </form>
-                                                        </li>
-                                                    </ul>
+                                                            </li>
+                                                            <li>
+                                                                <form
+                                                                    action="{{ route('service.deleteChecklist', $checklist->id) }}"
+                                                                    method="POST">
+                                                                    @csrf
+                                                                    @method('DELETE')
+                                                                    <button type="submit"
+                                                                        class="dropdown-item text-danger"
+                                                                        onclick="return confirm('Apakah Anda yakin ingin menghapus item ini?')">
+                                                                        <i class="fas fa-trash-alt"></i> Hapus
+                                                                    </button>
+                                                                </form>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            @endif
                                         @endif
                                     </li>
 
@@ -399,111 +407,118 @@
                     </table>
                 </div>
 
-                {{-- informasi pembayaran --}}
-                <h6 class="mb-3 mt-3 animate_animated animate_fadeInUp"
-                    style="animation-duration: 1.5s; animation-delay: 0.8s; color: #6c757d;">
-                    <i class="mdi mdi-cash"></i> Informasi Pembayaran
-                </h6>
+                @if (!Gate::allows('isBendahara'))
+                @if ($service->status == false)                    
+                    {{-- informasi pembayaran --}}
+                    <h6 class="mb-3 mt-3 animate_animated animate_fadeInUp"
+                        style="animation-duration: 1.5s; animation-delay: 0.8s; color: #6c757d;">
+                        <i class="mdi mdi-cash"></i> Informasi Pembayaran
+                    </h6>
 
-                @if (session('success'))
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        {{ session('success') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
+                    @if (session('success'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                aria-label="Close"></button>
+                        </div>
+                    @endif
+
+                    <form action="{{ route('service.updatePayment', $service->id) }}" method="POST"
+                        class="p-4 border rounded shadow bg-white">
+                        @csrf
+                        @method('PUT')
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="service_fee" class="form-label fw-bold text-primary">Jasa Pelayanan</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-primary text-white"><i
+                                            class="fas fa-dollar-sign"></i></span>
+                                    <input type="text" class="form-control border-primary" id="service_fee"
+                                        placeholder="Masukkan Biaya Jasa"
+                                        value="{{ old('service_fee', number_format($service->service_fee, 0, ',', '.')) }}">
+                                    <input type="hidden" name="service_fee" id="service_fee_asli"
+                                        value="{{ old('service_fee', $service->service_fee) }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="diskon" class="form-label fw-bold text-danger">Diskon (%)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-danger text-white"><i
+                                            class="fas fa-percentage"></i></span>
+                                    <input type="text" class="form-control border-danger" id="diskon"
+                                        name="diskon" placeholder="Masukkan Diskon"
+                                        value="{{ old('diskon', number_format($service->diskon, 0, ',', '.')) }}">
+                                    <input type="hidden" name="diskon" id="diskon_asli"
+                                        value="{{ old('diskon', $service->diskon) }}">
+                                </div>
+                            </div>
+
+                            <script>
+                                document.getElementById('diskon').addEventListener('input', function() {
+                                    let diskon = parseFloat(this.value.replace(/\D/g, '')) || 0; // Hanya angka
+                                    if (diskon > 100) {
+                                        diskon = 100;
+                                    }
+                                    this.value = diskon;
+                                    document.getElementById('diskon_asli').value = diskon;
+                                });
+                            </script>
+                            <div class="col-md-6">
+                                <label for="total_cost" class="form-label fw-bold text-success">Total Biaya</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-success text-white"><i
+                                            class="fas fa-calculator"></i></span>
+                                    <input type="text" id="total_cost" class="form-control border-success" readonly
+                                        value="{{ old('total_cost', number_format($service->total_cost, 0, ',', '.')) }}">
+                                    <input type="hidden" name="total_cost" id="total_cost_asli"
+                                        value="{{ old('total_cost', $service->total_cost) }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="payment_received" class="form-label fw-bold text-warning">Pembayaran
+                                    Diterima</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-warning text-white"><i
+                                            class="fas fa-credit-card"></i></span>
+                                    <input type="text" name="payment_received" id="payment_received"
+                                        class="form-control border-warning"
+                                        value="{{ old('payment_received', number_format($service->payment_received, 0, ',', '.')) }}">
+                                    <input type="hidden" name="payment_received" id="payment_received_asli"
+                                        value="{{ old('payment_received', $service->payment_received) }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="change" class="form-label fw-bold text-info">Kembalian</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-info text-white"><i
+                                            class="fas fa-money-bill-wave"></i></span>
+                                    <input type="text" name="change" id="change" class="form-control border-info"
+                                        readonly
+                                        value="{{ old('change', number_format($service->change, 0, ',', '.')) }}">
+                                    <input type="hidden" name="change" id="change_asli"
+                                        value="{{ old('change', $service->change) }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="payment_method" class="form-label fw-bold text-dark">Metode Pembayaran</label>
+                                <select name="payment_method" id="payment_method" class="form-select border-dark">
+                                    <option value="cash" class="text-dark"
+                                        {{ old('payment_method', $service->payment_method) == 'cash' ? 'selected' : '' }}>
+                                        Bayar
+                                        Cash</option>
+                                    <option value="cooperative" class="text-dark"
+                                        {{ old('payment_method', $service->payment_method) == 'cooperative' ? 'selected' : '' }}>
+                                        Kooperasi</option>
+                                    <option value="administration" class="text-dark"
+                                        {{ old('payment_method', $service->payment_method) == 'administration' ? 'selected' : '' }}>
+                                        Tata Usaha</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-3 w-100">Update Pembayaran</button>
+                    </form>
                 @endif
-
-                <form action="{{ route('service.updatePayment', $service->id) }}" method="POST"
-                    class="p-4 border rounded shadow bg-white">
-                    @csrf
-                    @method('PUT')
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label for="service_fee" class="form-label fw-bold text-primary">Jasa Pelayanan</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-primary text-white"><i
-                                        class="fas fa-dollar-sign"></i></span>
-                                <input type="text" class="form-control border-primary" id="service_fee"
-                                    placeholder="Masukkan Biaya Jasa"
-                                    value="{{ old('service_fee', number_format($service->service_fee, 0, ',', '.')) }}">
-                                <input type="hidden" name="service_fee" id="service_fee_asli"
-                                    value="{{ old('service_fee', $service->service_fee) }}">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="diskon" class="form-label fw-bold text-danger">Diskon (%)</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-danger text-white"><i
-                                        class="fas fa-percentage"></i></span>
-                                <input type="text" class="form-control border-danger" id="diskon" name="diskon"
-                                    placeholder="Masukkan Diskon"
-                                    value="{{ old('diskon', number_format($service->diskon, 0, ',', '.')) }}">
-                                <input type="hidden" name="diskon" id="diskon_asli"
-                                    value="{{ old('diskon', $service->diskon) }}">
-                            </div>
-                        </div>
-
-                        <script>
-                            document.getElementById('diskon').addEventListener('input', function() {
-                                let diskon = parseFloat(this.value.replace(/\D/g, '')) || 0; // Hanya angka
-                                if (diskon > 100) {
-                                    diskon = 100;
-                                }
-                                this.value = diskon;
-                                document.getElementById('diskon_asli').value = diskon;
-                            });
-                        </script>
-                        <div class="col-md-6">
-                            <label for="total_cost" class="form-label fw-bold text-success">Total Biaya</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-success text-white"><i
-                                        class="fas fa-calculator"></i></span>
-                                <input type="text" id="total_cost" class="form-control border-success" readonly
-                                    value="{{ old('total_cost', number_format($service->total_cost, 0, ',', '.')) }}">
-                                <input type="hidden" name="total_cost" id="total_cost_asli"
-                                    value="{{ old('total_cost', $service->total_cost) }}">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="payment_received" class="form-label fw-bold text-warning">Pembayaran
-                                Diterima</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-warning text-white"><i
-                                        class="fas fa-credit-card"></i></span>
-                                <input type="text" name="payment_received" id="payment_received"
-                                    class="form-control border-warning"
-                                    value="{{ old('payment_received', number_format($service->payment_received, 0, ',', '.')) }}">
-                                <input type="hidden" name="payment_received" id="payment_received_asli"
-                                    value="{{ old('payment_received', $service->payment_received) }}">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="change" class="form-label fw-bold text-info">Kembalian</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-info text-white"><i
-                                        class="fas fa-money-bill-wave"></i></span>
-                                <input type="text" name="change" id="change" class="form-control border-info"
-                                    readonly value="{{ old('change', number_format($service->change, 0, ',', '.')) }}">
-                                <input type="hidden" name="change" id="change_asli"
-                                    value="{{ old('change', $service->change) }}">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="payment_method" class="form-label fw-bold text-dark">Metode Pembayaran</label>
-                            <select name="payment_method" id="payment_method" class="form-select border-dark">
-                                <option value="cash" class="text-dark"
-                                    {{ old('payment_method', $service->payment_method) == 'cash' ? 'selected' : '' }}>Bayar
-                                    Cash</option>
-                                <option value="cooperative" class="text-dark"
-                                    {{ old('payment_method', $service->payment_method) == 'cooperative' ? 'selected' : '' }}>
-                                    Kooperasi</option>
-                                <option value="administration" class="text-dark"
-                                    {{ old('payment_method', $service->payment_method) == 'administration' ? 'selected' : '' }}>
-                                    Tata Usaha</option>
-                            </select>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn btn-primary mt-3 w-100">Update Pembayaran</button>
-                </form>
+                @endif
 
                 <script>
                     document.addEventListener("DOMContentLoaded", function() {
@@ -560,7 +575,7 @@
                     });
                 </script>
 
-                
+
                 <script>
                     document.addEventListener("DOMContentLoaded", function() {
                         function formatRibuan(angka) {
@@ -619,10 +634,12 @@
                                 </a>
                             @endif
 
-                            <!-- Edit Button -->
-                            <a href="{{ route('service.edit', $service->id) }}" class="btn btn-warning btn-sm">
-                                <i class="mdi mdi-pencil me-2"></i> Edit
-                            </a>
+                            @if ($service->status == false)
+                                <!-- Edit Button -->
+                                <a href="{{ route('service.edit', $service->id) }}" class="btn btn-warning btn-sm">
+                                    <i class="mdi mdi-pencil me-2"></i> Edit
+                                </a>
+                            @endif
 
                             <!-- Hapus Button -->
                             <form action="{{ route('service.destroy', $service->id) }}" method="POST"
@@ -649,6 +666,12 @@
                                     <i class="fas fa-check-circle"></i> Selesaikan Servis
                                 </button>
                             </form>
+                        </div>
+                    @else
+                        <div class="action-buttons-right ms-auto">
+                            <button type="button" class="btn btn-success conbtn-sm mt-2" disabled>
+                                <i class="fas fa-check-circle"></i>&nbsp;&nbsp;&nbsp;Servis selesai
+                            </button>
                         </div>
                     @endif
                 </div>
