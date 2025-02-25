@@ -102,10 +102,12 @@
                                     <p><strong>Keluhan:</strong> {{ $service->complaint ?? 'Tidak ada keluhan' }}</p>
                                     <p><strong>Jenis Layanan:</strong> {{ ucfirst($service->service_type) }}</p>
                                     <p><strong>Status Pembayaran:</strong> 
-                                        @if($service->payment_received >= $service->total_cost)
+                                        @if($service->payment_received == 0)
+                                            <span class="badge bg-danger">Belum Bayar</span>
+                                        @elseif($service->payment_received >= $service->total_cost)
                                             <span class="badge bg-success">Lunas</span>
                                         @else
-                                            <span class="badge bg-warning">Belum Lunas</span>
+                                            <span class="badge bg-warning">Hutang</span>
                                         @endif
                                     </p>
                                     @if (Gate::allows('isBendahara'))

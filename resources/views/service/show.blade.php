@@ -75,18 +75,18 @@
                                     class="text-muted">{{ \Carbon\Carbon::parse($service->service_date)->format('d-m-Y') }}</span>
                             </p>
                             <p><strong><i class="fas fa-check-circle text-success"></i> Status Pembayaran:</strong>
-                                <span id="payment-status" class="badge" style="color: #fff;">
+                                <span id="payment-status" class="badge" style="color: #fff; background-color: 
+                                    {{ $service->change > 0 ? '#28a745' : ($service->change < 0 ? '#dc3545' : '#ffc107') }};">
                                     {{ $service->change > 0 ? 'Lunas' : ($service->change < 0 ? 'Hutang' : 'Belum Bayar') }}
                                 </span>
                             </p>
-
+                            
                             <script>
                                 document.addEventListener("DOMContentLoaded", function() {
                                     let change = {{ $service->change }};
-                                    let isPaid =
-                                        {{ $service->isPaid() ? 'true' : 'false' }}; // Cek dari backend apakah pembayaran sudah dilakukan
+                                    let isPaid = {{ $service->isPaid() ? 'true' : 'false' }};
                                     let paymentStatus = document.getElementById("payment-status");
-
+                            
                                     if (change > 0) {
                                         paymentStatus.innerText = "Lunas";
                                         paymentStatus.style.backgroundColor = "#28a745"; // Hijau
@@ -94,7 +94,6 @@
                                         paymentStatus.innerText = "Hutang";
                                         paymentStatus.style.backgroundColor = "#dc3545"; // Merah
                                     } else {
-                                        // Jika change == 0, cek apakah memang sudah dibayar atau belum
                                         if (isPaid) {
                                             paymentStatus.innerText = "Lunas";
                                             paymentStatus.style.backgroundColor = "#28a745"; // Hijau
@@ -105,6 +104,7 @@
                                     }
                                 });
                             </script>
+                            
 
                             <p><strong><i class="fas fa-tools text-warning"></i> Status Servis:</strong>
                                 <span class="badge"
@@ -114,27 +114,52 @@
                             </p>
 
                             <script>
-                                document.addEventListener("DOMContentLoaded", function() {
-                                    // Cek apakah ada checklist atau pembayaran
-                                    let hasChecklist = @json($service->checklists->count() > 0);
-                                    let hasPayment = @json($service->total_cost > 0 || $service->payment_received > 0);
-
-                                    // Tombol submit
+                                document.addEventListener("DOMContentLoaded", function () {
+                                    let checkboxes = document.querySelectorAll(".checklist-item");
+                                    let paymentForm = document.getElementById("paymentForm"); // Form pembayaran jika ada
                                     let completeButton = document.getElementById("completeServiceButton");
+                            
+                                    // Cek apakah ada checklist yang sudah dicentang atau pembayaran sudah dilakukan
+                                    let totalChecklist = @json($service->checklists->count());
+                                    let hasChecklist = @json($service->checklists->where('is_completed', true)->count());
+                                    let hasPayment = @json($service->payment_received >= $service->total_cost);
+                                    console.log(hasPayment);
+                            
+                                    function updateButtonState() {
+                                        let isAnyChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
+                                        let isPaymentCompleted = hasPayment;
+                                        if(hasChecklist == totalChecklist) {
+                                            if ((isAnyChecked || hasChecklist) && isPaymentCompleted) {
+                                                completeButton.removeAttribute("disabled");
+                                            } else {
+                                                completeButton.setAttribute("disabled", "true");
+                                            }
+                                        } else {
+                                            completeButton.setAttribute("disabled", "true");
+                                        }
 
-                                    // Aktifkan tombol jika ada salah satu syarat terpenuhi
-                                    if (hasChecklist || hasPayment) {
-                                        completeButton.removeAttribute("disabled");
                                     }
+                            
+                                    checkboxes.forEach(checkbox => {
+                                        checkbox.addEventListener("change", updateButtonState);
+                                    });
+                            
+                                    if (paymentForm) {
+                                        paymentForm.addEventListener("submit", function () {
+                                            setTimeout(updateButtonState, 500); // Tunggu sebentar setelah submit untuk update state
+                                        });
+                                    }
+                            
+                                    updateButtonState(); // Pastikan state awal sesuai
                                 });
-
+                            
                                 function confirmCompletion() {
                                     if (confirm("Apakah kamu yakin ingin menyelesaikan servis ini?")) {
                                         document.getElementById("completeServiceForm").submit();
                                     }
                                 }
                             </script>
-
+                            
                             </p>
 
 
