@@ -122,7 +122,9 @@
                                     // Cek apakah ada checklist yang sudah dicentang atau pembayaran sudah dilakukan
                                     let totalChecklist = @json($service->checklists->count());
                                     let hasChecklist = @json($service->checklists->where('is_completed', true)->count());
-                                    let hasPayment = @json($service->payment_received >= $service->total_cost);
+                                    // let totalCost = @json($service->totalCost);
+                                    // let hasPayment = @json($service->payment_received >= $service->total_cost);
+                                    let hasPayment = @json($service->payment_received > 0 && $service->payment_received >= $service->total_cost);
                                     console.log(hasPayment);
                             
                                     function updateButtonState() {
@@ -558,6 +560,7 @@
                     });
                 </script>
 
+                
                 <script>
                     document.addEventListener("DOMContentLoaded", function() {
                         function formatRibuan(angka) {
