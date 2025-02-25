@@ -231,7 +231,7 @@
                 row.querySelector('.subtotal').value = subtotal.toFixed(2);
                 updateTotalBiaya();
             }
- 
+
             // Show modal with custom message
             function showModalMessage(message) {
                 const validationMessage = document.getElementById('validationMessage');
@@ -286,26 +286,35 @@
                 document.getElementById('change').value = kembalian.toFixed(2);
             }
 
+            // Format currency function
+            function formatCurrency(value) {
+                return new Intl.NumberFormat('id-ID', {
+                    style: 'currency',
+                    currency: 'IDR',
+                    minimumFractionDigits: 0
+                }).format(value);
+            }
+
             // Add new row
             document.getElementById('addRow').addEventListener('click', function() {
                 const tableBody = document.querySelector('#sparepartTable tbody');
                 const row = tableBody.insertRow();
                 row.innerHTML = `
-    <td>
-        <select name="sparepart_id[]" class="form-control sparepart_id select2">
-            <option value="">Pilih Sparepart</option>
-            @foreach ($spareparts as $sparepart)
-                <option value="{{ $sparepart->id_sparepart }}" data-harga="{{ $sparepart->harga_jual }}">
-                    {{ $sparepart->nama_sparepart }}
-                </option>                                      
-            @endforeach
-        </select>
-    </td>
-    <td><input type="text" class="form-control harga" readonly></td>
-    <td><input type="number" name="jumlah[]" class="form-control jumlah" min="1" style="width:100px"></td>
-    <td><input type="text" class="form-control subtotal" style="width:250px" readonly></td>
-    <td><button type="button" class="btn btn-danger remove-row">Hapus</button></td>
-    `;
+        <td>
+            <select name="sparepart_id[]" class="form-control sparepart_id select2">
+                <option value="">Pilih Sparepart</option>
+                @foreach ($spareparts as $sparepart)
+                    <option value="{{ $sparepart->id_sparepart }}" data-harga="{{ $sparepart->harga_jual }}">
+                        {{ $sparepart->nama_sparepart }}
+                    </option>                                      
+                @endforeach
+            </select>
+        </td>
+        <td><input type="text" class="form-control harga" readonly></td>
+        <td><input type="number" name="jumlah[]" class="form-control jumlah" min="1" style="width:100px"></td>
+        <td><input type="text" class="form-control subtotal" style="width:250px" readonly></td>
+        <td><button type="button" class="btn btn-danger remove-row">Hapus</button></td>
+        `;
 
                 // Re-add event listeners for the new row
                 const newRow = tableBody.lastElementChild;
@@ -318,7 +327,7 @@
                 $(newRow).find('.sparepart_id').on('select2:select', function() {
                     const selectedOption = $(this).find('option:selected');
                     const price = selectedOption.data('harga') || 0;
-                    $(newRow).find('.harga').val(parseFloat(price).toFixed(2));
+                    $(newRow).find('.harga').val(formatCurrency(price)); // Format currency
                     calculateSubtotal(newRow);
                 });
 
@@ -329,7 +338,27 @@
                 updateTotalBiaya();
             });
 
-            // Initialize select2 on existing select elements
+            // Function to calculate subtotal
+            function calculateSubtotal(row) {
+                const price = parseFloat($(row).find('.sparepart_id option:selected').data('harga')) || 0;
+                const quantity = parseInt($(row).find('.jumlah').val()) || 0;
+                const subtotal = price * quantity;
+
+                $(row).find('.subtotal').val(formatCurrency(subtotal)); // Format currency
+                updateTotalBiaya();
+            }
+
+            // Function to update total biaya
+            function updateTotalBiaya() {
+                let total = 0;
+                $('.subtotal').each(function() {
+                    const value = $(this).val().replace(/[^\d]/g,
+                    ''); // Remove currency symbols for calculation
+                    total += parseInt(value) || 0;
+                });
+                $('#totalBiaya').text(formatCurrency(total)); // Update total biaya display
+            }
+
             $(document).ready(function() {
                 $('.select2').select2();
                 $('.select2').on('select2:select', function() {
