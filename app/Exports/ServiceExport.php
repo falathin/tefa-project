@@ -2,6 +2,7 @@
 namespace App\Exports;
 
 use App\Models\Service;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
@@ -74,7 +75,11 @@ class ServiceExport implements FromCollection, WithHeadings, WithMapping, WithSt
 
     private function translateServiceType($type)
     {
-        $translations = ['light' => 'Ringan', 'medium' => 'Sedang', 'heavy' => 'Berat'];
+        if(Auth::user()->jurusan == 'TKRO') {
+            $translations = ['light' => '10.000 KM (Ringan)', 'medium' => '30.000 KM (Sedang)', 'heavy' => '50.000 KM (Berat)'];
+        } else if (Auth::user()->jurusan == 'TSM') {
+            $translations = ['light' => 'Ringan', 'medium' => 'Sedang', 'heavy' => 'Berat'];
+        }
         return $translations[$type] ?? ucfirst($type);
     }
 
