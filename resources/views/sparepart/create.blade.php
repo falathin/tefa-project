@@ -78,12 +78,12 @@
                     <div class="form-group">
                         <label for="keuntungan"><i class="bi bi-calculator"></i>&nbsp; Keuntungan (Per Barang):</label>
                         <input type="text" id="keuntungan" class="form-control" readonly>
+                        <input type="hidden" id="keuntungan_asli" name="keuntungan">
                     </div>
 
                     <div class="form-group">
                         <label for="total_keuntungan"><i class="bi bi-wallet2"></i>&nbsp; Total Keuntungan:</label>
                         <input type="text" id="total_keuntungan" class="form-control" readonly>
-                        <input type="hidden" id="total_keuntungan_asli">
                     </div>
 
                     <div class="form-group">
@@ -142,9 +142,10 @@
             let keuntungan = hargaJual - hargaBeli;
             let totalKeuntungan = keuntungan * jumlah;
 
-            document.getElementById('keuntungan').value = keuntungan;
-            document.getElementById('total_keuntungan').value = totalKeuntungan;
-
+            document.getElementById('keuntungan').value = formatRibuan(keuntungan);
+            document.getElementById('keuntungan_asli').value = keuntungan;
+            document.getElementById('total_keuntungan').value = formatRibuan(totalKeuntungan);
+            document.getElementById('total_keuntungan_asli').value = totalKeuntungan;
         }
 
         document.getElementById('harga_beli').addEventListener('input', function() {
@@ -160,11 +161,6 @@
         document.getElementById('jumlah').addEventListener('input', function() {
             this.value = formatRibuan(this.value.replace(/\D/g, ""));
             document.getElementById("jumlah_asli").value = unformat(this.value);
-            updateKeuntungan()
-        });
-
-        document.getElementById('total_keuntungan').addEventListener('input', function() {
-            this.value = formatRibuan(this.value.replace(/\D/g, ""));
             updateKeuntungan()
         });
 

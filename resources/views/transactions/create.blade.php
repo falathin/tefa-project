@@ -4,7 +4,7 @@
     <div class="container">
         <div class="card shadow-sm">
             <form action="{{ route('transactions.store') }}" method="POST" id="transactionForm">
-                
+
                 <div class="card-header mt-3 rounded bg-danger text-white d-flex justify-content-between align-items-center">
                     <h5 class="mb-0"><i class="fas fa-wrench"></i> &nbsp; Tambah Informasi Sparepart</h5>
                     <small class="text-right"><b>*</b> Hapus jika tidak diperlukan</small>
@@ -57,7 +57,8 @@
                             <label for="transaction_date">
                                 <i class="bi bi-calendar-event"></i> Tanggal Transaksi
                             </label>
-                            <input type="date" name="transaction_date" id="transaction_date" class="form-control" value="{{ old('transaction_date', now()->toDateString()) }}" required>
+                            <input type="date" name="transaction_date" id="transaction_date" class="form-control"
+                                value="{{ old('transaction_date', now()->toDateString()) }}" required>
                         </div>
 
                         <div class="form-group mt-3">
@@ -65,30 +66,27 @@
                                 <i class="bi bi-arrow-up-down"></i> Jenis Transaksi
                             </label>
                             <select name="transaction_type" id="transaction_type" class="form-control" required>
-                                <option value="purchase" {{ old('transaction_type') == 'purchase' ? 'selected' : '' }}>Pembelian</option>
-                                <option value="sale" {{ old('transaction_type') == 'sale' ? 'selected' : '' }}>Penjualan</option>
+                                <option value="purchase" {{ old('transaction_type') == 'purchase' ? 'selected' : '' }}>
+                                    Pembelian</option>
+                                <option value="sale" {{ old('transaction_type') == 'sale' ? 'selected' : '' }}>Penjualan
+                                </option>
                             </select>
                         </div>
                         <div class="form-group mt-3">
                             <label for="purchase_price">
                                 <i class="bi bi-credit-card"></i> Uang Masuk
                             </label>
-                            <input 
-                                type="number" 
-                                name="purchase_price" 
-                                id="purchase_price" 
-                                class="form-control" 
-                                min="0" 
-                                value="{{ old('purchase_price', 0) }}" 
-                                required
-                            >
-                        </div>                        
+                            <input type="text" id="purchase_price" class="form-control" min="0"
+                                value="{{ old('purchase_price', 0) }}" required>
+                            <input type="hidden" name="purchase_price" id="purchase_price_asli">
+                        </div>
 
                         <div class="form-group mt-3">
                             <label for="total_cost">
                                 <i class="bi bi-wallet2"></i> Total Biaya
                             </label>
-                            <input type="text" id="total_cost" class="form-control" value="{{ old('total_cost', 0) }}" readonly>
+                            <input type="text" id="total_cost" class="form-control" value="{{ old('total_cost', 0) }}"
+                                readonly>
                         </div>
 
                         <div class="form-group mt-3">
@@ -96,6 +94,7 @@
                                 <i class="bi bi-cash-coin"></i> Kembalian
                             </label>
                             <input type="text" id="change" class="form-control" readonly>
+                            <input type="hidden" id="change_asli">
                         </div>
 
                         <div class="d-flex justify-content-between">
@@ -103,61 +102,72 @@
                             <a href="{{ route('transactions.index') }}" class="btn btn-secondary mt-4">
                                 <i class="bi bi-arrow-left"></i> Kembali
                             </a>
-                
+
                             <!-- Submit button with confirmation -->
                             <button type="submit" class="btn btn-success mt-4" onclick="return confirmSubmit()">
                                 <i class="bi bi-save"></i> Simpan Transaksi
                             </button>
                         </div>
-                        
+
                         <script>
                             function confirmSubmit() {
                                 return confirm('Apakah Anda yakin ingin menyimpan transaksi ini?');
                             }
-                        </script>                        
-                    </form>
-                @endif
-            </div>
+                        </script>
+            </form>
+            @endif
         </div>
     </div>
+    </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-    const transactionDateInput = document.getElementById('transaction_date');
-    if (!transactionDateInput.value) {
-        const today = new Date().toISOString().split('T')[0];
-        transactionDateInput.value = today;
-    }
+    <script>
+        function formatRibuan(angka) {
+            return new Intl.NumberFormat("id-ID").format(angka);
+        }
 
-    function calculateSubtotal(row) {
-        const price = parseFloat(row.querySelector('.harga').value) || 0;
-        const quantity = parseFloat(row.querySelector('.jumlah').value) || 0;
-        const subtotal = price * quantity;
-        row.querySelector('.subtotal').value = subtotal.toFixed(2);
-        updateTotalCost();
-    }
+        function unformat(angka) {
+            return parseInt(angka.replace(/\D/g, "")) || 0;
+        }
 
-    function updateTotalCost() {
-        const totalSparepart = Array.from(document.querySelectorAll('#sparepartTable tbody tr')).reduce((sum, row) => {
-            const price = parseFloat(row.querySelector('.harga').value.replace(/[^0-9.-]+/g, "")) || 0;
-            const quantity = parseInt(row.querySelector('.jumlah').value) || 0;
-            return sum + (price * quantity);
-        }, 0);
-        document.getElementById('total_cost').value = totalSparepart.toFixed(2);
-        updateChange(); // Call updateChange when total cost changes
-    }
+        document.addEventListener('DOMContentLoaded', function() {
+            const transactionDateInput = document.getElementById('transaction_date');
+            if (!transactionDateInput.value) {
+                const today = new Date().toISOString().split('T')[0];
+                transactionDateInput.value = today;
+            }
 
-    function updateChange() {
-        const paymentReceived = parseFloat(document.getElementById('purchase_price').value) || 0;
-        const totalCost = parseFloat(document.getElementById('total_cost').value) || 0;
-        const change = paymentReceived - totalCost;
-        document.getElementById('change').value = change >= 0 ? change.toFixed(2) : 0;
-    }
+            function calculateSubtotal(row) {
+                const price = parseFloat(row.querySelector('.harga').value) || 0;
+                const quantity = parseFloat(row.querySelector('.jumlah').value) || 0;
+                const subtotal = price * quantity;
+                row.querySelector('.subtotal').value = subtotal.toFixed(2);
+                updateTotalCost();
+            }
 
-    document.getElementById('addRow').addEventListener('click', function() {
-        const tableBody = document.querySelector('#sparepartTable tbody');
-        const row = tableBody.insertRow();
-        row.innerHTML = `
+            function updateTotalCost() {
+                const totalSparepart = Array.from(document.querySelectorAll('#sparepartTable tbody tr')).reduce((
+                    sum, row) => {
+                    const price = parseFloat(row.querySelector('.harga').value.replace(/[^0-9.-]+/g, "")) ||
+                        0;
+                    const quantity = parseInt(row.querySelector('.jumlah').value) || 0;
+                    return sum + (price * quantity);
+                }, 0);
+                document.getElementById('total_cost').value = formatRibuan(totalSparepart.toFixed(2));
+                updateChange(); // Call updateChange when total cost changes
+            }
+
+            function updateChange() {
+                const paymentReceived = parseFloat(document.getElementById('purchase_price_asli').value) || 0;
+                const totalCost = parseFloat(unformat(document.getElementById('total_cost').value)) || 0;
+                const change = paymentReceived - totalCost;
+                document.getElementById('change').value = formatRibuan(change >= 0 ? change.toFixed(2) : 0);
+                document.getElementById('change_asli').value = change >= 0 ? change.toFixed(2) : 0;
+            }
+
+            document.getElementById('addRow').addEventListener('click', function() {
+                const tableBody = document.querySelector('#sparepartTable tbody');
+                const row = tableBody.insertRow();
+                row.innerHTML = `
             <td>
                 <select name="sparepart_id[]" class="form-control sparepart_id" required>
                     <option value="">Pilih Sparepart</option>
@@ -169,53 +179,96 @@
                 </select>
             </td>
             <td><input type="text" class="form-control harga" readonly></td>
-            <td><input type="number" name="quantity[]" class="form-control jumlah" min="1" required></td>
+            <td><input type="text" name="quantity[]" class="form-control jumlah" min="1" required"></td>
             <td><input type="text" class="form-control subtotal" readonly></td>
             <td><button type="button" class="btn btn-danger remove-row">Hapus</button></td>
         `;
-        const newRow = tableBody.lastElementChild;
-        newRow.querySelector('.sparepart_id').addEventListener('change', function() {
-            const price = this.options[this.selectedIndex].getAttribute('data-harga') || 0;
-            newRow.querySelector('.harga').value = parseFloat(price).toFixed(2);
-            calculateSubtotal(newRow);
-        });
-        newRow.querySelector('.jumlah').addEventListener('input', function() {
-            calculateSubtotal(newRow);
-        });
+                const newRow = tableBody.lastElementChild;
+                newRow.querySelector('.sparepart_id').addEventListener('change', function() {
+                    const price = this.options[this.selectedIndex].getAttribute('data-harga') || 0;
+                    newRow.querySelector('.harga').value = parseFloat(price).toFixed(2);
+                    calculateSubtotal(newRow);
+                });
+                newRow.querySelector('.jumlah').addEventListener('input', function() {
+                    calculateSubtotal(newRow);
+                });
 
-        updateTotalCost();
-    });
+                updateTotalCost();
+            });
 
-    document.querySelector('#sparepartTable').addEventListener('click', function(event) {
-        if (event.target.classList.contains('remove-row')) {
-            event.target.closest('tr').remove();
-            updateTotalCost();
+            document.querySelector('#sparepartTable').addEventListener('click', function(event) {
+                if (event.target.classList.contains('remove-row')) {
+                    event.target.closest('tr').remove();
+                    updateTotalCost();
+                }
+            });
+
+            document.getElementById('purchase_price').addEventListener('input', function() {
+                this.value = formatRibuan(this.value.replace(/\D/g, ""));
+                document.getElementById("purchase_price_asli").value = unformat(this.value);
+                updateChange()
+            });
+
+            // Validasi saat submit form
+            document.getElementById('transactionForm').addEventListener('submit', function(e) {
+                let valid = true;
+                document.querySelectorAll('select[name="sparepart_id[]"]').forEach(function(select) {
+                    if (!select.value) {
+                        alert('Kolom ID sparepart harus diisi.');
+                        valid = false;
+                    }
+                });
+                document.querySelectorAll('input[name="quantity[]"]').forEach(function(input) {
+                    if (!input.value || input.value <= 0) {
+                        alert('Kolom jumlah harus diisi dan lebih dari 0.');
+                        valid = false;
+                    }
+                });
+                if (!valid) {
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
+    {{-- contoh --}}
+    {{-- <script>
+        function formatRibuan(angka) {
+            return new Intl.NumberFormat("id-ID").format(angka);
         }
-    });
 
-    document.getElementById('purchase_price').addEventListener('input', updateChange);
-
-    // Validasi saat submit form
-    document.getElementById('transactionForm').addEventListener('submit', function(e) {
-        let valid = true;
-        document.querySelectorAll('select[name="sparepart_id[]"]').forEach(function(select) {
-            if (!select.value) {
-                alert('Kolom ID sparepart harus diisi.');
-                valid = false;
-            }
-        });
-        document.querySelectorAll('input[name="quantity[]"]').forEach(function(input) {
-            if (!input.value || input.value <= 0) {
-                alert('Kolom jumlah harus diisi dan lebih dari 0.');
-                valid = false;
-            }
-        });
-        if (!valid) {
-            e.preventDefault();
+        function unformat(angka) {
+            return parseInt(angka.replace(/\D/g, "")) || 0;
         }
-    });
-});
 
-</script>
+        function updateKeuntungan() {
+            let hargaBeli = parseFloat(document.getElementById('harga_beli_asli').value) || 0;
+            let hargaJual = parseFloat(document.getElementById('harga_jual_asli').value) || 0;
+            let jumlah = parseInt(document.getElementById('jumlah_asli').value) || 0;
+
+            let keuntungan = hargaJual - hargaBeli;
+            let totalKeuntungan = keuntungan * jumlah;
+
+            document.getElementById('keuntungan').value = formatRibuan(keuntungan);
+            document.getElementById('keuntungan_asli').value = keuntungan;
+            document.getElementById('total_keuntungan').value = formatRibuan(totalKeuntungan);
+            document.getElementById('total_keuntungan_asli').value = totalKeuntungan;
+        }
+
+        document.getElementById('harga_beli').addEventListener('input', function() {
+            this.value = formatRibuan(this.value.replace(/\D/g, ""));
+            document.getElementById("harga_beli_asli").value = unformat(this.value);
+            updateKeuntungan()
+        });
+        document.getElementById('harga_jual').addEventListener('input', function() {
+            this.value = formatRibuan(this.value.replace(/\D/g, ""));
+            document.getElementById("harga_jual_asli").value = unformat(this.value);
+            updateKeuntungan()
+        });
+        document.getElementById('jumlah').addEventListener('input', function() {
+            this.value = formatRibuan(this.value.replace(/\D/g, ""));
+            document.getElementById("jumlah_asli").value = unformat(this.value);
+            updateKeuntungan()
+        });
+    </script> --}}
 
 @endsection

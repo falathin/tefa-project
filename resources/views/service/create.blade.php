@@ -13,14 +13,14 @@
                     <div class="row">
                         <!-- Kategori Informasi Servis -->
                         <div class="col-md-12 mb-3">
-                            <h5 class="fw-bold">Informasi Servis</h5>
+                            <h5 class="fw-bold text-primary">Informasi Servis</h5>
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label for="complaint" class="form-label">Keluhan</label>
+                            <label for="complaint" class="form-label text-dark">Keluhan</label>
                             <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-comment"></i></span>
-                                <input type="text" name="complaint" class="form-control"
+                                <span class="input-group-text bg-warning text-white"><i class="fas fa-comment"></i></span>
+                                <input type="text" name="complaint" class="form-control border-warning"
                                     placeholder="Masukkan keluhan kendaraan" value="{{ old('complaint') }}" required>
                             </div>
                             @error('complaint')
@@ -29,10 +29,11 @@
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label for="current_mileage" class="form-label">Kilometer Saat Ini</label>
+                            <label for="current_mileage" class="form-label text-dark">Kilometer Saat Ini</label>
                             <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-tachometer-alt"></i></span>
-                                <input type="number" name="current_mileage" class="form-control"
+                                <span class="input-group-text bg-info text-white"><i
+                                        class="fas fa-tachometer-alt"></i></span>
+                                <input type="number" name="current_mileage" class="form-control border-info"
                                     placeholder="Masukkan kilometer kendaraan" value="{{ old('current_mileage') }}"
                                     required>
                             </div>
@@ -42,11 +43,12 @@
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label for="service_date" class="form-label">Tanggal Service</label>
+                            <label for="service_date" class="form-label text-dark">Tanggal Service</label>
                             <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
-                                <input type="date" name="service_date" id="service_date" class="form-control"
-                                    value="{{ old('service_date') }}" required>
+                                <span class="input-group-text bg-success text-white"><i
+                                        class="fas fa-calendar-alt"></i></span>
+                                <input type="date" name="service_date" id="service_date"
+                                    class="form-control border-success" value="{{ old('service_date') }}" required>
                             </div>
                             @error('service_date')
                                 <div class="text-danger">{{ $message }}</div>
@@ -54,16 +56,28 @@
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label for="service_type" class="form-label">Jenis Service</label>
+                            <label for="service_type" class="form-label text-dark">Jenis Service</label>
                             <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-tools"></i></span>
-                                <select name="service_type" class="form-control" required>
-                                    <option value="light" {{ old('service_type') == 'light' ? 'selected' : '' }}>Ringan
-                                    </option>
-                                    <option value="medium" {{ old('service_type') == 'medium' ? 'selected' : '' }}>Sedang
-                                    </option>
-                                    <option value="heavy" {{ old('service_type') == 'heavy' ? 'selected' : '' }}>Berat
-                                    </option>
+                                <span class="input-group-text bg-danger text-white"><i class="fas fa-tools"></i></span>
+                                <select name="service_type" class="form-control border-danger" required>
+                                    @if (Auth::user()->jurusan == 'TSM')
+                                        <option value="light" {{ old('service_type') == 'light' ? 'selected' : '' }}>
+                                            Ringan</option>
+                                        <option value="medium" {{ old('service_type') == 'medium' ? 'selected' : '' }}>
+                                            Sedang</option>
+                                        <option value="heavy" {{ old('service_type') == 'heavy' ? 'selected' : '' }}>Berat
+                                        </option>
+                                    @elseif (Auth::user()->jurusan == 'TKRO')
+                                        <option value="light" {{ old('service_type') == 'light' ? 'selected' : '' }}>
+                                            10.000 KM
+                                            (Ringan)</option>
+                                        <option value="medium" {{ old('service_type') == 'medium' ? 'selected' : '' }}>
+                                            30.000 KM
+                                            (Sedang)</option>
+                                        <option value="heavy" {{ old('service_type') == 'heavy' ? 'selected' : '' }}>
+                                            50.000 KM
+                                            (Berat)</option>
+                                    @endif
                                 </select>
                             </div>
                             @error('service_type')
@@ -72,11 +86,12 @@
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label for="technician_name" class="form-label">Nama Teknisi</label>
+                            <label for="technician_name" class="form-label text-dark">Nama Teknisi</label>
                             <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-user-cog"></i></span>
-                                <input type="text" name="technician_name" id="technician_name" class="form-control"
-                                    placeholder="Masukkan nama teknisi" value="{{ old('technician_name') }}" required>
+                                <span class="input-group-text bg-primary text-white"><i class="fas fa-user-cog"></i></span>
+                                <input type="text" name="technician_name" id="technician_name"
+                                    class="form-control border-primary" placeholder="Masukkan nama teknisi"
+                                    value="{{ old('technician_name') }}" required>
                             </div>
                             @error('technician_name')
                                 <div class="text-danger">{{ $message }}</div>
@@ -109,60 +124,6 @@
                             <br>
                             <button type="button" class="btn btn-primary" id="addRow">+ Tambah Sparepart</button>
                         </div>
-
-                        <!-- Kategori Informasi Pembayaran -->
-                        {{-- <div class="col-md-12 mb-3">
-                            <h5 class="fw-bold">Informasi Pembayaran</h5>
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label for="service_fee" class="form-label">Jasa Pelayanan</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
-                                <input type="number" name="service_fee" class="form-control" id="service_fee"
-                                    placeholder="Masukkan Biaya Jasa" value="{{ old('service_fee') }}">
-                            </div>
-                            @error('service_fee')
-                                <div class="text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label for="total_cost" class="form-label">Total Biaya</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-calculator"></i></span>
-                                <input type="number" name="total_cost" id="total_cost" class="form-control" readonly
-                                    placeholder="Total biaya" value="{{ old('total_cost') }}">
-                            </div>
-                            @error('total_cost')
-                                <div class="text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label for="payment_received" class="form-label">Pembayaran Diterima</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-credit-card"></i></span>
-                                <input type="number" name="payment_received" id="payment_received" class="form-control"
-                                    placeholder="Jumlah pembayaran diterima" value="{{ old('payment_received') }}"
-                                >
-                            </div>
-                            @error('payment_received')
-                                <div class="text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label for="change" class="form-label">Kembalian</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
-                                <input type="number" name="change" id="change" class="form-control" readonly
-                                    placeholder="Kembalian" value="{{ old('change') }}">
-                            </div>
-                            @error('change')
-                                <div class="text-danger">{{ $message }}</div>
-                            @enderror
-                        </div> --}}
 
                         <!-- Kategori Catatan Tambahan -->
                         <div class="col-md-12 mb-3">
@@ -353,7 +314,7 @@
                 let total = 0;
                 $('.subtotal').each(function() {
                     const value = $(this).val().replace(/[^\d]/g,
-                    ''); // Remove currency symbols for calculation
+                        ''); // Remove currency symbols for calculation
                     total += parseInt(value) || 0;
                 });
                 $('#totalBiaya').text(formatCurrency(total)); // Update total biaya display
