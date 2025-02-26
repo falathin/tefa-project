@@ -118,15 +118,27 @@
                                 <!-- Service Type (e.g., Berkala) -->
                                 <div class="card-body text-white">
                                     <h6 class="text-muted text-light">
-                                        <i class="bi bi-tools"></i> {{ $service->service_type }}
-                                        {{ $service->status }}
+                                        <i class="bi bi-tools"></i> 
+                                        {{ $service->service_type }}
+                                    
+                                        @if ($service->service_type == 'light')
+                                            <span class="fw-bold">10.000 KM (Ringan)</span>
+                                        @elseif ($service->service_type == 'medium')
+                                            <span class="fw-bold">10.000 KM (Sedang)</span>
+                                        @elseif ($service->service_type == 'heavy')
+                                            <span class="fw-bold">10.000 KM (Berat)</span>
+                                        @endif
                                     </h6>
 
-                                    <!-- Service Status with Background Color -->
+                                    <!-- Service Status with Icons -->
                                     @if ($service->status == 0)
-                                        <p class="bg-warning text-dark p-2">Status servis: Belum selesai</p>
+                                        <p class="text-light">
+                                            <i class="bi bi-x-circle text-danger"></i> Status servis: Belum selesai
+                                        </p>
                                     @else
-                                        <p class="bg-success text-light p-2">Status servis: Selesai</p>
+                                        <p class="text-light">
+                                            <i class="bi bi-check-circle text-success"></i> Status servis: Selesai
+                                        </p>
                                     @endif
 
                                     <p class="text-muted text-light">Total Biaya</p>
@@ -141,16 +153,13 @@
 
                                     <!-- Actions (Detail, Edit, Delete) -->
                                     <div class="d-flex justify-content-between mt-3">
-                                        <a href="{{ route('service.show', $service->id) }}"
-                                            class="btn btn-outline-info btn-sm">
+                                        <a href="{{ route('service.show', $service->id) }}" class="btn btn-outline-info btn-sm">
                                             <i class="bi bi-info-circle"></i> Detail
                                         </a>
-                                        <a href="{{ route('service.edit', $service->id) }}"
-                                            class="btn btn-outline-warning btn-sm">
+                                        <a href="{{ route('service.edit', $service->id) }}" class="btn btn-outline-warning btn-sm">
                                             <i class="bi bi-pencil-square"></i> Edit
                                         </a>
-                                        <form action="{{ route('service.destroy', $service->id) }}" method="POST"
-                                            class="d-inline-block">
+                                        <form action="{{ route('service.destroy', $service->id) }}" method="POST" class="d-inline-block">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-outline-danger btn-sm">

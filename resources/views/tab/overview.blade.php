@@ -290,9 +290,13 @@
                             </p>
                         </div>
                         <!-- Tombol dengan ikon -->
-                        <button class="btn btn-warning text-white" onclick="printDailyReport()">
+                        {{-- <button class="btn btn-warning text-white" onclick="printDailyReport()">
                             <i class="fa fa-print"></i> Print Laporan Umum
-                        </button>
+                        </button> --}}
+
+                        <a href="{{ route('transactions.export') }}" class="btn btn-success text-light">
+                            <i class="bi bi-file-earmark-excel"></i> Export Transaksi Sparepart
+                        </a>
                     </div>
                     <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
                         <table class="table table-bordered table-hover text-white"

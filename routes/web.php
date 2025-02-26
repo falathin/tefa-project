@@ -169,5 +169,5 @@ Route::middleware('auth')->group(function () {
         Route::get('{id}', [VehicleController::class, 'show'])->name('show');
     });
     Route::get('/export-service/{category}', [ServiceReportController::class, 'export'])->name('export.service');
-
+    Route::get('/export-transactions', [TransactionController::class, 'export'])->name('transactions.export');
 });

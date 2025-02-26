@@ -56,4 +56,10 @@ class Service extends Model
     {
         return $this->hasMany(ServiceChecklist::class);
     }
+
+    public function serviceChecklists()
+{
+    return $this->hasMany(ServiceChecklist::class, 'service_id');
+}
+
 }

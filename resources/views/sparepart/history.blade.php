@@ -22,7 +22,7 @@
         </div>
         
         <!-- Search Section (Visible only on mobile devices) -->
-        <div class="row mb-3 d-md-none">
+        {{-- <div class="row mb-3 d-md-none">
             <div class="col-12">
                 <!-- Button to open the filter modal -->
                 <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#filterModal">
@@ -137,10 +137,10 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
         
         <!-- Search Section (Visible on larger screens) -->
-        <div class="row mb-3 d-none d-md-flex"> <!-- Visible on medium to large screens -->
+        {{-- <div class="row mb-3 d-none d-md-flex"> <!-- Visible on medium to large screens -->
             <div class="col-md-12">
                 <form method="GET" action="{{ route('sparepart.history', $sparepart->id_sparepart) }}">
                     <div class="input-group">
@@ -196,7 +196,7 @@
                     </div>
                 </form>
             </div>
-        </div>
+        </div> --}}
         <!-- Tabel Riwayat Sparepart -->
         <div class="card shadow-sm">
             <div class="card-body">

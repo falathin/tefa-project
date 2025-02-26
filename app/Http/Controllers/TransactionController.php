@@ -8,6 +8,8 @@ use App\Models\SparepartHistory;
 use App\Models\SparepartTransaction;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use App\Exports\SparepartTransactionExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class TransactionController extends Controller
 {
@@ -248,5 +250,10 @@ class TransactionController extends Controller
         $transaction = SparepartTransaction::findOrFail($id);
         $transaction->delete();
         return redirect()->route('transactions.index')->with('success', 'Transaksi berhasil dihapus!');
+    }
+
+    public function export()
+    {
+        return Excel::download(new SparepartTransactionExport, 'sparepart-transactions.xlsx');
     }
 }

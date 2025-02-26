@@ -10,67 +10,24 @@
             <a href="{{ route('customer.index') }}" class="btn btn-primary mb-3">
                 <i class="fas fa-users"></i> Daftar Pelanggan
             </a>
-            <form method="GET" action="{{ route('service.index') }}" class="mb-3 row g-3">
-                <div class="col-12 col-md-3">
-                    <!-- Filter Pembayaran with Icon -->
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-credit-card"></i></span>
-                        <select name="payment_status" class="form-select" onchange="this.form.submit()">
-                            <option value="all" {{ session('payment_status') === 'all' ? 'selected' : '' }}>Semua</option>
-                            <option value="paid" {{ session('payment_status') === 'paid' ? 'selected' : '' }}>Lunas</option>
-                            <option value="unpaid" {{ session('payment_status') === 'unpaid' ? 'selected' : '' }}>Belum Lunas</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="col-12 col-md-3">
-                    <!-- Filter Hari with Icon -->
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-calendar-day"></i></span>
-                        <select name="day_of_week" class="form-select" onchange="this.form.submit()">
-                            <option value="">Pilih Hari</option>
-                            <option value="1" {{ request('day_of_week') == '1' ? 'selected' : '' }}>Minggu</option>
-                            <option value="2" {{ request('day_of_week') == '2' ? 'selected' : '' }}>Senin</option>
-                            <option value="3" {{ request('day_of_week') == '3' ? 'selected' : '' }}>Selasa</option>
-                            <option value="4" {{ request('day_of_week') == '4' ? 'selected' : '' }}>Rabu</option>
-                            <option value="5" {{ request('day_of_week') == '5' ? 'selected' : '' }}>Kamis</option>
-                            <option value="6" {{ request('day_of_week') == '6' ? 'selected' : '' }}>Jumat</option>
-                            <option value="7" {{ request('day_of_week') == '7' ? 'selected' : '' }}>Sabtu</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="col-12 col-md-3">
-                    <!-- Filter Tanggal with Icon -->
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
-                        <input type="date" name="date" class="form-control" value="{{ request('date') }}" onchange="this.form.submit()">
-                    </div>
-                </div>
-            
-                <div class="col-12 col-md-3">
-                    <!-- Filter Tahun with Icon -->
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
-                        <select name="year" class="form-select" onchange="this.form.submit()">
-                            <option value="">Pilih Tahun</option>
-                            @foreach(range(date('Y'), 2000) as $year)
-                                <option value="{{ $year }}" {{ request('year') == $year ? 'selected' : '' }}>{{ $year }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-            
-                <div class="col-12 col-md-12 col-lg-10 d-flex justify-content-center">
+            <form method="GET" action="{{ route('service.index') }}" class="mb-4 row g-2 align-items-center">
+                <div class="col-12 col-md-6">
                     <!-- Search Box with Icon -->
-                    <div class="input-group w-100">
+                    <div class="input-group">
                         <span class="input-group-text"><i class="fas fa-search"></i></span>
-                        <input type="text" name="search" class="form-control" placeholder="Cari berdasarkan Kendaraan, Pelanggan, Keluhan, atau Layanan" value="{{ request('search') }}" onchange="this.form.submit()">
+                        <input type="text" name="search" class="form-control" placeholder="Cari Kendaraan, Pelanggan, Keluhan, atau Layanan" value="{{ request('search') }}" onchange="this.form.submit()">
                         @if(request('search'))
                             <button class="btn btn-outline-secondary" type="button" onclick="window.location.href='{{ route('service.index') }}'">
                                 <i class="fas fa-times"></i> Reset
                             </button>
                         @endif
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <!-- Filter Tanggal with Icon -->
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                        <input type="date" name="date" class="form-control" value="{{ request('date') }}" onchange="this.form.submit()">
                     </div>
                 </div>
             </form>
@@ -92,7 +49,7 @@
         
                     <div class="row">
                         @foreach($dayServices as $index => $service)
-                        <div class="col-12 col-sm-12 col-md-6 col-lg-6 mb-3 animate__animated animate__fadeIn animate__delay-{{ ($index + 1) * 5 }}00ms">
+                        <div class="col-12 col-md-6 mb-3 animate__animated animate__fadeIn animate__delay-{{ ($index + 1) * 5 }}00ms">
                             <div class="card shadow-sm h-100">
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between">
@@ -129,7 +86,6 @@
                                                 <i class="fas fa-trash-alt"></i> Hapus
                                             </button>
                                         </form>
-                                            
                                         @endif
                                     </div>
                                 </div>

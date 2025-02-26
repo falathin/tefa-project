@@ -17,7 +17,7 @@
                     </select>
                 </div>
             </div>
-            <div class="col-12 col-md-3">
+            {{-- <div class="col-12 col-md-3">
                 <div class="input-group shadow-sm">
                     <span class="input-group-text bg-success text-light">
                         <i class="fas fa-calendar-alt"></i>
@@ -25,7 +25,7 @@
                     <input type="month" name="filterBulan" id="filterBulan" class="form-control"
                         value="{{ request('filterBulan', now()->format('Y-m')) }}" onchange="this.form.submit()">
                 </div>
-            </div>
+            </div> --}}
         </form>
     @endif
     <ul class="nav nav-tabs mb-3">
@@ -132,84 +132,132 @@
     </div>
 
     @if (Gate::allows('isBendahara'))
-        <form
-            action="{{ route('export.service', [
-                'category' => 'TKRO
-                                    ',
-            ]) }}"
-            method="GET" class="mt-4 p-3 shadow-sm border rounded">
-            <h5><i class="fas fa-download text-success"></i> Download Laporan TKRO</h5>
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <label for="start_date" class="form-label">Tanggal Mulai</label>
-                    <input type="date" name="start_date" class="form-control" required>
+    <div class="row mt-4">
+        <!-- TKRO Card -->
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-success text-light d-flex align-items-center">
+                    <i class="fas fa-car fa-2x me-2"></i>
+                    <h5 class="mb-0">Download Laporan TKRO</h5>
                 </div>
-                <div class="col-md-6">
-                    <label for="end_date" class="form-label">Tanggal Selesai</label>
-                    <input type="date" name="end_date" class="form-control" required>
-                </div>
-            </div>
-            <button type="submit" class="btn btn-success mt-3 w-100">
-                <i class="fas fa-file-excel text-light"></i> <span class='text-light'>Download Laporan</span>
-            </button>
-        </form>
-        <form action="{{ route('export.service', ['category' => 'TSM']) }}" method="GET"
-            class="mt-4 p-3 shadow-sm border rounded">
-            <h5><i class="fas fa-download text-primary"></i> Download Laporan TSM</h5>
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <label for="start_date" class="form-label">Tanggal Mulai</label>
-                    <input type="date" name="start_date" class="form-control" required>
-                </div>
-                <div class="col-md-6">
-                    <label for="end_date" class="form-label">Tanggal Selesai</label>
-                    <input type="date" name="end_date" class="form-control" required>
+                <div class="card-body">
+                    <form action="{{ route('export.service', ['category' => 'TKRO']) }}" method="GET">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="start_date_tkro" class="form-label">Tanggal Mulai</label>
+                                <input type="date" name="start_date" id="start_date_tkro" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="end_date_tkro" class="form-label">Tanggal Selesai</label>
+                                <input type="date" name="end_date" id="end_date_tkro" class="form-control" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success mt-3 w-100">
+                            <i class="fas fa-file-excel text-light"></i> 
+                            <span class="text-light">Download Laporan</span>
+                        </button>
+                    </form>
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary mt-3 w-100">
-                <i class="fas fa-file-excel text-light"></i> <span class="text-light">Download Laporan</span>
-            </button>
-        </form>
+        </div>
+    
+        <!-- TSM Card -->
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-light d-flex align-items-center">
+                    <i class="fas fa-motorcycle fa-2x me-2"></i>
+                    <h5 class="mb-0">Download Laporan TSM</h5>
+                </div>
+                <div class="card-body">
+                    <form action="{{ route('export.service', ['category' => 'TSM']) }}" method="GET">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="start_date_tsm" class="form-label">Tanggal Mulai</label>
+                                <input type="date" name="start_date" id="start_date_tsm" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="end_date_tsm" class="form-label">Tanggal Selesai</label>
+                                <input type="date" name="end_date" id="end_date_tsm" class="form-control" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-3 w-100">
+                            <i class="fas fa-file-excel text-light"></i> 
+                            <span class="text-light">Download Laporan</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     @elseif (Auth::user()->jurusan == 'TKRO')
-        <form
-            action="{{ route('export.service', [
-                'category' => 'TKRO
-                                    ',
-            ]) }}"
-            method="GET" class="mt-4 p-3 shadow-sm border rounded">
-            <h5><i class="fas fa-download text-success"></i> Download Laporan TKRO</h5>
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <label for="start_date" class="form-label">Tanggal Mulai</label>
-                    <input type="date" name="start_date" class="form-control" required>
-                </div>
-                <div class="col-md-6">
-                    <label for="end_date" class="form-label">Tanggal Selesai</label>
-                    <input type="date" name="end_date" class="form-control" required>
-                </div>
+    <div class="col-md-12">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-success text-light d-flex align-items-center">
+                <i class="fas fa-car fa-2x me-2"></i>
+                <h5 class="mb-0">Download Laporan TKRO</h5>
             </div>
-            <button type="submit" class="btn btn-success mt-3 w-100">
-                <i class="fas fa-file-excel text-light"></i> <span class='text-light'>Download Laporan</span>
-            </button>
-        </form>
+            <div class="card-body">
+                <form action="{{ route('export.service', ['category' => 'TKRO']) }}" method="GET">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="start_date_tkro" class="form-label">Tanggal Mulai</label>
+                            <input type="date" name="start_date" id="start_date_tkro" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="end_date_tkro" class="form-label">Tanggal Selesai</label>
+                            <input type="date" name="end_date" id="end_date_tkro" class="form-control" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-success mt-3 w-100">
+                        <i class="fas fa-file-excel text-light"></i> 
+                        <span class="text-light">Download Laporan</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
     @elseif (Auth::user()->jurusan == 'TSM')
-        <form action="{{ route('export.service', ['category' => 'TSM']) }}" method="GET"
-            class="mt-4 p-3 shadow-sm border rounded">
-            <h5><i class="fas fa-download text-primary"></i> Download Laporan TSM</h5>
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <label for="start_date" class="form-label">Tanggal Mulai</label>
-                    <input type="date" name="start_date" class="form-control" required>
+<!-- TSM Card -->
+<div class="col-md-12">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-primary text-light d-flex align-items-center">
+            <i class="fas fa-motorcycle fa-2x me-2"></i>
+            <h5 class="mb-0">Download Laporan TSM</h5>
+        </div>
+        <div class="card-body">
+            <form action="{{ route('export.service', ['category' => 'TSM']) }}" method="GET">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="start_date_tsm" class="form-label">Tanggal Mulai</label>
+                        <input type="date" name="start_date" id="start_date_tsm" class="form-control" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="end_date_tsm" class="form-label">Tanggal Selesai</label>
+                        <input type="date" name="end_date" id="end_date_tsm" class="form-control" required>
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    <label for="end_date" class="form-label">Tanggal Selesai</label>
-                    <input type="date" name="end_date" class="form-control" required>
-                </div>
-            </div>
-            <button type="submit" class="btn btn-primary mt-3 w-100">
-                <i class="fas fa-file-excel text-light"></i> <span class="text-light">Download Laporan</span>
-            </button>
-        </form>
+                <button type="submit" class="btn btn-primary mt-3 w-100">
+                    <i class="fas fa-file-excel text-light"></i> 
+                    <span class="text-light">Download Laporan</span>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        let today = new Date().toISOString().split("T")[0];
+        let tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        let formattedTomorrow = tomorrow.toISOString().split("T")[0];
+
+        document.getElementById("start_date_tsm").value = today;
+        document.getElementById("end_date_tsm").value = formattedTomorrow;
+    });
+</script>
+
     @endif
 
 </div>
@@ -230,5 +278,21 @@
                 localStorage.setItem("activeTab", event.target.getAttribute("href"));
             });
         });
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let today = new Date();
+        let tomorrow = new Date();
+        tomorrow.setDate(today.getDate() + 1);
+
+        let formatDate = (date) => date.toISOString().split("T")[0];
+
+        document.getElementById("start_date_tkro").value = formatDate(today);
+        document.getElementById("end_date_tkro").value = formatDate(tomorrow);
+        
+        document.getElementById("start_date_tsm").value = formatDate(today);
+        document.getElementById("end_date_tsm").value = formatDate(tomorrow);
     });
 </script>

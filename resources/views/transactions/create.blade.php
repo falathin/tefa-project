@@ -1,128 +1,114 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container">
-        <div class="card shadow-sm">
-            <form action="{{ route('transactions.store') }}" method="POST" id="transactionForm">
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <form action="{{ route('transactions.store') }}" method="POST" id="transactionForm">
+            <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-wrench"></i> Tambah Informasi Sparepart</h5>
+                <small><b>*</b> Hapus jika tidak diperlukan</small>
+            </div>
+            <div class="card-body">
+                @if (session('success'))
+                    <div class="alert alert-success">
+                        <i class="bi bi-check-circle"></i> {{ session('success') }}
+                    </div>
+                @endif
 
-                <div class="card-header mt-3 rounded bg-danger text-white d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0"><i class="fas fa-wrench"></i> &nbsp; Tambah Informasi Sparepart</h5>
-                    <small class="text-right"><b>*</b> Hapus jika tidak diperlukan</small>
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <i class="bi bi-x-circle"></i>
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                @if ($spareparts->isEmpty())
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-circle"></i> Tidak ada sparepart yang tersedia.
+                    </div>
+                @else
+                    <div class="table-responsive">
+                        <table class="table table-bordered text-center" id="sparepartTable">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>Nama Sparepart</th>
+                                    <th>Harga Satuan</th>
+                                    <th>Jumlah</th>
+                                    <th>Subtotal</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    <button type="button" class="btn btn-primary mt-3" id="addRow">+ Tambah Sparepart</button>
+                @endif
+                
+                @csrf
+                <input type="hidden" name="jurusan" value="{{ Auth::user()->jurusan }}">
+                <div class="row mt-3">
+                    <div class="col-md-6 mt-1">
+                        <label for="transaction_date"><i class="bi bi-calendar-event"></i> Tanggal Transaksi</label>
+                        <input type="date" name="transaction_date" id="transaction_date" class="form-control mt-2" value="{{ old('transaction_date', now()->toDateString()) }}" required>
+                    </div>
+                    <div class="col-md-6 mt-1">
+                        <label for="transaction_type"><i class="bi bi-arrow-up-down"></i> Jenis Transaksi</label>
+                        <select name="transaction_type" id="transaction_type" class="form-control mt-2" required>
+                            <option value="purchase" {{ old('transaction_type', 'sale') == 'purchase' ? 'selected' : '' }}>Pembelian</option>
+                            <option value="sale" {{ old('transaction_type', 'sale') == 'sale' ? 'selected' : '' }}>Penjualan</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="card-body">
-                    @if (session('success'))
-                        <div class="alert alert-success">
-                            <i class="bi bi-check-circle"></i> {{ session('success') }}
-                        </div>
-                    @endif
-
-                    @if ($errors->any())
-                        <div class="alert alert-danger">
-                            <i class="bi bi-x-circle"></i>
-                            <ul>
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
-
-                    @if ($spareparts->isEmpty())
-                        <div class="alert alert-warning">
-                            <i class="bi bi-exclamation-circle"></i> Tidak ada sparepart yang tersedia.
-                        </div>
-                    @else
-                        <div class="table-responsive">
-                            <table class="table table-bordered" id="sparepartTable">
-                                <thead>
-                                    <tr>
-                                        <th>Nama Sparepart</th>
-                                        <th>Harga Satuan</th>
-                                        <th>Jumlah</th>
-                                        <th>Subtotal</th>
-                                        <th>Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <br>
-                        <button type="button" class="btn btn-primary" id="addRow">+ Tambah Sparepart</button>
-
-                        @csrf
-                        <input type="text" value="{{ Auth::user()->jurusan }}" name="jurusan" id="jurusan" hidden>
-                        <div class="form-group mt-3">
-                            <label for="transaction_date">
-                                <i class="bi bi-calendar-event"></i> Tanggal Transaksi
-                            </label>
-                            <input type="date" name="transaction_date" id="transaction_date" class="form-control"
-                                value="{{ old('transaction_date', now()->toDateString()) }}" required>
-                        </div>
-
-                        <div class="form-group mt-3">
-                            <label for="transaction_type">
-                                <i class="bi bi-arrow-up-down"></i> Jenis Transaksi
-                            </label>
-                            <select name="transaction_type" id="transaction_type" class="form-control" required>
-                                <option value="purchase" {{ old('transaction_type') == 'purchase' ? 'selected' : '' }}>
-                                    Pembelian</option>
-                                <option value="sale" {{ old('transaction_type') == 'sale' ? 'selected' : '' }}>Penjualan
-                                </option>
-                            </select>
-                        </div>
-                        <div class="form-group mt-3">
-                            <label for="purchase_price">
-                                <i class="bi bi-credit-card"></i> Uang Masuk
-                            </label>
-                            <input type="text" id="purchase_price" class="form-control" min="0"
-                                value="{{ old('purchase_price', 0) }}" required>
-                            <input type="hidden" name="purchase_price" id="purchase_price_asli">
-                        </div>
-
-                        <div class="form-group mt-3">
-                            <label for="total_cost">
-                                <i class="bi bi-wallet2"></i> Total Biaya
-                            </label>
-                            <input type="text" id="total_cost" class="form-control" value="{{ old('total_cost', 0) }}"
-                                readonly>
-                        </div>
-
-                        <div class="form-group mt-3">
-                            <label for="change">
-                                <i class="bi bi-cash-coin"></i> Kembalian
-                            </label>
-                            <input type="text" id="change" class="form-control" readonly>
-                            <input type="hidden" id="change_asli">
-                        </div>
-
-                        <div class="d-flex justify-content-between">
-                            <!-- Kembali button -->
-                            <a href="{{ route('transactions.index') }}" class="btn btn-secondary mt-4">
-                                <i class="bi bi-arrow-left"></i> Kembali
-                            </a>
-
-                            <!-- Submit button with confirmation -->
-                            <button type="submit" class="btn btn-success mt-4" onclick="return confirmSubmit()">
-                                <i class="bi bi-save"></i> Simpan Transaksi
-                            </button>
-                        </div>
-
-                        <script>
-                            function confirmSubmit() {
-                                return confirm('Apakah Anda yakin ingin menyimpan transaksi ini?');
-                            }
-                        </script>
-            </form>
-            @endif
-        </div>
+                
+                <div class="row mt-3">
+                    <div class="col-md-6 mt-1">
+                        <label for="purchase_price"><i class="bi bi-credit-card"></i> Uang Masuk</label>
+                        <input type="text" id="purchase_price" class="form-control mt-2" value="{{ old('purchase_price', 0) }}" required>
+                        <input type="hidden" name="purchase_price" id="purchase_price_asli">
+                    </div>
+                    <div class="col-md-6 mt-1">
+                        <label for="total_cost"><i class="bi bi-wallet2"></i> Total Biaya</label>
+                        <input type="text" id="total_cost" class="form-control mt-2" value="{{ old('total_cost', 0) }}" readonly>
+                    </div>
+                </div>
+                
+                <div class="row mt-3">
+                    <div class="col-md-6 mt-1">
+                        <label for="change"><i class="bi bi-cash-coin"></i> Kembalian</label>
+                        <input type="text" id="change" class="form-control mt-2" readonly>
+                        <input type="hidden" id="change_asli">
+                    </div>
+                </div>
+                
+                <div class="d-flex justify-content-between mt-4">
+                    <a href="{{ route('transactions.index') }}" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Kembali
+                    </a>
+                    <button type="submit" class="btn btn-success" onclick="return confirmSubmit()">
+                        <i class="bi bi-save"></i> Simpan Transaksi
+                    </button>
+                </div>
+            </div>
+        </form>
     </div>
-    </div>
+</div>
 
+<script>
+    function confirmSubmit() {
+        return confirm('Apakah Anda yakin ingin menyimpan transaksi ini?');
+    }
+</script>
     <script>
         function formatRibuan(angka) {
             return new Intl.NumberFormat("id-ID").format(angka);
+        }
+
+        function formatRupiah(angka) {
+            return "Rp " + formatRibuan(angka);
         }
 
         function unformat(angka) {
@@ -137,56 +123,58 @@
             }
 
             function calculateSubtotal(row) {
-                const price = parseFloat(row.querySelector('.harga').value) || 0;
+                const price = parseFloat(unformat(row.querySelector('.harga').value)) || 0;
                 const quantity = parseFloat(row.querySelector('.jumlah').value) || 0;
                 const subtotal = price * quantity;
-                row.querySelector('.subtotal').value = subtotal.toFixed(2);
+                row.querySelector('.subtotal').value = formatRupiah(subtotal.toFixed(2));
                 updateTotalCost();
             }
 
             function updateTotalCost() {
                 const totalSparepart = Array.from(document.querySelectorAll('#sparepartTable tbody tr')).reduce((
                     sum, row) => {
-                    const price = parseFloat(row.querySelector('.harga').value.replace(/[^0-9.-]+/g, "")) ||
-                        0;
+                    const price = parseFloat(unformat(row.querySelector('.harga').value)) || 0;
                     const quantity = parseInt(row.querySelector('.jumlah').value) || 0;
                     return sum + (price * quantity);
                 }, 0);
-                document.getElementById('total_cost').value = formatRibuan(totalSparepart.toFixed(2));
-                updateChange(); // Call updateChange when total cost changes
+                document.getElementById('total_cost').value = formatRupiah(totalSparepart.toFixed(2));
+                updateChange();
             }
 
             function updateChange() {
-                const paymentReceived = parseFloat(document.getElementById('purchase_price_asli').value) || 0;
+                const paymentReceived = parseFloat(unformat(document.getElementById('purchase_price_asli')
+                    .value)) || 0;
                 const totalCost = parseFloat(unformat(document.getElementById('total_cost').value)) || 0;
                 const change = paymentReceived - totalCost;
-                document.getElementById('change').value = formatRibuan(change >= 0 ? change.toFixed(2) : 0);
-                document.getElementById('change_asli').value = change >= 0 ? change.toFixed(2) : 0;
+
+                document.getElementById('change').value = formatRupiah(change.toFixed(2));
+                document.getElementById('change_asli').value = change.toFixed(2);
             }
 
             document.getElementById('addRow').addEventListener('click', function() {
                 const tableBody = document.querySelector('#sparepartTable tbody');
                 const row = tableBody.insertRow();
                 row.innerHTML = `
-            <td>
-                <select name="sparepart_id[]" class="form-control sparepart_id" required>
-                    <option value="">Pilih Sparepart</option>
-                    @foreach ($spareparts->where('jurusan', Auth::user()->jurusan) as $sparepart)
-                        <option value="{{ $sparepart->id_sparepart }}" data-harga="{{ $sparepart->harga_jual }}">
-                            {{ $sparepart->nama_sparepart }}
-                        </option>                                 
-                    @endforeach
-                </select>
-            </td>
-            <td><input type="text" class="form-control harga" readonly></td>
-            <td><input type="text" name="quantity[]" class="form-control jumlah" min="1" required"></td>
-            <td><input type="text" class="form-control subtotal" readonly></td>
-            <td><button type="button" class="btn btn-danger remove-row">Hapus</button></td>
-        `;
+                <td>
+                    <select name="sparepart_id[]" class="form-control sparepart_id" required>
+                        <option value="">Pilih Sparepart</option>
+                        @foreach ($spareparts->where('jurusan', Auth::user()->jurusan) as $sparepart)
+                            <option value="{{ $sparepart->id_sparepart }}" data-harga="{{ $sparepart->harga_jual }}">
+                                {{ $sparepart->nama_sparepart }}
+                            </option>                                 
+                        @endforeach
+                    </select>
+                </td>
+                <td><input type="text" class="form-control harga" readonly></td>
+                <td><input type="text" name="quantity[]" class="form-control jumlah" min="1" required></td>
+                <td><input type="text" class="form-control subtotal" readonly></td>
+                <td><button type="button" class="btn btn-danger remove-row">Hapus</button></td>
+            `;
                 const newRow = tableBody.lastElementChild;
                 newRow.querySelector('.sparepart_id').addEventListener('change', function() {
                     const price = this.options[this.selectedIndex].getAttribute('data-harga') || 0;
-                    newRow.querySelector('.harga').value = parseFloat(price).toFixed(2);
+                    newRow.querySelector('.harga').value = formatRupiah(parseFloat(price).toFixed(
+                        2));
                     calculateSubtotal(newRow);
                 });
                 newRow.querySelector('.jumlah').addEventListener('input', function() {
@@ -204,9 +192,9 @@
             });
 
             document.getElementById('purchase_price').addEventListener('input', function() {
-                this.value = formatRibuan(this.value.replace(/\D/g, ""));
+                this.value = formatRupiah(this.value.replace(/\D/g, ""));
                 document.getElementById("purchase_price_asli").value = unformat(this.value);
-                updateChange()
+                updateChange();
             });
 
             // Validasi saat submit form
@@ -230,45 +218,5 @@
             });
         });
     </script>
-    {{-- contoh --}}
-    {{-- <script>
-        function formatRibuan(angka) {
-            return new Intl.NumberFormat("id-ID").format(angka);
-        }
-
-        function unformat(angka) {
-            return parseInt(angka.replace(/\D/g, "")) || 0;
-        }
-
-        function updateKeuntungan() {
-            let hargaBeli = parseFloat(document.getElementById('harga_beli_asli').value) || 0;
-            let hargaJual = parseFloat(document.getElementById('harga_jual_asli').value) || 0;
-            let jumlah = parseInt(document.getElementById('jumlah_asli').value) || 0;
-
-            let keuntungan = hargaJual - hargaBeli;
-            let totalKeuntungan = keuntungan * jumlah;
-
-            document.getElementById('keuntungan').value = formatRibuan(keuntungan);
-            document.getElementById('keuntungan_asli').value = keuntungan;
-            document.getElementById('total_keuntungan').value = formatRibuan(totalKeuntungan);
-            document.getElementById('total_keuntungan_asli').value = totalKeuntungan;
-        }
-
-        document.getElementById('harga_beli').addEventListener('input', function() {
-            this.value = formatRibuan(this.value.replace(/\D/g, ""));
-            document.getElementById("harga_beli_asli").value = unformat(this.value);
-            updateKeuntungan()
-        });
-        document.getElementById('harga_jual').addEventListener('input', function() {
-            this.value = formatRibuan(this.value.replace(/\D/g, ""));
-            document.getElementById("harga_jual_asli").value = unformat(this.value);
-            updateKeuntungan()
-        });
-        document.getElementById('jumlah').addEventListener('input', function() {
-            this.value = formatRibuan(this.value.replace(/\D/g, ""));
-            document.getElementById("jumlah_asli").value = unformat(this.value);
-            updateKeuntungan()
-        });
-    </script> --}}
 
 @endsection

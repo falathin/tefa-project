@@ -69,61 +69,64 @@
                         @endif
                     </div>
                 </form>
-
-                <div class="table-responsive mt-3">
-                    @if ($vehicles->isEmpty())
-                        <div class="alert alert-warning text-center animate__animated animate__fadeInUp" style="animation-delay: 3.7s;">
-                            <strong>Belum ada kendaraan yang dimasukkan!</strong>
-                        </div>
-                    @else
-                        <table class="table table-striped table-hover table-bordered">
-                            <thead class="table-dark text-center">
-                                <tr>
-                                    <th scope="col">NO POL</th>
-                                    <th scope="col">Jenis Kendaraan</th>
-                                    <th scope="col">Aksi</th>
+                @php
+                $sortedVehicles = $vehicles->sortByDesc('created_at');
+            @endphp
+            
+            <div class="table-responsive mt-3">
+                @if ($sortedVehicles->isEmpty())
+                    <div class="alert alert-warning text-center animate__animated animate__fadeInUp" style="animation-delay: 3.7s;">
+                        <strong>Belum ada kendaraan yang dimasukkan!</strong>
+                    </div>
+                @else
+                    <table class="table table-striped table-hover table-bordered">
+                        <thead class="table-dark text-center">
+                            <tr>
+                                <th scope="col">NO POL</th>
+                                <th scope="col">Jenis Kendaraan</th>
+                                <th scope="col">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($sortedVehicles as $vehicle)
+                                <tr class="text-center animate__animated animate__fadeInUp" style="transition: transform 0.3s ease-in-out; animation-delay: {{ 3.7 + $loop->index * 0.3 }}s;">
+                                    <td>{{ $vehicle->license_plate }}</td>
+                                    <td>{{ $vehicle->vehicle_type }}</td>
+                                    <td>
+                                        <!-- View Vehicle -->
+                                        <a href="{{ route('vehicle.show', $vehicle->id) }}" class="btn btn-info rounded-pill px-4 py-2 animate__animated animate__fadeInUp" style="animation-delay: {{ 4 + $loop->index * 0.3 }}s;">
+                                            <i class="bi bi-eye"></i> Lihat
+                                        </a>
+            
+                                        <!-- Edit Vehicle -->
+                                        <a href="{{ route('vehicle.edit', $vehicle->id) }}" class="btn btn-warning rounded-pill px-4 py-2 animate__animated animate__fadeInUp" style="animation-delay: {{ 4.3 + $loop->index * 0.3 }}s;">
+                                            <i class="bi bi-pencil"></i> Edit
+                                        </a>
+            
+                                        <!-- Delete Vehicle -->
+                                        <form action="{{ route('vehicle.destroy', $vehicle->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Apakah Anda yakin ingin menghapus kendaraan ini?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger rounded-pill px-4 py-2 animate__animated animate__fadeInUp" style="animation-delay: {{ 4.6 + $loop->index * 0.3 }}s;">
+                                                <i class="bi bi-trash"></i> Hapus
+                                            </button>
+                                        </form>
+            
+                                        <a href="{{ route('service.create', ['vehicle_id' => $vehicle->id]) }}" class="btn btn-primary rounded-pill px-4 py-2 animate__animated animate__fadeInUp" style="animation-delay: {{ 4.9 + $loop->index * 0.3 }}s;">
+                                            <i class="bi bi-gear"></i> Tambah Service
+                                        </a>                                            
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($vehicles as $vehicle)
-                                    <tr class="text-center animate__animated animate__fadeInUp" style="transition: transform 0.3s ease-in-out; animation-delay: {{ 3.7 + $loop->index * 0.3 }}s;">
-                                        <td>{{ $vehicle->license_plate }}</td>
-                                        <td>{{ $vehicle->vehicle_type }}</td>
-                                        <td>
-                                            <!-- View Vehicle -->
-                                            <a href="{{ route('vehicle.show', $vehicle->id) }}" class="btn btn-info rounded-pill px-4 py-2 animate__animated animate__fadeInUp" style="animation-delay: {{ 4 + $loop->index * 0.3 }}s;">
-                                                <i class="bi bi-eye"></i> Lihat
-                                            </a>
-
-                                            <!-- Edit Vehicle -->
-                                            <a href="{{ route('vehicle.edit', $vehicle->id) }}" class="btn btn-warning rounded-pill px-4 py-2 animate__animated animate__fadeInUp" style="animation-delay: {{ 4.3 + $loop->index * 0.3 }}s;">
-                                                <i class="bi bi-pencil"></i> Edit
-                                            </a>
-
-                                            <!-- Delete Vehicle -->
-                                            <form action="{{ route('vehicle.destroy', $vehicle->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Apakah Anda yakin ingin menghapus kendaraan ini?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-danger rounded-pill px-4 py-2 animate__animated animate__fadeInUp" style="animation-delay: {{ 4.6 + $loop->index * 0.3 }}s;">
-                                                    <i class="bi bi-trash"></i> Hapus
-                                                </button>
-                                            </form>
-
-                                            <a href="{{ route('service.create', ['vehicle_id' => $vehicle->id]) }}" class="btn btn-primary rounded-pill px-4 py-2 animate__animated animate__fadeInUp" style="animation-delay: {{ 4.9 + $loop->index * 0.3 }}s;">
-                                                <i class="bi bi-gear"></i> Tambah Service
-                                            </a>                                            
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                        <!-- Pagination Links -->
-                        <div class="d-flex justify-content-center mt-3 animate__animated animate__fadeInUp" style="animation-delay: 5.2s;">
-                            {{ $vehicles->appends(request()->query())->links('vendor.pagination.simple-bootstrap-5') }}
-                        </div>
-                    @endif
-                </div>
-
+                            @endforeach
+                        </tbody>
+                    </table>
+                    <!-- Pagination Links -->
+                    <div class="d-flex justify-content-center mt-3 animate__animated animate__fadeInUp" style="animation-delay: 5.2s;">
+                        {{ $vehicles->appends(request()->query())->links('vendor.pagination.simple-bootstrap-5') }}
+                    </div>
+                @endif
+            </div>
+            
             </div>
         </div>
     </div>

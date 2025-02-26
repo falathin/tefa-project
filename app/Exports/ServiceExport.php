@@ -25,7 +25,8 @@ class ServiceExport implements FromCollection, WithHeadings, WithMapping, WithSt
 
     public function collection()
     {
-        $services = Service::whereBetween('created_at', [$this->startDate, $this->endDate])
+        $services = Service::with('serviceChecklists', 'vehicle.customer')
+                           ->whereBetween('created_at', [$this->startDate, $this->endDate])
                            ->where('jurusan', $this->category)
                            ->get();
         
@@ -39,7 +40,7 @@ class ServiceExport implements FromCollection, WithHeadings, WithMapping, WithSt
             'No', 'ID Service', 'Nama Pelanggan', 'Plat Nomor', 'Keluhan',
             'Kilometer', 'Biaya Servis', 'Total Biaya', 'Pembayaran', 'Kembalian',
             'Tipe Servis', 'Status', 'Catatan', 'Teknisi', 'Jurusan',
-            'Diskon', 'Metode Pembayaran', 'Tanggal Servis'
+            'Diskon', 'Metode Pembayaran', 'Tanggal Servis', 'Checklist Servis'
         ];
     }
 
@@ -47,10 +48,14 @@ class ServiceExport implements FromCollection, WithHeadings, WithMapping, WithSt
     {
         static $index = 0;
         $index++;
-
+    
         $diskon = $service->diskon ?? 0; 
         $totalBiaya = $service->total_cost - $diskon;
-
+    
+        $checklist = optional($service->serviceChecklists)->map(function ($task) {
+            return ($task->is_completed ? '✔' : '✘') . ' ' . $task->task;
+        })->implode(', ') ?? 'Tidak ada checklist';
+    
         return [
             $index, 
             $service->id,
@@ -70,32 +75,52 @@ class ServiceExport implements FromCollection, WithHeadings, WithMapping, WithSt
             $diskon > 0 ? number_format($diskon, 2) : 'Tanpa Diskon',
             ucfirst($service->payment_method),
             $service->service_date,
+            $checklist,
         ];
     }
-
+        
     private function translateServiceType($type)
     {
-        if(Auth::user()->jurusan == 'TKRO') {
-            $translations = ['light' => '10.000 KM (Ringan)', 'medium' => '30.000 KM (Sedang)', 'heavy' => '50.000 KM (Berat)'];
-        } else if (Auth::user()->jurusan == 'TSM') {
-            $translations = ['light' => 'Ringan', 'medium' => 'Sedang', 'heavy' => 'Berat'];
+        $translations = [
+            'light' => 'Ringan',
+            'medium' => 'Sedang',
+            'heavy' => 'Berat',
+        ];
+
+        if (Auth::check()) {
+            if (Auth::user()->jurusan == 'TKRO') {
+                $translations = [
+                    'light' => '10.000 KM (Ringan)',
+                    'medium' => '30.000 KM (Sedang)',
+                    'heavy' => '50.000 KM (Berat)',
+                ];
+            } elseif (Auth::user()->jurusan == 'TSM') {
+                $translations = [
+                    'light' => 'Service Kecil',
+                    'medium' => 'Service Sedang',
+                    'heavy' => 'Service Besar',
+                ];
+            }
         }
+    
         return $translations[$type] ?? ucfirst($type);
-    }
+    }    
 
     public function styles(Worksheet $sheet)
     {
         $lastRow = $sheet->getHighestRow();
 
-        // Set lebar kolom otomatis
         foreach (range('A', 'R') as $col) {
             $sheet->getColumnDimension($col)->setAutoSize(true);
         }
 
         return [
-            1 => ['font' => ['bold' => true, 'color' => ['argb' => 'FFFFFF']], 'fill' => ['fillType' => 'solid', 'startColor' => ['argb' => '0070C0']]], // Header biru
+            1 => ['font' => ['bold' => true, 'color' => ['argb' => 'FFFFFF']], 'fill' => ['fillType' => 'solid', 'startColor' => ['argb' => '0070C0']]],
             'A1:R' . $lastRow => [
                 'borders' => ['allBorders' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN]],
+            ],
+            'S1:S' . $lastRow => [
+                'borders' => ['allBorders' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN]], // Border untuk checklist servis
             ],
         ];
     }
@@ -106,42 +131,49 @@ class ServiceExport implements FromCollection, WithHeadings, WithMapping, WithSt
             AfterSheet::class => function (AfterSheet $event) {
                 $sheet = $event->sheet;
                 $highestRow = $sheet->getHighestRow();
-
-                // Tambahkan total penghasilan
+                $highestColumn = $sheet->getHighestColumn();
+    
+                // Menambahkan total penghasilan di bawah tabel
                 $totalRow = $highestRow + 2;
                 $sheet->setCellValue('F' . $totalRow, 'Total Penghasilan:');
                 $sheet->setCellValue('G' . $totalRow, number_format($this->totalIncome, 2));
                 $sheet->getStyle('F' . $totalRow)->getFont()->setBold(true);
-
-                // Warna berdasarkan status pembayaran dan servis
+    
+                // Looping melalui setiap baris untuk memberikan style berdasarkan status dan pembayaran
                 for ($row = 2; $row <= $highestRow; $row++) {
                     $statusCell = 'L' . $row;
                     $paymentCell = 'I' . $row;
-
+    
                     $statusValue = $sheet->getCell($statusCell)->getValue();
                     $paymentValue = $sheet->getCell($paymentCell)->getValue();
-
+    
                     if ($statusValue === 'Selesai') {
                         $sheet->getStyle($statusCell)->applyFromArray([
-                            'fill' => ['fillType' => 'solid', 'startColor' => ['argb' => '00FF00']], // Hijau
+                            'fill' => ['fillType' => 'solid', 'startColor' => ['argb' => '00FF00']]
                         ]);
                     } elseif ($statusValue === 'Belum Selesai') {
                         $sheet->getStyle($statusCell)->applyFromArray([
-                            'fill' => ['fillType' => 'solid', 'startColor' => ['argb' => 'FF0000']], // Merah
+                            'fill' => ['fillType' => 'solid', 'startColor' => ['argb' => 'FF0000']]
                         ]);
                     }
-
+    
                     if ($paymentValue > 0) {
                         $sheet->getStyle($paymentCell)->applyFromArray([
-                            'fill' => ['fillType' => 'solid', 'startColor' => ['argb' => '00FF00']], // Hijau (Lunas)
+                            'fill' => ['fillType' => 'solid', 'startColor' => ['argb' => '00FF00']]
                         ]);
                     } else {
                         $sheet->getStyle($paymentCell)->applyFromArray([
-                            'fill' => ['fillType' => 'solid', 'startColor' => ['argb' => 'FF0000']], // Merah (Hutang)
+                            'fill' => ['fillType' => 'solid', 'startColor' => ['argb' => 'FF0000']]
                         ]);
                     }
+                }
+    
+                // Otomatis menyesuaikan lebar semua kolom berdasarkan kontennya
+                foreach (range('A', $highestColumn) as $col) {
+                    $sheet->getColumnDimension($col)->setAutoSize(true);
                 }
             },
         ];
     }
+    
 }
