@@ -196,7 +196,11 @@
 
                             <p><strong><i class="fas fa-cogs text-secondary"></i> Tipe Servis:</strong>
                                 <span class="badge" style="background-color: #28a745; color: #fff;">
-                                    {{ ucfirst($service->service_type == 'light' ? 'Ringan' : ($service->service_type == 'medium' ? 'Sedang' : 'Berat')) }}
+                                    @if (Auth::user()->jurusan == 'TSM')
+                                        {{ ucfirst($service->service_type == 'light' ? 'Ringan' : ($service->service_type == 'medium' ? 'Sedang' : 'Berat')) }}
+                                    @elseif (Auth::user()->jurusan == 'TKRO')
+                                        {{ ucfirst($service->service_type == 'light' ? '10.000 KM (Ringan)' : ($service->service_type == 'medium' ? '30.000 KM (Sedang)' : '50.000 KM (Berat)')) }}
+                                    @endif
                                 </span>
                             </p>
 
@@ -235,7 +239,7 @@
                                 </form>
                             @endif
                         @endif
-                        
+
                         <!-- Daftar Checklist -->
                         <ul class="list-group mt-4" id="checklist-list">
                             @foreach ($service->checklists->groupBy(function ($item) {
