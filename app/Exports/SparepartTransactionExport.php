@@ -10,6 +10,8 @@ use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class SparepartTransactionExport implements WithMultipleSheets
 {
@@ -44,7 +46,15 @@ class SparepartTransactionWeeklySheet implements FromCollection, WithHeadings, S
 
     public function collection()
     {
-        return $this->data->map(function ($transaction) {
+        $filteredData = $this->data->filter(function ($transaction) {
+            if (Gate::allows('isBendahara')) {
+                return $transaction;
+            } else {
+                return $transaction->jurusan == Auth::user()->jurusan;
+            }
+        });
+
+        return $filteredData->map(function ($transaction) {
             return [
                 'ID' => $transaction->id,
                 'Nama Sparepart' => $transaction->sparepart->nama_sparepart ?? 'Tidak Diketahui',
