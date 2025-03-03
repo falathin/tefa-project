@@ -53,7 +53,8 @@ class ServiceController extends Controller
                         $query->where('name', 'like', "%{$search}%");
                     })
                     ->orWhere('complaint', 'like', "%{$search}%")
-                    ->orWhere('service_type', 'like', "%{$search}%");
+                    ->orWhere('service_type', 'like', "%{$search}%")
+                    ->orWhere('status', 'like', "%{$search}%");
             });
         }
 

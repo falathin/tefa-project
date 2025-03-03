@@ -1,4 +1,4 @@
-@extends('layouts.app')
+\@extends('layouts.app')
 
 @section('content')
     <div class="container mt-5">
@@ -12,48 +12,44 @@
                     <i class="bi bi-arrow-left-circle"></i> Kembali ke Customer
                 </a>
             </div>
-
             <div class="row g-3 mt-3">
-                <div class="col-md-4 animate__animated animate__slideInLeft animate__delay-1s">
+                <div class="col-md-4 animate__animated animate__fadeIn">
                     <label for="brand" class="form-label">
                         <i class="bi bi-tags"></i> Merek Kendaraan
                     </label>
                     <input type="text" class="form-control" id="brand" value="{{ $vehicle->brand }}" disabled>
                 </div>
-                <div class="col-md-4 animate__animated animate__slideInDown animate__delay-2s">
+                <div class="col-md-4 animate__animated animate__fadeIn">
                     <label for="jenisKendaraan" class="form-label">
-                        <i class="bi bi-car-front"></i> tipe Kendaraan
+                        <i class="bi bi-car-front"></i> Tipe Kendaraan
                     </label>
-                    <input type="text" class="form-control" id="jenisKendaraan" value="{{ $vehicle->vehicle_type }}"
-                        disabled>
+                    <input type="text" class="form-control" id="jenisKendaraan" value="{{ $vehicle->vehicle_type }}" disabled>
                 </div>
-                <div class="col-md-4 animate__animated animate__slideInRight animate__delay-3s">
+                <div class="col-md-4 animate__animated animate__fadeIn">
                     <label for="kodeMesin" class="form-label">
                         <i class="bi bi-gear-wide"></i> Kode Mesin
                     </label>
                     <input type="text" class="form-control" id="kodeMesin" value="{{ $vehicle->engine_code }}" disabled>
                 </div>
-                <div class="col-md-4 animate__animated animate__slideInLeft animate__delay-4s">
+                <div class="col-md-4 animate__animated animate__fadeIn">
                     <label for="noPolisi" class="form-label">
                         <i class="bi bi-key"></i> No Polisi
                     </label>
-                    <input type="text" class="form-control" id="noPolisi" value="{{ $vehicle->license_plate }}"
-                        disabled>
+                    <input type="text" class="form-control" id="noPolisi" value="{{ $vehicle->license_plate }}" disabled>
                 </div>
-                <div class="col-md-4 animate__animated animate__slideInUp animate__delay-3s">
+                <div class="col-md-4 animate__animated animate__fadeIn">
                     <label for="tahunProduksi" class="form-label">
                         <i class="bi bi-calendar-event"></i> Tahun Produksi
                     </label>
-                    <input type="text" class="form-control" id="tahunProduksi" value="{{ $vehicle->production_year }}"
-                        disabled>
+                    <input type="text" class="form-control" id="tahunProduksi" value="{{ $vehicle->production_year }}" disabled>
                 </div>
-                <div class="col-md-4 animate__animated animate__slideInLeft animate__delay-6s">
+                <div class="col-md-4 animate__animated animate__fadeIn">
                     <label for="warna" class="form-label">
                         <i class="bi bi-palette"></i> Warna
                     </label>
                     <input type="text" class="form-control" id="warna" value="{{ $vehicle->color }}" disabled>
                 </div>
-                <div class="col-md-12 animate__animated animate__slideInDown animate__delay-3s text-center">
+                <div class="col-md-12 animate__animated animate__zoomIn text-center">
                     <label for="image" class="form-label">
                         <i class="bi bi-image"></i> Gambar Kendaraan
                     </label>
@@ -68,7 +64,7 @@
                     @endif
                 </div>
             </div>
-
+            
             <!-- Service History Section -->
             <h5 class="mt-5 animate__animated animate__slideInUp">Riwayat Service</h5>
             <!-- Search Form -->

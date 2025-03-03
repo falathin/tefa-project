@@ -43,7 +43,7 @@
                         <input type="text" id="jumlah"
                             class="form-control @error('jumlah') is-invalid @enderror" value="{{ old('jumlah') }}"
                             min="1">
-                        <input type="hidden" id="jumlah_asli" name="jumlah" >
+                        <input type="hidden" id="jumlah_asli" name="jumlah">
                         @error('jumlah')
                             <div class="alert alert-danger mt-2">
                                 <strong>Error:</strong> Jumlah harus berupa angka dan minimal bernilai 1.
@@ -54,7 +54,7 @@
                     <div class="form-group">
                         <label for="harga_beli"><i class="bi bi-cash-stack"></i>&nbsp; Harga Beli:</label>
                         <input type="text" id="harga_beli" class="form-control @error('harga_beli') is-invalid @enderror"
-                            value="{{ old('harga_beli') }}" step="0.01">
+                            value="{{ old('harga_beli') }}">
                         <input type="hidden" id="harga_beli_asli" name="harga_beli">
                         @error('harga_beli')
                             <div class="alert alert-danger mt-2">
@@ -122,18 +122,6 @@
             return parseInt(angka.replace(/\D/g, "")) || 0;
         }
 
-        // function updateKeuntungan() {
-        //     const hargaBeli = parseFloat(document.getElementById('harga_beli').value) || 0;
-        //     const hargaJual = parseFloat(document.getElementById('harga_jual').value) || 0;
-        //     const jumlah = parseInt(document.getElementById('jumlah').value) || 0;
-
-        //     const keuntungan = hargaJual - hargaBeli;
-        //     document.getElementById('keuntungan').value = keuntungan.toLocaleString('id-ID');
-
-        //     const totalKeuntungan = keuntungan * jumlah;
-        //     document.getElementById('total_keuntungan').value = totalKeuntungan.toLocaleString('id-ID');
-        // }
-
         function updateKeuntungan() {
             let hargaBeli = parseFloat(document.getElementById('harga_beli_asli').value) || 0;
             let hargaJual = parseFloat(document.getElementById('harga_jual_asli').value) || 0;
@@ -165,60 +153,4 @@
         });
 
     </script>
-
-    {{-- contoh kode currency --}}
-    {{-- <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            let spareparts = @json($service->serviceSpareparts);
-            let totalSparepart = spareparts.reduce((total, item) => total + (item.sparepart.harga_jual * item
-                .quantity), 0);
-
-            function formatRibuan(angka) {
-                return new Intl.NumberFormat("id-ID").format(angka);
-            }
-
-            function unformat(angka) {
-                return parseInt(angka.replace(/\D/g, "")) || 0;
-            }
-
-            function updateTotalCost() {
-                let serviceFee = unformat(document.getElementById("service_fee").value);
-                let diskon = unformat(document.getElementById("diskon").value) / 100;
-                let total = (serviceFee + totalSparepart) * (1 - diskon);
-
-                document.getElementById("total_cost").value = formatRibuan(total);
-                document.getElementById("total_cost_asli").value = total;
-                updateChange();
-            }
-
-            function updateChange() {
-                let totalCost = unformat(document.getElementById("total_cost").value);
-                let paymentReceived = unformat(document.getElementById("payment_received").value);
-                let change = paymentReceived - totalCost;
-
-                document.getElementById("change").value = formatRibuan(change);
-                document.getElementById("change_asli").value = change;
-            }
-
-            document.getElementById("service_fee").addEventListener("input", function() {
-                this.value = formatRibuan(this.value.replace(/\D/g, ""));
-                document.getElementById("service_fee_asli").value = unformat(this.value);
-                updateTotalCost();
-            });
-
-            document.getElementById("diskon").addEventListener("input", function() {
-                this.value = formatRibuan(this.value.replace(/\D/g, ""));
-                document.getElementById("diskon_asli").value = unformat(this.value);
-                updateTotalCost();
-            });
-
-            document.getElementById("payment_received").addEventListener("input", function() {
-                this.value = formatRibuan(this.value.replace(/\D/g, ""));
-                document.getElementById("payment_received_asli").value = unformat(this.value);
-                updateChange();
-            });
-
-            updateTotalCost();
-        });
-    </script> --}}
 @endsection

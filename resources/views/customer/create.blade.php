@@ -151,73 +151,75 @@
             newVehicleGroup.id = `vehicle-${vehicleIndex}`;
 
             newVehicleGroup.innerHTML = `
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                                <label>Merk</label>
-                                <input type="text" name="vehicles[0][brand]" class="form-control mb-2" 
-                                       value="{{ old('vehicles.0.brand') }}" 
-                                       placeholder=" Contoh : @if (Auth::user()->jurusan == 'TSM') Honda
-                                       @elseif (Auth::user()->jurusan == 'TKRO') Daihatsu @endif" required>
-                                @error('vehicles.0.brand')
-                                    <div class="alert alert-danger mt-2">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label>Tipe kendaraan</label>
-                                <input type="text" name="vehicles[0][vehicle_type]" class="form-control mb-2" 
-                                       value="{{ old('vehicles.0.vehicle_type') }}" 
-                                       placeholder=" Contoh : @if (Auth::user()->jurusan == 'TSM') CBR250RR
-                                       @elseif (Auth::user()->jurusan == 'TKRO') Xenia 1.5 A/T @endif" required>
-                                @error('vehicles.0.vehicle_type')
-                                    <div class="alert alert-danger mt-2">{{ $message }}</div>
-                                @enderror
-                            </div>
-                <div class="col-md-6 mb-3">
-                    <label>Nomor Plat</label>
-                    <input type="text" name="vehicles[${vehicleIndex}][license_plate]" class="form-control mb-2" 
-                           value="{{ old('vehicles.${vehicleIndex}.license_plate') }}" placeholder="Masukkan nomor plat" required>
-                    @error('vehicles.${vehicleIndex}.license_plate')
-                        <div class="alert alert-danger mt-2">{{ $message }}</div>
-                    @enderror
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label>Warna</label>
-                    <input type="text" name="vehicles[${vehicleIndex}][color]" class="form-control mb-2" 
-                           value="{{ old('vehicles.${vehicleIndex}.color') }}" placeholder="Masukkan warna kendaraan">
-                    @error('vehicles.${vehicleIndex}.color')
-                        <div class="alert alert-danger mt-2">{{ $message }}</div>
-                    @enderror
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label>Tahun Produksi</label>
-                    <input type="number" name="vehicles[${vehicleIndex}][production_year]" class="form-control mb-2" 
-                           value="{{ old('vehicles.${vehicleIndex}.production_year') }}" placeholder="Masukkan tahun produksi">
-                    @error('vehicles.${vehicleIndex}.production_year')
-                        <div class="alert alert-danger mt-2">{{ $message }}</div>
-                    @enderror
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label>Kode Mesin</label>
-                    <input type="text" name="vehicles[${vehicleIndex}][engine_code]" class="form-control mb-2" 
-                           value="{{ old('vehicles.${vehicleIndex}.engine_code') }}" placeholder="Masukkan kode mesin">
-                    @error('vehicles.${vehicleIndex}.engine_code')
-                        <div class="alert alert-danger mt-2">{{ $message }}</div>
-                    @enderror
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label>Foto Kendaraan</label>
-                    <input type="file" name="vehicles[${vehicleIndex}][image]" class="form-control mb-2">
-                    @if (old('vehicles.${vehicleIndex}.image'))
-                        <img src="{{ asset('storage/' . old('vehicles.${vehicleIndex}.image')) }}" alt="Preview Image" class="mt-2" width="100">
-                    @endif
-                    @error('vehicles.${vehicleIndex}.image')
-                        <div class="alert alert-danger mt-2">{{ $message }}</div>
-                    @enderror
-                </div>
-            </div>
-            <button type="button" class="btn btn-danger btn-sm mt-2" onclick="deleteVehicle(${vehicleIndex})"><i class="fas fa-trash"></i> Hapus Kendaraan</button>
-        `;
-
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label>Merk</label>
+                            <input type="text" name="vehicles[${vehicleIndex}][brand]" class="form-control mb-2"
+                                value="{{ old('vehicles.${vehicleIndex}.brand') }}"
+                                placeholder=" Contoh : @if (Auth::user()->jurusan == 'TSM') Honda
+                                @elseif (Auth::user()->jurusan == 'TKRO') Daihatsu @endif"
+                                required>
+                            @error('vehicles.${vehicleIndex}.brand')
+                                <div class="alert alert-danger mt-2">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>Tipe kendaraan</label>
+                            <input type="text" name="vehicles[${vehicleIndex}][vehicle_type]" class="form-control mb-2" 
+                                value="{{ old('vehicles.${vehicleIndex}.vehicle_type') }}" 
+                                placeholder=" Contoh : @if (Auth::user()->jurusan == 'TSM') CBR250RR
+                                @elseif (Auth::user()->jurusan == 'TKRO') Xenia 1.5 A/T @endif" required>
+                            @error('vehicles.${vehicleIndex}.vehicle_type')
+                                <div class="alert alert-danger mt-2">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>Nomor Plat</label>
+                            <input type="text" name="vehicles[${vehicleIndex}][license_plate]" class="form-control mb-2" 
+                                value="{{ old('vehicles.${vehicleIndex}.license_plate') }}" placeholder="Masukkan nomor plat" required>
+                            @error('vehicles.${vehicleIndex}.license_plate')
+                                <div class="alert alert-danger mt-2">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>Warna</label>
+                            <input type="text" name="vehicles[${vehicleIndex}][color]" class="form-control mb-2" 
+                                value="{{ old('vehicles.${vehicleIndex}.color') }}" placeholder="Masukkan warna kendaraan">
+                            @error('vehicles.${vehicleIndex}.color')
+                                <div class="alert alert-danger mt-2">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>Tahun Produksi</label>
+                            <input type="number" name="vehicles[${vehicleIndex}][production_year]" class="form-control mb-2" 
+                                value="{{ old('vehicles.${vehicleIndex}.production_year') }}" placeholder="Masukkan tahun produksi">
+                            @error('vehicles.${vehicleIndex}.production_year')
+                                <div class="alert alert-danger mt-2">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>Kode Mesin</label>
+                            <input type="text" name="vehicles[${vehicleIndex}][engine_code]" class="form-control mb-2" 
+                                value="{{ old('vehicles.${vehicleIndex}.engine_code') }}" placeholder="Masukkan kode mesin">
+                            @error('vehicles.${vehicleIndex}.engine_code')
+                                <div class="alert alert-danger mt-2">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>Foto Kendaraan</label>
+                            <input type="file" name="vehicles[${vehicleIndex}][image]" class="form-control mb-2">
+                            @if (old('vehicles.${vehicleIndex}.image'))
+                                <img src="{{ asset('storage/' . old('vehicles.${vehicleIndex}.image')) }}" alt="Preview Image" class="mt-2" width="100">
+                            @endif
+                            @error('vehicles.${vehicleIndex}.image')
+                                <div class="alert alert-danger mt-2">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <button type="button" class="btn btn-danger btn-sm mt-2" onclick="deleteVehicle(${vehicleIndex})">
+                            <i class="fas fa-trash"></i> Hapus Kendaraan
+                        </button>
+                    </div>
+                `;
             vehicleFields.appendChild(newVehicleGroup);
 
             newVehicleGroup.classList.add('animate__animated', 'animate__fadeInUp');
