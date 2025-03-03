@@ -220,6 +220,7 @@
                         </button>
                     </div>
                 `;
+                
             vehicleFields.appendChild(newVehicleGroup);
 
             newVehicleGroup.classList.add('animate__animated', 'animate__fadeInUp');
