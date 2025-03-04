@@ -36,13 +36,19 @@
                 Anda memiliki <strong id="newNotificationCount">{{ $jumlah_notif }}</strong>
                 notifikasi baru
             </p>&nbsp;&nbsp;&nbsp;&nbsp;
-            <a href="{{ route('notifications.index') }}" class="btn btn-sm btn-primary text-white">
-                <i class="bi bi-eye-fill"></i>&nbsp; Lihat Semua
+            <a href="{{ route('notifications.read-all') }}" class="btn btn-sm btn-success text-white"
+                onclick="event.preventDefault(); document.getElementById('read-all-form').submit();">
+                <i class="bi bi-check-all"></i>&nbsp; Tandai Semua Dibaca
             </a>
+            <form id="read-all-form" action="{{ route('notifications.read-all') }}" method="POST"
+                style="display: none;">
+                @csrf
+            </form>
+
         </li>
 
         @if ($jumlah_notif > 0)
-            @foreach (App\Models\Notification::where('is_read', false)->latest()->take(5)->get() as $notification)
+            @foreach (App\Models\Notification::where('is_read', false)->where('jurusan', Auth::user()->jurusan)->latest()->take(5)->get() as $notification)
                 <li class="dropdown-item d-flex justify-content-between align-items-start px-3 py-2">
                     <div class="flex-grow-1">
                         <p class="mb-1 text-truncate text-dark" style="max-width: 200px;">

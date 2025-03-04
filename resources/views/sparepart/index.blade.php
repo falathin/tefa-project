@@ -104,7 +104,7 @@
                         </tbody>
                     </table>
                 </div>
-
+                <br>
                 <!-- Pagination -->
                 <div class="d-flex justify-content-center">
                     {{ $spareparts->links('vendor.pagination.simple-bootstrap-5') }}

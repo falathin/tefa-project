@@ -76,6 +76,8 @@
                     <div class="col-md-6">
                         <h5 class="mb-2"><i class="fas fa-credit-card"></i> Kembalian</h5>
                         <p class="mb-1" id="changeAmount">Rp. 0,00</p>
+                        <p class="mb-1" id="changeAmount">{{ $transaction->change}}</p>
+                        
                     </div>
                 </div>
         

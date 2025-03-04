@@ -63,8 +63,8 @@ class TransactionController extends Controller
             'sparepart_id.*' => 'exists:spareparts,id_sparepart',
             'quantity' => 'required|array',
             'quantity.*' => 'required|numeric|min:1',
-            // 'purchase_price' => $request->transaction_type == 'purchase' ? 'required|array' : 'nullable|array',  // Only required for purchases
-            'purchase_price' => 'required',
+            'purchase_price' => $request->transaction_type == 'purchase' ? 'required|array' : 'nullable|array',
+            'purchase_price.*' => 'numeric|min:0',
             'jurusan' => 'required',
         ], [
             'transaction_type.required' => 'Jenis transaksi harus dipilih.',
@@ -77,42 +77,40 @@ class TransactionController extends Controller
             'quantity.*.required' => 'Jumlah harus diisi.',
             'quantity.*.numeric' => 'Jumlah harus berupa angka.',
             'quantity.*.min' => 'Jumlah minimal adalah 1.',
-            'purchase_price.required' => 'Harga beli harus diisi.',
+            'purchase_price.required' => 'Harga beli harus diisi untuk pembelian.',
             'purchase_price.*.numeric' => 'Harga beli harus berupa angka.',
             'purchase_price.*.min' => 'Harga beli tidak boleh kurang dari 0.',
         ]);
-
-        $total_profit = 0;
-        
+    
+        $total_price = 0;
+    
         foreach ($request->sparepart_id as $index => $sparepart_id) {
-            // Ensure that the index exists in the quantity and purchase_price arrays
-            if (!isset($request->quantity[$index]) || !isset($request->purchase_price)) {
-                // return " request->quantity[index] = {$request->quantity[$index]} dan request->purchase_price[index] = {$request->purchase_price[$index - 1]} dan index = $index";
-                return redirect()->back()->withErrors(['quantity' => 'Jumlah atau harga beli tidak valid.']);
+            if (!isset($request->quantity[$index])) {
+                return redirect()->back()->withErrors(['quantity' => 'Jumlah tidak valid untuk sparepart tertentu.']);
             }
-
+    
             $sparepart = Sparepart::where('id_sparepart', $sparepart_id)->firstOrFail();
-
-            $purchase_price = $request->purchase_price;
-
+            $quantity = $request->quantity[$index];
+    
             if ($request->transaction_type == 'sale') {
-                if ($sparepart->jumlah >= $request->quantity[$index]) {
-                    $sparepart->decrement('jumlah', $request->quantity[$index]);
-
+                if ($sparepart->jumlah >= $quantity) {
+                    $sparepart->decrement('jumlah', $quantity);
+    
                     SparepartHistory::create([
                         'sparepart_id' => $sparepart_id,
-                        'jumlah_changed' => -$request->quantity[$index],
+                        'jumlah_changed' => -$quantity,
                         'action' => 'subtract',
                     ]);
-
-                    $profit_per_sparepart = $sparepart->harga_jual - $purchase_price;
-                    $total_profit += $profit_per_sparepart * $request->quantity[$index];
-
+    
+                    $price_per_item = $sparepart->harga_jual;
+                    $subtotal = $price_per_item * $quantity;
+                    $total_price += $subtotal;
+    
                     SparepartTransaction::create([
                         'sparepart_id' => $sparepart_id,
-                        'quantity' => $request->quantity[$index],
-                        'purchase_price' => $purchase_price,
-                        'total_price' => $sparepart->harga_jual * $request->quantity[$index],  // Gunakan harga jual untuk total harga
+                        'quantity' => $quantity,
+                        'purchase_price' => $sparepart->harga_beli,
+                        'total_price' => $subtotal,
                         'transaction_date' => now(),
                         'transaction_type' => 'sale',
                         'jurusan' => $request->jurusan
@@ -121,29 +119,38 @@ class TransactionController extends Controller
                     return redirect()->back()->withErrors(['sparepart_id' => 'Stok sparepart tidak cukup untuk salah satu item.']);
                 }
             } elseif ($request->transaction_type == 'purchase') {
-                $sparepart->increment('jumlah', $request->quantity[$index]);
-
+                if (!isset($request->purchase_price[$index])) {
+                    return redirect()->back()->withErrors(['purchase_price' => 'Harga beli tidak valid.']);
+                }
+    
+                $purchase_price = $request->purchase_price[$index];
+    
+                $sparepart->increment('jumlah', $quantity);
+    
                 SparepartHistory::create([
                     'sparepart_id' => $sparepart_id,
-                    'jumlah_changed' => $request->quantity[$index],
+                    'jumlah_changed' => $quantity,
                     'action' => 'add',
                 ]);
-
+    
+                $subtotal = $purchase_price * $quantity;
+                $total_price += $subtotal;
+    
                 SparepartTransaction::create([
                     'sparepart_id' => $sparepart_id,
-                    'quantity' => $request->quantity[$index],
-                    'purchase_price' => $purchase_price,  // Gunakan harga beli dari form
-                    'total_price' => $purchase_price * $request->quantity[$index],  // Gunakan harga beli untuk total harga
+                    'quantity' => $quantity,
+                    'purchase_price' => $purchase_price,
+                    'total_price' => $subtotal,
                     'transaction_date' => now(),
                     'transaction_type' => 'purchase',
                     'jurusan' => $request->jurusan
                 ]);
             }
         }
-
+    
         return redirect()->route('transactions.index')
-            ->with('success', 'Transaksi sparepart berhasil disimpan!');
-    }
+            ->with('success', 'Transaksi sparepart berhasil disimpan! Total harga: Rp' . number_format($total_price, 0, ',', '.'));
+    }    
 
     public function show($id)
     {

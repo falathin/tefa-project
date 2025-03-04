@@ -394,24 +394,39 @@
                                 <th>Nama</th>
                                 <th>Jumlah</th>
                                 <th>Harga</th>
+                                <th>Subtotal</th>
                             </tr>
                         </thead>
                         <tbody>
+                            @php $total = 0; @endphp
                             @forelse($service->serviceSpareparts as $serviceSparepart)
+                                @php
+                                    $subtotal = $serviceSparepart->quantity * $serviceSparepart->sparepart->harga_jual;
+                                    $total += $subtotal;
+                                @endphp
                                 <tr class="animate_animated animate_flipInX">
                                     <td>{{ $serviceSparepart->sparepart->nama_sparepart }}</td>
                                     <td>{{ $serviceSparepart->quantity }}</td>
                                     <td>Rp. {{ number_format($serviceSparepart->sparepart->harga_jual, 0, ',', '.') }}</td>
+                                    <td>Rp. {{ number_format($subtotal, 0, ',', '.') }}</td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="3" class="text-center">Tidak ada sparepart yang digunakan.</td>
+                                    <td colspan="4" class="text-center">Tidak ada sparepart yang digunakan.</td>
                                 </tr>
                             @endforelse
                         </tbody>
+                        @if ($total > 0)
+                            <tfoot>
+                                <tr style="background-color: #f8f9fa;">
+                                    <th colspan="3" class="text-right">Total</th>
+                                    <th>Rp. {{ number_format($total, 0, ',', '.') }}</th>
+                                </tr>
+                            </tfoot>
+                        @endif
                     </table>
                 </div>
-
+                
                 @if (!Gate::allows('isBendahara'))
                     @if ($service->status == false || Gate::allows('isAdminOrEngineer'))
                         {{-- informasi pembayaran --}}

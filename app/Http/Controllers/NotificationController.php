@@ -81,4 +81,18 @@ class NotificationController extends Controller
         $unreadCount = Notification::where('is_read', false)->count();
         return response()->json(['count' => $unreadCount]);
     }
+
+    public function markAllAsRead()
+    {
+        if (Gate::allows('isBendahara')) {
+            Notification::where('is_read', false)->update(['is_read' => true]);
+        } else {
+            Notification::where('is_read', false)
+                ->where('jurusan', Auth::user()->jurusan)
+                ->update(['is_read' => true]);
+        }
+    
+        return back()->with('success', 'Semua notifikasi telah ditandai sebagai dibaca.');
+    }    
+
 }

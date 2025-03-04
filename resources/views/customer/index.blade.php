@@ -105,26 +105,25 @@
                         <i class="bi bi-arrow-bar-down me-2"></i> Pelanggan yang Dihapus
                     </button>
 
-
-
                     <br><br>
 
                     <div class="collapse mt-3" id="deletedCustomers">
-                                            <div class="mt-3">
-                                                <form action="{{ route('customer.index') }}" method="GET" class="d-flex position-relative w-100">
-                                                    <input type="text" name="deletedSearch" class="form-control me-2 w-75" placeholder="Cari pelanggan yang dihapus..." value="{{ request('deletedSearch') }}">
-                                            
-                                                    <button type="submit" class="btn btn-outline-primary">
-                                                        <i class="bi bi-search"></i> Cari
-                                                    </button>
-                                            
-                                                    @if(request('deletedSearch'))
-                                                    <a href="{{ route('customer.index') }}" class="btn btn-outline-danger btn-sm position-absolute top-50 end-0 translate-middle-y">
-                                                        <i class="bi bi-x-circle"></i> Tutup
-                                                    </a>
-                                                    @endif
-                                                </form>
-                                            </div>
+                        <div class="mt-3">
+                            <form action="{{ route('customer.index') }}" method="GET" class="d-flex position-relative w-100">
+                                <input type="text" name="deletedSearch" class="form-control me-2 w-75" placeholder="Cari pelanggan yang dihapus..." value="{{ request('deletedSearch') }}">
+
+                                <button type="submit" class="btn btn-outline-primary">
+                                    <i class="bi bi-search"></i> Cari
+                                </button>
+
+                                @if(request('deletedSearch'))
+                                <a href="{{ route('customer.index') }}" class="btn btn-outline-danger btn-sm position-absolute top-50 end-0 translate-middle-y">
+                                    <i class="bi bi-x-circle"></i> Tutup
+                                </a>
+                                @endif
+                            </form>
+                        </div>
+
                         <div class="mt-3">
                             <form action="{{ route('customer.forceDeleteAll') }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus semua pelanggan yang telah dihapus secara permanen?')">
                                 @csrf
@@ -135,7 +134,7 @@
                             </form>
                         </div>
 
-                    <br><br>
+                        <br><br>
                         <div class="table-responsive">
                             <table class="table table-hover table-striped table-bordered shadow-sm">
                                 <thead class="table-light">
@@ -159,81 +158,19 @@
                                                 <button class="btn btn-success btn-sm hover-effect" data-bs-toggle="modal" data-bs-target="#restoreModal{{ $customer->id }}">
                                                     <i class="bi bi-arrow-clockwise"></i> Urungkan Hapus
                                                 </button>
-                                                
+
                                                 <!-- Button to Permanently Delete, triggers confirmation modal -->
                                                 <button class="btn btn-danger btn-sm hover-effect" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal{{ $customer->id }}">
                                                     <i class="bi bi-trash"></i> Hapus Permanen
                                                 </button>
-                                                <!-- Modal for Permanently Delete Confirmation -->
-                                                <div class="modal fade" id="confirmDeleteModal{{ $customer->id }}" tabindex="-1" aria-labelledby="confirmDeleteModalLabel{{ $customer->id }}" aria-hidden="true">
-                                                    <div class="modal-dialog">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header text-dark">
-                                                                <h5 class="modal-title" id="confirmDeleteModalLabel{{ $customer->id }}">
-                                                                    <i class="bi bi-exclamation-circle me-2"></i> Konfirmasi Penghapusan Permanen
-                                                                </h5>
-                                                                <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                <p>Apakah Anda yakin ingin menghapus pelanggan ini secara permanen? <br>
-                                                                    <strong>Data yang dihapus tidak dapat dikembalikan!</strong>
-                                                                </p>
-                                                                <ul class="list-unstyled">
-                                                                    <li><strong>ID:</strong> {{ $customer->id }}</li>
-                                                                    <li><strong>Nama:</strong> {{ $customer->name }}</li>
-                                                                    <li><strong>No HP:</strong> {{ $customer->contact ?: 'Tidak ada data kontak' }}</li>
-                                                                    <li><strong>Alamat:</strong> {{ $customer->address ?: 'Tidak ada data alamat' }}</li>
-                                                                </ul>
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <form action="{{ route('customer.forceDelete', $customer->id) }}" method="POST">
-                                                                    @csrf
-                                                                    @method('DELETE')
-                                                                    <button type="submit" class="btn hover-effect btn-danger hover-effect">
-                                                                        <i class="bi bi-trash"></i> Ya, Hapus Permanen
-                                                                    </button>
-                                                                    <button type="button" class="btn btn-secondary hover-effect" data-bs-dismiss="modal">
-                                                                        <i class="bi bi-x-circle"></i> Batal
-                                                                    </button>
-                                                                </form>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
                                             </td>
                                         </tr>
-                                        <!-- Modal for Undo Delete -->
-                                        <div class="modal fade" id="restoreModal{{ $customer->id }}" tabindex="-1" aria-labelledby="restoreModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="restoreModalLabel">Urungkan Hapus Pelanggan</h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        Apakah Anda yakin ingin mengembalikan pelanggan ini?
-                                                        <p><strong>ID:</strong> {{ $customer->id }}</p>
-                                                        <p><strong>Nama:</strong> {{ $customer->name }}</p>
-                                                        <p><strong>No HP:</strong> {{ $customer->contact ?: 'Tidak ada data kontak' }}</p>
-                                                        <p><strong>Alamat:</strong> {{ $customer->address ?: 'Tidak ada data alamat' }}</p>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <form action="{{ route('customer.restore', $customer->id) }}" method="POST">
-                                                            @csrf
-                                                            <button type="submit" class="btn hover-effect btn-success">Ya, Kembalikan</button>
-                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                                        </form>
-                                                    </div>
-
-
-                                                </div>
-                                            </div>
-                                        </div>
                                     @endforeach
                                 </tbody>
                             </table>
                         </div>
                     </div>
+
                     <div class="mt-4 d-flex justify-content-center">
                         <nav aria-label="Pagination">
                             <ul class="pagination pagination-lg">
@@ -243,6 +180,7 @@
                     </div>  
                 </div>
                 @endif
+
             @endif
         </div>     
     </div>
