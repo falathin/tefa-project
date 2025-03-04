@@ -65,6 +65,7 @@ class TransactionController extends Controller
             'quantity.*' => 'required|numeric|min:1',
             'purchase_price' => $request->transaction_type == 'purchase' ? 'required|array' : 'nullable|array',
             'purchase_price.*' => 'numeric|min:0',
+            'total_price' => 'required',
             'jurusan' => 'required',
         ], [
             'transaction_type.required' => 'Jenis transaksi harus dipilih.',
@@ -81,36 +82,30 @@ class TransactionController extends Controller
             'purchase_price.*.numeric' => 'Harga beli harus berupa angka.',
             'purchase_price.*.min' => 'Harga beli tidak boleh kurang dari 0.',
         ]);
-    
-        $total_price = 0;
-    
+
         foreach ($request->sparepart_id as $index => $sparepart_id) {
             if (!isset($request->quantity[$index])) {
                 return redirect()->back()->withErrors(['quantity' => 'Jumlah tidak valid untuk sparepart tertentu.']);
             }
-    
+
             $sparepart = Sparepart::where('id_sparepart', $sparepart_id)->firstOrFail();
             $quantity = $request->quantity[$index];
-    
+
             if ($request->transaction_type == 'sale') {
                 if ($sparepart->jumlah >= $quantity) {
                     $sparepart->decrement('jumlah', $quantity);
-    
+
                     SparepartHistory::create([
                         'sparepart_id' => $sparepart_id,
                         'jumlah_changed' => -$quantity,
                         'action' => 'subtract',
                     ]);
-    
-                    $price_per_item = $sparepart->harga_jual;
-                    $subtotal = $price_per_item * $quantity;
-                    $total_price += $subtotal;
-    
+
                     SparepartTransaction::create([
                         'sparepart_id' => $sparepart_id,
                         'quantity' => $quantity,
                         'purchase_price' => $sparepart->harga_beli,
-                        'total_price' => $subtotal,
+                        'total_price' => $request->total_price,
                         'transaction_date' => now(),
                         'transaction_type' => 'sale',
                         'jurusan' => $request->jurusan
@@ -122,35 +117,32 @@ class TransactionController extends Controller
                 if (!isset($request->purchase_price[$index])) {
                     return redirect()->back()->withErrors(['purchase_price' => 'Harga beli tidak valid.']);
                 }
-    
+
                 $purchase_price = $request->purchase_price[$index];
-    
+
                 $sparepart->increment('jumlah', $quantity);
-    
+
                 SparepartHistory::create([
                     'sparepart_id' => $sparepart_id,
                     'jumlah_changed' => $quantity,
                     'action' => 'add',
                 ]);
-    
-                $subtotal = $purchase_price * $quantity;
-                $total_price += $subtotal;
-    
+
                 SparepartTransaction::create([
                     'sparepart_id' => $sparepart_id,
                     'quantity' => $quantity,
                     'purchase_price' => $purchase_price,
-                    'total_price' => $subtotal,
+                    'total_price' => $request->total_price,
                     'transaction_date' => now(),
                     'transaction_type' => 'purchase',
                     'jurusan' => $request->jurusan
                 ]);
             }
         }
-    
+
         return redirect()->route('transactions.index')
-            ->with('success', 'Transaksi sparepart berhasil disimpan! Total harga: Rp' . number_format($total_price, 0, ',', '.'));
-    }    
+            ->with('success', 'Transaksi sparepart berhasil disimpan! Total harga: Rp' . number_format($request->total_price, 0, ',', '.'));
+    }
 
     public function show($id)
     {

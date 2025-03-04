@@ -71,8 +71,9 @@
                             <input type="hidden" name="purchase_price[]" id="purchase_price_asli" value="{{ old('purchase_price', 0) }}">
                         </div>                    
                         <div class="col-md-6 mt-1">
-                            <label for="total_cost"><i class="bi bi-wallet2"></i> Total Biaya</label>
-                            <input type="text" id="total_cost" class="form-control mt-2" value="{{ old('total_cost', 0) }}" readonly>
+                            <label for="total_price"><i class="bi bi-wallet2"></i> Total Biaya</label>
+                            <input type="text" id="total_price" class="form-control mt-2" value="{{ old('total_price', 0) }}" readonly>
+                            <input type="hidden" name="total_price" id="total_price_asli">
                         </div>
                     </div>
                     
@@ -130,13 +131,14 @@
                     const quantity = parseInt(row.querySelector('.jumlah').value) || 0;
                     totalSparepart += price * quantity;
                 });
-                document.getElementById('total_cost').value = formatRupiah(totalSparepart);
+                document.getElementById('total_price').value = formatRupiah(totalSparepart);
+                document.getElementById('total_price_asli').value = totalSparepart;
                 updateChange();
             }
     
             function updateChange() {
                 const paymentReceived = parseFloat(unformat(document.getElementById('purchase_price_asli').value)) || 0;
-                const totalCost = parseFloat(unformat(document.getElementById('total_cost').value)) || 0;
+                const totalCost = parseFloat(unformat(document.getElementById('total_price').value)) || 0;
                 const change = paymentReceived - totalCost;
     
                 document.getElementById('change').value = formatRupiah(change);
@@ -154,7 +156,7 @@
                                     <option value="">Pilih Sparepart</option>
                                     @foreach ($spareparts->where('jurusan', Auth::user()->jurusan) as $sparepart)
                                         <option value="{{ $sparepart->id_sparepart }}" data-harga="{{ $sparepart->harga_jual }}">
-                                            {{ $sparepart->nama_sparepart }}
+                                            {{ $sparepart->nama_sparepart }} {{ $sparepart->spek }}
                                         </option>
                                     @endforeach
                                 </select>

@@ -47,6 +47,7 @@
                         <thead class="table-dark">
                             <tr>
                                 <th><i class="bi bi-gear"></i> Nama Sparepart</th>
+                                <th><i class="bi bi-gear"></i> Spek</th>
                                 <th><i class="bi bi-box"></i> Stok</th>
                                 <th><i class="bi bi-cash-stack"></i> Harga Satuan</th>
                                 @if (Gate::allows('isBendahara'))
@@ -59,6 +60,7 @@
                             @forelse($spareparts as $sparepart)
                                 <tr class="animate__animated animate__fadeInUp">
                                     <td>{{ $sparepart->nama_sparepart }}</td>
+                                    <td>{{ $sparepart->spek }}</td>
                                     <td>{{ number_format($sparepart->jumlah, 0, ',', '.') }}</td>
                                     <td>Rp. {{ number_format($sparepart->harga_jual, 2, ',', '.') }}</td>
                                     @if (Gate::allows('isBendahara'))
