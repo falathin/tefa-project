@@ -143,7 +143,6 @@ class TransactionController extends Controller
         return redirect()->route('transactions.index')
             ->with('success', 'Transaksi sparepart berhasil disimpan! Total harga: Rp' . number_format($request->total_price, 0, ',', '.'));
     }
-
     public function show($id)
     {
         $sparepart = SparepartTransaction::find($id);

@@ -92,10 +92,10 @@
 <footer class="footer">
     <div class="d-sm-flex justify-content-center justify-content-sm-between container">
         <span class="float-none float-sm-end d-block mt-1 mt-sm-0 text-center">
-            <small>EduTech buatan anak SMK Lentera Bangsa Karawang, dikembangkan oleh 
-                <a href="https://www.instagram.com/iteenagers_?igsh=MWpraWN5bTJuejk4bw==" target="_blank" class="font-weight-bold text-primary"> 
-                    <span class="wave-icon"><i class="fab fa-instagram social-icon"></i></span>
-                    Iteens</a>
+            <small>EduTech buatan I - Teenagers, dikembangkan oleh 
+                <a href="https://www.inovindodigital.com" target="_blank" class="font-weight-bold text-primary"> 
+                    <span class="wave-icon"><i class="fas fa-briefcase social-icon"></i></span>
+                    Staff Inovindo</a>
             </small>
         </span>
     </div>

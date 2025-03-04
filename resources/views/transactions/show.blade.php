@@ -55,7 +55,7 @@
                         <p class="mb-1">{{ $transaction->transaction_date->format('d-m-Y') }}</p>
                     </div>
                 </div>
-        
+
                 <div class="row mb-4">
                     <div class="col-md-6">
                         <h5 class="mb-2"><i class="fas fa-money-bill-wave"></i> Uang Masuk</h5>
@@ -63,7 +63,7 @@
                     </div>
                     <div class="col-md-6">
                         <h5 class="mb-2"><i class="fas fa-dollar-sign"></i> Total Harga</h5>
-                        <p class="mb-1" data-total-price="true">Rp. {{ number_format($totalPrice, 2, ',', '.') }}</p>
+                        <p class="mb-1" data-total-price="true">Rp. {{ number_format($transaction->total_price, 2, ',', '.') }}</p>
                     </div>
                 </div>
         
@@ -87,36 +87,36 @@
                 Terima kasih telah bertransaksi dengan kami!
             </div>
         </div>
-        
         <script>
             document.addEventListener('DOMContentLoaded', function () {
-                calculateChange();  // Calculate change when the page loads
+                calculateChange();  // Menghitung kembalian saat halaman dimuat
             });
         
             function calculateChange() {
-                // Get the amount paid from the predefined value (Uang Masuk)
-                var amountPaid = parseFloat('{{ $transaction->purchase_price }}');
-                var totalPrice = parseFloat('{{ $totalPrice }}');
-        
+                var amountPaid = parseFloat('{{ $transaction->purchase_price }}') || 0; 
+                var totalPrice = parseFloat('{{ $transaction->total_price }}') || 0; 
+                
                 var change = amountPaid - totalPrice;
         
                 var changeAmountElement = document.getElementById('changeAmount');
         
                 if (change < 0) {
-                    // If change is negative, show debt and red text
+                    // Jika pembayaran kurang, tampilkan dalam format hutang
                     changeAmountElement.innerHTML = 'Rp. <span class="text-danger">' + formatCurrency(Math.abs(change)) + '</span> (Hutang)';
                 } else {
-                    // If change is positive or zero, show "Lunas" and green text
+                    // Jika pembayaran cukup atau lebih, tampilkan kembalian/lunas
                     changeAmountElement.innerHTML = 'Rp. <span class="text-success">' + formatCurrency(change) + '</span> (Lunas)';
                 }
             }
         
-            // Format number as currency with Rp.
+            // Format angka ke Rupiah
             function formatCurrency(amount) {
                 return amount.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' }).replace('IDR', '').trim();
             }
-        </script>                            
+        </script>
+                                   
     </div>
+</div>
     
     
     <script>

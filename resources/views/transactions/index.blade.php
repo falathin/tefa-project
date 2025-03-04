@@ -67,50 +67,52 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($transactions as $index => $transaction)
-                                    <tr class="animate__animated animate__fadeInUp animate__delay-{{ $index + 1 }}s">
+                                @php
+                                    $groupedTransactions = $transactions->groupBy(function ($transaction) {
+                                        return $transaction->sparepart_id . '-' . \Carbon\Carbon::parse($transaction->created_at)->format('Y-m-d H:i');
+                                    });
+                                @endphp
+                            
+                                @foreach ($groupedTransactions as $group)
+                                    @php
+                                        $firstTransaction = $group->first();
+                                        $totalQuantity = $group->sum('quantity');
+                                        $totalPrice = $group->sum('total_price');
+                                    @endphp
+                                    <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>
-                                            @if ($transaction->sparepart)
+                                            @if ($firstTransaction->sparepart)
                                                 <i class="bi bi-check-circle text-success"></i>
-                                                {{ $transaction->sparepart->nama_sparepart }}
+                                                {{ $firstTransaction->sparepart->nama_sparepart }}
                                             @else
                                                 <span class="text-muted">Tidak ditemukan</span>
                                             @endif
                                         </td>
-                                        <td>{{ $transaction->quantity }}</td>
-                                        <td>{{ number_format($transaction->total_price, 2, ',', '.') }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($transaction->transaction_date)->format('d-m-Y') }}
-                                        </td>
+                                        <td>{{ $totalQuantity }}</td>
+                                        <td>{{ number_format($totalPrice, 2, ',', '.') }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($firstTransaction->created_at)->format('d-m-Y H:i') }}</td>
                                         <td>
-                                            @if ($transaction->transaction_type == 'sale')
+                                            @if ($firstTransaction->transaction_type == 'sale')
                                                 <span class="badge bg-success">Penjualan</span>
-                                            @elseif($transaction->transaction_type == 'purchase')
+                                            @elseif($firstTransaction->transaction_type == 'purchase')
                                                 <span class="badge bg-warning">Pembelian</span>
                                             @else
                                                 <span class="text-muted">Tidak Tersedia</span>
                                             @endif
                                         </td>
                                         @if (Gate::allows('isBendahara'))
-                                            <td> {{ $transaction->jurusan }} </td>
+                                            <td>{{ $firstTransaction->jurusan }}</td>
                                         @endif
                                         <td>
-                                            <!-- Action Buttons -->
-                                            <a href="{{ route('transactions.show', $transaction->id) }}"
-                                                class="btn btn-info btn-sm">
+                                            <a href="{{ route('transactions.show', $firstTransaction->id) }}" class="btn btn-info btn-sm">
                                                 <i class="bi bi-eye"></i> Detail
                                             </a>
                                             @if (Gate::allows('isKasir') xor Gate::allows('isAdminOrEngineer'))
-                                                {{-- <a href="{{ route('transactions.edit', $transaction->id) }}"
-                                                    class="btn btn-warning btn-sm">
-                                                    <i class="bi bi-pencil"></i> Edit
-                                                </a> --}}
-                                                <form action="{{ route('transactions.destroy', $transaction->id) }}"
-                                                    method="POST" class="d-inline">
+                                                <form action="{{ route('transactions.destroy', $firstTransaction->id) }}" method="POST" class="d-inline">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger btn-sm"
-                                                        onclick="return confirm('Yakin hapus transaksi ini?')">
+                                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin hapus transaksi ini?')">
                                                         <i class="bi bi-trash"></i> Hapus
                                                     </button>
                                                 </form>
@@ -119,6 +121,7 @@
                                     </tr>
                                 @endforeach
                             </tbody>
+                            
                         </table>
                     </div>
 
