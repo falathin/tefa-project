@@ -194,23 +194,6 @@
                     </div>
                 
                     <!-- JavaScript untuk Toggle Icon dan Tutup Tabel -->
-                    <script>
-                        document.addEventListener("DOMContentLoaded", function() {
-                            var toggleButton = document.getElementById("toggleDeletedCustomers");
-                            var arrowIcon = document.getElementById("arrowIcon");
-                            var deletedCustomers = document.getElementById("deletedCustomers");
-                
-                            toggleButton.addEventListener("click", function() {
-                                if (deletedCustomers.classList.contains("show")) {
-                                    arrowIcon.classList.remove("bi-arrow-bar-up");
-                                    arrowIcon.classList.add("bi-arrow-bar-down");
-                                } else {
-                                    arrowIcon.classList.remove("bi-arrow-bar-down");
-                                    arrowIcon.classList.add("bi-arrow-bar-up");
-                                }
-                            });
-                        });
-                    </script>
                 @endif
                 
                 @endif
