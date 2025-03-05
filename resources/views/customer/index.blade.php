@@ -111,7 +111,7 @@
                             aria-controls="deletedCustomers">
                             <i id="arrowIcon" class="bi bi-arrow-bar-down me-2"></i> Pelanggan yang Dihapus
                         </button>
-                
+                    
                         <!-- Div Collapse -->
                         <div class="collapse mt-3" id="deletedCustomers">
                             <!-- Form Pencarian -->
@@ -122,7 +122,6 @@
                                     <button type="submit" class="btn btn-outline-primary">
                                         <i class="bi bi-search"></i> Cari
                                     </button>
-                
                                     @if (request('deletedSearch'))
                                         <a href="{{ route('customer.index') }}"
                                             class="btn btn-outline-danger btn-sm position-absolute top-50 end-0 translate-middle-y">
@@ -131,7 +130,7 @@
                                     @endif
                                 </form>
                             </div>
-                
+                    
                             <!-- Tombol Hapus Semua -->
                             <div class="mt-3">
                                 <form action="{{ route('customer.forceDeleteAll') }}" method="POST"
@@ -143,7 +142,7 @@
                                     </button>
                                 </form>
                             </div>
-                
+                    
                             <!-- Tabel Pelanggan Dihapus -->
                             <div class="table-responsive mt-3">
                                 <table class="table table-hover table-striped table-bordered shadow-sm">
@@ -169,19 +168,23 @@
                                                         data-bs-target="#restoreModal{{ $customer->id }}">
                                                         <i class="bi bi-arrow-clockwise"></i> Urungkan Hapus
                                                     </button>
-                
-                                                    <!-- Button to Permanently Delete -->
-                                                    <button class="btn btn-danger btn-sm hover-effect" data-bs-toggle="modal"
-                                                        data-bs-target="#confirmDeleteModal{{ $customer->id }}">
-                                                        <i class="bi bi-trash"></i> Hapus Permanen
-                                                    </button>
+                    
+                                                    <!-- Button to Permanently Delete with Alert -->
+                                                    <form action="{{ route('customer.forceDelete', $customer->id) }}" method="POST" class="d-inline"
+                                                        onsubmit="return confirmDelete(event, '{{ $customer->name }}')">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-danger btn-sm hover-effect">
+                                                            <i class="bi bi-trash"></i> Hapus Permanen
+                                                        </button>
+                                                    </form>
                                                 </td>
                                             </tr>
                                         @endforeach
                                     </tbody>
                                 </table>
                             </div>
-                
+                    
                             <!-- Pagination -->
                             <div class="mt-4 d-flex justify-content-center">
                                 <nav aria-label="Pagination">
@@ -192,10 +195,16 @@
                             </div>
                         </div>
                     </div>
-                
-                    <!-- JavaScript untuk Toggle Icon dan Tutup Tabel -->
-                @endif
-                
+                    
+                    <script>
+                        function confirmDelete(event, name) {
+                            event.preventDefault();
+                            if (confirm(`Apakah Anda yakin ingin menghapus pelanggan "${name}" secara permanen?`)) {
+                                event.target.submit();
+                            }
+                        }
+                    </script>
+                    @endif
                 @endif
             </div>
         </div>
