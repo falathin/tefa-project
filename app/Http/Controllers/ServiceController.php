@@ -1,7 +1,6 @@
-
 <?php
-
 namespace App\Http\Controllers;
+
 
 use App\Models\Service;
 use App\Models\Vehicle;

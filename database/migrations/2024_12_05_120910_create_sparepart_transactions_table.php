@@ -18,7 +18,7 @@ class CreateSparepartTransactionsTable extends Migration
             $table->unsignedBigInteger('sparepart_id');
             $table->foreign('sparepart_id')->references('id_sparepart')->on('spareparts')->onDelete('cascade');
             $table->integer('quantity');
-            $table->integer('price');
+            // $table->integer('price');
             $table->timestamps();
         });
     }
