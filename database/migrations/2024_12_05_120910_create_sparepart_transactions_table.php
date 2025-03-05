@@ -10,14 +10,15 @@ class CreateSparepartTransactionsTable extends Migration
     {
         Schema::create('sparepart_transactions', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('transaction_id');
+            $table->foreign('transaction_id')
+                ->references('id')
+                ->on('transactions')
+                ->onDelete('cascade');
             $table->unsignedBigInteger('sparepart_id');
             $table->foreign('sparepart_id')->references('id_sparepart')->on('spareparts')->onDelete('cascade');
             $table->integer('quantity');
-            $table->decimal('purchase_price', 10, 2);
-            $table->decimal('total_price', 10, 2);
-            $table->date('transaction_date');
-            $table->enum('transaction_type', ['purchase', 'sale']);
-            $table->enum('jurusan', ['TSM', 'TKRO', 'General']);
+            $table->integer('price');
             $table->timestamps();
         });
     }

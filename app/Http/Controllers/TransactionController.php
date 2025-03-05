@@ -9,16 +9,48 @@ use App\Models\SparepartTransaction;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use App\Exports\SparepartTransactionExport;
+use App\Models\Transaction;
 use Maatwebsite\Excel\Facades\Excel;
 
 class TransactionController extends Controller
 {
+    // public function index(Request $request)
+    // {
+    //     $search = $request->input('search');
+
+    //     if (Gate::allows('isBendahara')) {
+    //         $transactions = SparepartTransaction::with('sparepart')
+    //             ->when($search, function ($query, $search) {
+    //                 return $query->whereHas('sparepart', function ($query) use ($search) {
+    //                     $query->where('nama_sparepart', 'like', "%{$search}%");
+    //                 });
+    //             })
+    //             ->orderBy('created_at', 'desc')
+    //             ->paginate(5);
+
+    //         return view('transactions.index', compact('transactions'));
+
+    //     } else {
+    //         $jurusan = Auth::user()->jurusan;
+    //         $transactions = SparepartTransaction::with('sparepart')
+    //             ->when($search, function ($query, $search) {
+    //                 return $query->whereHas('sparepart', function ($query) use ($search) {
+    //                     $query->where('nama_sparepart', 'like', "%{$search}%");
+    //                 });
+    //             })
+    //             ->where('jurusan', 'like', $jurusan)
+    //             ->orderBy('created_at', 'desc')
+    //             ->paginate(5);
+
+    //         return view('transactions.index', compact('transactions'));
+    //     }
+    // }
     public function index(Request $request)
     {
         $search = $request->input('search');
-
         if (Gate::allows('isBendahara')) {
-            $transactions = SparepartTransaction::with('sparepart')
+            // $transactions = SparepartTransaction::with('sparepart')
+            $transactions = Transaction::query()
                 ->when($search, function ($query, $search) {
                     return $query->whereHas('sparepart', function ($query) use ($search) {
                         $query->where('nama_sparepart', 'like', "%{$search}%");
@@ -29,14 +61,14 @@ class TransactionController extends Controller
 
             return view('transactions.index', compact('transactions'));
         } else {
-            $jurusan = Auth::user()->jurusan;
-            $transactions = SparepartTransaction::with('sparepart')
+            $transactions = Transaction::query()->where('jurusan', 'like', Auth::user()->jurusan);
+            $transactions = Transaction::query()
                 ->when($search, function ($query, $search) {
                     return $query->whereHas('sparepart', function ($query) use ($search) {
                         $query->where('nama_sparepart', 'like', "%{$search}%");
                     });
                 })
-                ->where('jurusan', 'like', $jurusan)
+                ->where('jurusan', 'like', Auth::user()->jurusan)
                 ->orderBy('created_at', 'desc')
                 ->paginate(5);
 
@@ -63,7 +95,7 @@ class TransactionController extends Controller
             'sparepart_id.*' => 'exists:spareparts,id_sparepart',
             'quantity' => 'required|array',
             'quantity.*' => 'required|numeric|min:1',
-            'purchase_price' => $request->transaction_type == 'purchase' ? 'required|array' : 'nullable|array',
+            // 'purchase_price' => $request->transaction_type == 'purchase' ? 'required|array' : 'nullable|array',
             'purchase_price.*' => 'numeric|min:0',
             'total_price' => 'required',
             'jurusan' => 'required',
@@ -71,7 +103,7 @@ class TransactionController extends Controller
             'transaction_type.required' => 'Jenis transaksi harus dipilih.',
             'transaction_type.in' => 'Jenis transaksi tidak valid.',
             'sparepart_id.required' => 'Kolom ID sparepart harus diisi.',
-            'sparepart_id.array' => 'ID sparepart harus dalam bentuk array.',
+            // 'sparepart_id.array' => 'ID sparepart harus dalam bentuk array.',
             'sparepart_id.*.exists' => 'Beberapa sparepart tidak ditemukan.',
             'quantity.required' => 'Kolom jumlah harus diisi.',
             'quantity.array' => 'Jumlah harus dalam bentuk array.',
@@ -81,6 +113,14 @@ class TransactionController extends Controller
             'purchase_price.required' => 'Harga beli harus diisi untuk pembelian.',
             'purchase_price.*.numeric' => 'Harga beli harus berupa angka.',
             'purchase_price.*.min' => 'Harga beli tidak boleh kurang dari 0.',
+        ]);
+
+        $transaction = Transaction::create([
+            'purchase_price' => $request->purchase_price,
+            'total_price' => $request->total_price,
+            'transaction_date' => $request->transaction_date,
+            'transaction_type' => $request->transaction_type,
+            'jurusan' => $request->jurusan
         ]);
 
         foreach ($request->sparepart_id as $index => $sparepart_id) {
@@ -102,13 +142,10 @@ class TransactionController extends Controller
                     ]);
 
                     SparepartTransaction::create([
+                        'transaction_id' => $transaction->id,
                         'sparepart_id' => $sparepart_id,
+                        'transaction_id' => $transaction->id,
                         'quantity' => $quantity,
-                        'purchase_price' => $sparepart->harga_beli,
-                        'total_price' => $request->total_price,
-                        'transaction_date' => now(),
-                        'transaction_type' => 'sale',
-                        'jurusan' => $request->jurusan
                     ]);
                 } else {
                     return redirect()->back()->withErrors(['sparepart_id' => 'Stok sparepart tidak cukup untuk salah satu item.']);
@@ -129,13 +166,9 @@ class TransactionController extends Controller
                 ]);
 
                 SparepartTransaction::create([
+                    'transaction_id' => $transaction->id,
                     'sparepart_id' => $sparepart_id,
                     'quantity' => $quantity,
-                    'purchase_price' => $purchase_price,
-                    'total_price' => $request->total_price,
-                    'transaction_date' => now(),
-                    'transaction_type' => 'purchase',
-                    'jurusan' => $request->jurusan
                 ]);
             }
         }
@@ -143,25 +176,46 @@ class TransactionController extends Controller
         return redirect()->route('transactions.index')
             ->with('success', 'Transaksi sparepart berhasil disimpan! Total harga: Rp' . number_format($request->total_price, 0, ',', '.'));
     }
+    // public function show($id)
+    // {
+    //     $sparepart = Transaction::find($id);
+    //     if (! Gate::allows('isSameJurusan', [$sparepart])) {
+    //         abort(403, 'Data tidak ditemukan!');
+    //     }
+    //     $transaction = SparepartTransaction::with('sparepart')->findOrFail($id);
+
+    //     $subtotal = $transaction->sparepart->harga_jual * $transaction->quantity;
+
+    //     $totalPrice = $subtotal;
+
+    //     $change = 0;
+
+    //     if ($transaction->transaction_type == 'sale') {
+    //         $change = $transaction->purchase_price - $subtotal; // Kembalian = uang bayar - subtotal
+    //     }
+
+    //     return view('transactions.show', compact('transaction', 'subtotal', 'totalPrice', 'change'));
+    // }
+
     public function show($id)
     {
-        $sparepart = SparepartTransaction::find($id);
-        if (! Gate::allows('isSameJurusan', [$sparepart])) {
+        // Ambil data Transaction berdasarkan ID, bukan SparepartTransaction
+        $transaction = Transaction::with('transactionSpareparts.sparepart')->findOrFail($id);
+        
+
+        // Cek izin jurusan
+        if (!Gate::allows('isSameJurusan', [$transaction])) {
             abort(403, 'Data tidak ditemukan!');
         }
-        $transaction = SparepartTransaction::with('sparepart')->findOrFail($id);
 
-        $subtotal = $transaction->sparepart->harga_jual * $transaction->quantity;
+        // Hitung total harga dan kembalian
+        // dd($transaction->sparepart->harga_jual);
+        
+        $totalPrice = $transaction->total_price;
+        $purchasePrice = $transaction->purchase_price;
+        $change = $purchasePrice - $totalPrice;
 
-        $totalPrice = $subtotal;
-
-        $change = 0;
-
-        if ($transaction->transaction_type == 'sale') {
-            $change = $transaction->purchase_price - $subtotal; // Kembalian = uang bayar - subtotal
-        }
-
-        return view('transactions.show', compact('transaction', 'subtotal', 'totalPrice', 'change'));
+        return view('transactions.show', compact('transaction', 'totalPrice', 'change'));
     }
 
     public function edit($id)

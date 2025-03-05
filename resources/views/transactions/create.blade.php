@@ -72,7 +72,7 @@
                             <label for="purchase_price"><i class="bi bi-credit-card"></i> Uang Masuk</label>
                             <input type="text" id="purchase_price" class="form-control mt-2"
                                 value="{{ old('purchase_price', 0) }}" required>
-                            <input type="hidden" name="purchase_price[]" id="purchase_price_asli"
+                            <input type="hidden" name="purchase_price" id="purchase_price_asli"
                                 value="{{ old('purchase_price', 0) }}">
                         </div>
                         <div class="col-md-6 mt-1">

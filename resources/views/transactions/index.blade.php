@@ -55,10 +55,8 @@
                             <thead class="table-dark">
                                 <tr>
                                     <th>No</th>
-                                    <th><i class="bi bi-gear"></i> Nama Sparepart</th>
-                                    <th><i class="bi bi-box"></i> Jumlah</th>
-                                    <th><i class="bi bi-cash"></i> Total Biaya</th>
                                     <th><i class="bi bi-calendar"></i> Tanggal</th>
+                                    <th><i class="bi bi-cash"></i> Total Biaya</th>
                                     <th><i class="bi bi-tag"></i> Jenis</th>
                                     @if (Gate::allows('isBendahara'))
                                         <th><i class="fa-solid fa-wrench"></i>Jurusan</th>
@@ -81,17 +79,8 @@
                                     @endphp
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>
-                                            @if ($firstTransaction->sparepart)
-                                                <i class="bi bi-check-circle text-success"></i>
-                                                {{ $firstTransaction->sparepart->nama_sparepart }}
-                                            @else
-                                                <span class="text-muted">Tidak ditemukan</span>
-                                            @endif
-                                        </td>
-                                        <td>{{ $totalQuantity }}</td>
-                                        <td>{{ number_format($totalPrice, 2, ',', '.') }}</td>
                                         <td>{{ \Carbon\Carbon::parse($firstTransaction->created_at)->format('d-m-Y H:i') }}</td>
+                                        <td>{{ number_format($totalPrice, 2, ',', '.') }}</td>
                                         <td>
                                             @if ($firstTransaction->transaction_type == 'sale')
                                                 <span class="badge bg-success">Penjualan</span>

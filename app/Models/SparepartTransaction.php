@@ -10,27 +10,25 @@ class SparepartTransaction extends Model
     use HasFactory;
 
     protected $fillable = [
+        'transaction_id',
         'sparepart_id',
         'quantity',
-        'purchase_price',
-        'total_price',
-        'transaction_date',
-        'transaction_type',
-        'jurusan'
     ];
 
     protected $casts = [
         'transaction_date' => 'date',
     ];
 
-    public function sparepart()
+    // Relasi ke transaction
+    public function transaction()
     {
-        return $this->belongsTo(Sparepart::class, 'sparepart_id', 'id_sparepart');
+        return $this->belongsTo(Transaction::class);
     }
 
-    public function spareparts()
+    // Relasi ke Sparepart
+    public function sparepart()
     {
-        return $this->hasMany(Sparepart::class, 'id_sparepart', 'sparepart_id');
+        return $this->belongsTo(Sparepart::class, 'sparepart_id');
     }
 
 }
