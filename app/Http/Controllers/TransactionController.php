@@ -14,37 +14,6 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class TransactionController extends Controller
 {
-    // public function index(Request $request)
-    // {
-    //     $search = $request->input('search');
-
-    //     if (Gate::allows('isBendahara')) {
-    //         $transactions = SparepartTransaction::with('sparepart')
-    //             ->when($search, function ($query, $search) {
-    //                 return $query->whereHas('sparepart', function ($query) use ($search) {
-    //                     $query->where('nama_sparepart', 'like', "%{$search}%");
-    //                 });
-    //             })
-    //             ->orderBy('created_at', 'desc')
-    //             ->paginate(5);
-
-    //         return view('transactions.index', compact('transactions'));
-
-    //     } else {
-    //         $jurusan = Auth::user()->jurusan;
-    //         $transactions = SparepartTransaction::with('sparepart')
-    //             ->when($search, function ($query, $search) {
-    //                 return $query->whereHas('sparepart', function ($query) use ($search) {
-    //                     $query->where('nama_sparepart', 'like', "%{$search}%");
-    //                 });
-    //             })
-    //             ->where('jurusan', 'like', $jurusan)
-    //             ->orderBy('created_at', 'desc')
-    //             ->paginate(5);
-
-    //         return view('transactions.index', compact('transactions'));
-    //     }
-    // }
     public function index(Request $request)
     {
         $search = $request->input('search');
@@ -176,32 +145,12 @@ class TransactionController extends Controller
         return redirect()->route('transactions.index')
             ->with('success', 'Transaksi sparepart berhasil disimpan! Total harga: Rp' . number_format($request->total_price, 0, ',', '.'));
     }
-    // public function show($id)
-    // {
-    //     $sparepart = Transaction::find($id);
-    //     if (! Gate::allows('isSameJurusan', [$sparepart])) {
-    //         abort(403, 'Data tidak ditemukan!');
-    //     }
-    //     $transaction = SparepartTransaction::with('sparepart')->findOrFail($id);
-
-    //     $subtotal = $transaction->sparepart->harga_jual * $transaction->quantity;
-
-    //     $totalPrice = $subtotal;
-
-    //     $change = 0;
-
-    //     if ($transaction->transaction_type == 'sale') {
-    //         $change = $transaction->purchase_price - $subtotal; // Kembalian = uang bayar - subtotal
-    //     }
-
-    //     return view('transactions.show', compact('transaction', 'subtotal', 'totalPrice', 'change'));
-    // }
 
     public function show($id)
     {
         // Ambil data Transaction berdasarkan ID, bukan SparepartTransaction
         $transaction = Transaction::with('transactionSpareparts.sparepart')->findOrFail($id);
-        
+
 
         // Cek izin jurusan
         if (!Gate::allows('isSameJurusan', [$transaction])) {
@@ -210,7 +159,7 @@ class TransactionController extends Controller
 
         // Hitung total harga dan kembalian
         // dd($transaction->sparepart->harga_jual);
-        
+
         $totalPrice = $transaction->total_price;
         $purchasePrice = $transaction->purchase_price;
         $change = $purchasePrice - $totalPrice;
@@ -218,21 +167,56 @@ class TransactionController extends Controller
         return view('transactions.show', compact('transaction', 'totalPrice', 'change'));
     }
 
+    // public function edit($id)
+    // {
+    //     // Ambil data Transaction berdasarkan ID, bukan SparepartTransaction
+    //     $transaction = Transaction::with('transactionSpareparts.sparepart')->findOrFail($id);
+
+    //     if (! Gate::allows('isSameJurusan', [$transaction])) {
+    //         abort(403, 'Data tidak ditemukan!');
+    //     }
+
+    //     if (! Gate::allows('isAdminOrEngineer')) {
+    //         abort(403, 'Butuh level Admin');
+    //     }
+    //     // $transaction = SparepartTransaction::findOrFail($id);
+    //     $spareparts = Sparepart::all();
+    //     dd($transaction->transactionSpareparts);
+    //     $transactionDate = \Carbon\Carbon::parse($transaction->transaction_date);
+    //     $formattedDate = $transactionDate->toDateString();
+    //     $transactionDetails = $transaction->sparepart ?? collect();
+    //     return view('transactions.edit', compact('transaction', 'spareparts', 'transactionDetails', 'formattedDate'));
+    // }
+
     public function edit($id)
     {
-        $sparepart = SparepartTransaction::find($id);
-        if (! Gate::allows('isSameJurusan', [$sparepart])) {
+        // Ambil data Transaction berdasarkan ID, bukan SparepartTransaction
+        $transaction = Transaction::with('transactionSpareparts.sparepart')->findOrFail($id);
+
+        if (! Gate::allows('isSameJurusan', [$transaction])) {
             abort(403, 'Data tidak ditemukan!');
         }
 
-        if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
-            abort(403, 'Butuh level Admin & Kasir');
+        if (! Gate::allows('isAdminOrEngineer')) {
+            abort(403, 'Butuh level Admin');
         }
-        $transaction = SparepartTransaction::findOrFail($id);
+
         $spareparts = Sparepart::all();
         $transactionDate = \Carbon\Carbon::parse($transaction->transaction_date);
         $formattedDate = $transactionDate->toDateString();
-        $transactionDetails = $transaction->sparepart ?? collect();
+
+        // Hitung subtotal untuk setiap sparepart dalam transaksi
+        $transactionDetails = $transaction->transactionSpareparts->map(function ($transactionSparepart) {
+            $subtotal = $transactionSparepart->quantity * $transactionSparepart->sparepart->harga_jual;
+            return [
+                'sparepart_id' => $transactionSparepart->sparepart_id,
+                'nama_sparepart' => $transactionSparepart->sparepart->nama_sparepart,
+                'harga_jual' => $transactionSparepart->sparepart->harga_jual,
+                'quantity' => $transactionSparepart->quantity,
+                'subtotal' => $subtotal, // Menambahkan subtotal
+            ];
+        });
+
         return view('transactions.edit', compact('transaction', 'spareparts', 'transactionDetails', 'formattedDate'));
     }
 
@@ -244,55 +228,55 @@ class TransactionController extends Controller
             'quantity' => 'required|array',
             'quantity.*' => 'required|numeric|min:1',
             'transaction_type' => 'required|in:sale,purchase',
-            'purchase_price' => 'required_if:transaction_type,purchase|numeric|min:0', // added validation for purchase_price when transaction type is 'purchase'
-        ], [
-            'sparepart_id.required' => 'Kolom ID sparepart harus diisi.',
-            'sparepart_id.array' => 'ID sparepart harus dalam bentuk array.',
-            'sparepart_id.*.exists' => 'Beberapa sparepart tidak ditemukan.',
-            'quantity.required' => 'Kolom jumlah harus diisi.',
-            'quantity.array' => 'Jumlah harus dalam bentuk array.',
-            'quantity.*.required' => 'Jumlah harus diisi.',
-            'quantity.*.numeric' => 'Jumlah harus berupa angka.',
-            'quantity.*.min' => 'Jumlah minimal adalah 1.',
-            'transaction_type.required' => 'Jenis transaksi harus dipilih.',
-            'transaction_type.in' => 'Jenis transaksi tidak valid.',
-            'purchase_price.required_if' => 'Harga beli harus diisi untuk transaksi pembelian.',
-            'purchase_price.numeric' => 'Harga beli harus berupa angka.',
-            'purchase_price.min' => 'Harga beli tidak boleh kurang dari 0.',
+            // 'total_price' => 'required|numeric',
+            'purchase_price' => 'required_if:transaction_type,purchase|numeric|min:0',
+            'transaction_date' => 'required|date',
+            // 'jurusan' => 'required',
         ]);
 
-        $transaction = SparepartTransaction::findOrFail($id);
-        $transaction->transaction_type = $request->transaction_type;
-        $transaction->purchase_price = $request->purchase_price;
+        $transaction = Transaction::with('transactionSpareparts.sparepart')->findOrFail($id);
 
-        // Process each sparepart transaction
-        foreach ($request->sparepart_id as $index => $sparepart_id) {
-            $sparepart = Sparepart::findOrFail($sparepart_id);
-
-            if ($request->transaction_type == 'sale') {
-                $sparepart->decrement('jumlah', $request->quantity[$index]);
-
-                SparepartHistory::create([
-                    'sparepart_id' => $sparepart_id,
-                    'jumlah_changed' => -$request->quantity[$index],
-                    'action' => 'subtract',
-                ]);
-
-                $transaction->spareparts()->updateExistingPivot($sparepart_id, ['quantity' => $request->quantity[$index]]);
+        // Revert efek transaksi lama ke stok
+        foreach ($transaction->transactionSpareparts as $transactionSparepart) {
+            $sparepart = $transactionSparepart->sparepart;
+            if ($transaction->transaction_type == 'sale') {
+                $sparepart->increment('jumlah', $transactionSparepart->quantity);
             } else {
-                $sparepart->increment('jumlah', $request->quantity[$index]);
-
-                SparepartHistory::create([
-                    'sparepart_id' => $sparepart_id,
-                    'jumlah_changed' => $request->quantity[$index],
-                    'action' => 'add',
-                ]);
-
-                $transaction->spareparts()->updateExistingPivot($sparepart_id, ['quantity' => $request->quantity[$index]]);
+                $sparepart->decrement('jumlah', $transactionSparepart->quantity);
             }
+            $transactionSparepart->delete();
         }
 
-        $transaction->save();
+        $totalPrice = 0;
+        foreach ($request->sparepart_id as $index => $sparepart_id) {
+            $sparepart = Sparepart::findOrFail($sparepart_id);
+            $quantity = $request->quantity[$index];
+
+            if ($request->transaction_type == 'sale') {
+                if ($sparepart->jumlah < $quantity) {
+                    return redirect()->back()->withErrors(['sparepart_id' => 'Stok tidak cukup untuk ' . $sparepart->nama_sparepart]);
+                }
+                $sparepart->decrement('jumlah', $quantity);
+                $totalPrice += $sparepart->harga_jual * $quantity;
+            } else {
+                $purchasePrice = $request->purchase_price;
+                $sparepart->increment('jumlah', $quantity);
+                $totalPrice += $purchasePrice * $quantity;
+            }
+
+            SparepartTransaction::create([
+                'transaction_id' => $transaction->id,
+                'sparepart_id' => $sparepart_id,
+                'quantity' => $quantity,
+            ]);
+        }
+
+        $transaction->update([
+            'transaction_type' => $request->transaction_type,
+            'transaction_date' => $request->transaction_date,
+            'purchase_price' => $request->purchase_price,
+            'total_price' => $totalPrice,
+        ]);
 
         return redirect()->route('transactions.index')->with('success', 'Transaksi berhasil diperbarui!');
     }

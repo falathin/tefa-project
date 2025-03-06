@@ -24,6 +24,6 @@ class Transaction extends Model
 
     public function spareparts()
     {
-        return $this->belongsToMany(Sparepart::class, 'service_spareparts')->withPivot('quantity');
+        return $this->belongsToMany(Sparepart::class, 'sparepart_transactions', 'transaction_id', 'sparepart_id')->withPivot('quantity');
     }
 }

@@ -67,10 +67,12 @@
                             <tbody>
                                 @php
                                     $groupedTransactions = $transactions->groupBy(function ($transaction) {
-                                        return $transaction->sparepart_id . '-' . \Carbon\Carbon::parse($transaction->created_at)->format('Y-m-d H:i');
+                                        return $transaction->sparepart_id .
+                                            '-' .
+                                            \Carbon\Carbon::parse($transaction->created_at)->format('Y-m-d H:i');
                                     });
                                 @endphp
-                            
+
                                 @foreach ($groupedTransactions as $group)
                                     @php
                                         $firstTransaction = $group->first();
@@ -79,7 +81,8 @@
                                     @endphp
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($firstTransaction->created_at)->format('d-m-Y H:i') }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($firstTransaction->created_at)->format('d-m-Y H:i') }}
+                                        </td>
                                         <td>{{ number_format($totalPrice, 2, ',', '.') }}</td>
                                         <td>
                                             @if ($firstTransaction->transaction_type == 'sale')
@@ -94,14 +97,23 @@
                                             <td>{{ $firstTransaction->jurusan }}</td>
                                         @endif
                                         <td>
-                                            <a href="{{ route('transactions.show', $firstTransaction->id) }}" class="btn btn-info btn-sm">
+                                            <a href="{{ route('transactions.show', $firstTransaction->id) }}"
+                                                class="btn btn-info btn-sm">
                                                 <i class="bi bi-eye"></i> Detail
                                             </a>
+                                            @if (Gate::allows('isAdminOrEngineer'))
+                                                <a href="{{ route('transactions.edit', $firstTransaction->id) }}"
+                                                    class="btn btn-warning btn-sm">
+                                                    <i class="fas fa-edit"></i> Edit
+                                                </a>
+                                            @endif
                                             @if (Gate::allows('isKasir') xor Gate::allows('isAdminOrEngineer'))
-                                                <form action="{{ route('transactions.destroy', $firstTransaction->id) }}" method="POST" class="d-inline">
+                                                <form action="{{ route('transactions.destroy', $firstTransaction->id) }}"
+                                                    method="POST" class="d-inline">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin hapus transaksi ini?')">
+                                                    <button type="submit" class="btn btn-danger btn-sm"
+                                                        onclick="return confirm('Yakin hapus transaksi ini?')">
                                                         <i class="bi bi-trash"></i> Hapus
                                                     </button>
                                                 </form>
@@ -110,7 +122,7 @@
                                     </tr>
                                 @endforeach
                             </tbody>
-                            
+
                         </table>
                     </div>
 
