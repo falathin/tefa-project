@@ -43,93 +43,86 @@
 
     <div class="tab-content">
         <div class="tab-pane fade show active" id="daily">
-            <table class="table table-bordered table-hover shadow-sm">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Nama Pelanggan</th>
-                        <th>Kendaraan</th>
-                        <th>Pemasukan</th>
-                        <th>Waktu</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($dailyCustomerData as $data)
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover shadow-sm">
+                    <thead class="table-dark">
                         <tr>
-                            <td>{{ $data['customer_name'] }}</td>
-                            <td>{{ $data['vehicle'] }}</td>
-                            <td class="text-success fw-bold">Rp {{ number_format($data['income'], 0, ',', '.') }}</td>
-                            <td>{{ $data['service_time'] }}</td>
-                            <td>
-                                <a href="{{ route('service.show', $data['id']) }}"
-                                    class="btn btn-primary text-light btn-sm">
-                                    <i class="fas fa-eye"></i> Detail
-                                </a>
-                            </td>
+                            <th>Nama Pelanggan</th>
+                            <th>Kendaraan</th>
+                            <th>Pemasukan</th>
+                            <th>Waktu</th>
+                            <th>Aksi</th>
                         </tr>
-                    @endforeach
-                </tbody>
-                <tfoot class="table-secondary">
-                    <tr>
-                        <td colspan="3" class="text-end fw-bold">Total Pemasukan:</td>
-                        <td class="text-success fw-bold">Rp {{ number_format($totalDailyIncome, 0, ',', '.') }}</td>
-                        <td></td>
-                    </tr>
-                </tfoot>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach ($dailyCustomerData as $data)
+                            <tr>
+                                <td>{{ $data['customer_name'] }}</td>
+                                <td>{{ $data['vehicle'] }}</td>
+                                <td class="text-success fw-bold">Rp {{ number_format($data['income'], 0, ',', '.') }}</td>
+                                <td>{{ $data['service_time'] }}</td>
+                                <td>
+                                    <a href="{{ route('service.show', $data['id']) }}" class="btn btn-primary text-light btn-sm">
+                                        <i class="fas fa-eye"></i> Detail
+                                    </a>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                    <tfoot class="table-secondary">
+                        <tr>
+                            <td colspan="3" class="text-end fw-bold">Total Pemasukan:</td>
+                            <td class="text-success fw-bold">Rp {{ number_format($totalDailyIncome, 0, ',', '.') }}</td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
         </div>
-
+    
         <div class="tab-pane fade" id="monthly">
-            <table class="table table-bordered table-hover shadow-sm">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Bulan</th>
-                        <th>Total Pemasukan</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @php
-                        $allMonths = [
-                            'Januari',
-                            'Februari',
-                            'Maret',
-                            'April',
-                            'Mei',
-                            'Juni',
-                            'Juli',
-                            'Agustus',
-                            'September',
-                            'Oktober',
-                            'November',
-                            'Desember',
-                        ];
-                        $totalAllMonths = 0;
-                        $selectedYear = request()->input('filterTahun', date('Y'));
-                    @endphp
-
-                    @foreach ($allMonths as $index => $month)
-                        @php
-                            $monthKey = $index + 1;
-                            $income = $monthlyCustomerData[$monthKey]->total_income ?? 0;
-                            $totalAllMonths += $income;
-                        @endphp
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover shadow-sm">
+                    <thead class="table-dark">
                         <tr>
-                            <td>{{ $month }} {{ $selectedYear }}</td>
-                            <td class="{{ $income > 0 ? 'text-success fw-bold' : 'text-muted' }}">
-                                Rp {{ number_format($income, 0, ',', '.') }}
-                            </td>
+                            <th>Bulan</th>
+                            <th>Total Pemasukan</th>
                         </tr>
-                    @endforeach
-                </tbody>
-                <tfoot class="table-secondary">
-                    <tr>
-                        <td class="text-end fw-bold">Total Keseluruhan ({{ $selectedYear }}):</td>
-                        <td class="text-success fw-bold">Rp {{ number_format($totalAllMonths, 0, ',', '.') }}</td>
-                    </tr>
-                </tfoot>
-            </table>
+                    </thead>
+                    <tbody>
+                        @php
+                            $allMonths = [
+                                'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                                'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember',
+                            ];
+                            $totalAllMonths = 0;
+                            $selectedYear = request()->input('filterTahun', date('Y'));
+                        @endphp
+    
+                        @foreach ($allMonths as $index => $month)
+                            @php
+                                $monthKey = $index + 1;
+                                $income = $monthlyCustomerData[$monthKey]->total_income ?? 0;
+                                $totalAllMonths += $income;
+                            @endphp
+                            <tr>
+                                <td>{{ $month }} {{ $selectedYear }}</td>
+                                <td class="{{ $income > 0 ? 'text-success fw-bold' : 'text-muted' }}">
+                                    Rp {{ number_format($income, 0, ',', '.') }}
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                    <tfoot class="table-secondary">
+                        <tr>
+                            <td class="text-end fw-bold">Total Keseluruhan ({{ $selectedYear }}):</td>
+                            <td class="text-success fw-bold">Rp {{ number_format($totalAllMonths, 0, ',', '.') }}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
         </div>
-    </div>
+    </div>    
 
     @if (Gate::allows('isBendahara'))
     <div class="row mt-4">
