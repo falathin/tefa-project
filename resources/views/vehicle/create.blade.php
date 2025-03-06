@@ -1,88 +1,82 @@
-@extends('layouts.app') <!-- Ensure this matches your main layout -->
+@extends('layouts.app')
 
 @section('content')
     <div class="container mt-5">
-        <!-- Add animation class to the container or card element -->
+        @if(session()->has('message'))
+            <div class="alert alert-{{ session('alert-type', 'info') }} alert-dismissible fade show" role="alert">
+                {{ session('message') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
+        @if ($errors->any())
+            <div class="card border-danger mb-4">
+                <div class="card-header bg-danger text-white">Terjadi Kesalahan</div>
+                <div class="card-body">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li class="text-danger">{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
+        @endif
+
         <div class="card shadow-lg animate__animated animate__fadeIn">
             <div class="card-header bg-primary text-white">
-                <h5>Tambah Data Kendaraan Milik : {{ $customer->name }}</h5>
+                <h5>Tambah Data Kendaraan Milik: {{ $customer->name }}</h5>
             </div>
             <div class="card-body">
                 <form action="{{ route('vehicle.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
-                    <!-- Hidden fields -->
                     <input type="hidden" name="customer_id" value="{{ $customer->id }}">
                     <input type="hidden" name="jurusan" value="{{ Auth::user()->jurusan }}">
-                    
-                    <!-- Vehicle Information -->
-                    <div class="row mb-4 animate__animated animate__fadeIn animate__delay-1s">
-                        @if (Auth::user()->jurusan == 'TKRO' || Auth::user()->jurusan == 'TSM')
+
+                    @if (Auth::user()->jurusan == 'TKRO' || Auth::user()->jurusan == 'TSM')
+                        <div class="row mb-4">
                             <div class="col-md-6">
                                 <label for="brand" class="form-label">Merk</label>
-                                <input type="text" class="form-control @error('brand') is-invalid @enderror" id="brand" name="brand" value="{{ old('brand') }}" placeholder="{{ Auth::user()->jurusan == 'TKRO' ? 'Daihatsu' : 'Honda' }}">
-                                @error('brand')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <input type="text" class="form-control" id="brand" name="brand" value="{{ old('brand') }}" 
+                                       placeholder="{{ Auth::user()->jurusan == 'TKRO' ? 'Daihatsu' : 'Honda' }}">
                             </div>
                             <div class="col-md-6">
                                 <label for="vehicle_type" class="form-label">Tipe Kendaraan</label>
-                                <input type="text" class="form-control @error('vehicle_type') is-invalid @enderror" id="vehicle_type" name="vehicle_type" value="{{ old('vehicle_type') }}" required placeholder="{{ Auth::user()->jurusan == 'TKRO' ? 'Xenia 1.5 A/T' : 'CBR 250RR' }}">
-                                @error('vehicle_type')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <input type="text" class="form-control" id="vehicle_type" name="vehicle_type" value="{{ old('vehicle_type') }}" 
+                                       placeholder="{{ Auth::user()->jurusan == 'TKRO' ? 'Xenia 1.5 A/T' : 'CBR 250RR' }}">
                             </div>
-                        @endif
-                    </div>
+                        </div>
+                    @endif
                     
-                    <!-- Engine Code and Color -->
-                    <div class="row mb-4 animate__animated animate__fadeIn animate__delay-2s">
+                    <div class="row mb-4">
                         <div class="col-md-6">
                             <label for="engine_code" class="form-label">Kode Mesin</label>
-                            <input type="text" class="form-control @error('engine_code') is-invalid @enderror" id="engine_code" name="engine_code" value="{{ old('engine_code') }}">
-                            @error('engine_code')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                            <input type="text" class="form-control" id="engine_code" name="engine_code" value="{{ old('engine_code') }}">
                         </div>
                         <div class="col-md-6">
                             <label for="color" class="form-label">Warna</label>
-                            <input type="text" class="form-control @error('color') is-invalid @enderror" id="color" name="color" value="{{ old('color') }}">
-                            @error('color')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                            <input type="text" class="form-control" id="color" name="color" value="{{ old('color') }}">
                         </div>
                     </div>
                     
-                    <!-- Year and License Plate -->
-                    <div class="row mb-4 animate__animated animate__fadeIn animate__delay-3s">
+                    <div class="row mb-4">
                         <div class="col-md-6">
                             <label for="year" class="form-label">Tahun Kendaraan</label>
-                            <input type="number" class="form-control @error('year') is-invalid @enderror" id="year" name="year" value="{{ old('year') }}">
-                            @error('year')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                            <input type="number" class="form-control" id="year" name="year" value="{{ old('year') }}">
                         </div>
                         <div class="col-md-6">
                             <label for="license_plate" class="form-label">Nomor Plat Kendaraan</label>
-                            <input type="text" class="form-control @error('license_plate') is-invalid @enderror" id="license_plate" name="license_plate" value="{{ old('license_plate') }}" required>
-                            @error('license_plate')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                            <input type="text" class="form-control" id="license_plate" name="license_plate" value="{{ old('license_plate') }}">
                         </div>
                     </div>
                     
-                    <!-- Image Upload -->
-                    <div class="row mb-4 animate__animated animate__fadeIn animate__delay-3s">
+                    <div class="row mb-4">
                         <div class="col-md-12">
                             <label for="image" class="form-label">Foto Kendaraan (Opsional)</label>
-                            <input type="file" class="form-control @error('image') is-invalid @enderror" id="image" name="image">
-                            @error('image')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                            <input type="file" class="form-control" id="image" name="image">
                         </div>
                     </div>
                     
-                    <!-- Submit Button Section -->
-                    <div class="d-flex justify-content-end animate__animated animate__fadeIn animate__delay-4s">
+                    <div class="d-flex justify-content-end">
                         <button type="submit" class="btn btn-success">Simpan</button>
                         <a href="{{ route('customer.show', $customer->id) }}" class="btn btn-outline-secondary ms-2">Kembali</a>
                     </div>
