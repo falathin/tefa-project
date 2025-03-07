@@ -258,7 +258,7 @@ class TransactionController extends Controller
                 SparepartHistory::create([
                     'sparepart_id' => $sparepart->id_sparepart,
                     'jumlah_changed' => $quantity,
-                    'action' => 'restore',
+                    'action' => 'add',
                 ]);
             } else {
                 $sparepart->decrement('jumlah', $quantity);
@@ -273,6 +273,7 @@ class TransactionController extends Controller
     
             // Catat perubahan yang terjadi
             $changes[] = "Stok {$sparepart->nama_sparepart} dikembalikan dari {$oldStock} ke " . ($sparepart->jumlah);
+            
         }
     
         // Update transaksi baru
