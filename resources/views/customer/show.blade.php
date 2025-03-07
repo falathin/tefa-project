@@ -83,6 +83,7 @@
                             <thead class="table-dark text-center">
                                 <tr>
                                     <th scope="col">NO POL</th>
+                                    <th scope="col">Merk</th>
                                     <th scope="col">Jenis Kendaraan</th>
                                     <th scope="col">Aksi</th>
                                 </tr>
@@ -91,6 +92,7 @@
                                 @foreach ($sortedVehicles as $vehicle)
                                     <tr class="text-center animate__animated animate__fadeInUp" style="animation-delay: {{ 1.2 + $loop->index * 0.1 }}s;">
                                         <td>{{ $vehicle->license_plate }}</td>
+                                        <td>{{ $vehicle->brand }}</td>
                                         <td>{{ $vehicle->vehicle_type }}</td>
                                         <td>
                                             <a href="{{ route('vehicle.show', $vehicle->id) }}" class="btn btn-info rounded-pill px-4 py-2 animate__animated animate__fadeInUp" style="animation-delay: {{ 1.3 + $loop->index * 0.1 }}s;">
