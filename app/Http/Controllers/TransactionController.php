@@ -113,7 +113,6 @@ class TransactionController extends Controller
                     SparepartTransaction::create([
                         'transaction_id' => $transaction->id,
                         'sparepart_id' => $sparepart_id,
-                        'transaction_id' => $transaction->id,
                         'quantity' => $quantity,
                     ]);
                 } else {
@@ -223,64 +222,110 @@ class TransactionController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
+            'transaction_type' => 'required|in:sale,purchase',
             'sparepart_id' => 'required|array',
             'sparepart_id.*' => 'exists:spareparts,id_sparepart',
             'quantity' => 'required|array',
             'quantity.*' => 'required|numeric|min:1',
-            'transaction_type' => 'required|in:sale,purchase',
-            // 'total_price' => 'required|numeric',
-            'purchase_price' => 'required_if:transaction_type,purchase|numeric|min:0',
-            'transaction_date' => 'required|date',
-            // 'jurusan' => 'required',
+            'purchase_price.*' => 'numeric|min:0',
+            'total_price' => 'required',    
+        ], [
+            'transaction_type.required' => 'Jenis transaksi harus dipilih.',
+            'transaction_type.in' => 'Jenis transaksi tidak valid.',
+            'sparepart_id.required' => 'Kolom ID sparepart harus diisi.',
+            'sparepart_id.*.exists' => 'Beberapa sparepart tidak ditemukan.',
+            'quantity.required' => 'Kolom jumlah harus diisi.',
+            'quantity.array' => 'Jumlah harus dalam bentuk array.',
+            'quantity.*.required' => 'Jumlah harus diisi.',
+            'quantity.*.numeric' => 'Jumlah harus berupa angka.',
+            'quantity.*.min' => 'Jumlah minimal adalah 1.',
+            'purchase_price.*.numeric' => 'Harga beli harus berupa angka.',
+            'purchase_price.*.min' => 'Harga beli tidak boleh kurang dari 0.',
         ]);
-
+    
         $transaction = Transaction::with('transactionSpareparts.sparepart')->findOrFail($id);
-
-        // Revert efek transaksi lama ke stok
+        
+        $changes = []; // Menyimpan perubahan untuk ditampilkan
+    
+        // Kembalikan stok lama sebelum update
         foreach ($transaction->transactionSpareparts as $transactionSparepart) {
             $sparepart = $transactionSparepart->sparepart;
+            $quantity = $transactionSparepart->quantity;
+            $oldStock = $sparepart->jumlah; // Stok sebelum perubahan
+    
             if ($transaction->transaction_type == 'sale') {
-                $sparepart->increment('jumlah', $transactionSparepart->quantity);
+                $sparepart->increment('jumlah', $quantity);
+                SparepartHistory::create([
+                    'sparepart_id' => $sparepart->id_sparepart,
+                    'jumlah_changed' => $quantity,
+                    'action' => 'restore',
+                ]);
             } else {
-                $sparepart->decrement('jumlah', $transactionSparepart->quantity);
+                $sparepart->decrement('jumlah', $quantity);
+                SparepartHistory::create([
+                    'sparepart_id' => $sparepart->id_sparepart,
+                    'jumlah_changed' => -$quantity,
+                    'action' => 'subtract',
+                ]);
             }
+    
             $transactionSparepart->delete();
+    
+            // Catat perubahan yang terjadi
+            $changes[] = "Stok {$sparepart->nama_sparepart} dikembalikan dari {$oldStock} ke " . ($sparepart->jumlah);
         }
-
+    
+        // Update transaksi baru
         $totalPrice = 0;
         foreach ($request->sparepart_id as $index => $sparepart_id) {
             $sparepart = Sparepart::findOrFail($sparepart_id);
             $quantity = $request->quantity[$index];
-
+            $oldStock = $sparepart->jumlah; // Stok sebelum perubahan
+    
             if ($request->transaction_type == 'sale') {
                 if ($sparepart->jumlah < $quantity) {
                     return redirect()->back()->withErrors(['sparepart_id' => 'Stok tidak cukup untuk ' . $sparepart->nama_sparepart]);
                 }
                 $sparepart->decrement('jumlah', $quantity);
+                SparepartHistory::create([
+                    'sparepart_id' => $sparepart->id_sparepart,
+                    'jumlah_changed' => -$quantity,
+                    'action' => 'subtract',
+                ]);
                 $totalPrice += $sparepart->harga_jual * $quantity;
             } else {
-                $purchasePrice = $request->purchase_price;
+                $purchasePrice = $request->purchase_price[$index] ?? 0;
                 $sparepart->increment('jumlah', $quantity);
+                SparepartHistory::create([
+                    'sparepart_id' => $sparepart->id_sparepart,
+                    'jumlah_changed' => $quantity,
+                    'action' => 'add',
+                ]);
                 $totalPrice += $purchasePrice * $quantity;
             }
-
+    
             SparepartTransaction::create([
                 'transaction_id' => $transaction->id,
                 'sparepart_id' => $sparepart_id,
                 'quantity' => $quantity,
             ]);
+    
+            // Catat perubahan stok setelah transaksi diperbarui
+            $changes[] = "Stok {$sparepart->nama_sparepart} berubah dari {$oldStock} ke " . ($sparepart->jumlah);
         }
-
+    
         $transaction->update([
             'transaction_type' => $request->transaction_type,
             'transaction_date' => $request->transaction_date,
-            'purchase_price' => $request->purchase_price,
+            'purchase_price' => $request->purchase_price[0] ?? null,
             'total_price' => $totalPrice,
         ]);
-
-        return redirect()->route('transactions.index')->with('success', 'Transaksi berhasil diperbarui!');
+    
+        return redirect()->route('transactions.index')
+            ->with('success', 'Transaksi berhasil diperbarui! Total harga: Rp' . number_format($totalPrice, 0, ',', '.') . '<br>' . implode('<br>', $changes));
     }
-
+    
+    
     public function destroy($id)
     {
         $transaction = Transaction::findOrFail($id);
