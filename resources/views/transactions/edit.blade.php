@@ -59,15 +59,16 @@
                                             </td>
                                             <td>
                                                 <input type="text" class="form-control harga"
-                                                    value="{{ $detail['harga_jual'] }}" readonly>
+                                                    value="{{ number_format($detail['harga_jual']) }}" readonly>
                                             </td>
                                             <td>
                                                 <input type="number" name="quantity[]" class="form-control jumlah"
-                                                    value="{{ $detail['quantity'] }}" min="1" required>
+                                                    value="{{ number_format($detail['quantity']) }}" min="1" required>
                                             </td>
 
                                             <td>
-                                                <input type="text" class="form-control subtotal" value="{{ $detail['subtotal'] }}" readonly>
+                                                <input type="text" class="form-control subtotal"
+                                                    value="{{ number_format($detail['subtotal']) }}" readonly>
                                             </td>
                                             <td>
                                                 <button type="button" class="btn btn-danger remove-row">Hapus</button>
@@ -114,14 +115,16 @@
                         </label>
                         <input type="text" id="total_price" class="form-control"
                             value="{{ old('total_price', $transaction->total_price) }}" readonly>
+                        <input type="hidden" id="total_price_asli" name="total_price">
                     </div>
 
                     <div class="form-group mt-3">
                         <label for="purchase_price">
                             <i class="bi bi-credit-card"></i> Uang Masuk
                         </label>
-                        <input type="number" name="purchase_price" id="purchase_price" class="form-control" min="0"
+                        <input type="text" id="purchase_price" class="form-control" min="0"
                             value="{{ old('purchase_price', $transaction->purchase_price) }}">
+                        <input type="hidden" id="purchase_price_asli" name="purchase_price">
                     </div>
 
                     <div class="form-group mt-3">
@@ -141,36 +144,57 @@
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            function purchasePrice() {
+                let a = formatRupiah(document.getElementById('purchase_price').value);
+                document.getElementById("purchase_price_asli").value = unformat(a);
+                document.getElementById("purchase_price").value = a;
+            }
+
+            function formatRibuan(angka) {
+                return new Intl.NumberFormat("id-ID").format(angka);
+            }
+
+            function formatRupiah(angka) {
+                return "Rp " + formatRibuan(angka);
+            }
+
+            function unformat(angka) {
+                return parseInt(angka.replace(/\D/g, "")) || 0;
+            }
+
             const transactionDateInput = document.getElementById('transaction_date');
             if (!transactionDateInput.value) {
-                const today = new Date().toISOString().split('T')[0];
-                transactionDateInput.value = today;
+                transactionDateInput.value = new Date().toISOString().split('T')[0];
             }
 
             function calculateSubtotal(row) {
-                const price = parseFloat(row.querySelector('.harga').value) || 0;
+                const price = parseFloat(unformat(row.querySelector('.harga').value)) || 0;
                 const quantity = parseFloat(row.querySelector('.jumlah').value) || 0;
                 const subtotal = price * quantity;
-                row.querySelector('.subtotal').value = subtotal.toFixed(2);
+                row.querySelector('.subtotal').value = formatRupiah(subtotal);
                 updateTotalCost();
             }
 
             function updateTotalCost() {
-                const totalSparepart = Array.from(document.querySelectorAll('#sparepartTable tbody tr')).reduce((
-                    sum, row) => {
-                    const price = parseFloat(row.querySelector('.harga').value.replace(/[^0-9.-]+/g, "")) ||
-                        0;
+                let totalSparepart = 0;
+                document.querySelectorAll('#sparepartTable tbody tr').forEach(row => {
+                    const price = parseFloat(unformat(row.querySelector('.harga').value)) || 0;
                     const quantity = parseInt(row.querySelector('.jumlah').value) || 0;
-                    return sum + (price * quantity);
-                }, 0);
-                document.getElementById('total_price').value = totalSparepart.toFixed(2);
+                    totalSparepart += price * quantity;
+                });
+                document.getElementById('total_price').value = formatRupiah(totalSparepart);
+                document.getElementById('total_price_asli').value = totalSparepart;
                 updateChange();
             }
 
             function updateChange() {
-                const paymentReceived = parseFloat(document.getElementById('purchase_price').value) || 0;
-                const totalCost = parseFloat(document.getElementById('total_price').value) || 0;
-                document.getElementById('change').value = (paymentReceived - totalCost).toFixed(2);
+                const paymentReceived = parseFloat(unformat(document.getElementById('purchase_price_asli')
+                    .value)) || 0;
+                const totalCost = parseFloat(unformat(document.getElementById('total_price').value)) || 0;
+                const change = paymentReceived - totalCost;
+
+                document.getElementById('change').value = formatRupiah(change);
+                document.getElementById('change_asli').value = change;
             }
 
             document.getElementById('addRow').addEventListener('click', function() {
@@ -221,8 +245,13 @@
                 }
             });
 
-            document.getElementById('purchase_price').addEventListener('input', updateChange);
+            document.getElementById('purchase_price').addEventListener('input', function() {
+                this.value = formatRupiah(this.value.replace(/\D/g, ""));
+                document.getElementById('purchase_price_asli').value = unformat(this.value);
+                updateChange();
+            });
 
+            purchasePrice();
             updateTotalCost();
             updateChange();
         });
