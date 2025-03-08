@@ -214,24 +214,18 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @php
-                                $currentStock = $sparepart->jumlah; // Initial stock
-                            @endphp
-
-                            @forelse($histories as $history)
+                            @forelse($data as $history)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
 
                                     <!-- Initial Stock -->
                                     <td>
-                                        @php
-                                            $stockBeforeChange = $currentStock - $history->jumlah_changed;
-                                        @endphp
-                                        {{ $stockBeforeChange }} unit
+                                        {{-- @dd($query) --}}
+                                        {{ $history->old_value }} unit
                                     </td>
 
                                     <!-- Change -->
-                                    <td>
+                                    {{-- <td>
                                         @if ($history->action == 'add')
                                             <span class="text-success">+{{ $history->jumlah_changed }} unit
                                                 (Penambahan)
@@ -242,13 +236,13 @@
                                         @elseif($history->action == 'edit')
                                             <span class="text-warning">Edit Data</span>
                                         @endif
-                                    </td>
+                                    </td> --}}
 
                                     <!-- Final Stock -->
-                                    <td>{{ $currentStock }} unit</td>
+                                    <td>{{ $history->new_value }} unit</td>
 
                                     <!-- Action -->
-                                    <td
+                                    {{-- <td
                                         class="{{ $history->action == 'add' ? 'text-success' : ($history->action == 'edit' ? 'text-warning' : 'text-danger') }}">
                                         @if ($history->action == 'subtract' || $history->action == 'use')
                                             Pemakaian
@@ -257,15 +251,15 @@
                                         @elseif($history->action == 'edit')
                                             Perubahan Data (Edit)
                                         @endif
-                                    </td>
+                                    </td> --}}
 
                                     <!-- Date -->
                                     <td>{{ $history->created_at->format('d-m-Y H:i') }}</td>
                                 </tr>
 
-                                @php
+                                {{-- @php
                                     $currentStock = $stockBeforeChange; // Update the stock for next iteration
-                                @endphp
+                                @endphp --}}
                             @empty
                                 <tr>
                                     <td colspan="6" class="text-center">Tidak ada histori perubahan stok.</td>
@@ -275,9 +269,9 @@
                     </table>
                 </div>
                 <!-- Pagination -->
-                <div class="d-flex justify-content-center mt-3">
-                    {{ $histories->links('vendor.pagination.simple-bootstrap-5') }}
-                </div>
+                {{-- <div class="d-flex justify-content-center mt-3">
+                    {{ $->links('vendor.pagination.simple-bootstrap-5') }}
+                </div> --}}
 
                 <!-- Text and Right-to-Left Arrow with Animation -->
                 <div id="stock-history-message" class="mt-4 text-center animate__animated animate__fadeInLeft">
@@ -333,21 +327,15 @@
                                         <th>Tanggal</th> <!-- Tanggal -->
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    @php
-                                        $currentStock = $sparepart->jumlah; // Initial stock
-                                    @endphp
-        
-                                    @forelse($histories as $history)
+                                <tbody>        
+                                    @forelse($data as $history)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
         
                                             <!-- Initial Stock -->
                                             <td>
-                                                @php
-                                                    $stockBeforeChange = $currentStock - $history->jumlah_changed;
-                                                @endphp
-                                                {{ $stockBeforeChange }} unit
+                                                @dd($history->old_value)
+                                                {{ $history->old_value }} unit
                                             </td>
         
                                             <!-- Change -->
@@ -383,9 +371,6 @@
                                             <td>{{ $history->created_at->format('d-m-Y H:i') }}</td>
                                         </tr>
         
-                                        @php
-                                            $currentStock = $stockBeforeChange; // Update the stock for next iteration
-                                        @endphp
                                     @empty
                                         <tr>
                                             <td colspan="6" class="text-center">Tidak ada histori perubahan stok.</td>
@@ -396,7 +381,7 @@
                         </div>
                         <hr class="border-muted mt-2 mb-3">
 
-                        <div class="text-start">
+                        {{-- <div class="text-start">
                             <p><strong>Perubahan Hari Ini:</strong> <span class="text-warning">{{ $todayChanges }}
                                     unit</span> ({{ $todayActionsCount }} kali)</p>
                             <p><strong>Ditambah Hari Ini:</strong> <span class="text-success">{{ $todayAdded }}
@@ -417,7 +402,7 @@
                             </p>
                             <p><strong>Dikurangi Total:</strong> <span class="text-danger">{{ $totalSubtracted }}
                                     unit</span></p>
-                        </div>
+                        </div> --}}
                     </div>
                     <div class="modal-footer p-3">
                         <button type="button" class="btn btn-outline-primary fw-semibold rounded-3 px-4 py-2"

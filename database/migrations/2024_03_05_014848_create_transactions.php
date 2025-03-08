@@ -13,6 +13,7 @@ class CreateTransactions extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
+            // $table->string('nama_pelanggan');
             $table->decimal('purchase_price', 10, 2);
             $table->decimal('total_price', 10, 2);
             $table->date('transaction_date');
