@@ -1028,6 +1028,10 @@
                                             <span>Rp. {{ number_format($service->payment_received, 0, ',', '.') }}</span>
                                         </div>
                                         <div class="list-group-item">
+                                            <span><i class="bi bi-credit-card"></i> <strong>Metode Pembayaran:</strong></span>
+                                            <span>{{ $service->payment_method }}</span>
+                                        </div>
+                                        <div class="list-group-item">
                                             <span><i class="bi bi-cash"></i> <strong>Kembalian:</strong></span>
                                             <span>Rp. {{ number_format($service->change, 0, ',', '.') }}</span>
                                         </div>
