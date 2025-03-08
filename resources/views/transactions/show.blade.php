@@ -62,9 +62,6 @@
                                 <button class="btn btn-sm btn-secondary copy-btn" data-text="{{ $sparepart->sparepart->nama_sparepart }}">
                                     <i class="fas fa-copy"></i>
                                 </button>
-                                <button class="btn btn-sm btn-danger delete-btn" data-id="{{ $sparepart->sparepart->id_sparepart }}">
-                                    <i class="fas fa-trash"></i>
-                                </button>
                             </td>
                         </tr>
                     @endforeach

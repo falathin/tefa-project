@@ -199,6 +199,7 @@ class ServiceController extends Controller
             return redirect()->back()->withErrors(['vehicle_id' => 'Anda tidak memiliki izin untuk menambahkan layanan ke kendaraan ini.']);
         }
 
+        
         $service = Service::create([
             'vehicle_id' => $request->vehicle_id,
             'complaint' => $request->complaint,
@@ -221,13 +222,22 @@ class ServiceController extends Controller
                 $sparepart = Sparepart::findOrFail($sparepart_id);
 
                 if ($sparepart->jumlah >= $request->jumlah[$index]) {
+                    $oldSparepart = $sparepart->jumlah;
                     $sparepart->decrement('jumlah', $request->jumlah[$index]);
 
-                    SparepartHistory::create([
-                        'sparepart_id' => $sparepart_id,
-                        'jumlah_changed' => -$request->jumlah[$index],
-                        'action' => 'subtract',
-                    ]);
+                    // ini untuk jumlah_before
+                    // dd($oldSparepart);
+
+                    // ini untuk jumlah_changed
+                    // dd($request->jumlah[$index]); 
+
+                    // ini untuk jumlah_after
+                    // dd($sparepart->jumlah;
+                    // SparepartHistory::create([
+                    //     'sparepart_id' => $sparepart_id,
+                    //     'jumlah_changed' => -$request->jumlah[$index],
+                    //     'action' => 'subtract',
+                    // ]);
 
                     $keuntungan_per_sparepart = $sparepart->harga_jual - $sparepart->harga_beli;
                     $total_keuntungan += $keuntungan_per_sparepart * $request->jumlah[$index];
@@ -300,20 +310,20 @@ class ServiceController extends Controller
 
         $service = Service::findOrFail($id);
 
-        foreach ($service->serviceSpareparts as $serviceSparepart) {
-            $sparepart = Sparepart::findOrFail($serviceSparepart->sparepart_id);
-            $sparepart->increment('jumlah', $serviceSparepart->quantity);
+        // foreach ($service->serviceSpareparts as $serviceSparepart) {
+        //     $sparepart = Sparepart::findOrFail($serviceSparepart->sparepart_id);
+        //     $sparepart->increment('jumlah', $serviceSparepart->quantity);
 
-            SparepartHistory::create([
-                'sparepart_id' => $sparepart->id_sparepart,
-                'jumlah_changed' => $serviceSparepart->quantity,
-                'action' => 'add',
-            ]);
-        }
+        //     SparepartHistory::create([
+        //         'sparepart_id' => $sparepart->id_sparepart,
+        //         'jumlah_changed' => $serviceSparepart->quantity,
+        //         'action' => 'add',
+        //     ]);
+        // }
 
-        $service->serviceSpareparts()->delete();
+        // $service->serviceSpareparts()->delete();
 
-        $service->update($request->except('sparepart_id', 'jumlah', 'payment_proof'));
+        // $service->update($request->except('sparepart_id', 'jumlah', 'payment_proof'));
 
         if ($request->hasFile('payment_proof')) {
             $paymentProof = $request->file('payment_proof')->store('payment_proofs', 'public');
@@ -328,11 +338,17 @@ class ServiceController extends Controller
                 if ($sparepart->jumlah >= $request->jumlah[$index]) {
                     $sparepart->decrement('jumlah', $request->jumlah[$index]);
 
-                    SparepartHistory::create([
-                        'sparepart_id' => $sparepart_id,
-                        'jumlah_changed' => -$request->jumlah[$index],
-                        'action' => 'subtract',
-                    ]);
+                    // ini untuk jumlah_after
+                    // dd($sparepart->jumlah);
+
+                    // ini untuk jumlah_changed
+                    dd($request->jumlah[$index]);
+
+                    // SparepartHistory::create([
+                    //     'sparepart_id' => $sparepart_id,
+                    //     'jumlah_changed' => -$request->jumlah[$index],
+                    //     'action' => 'subtract',
+                    // ]);
 
                     $keuntungan_per_sparepart = $sparepart->harga_jual - $sparepart->harga_beli;
                     $total_keuntungan += $keuntungan_per_sparepart * $request->jumlah[$index];
@@ -375,11 +391,11 @@ class ServiceController extends Controller
             $sparepart = Sparepart::findOrFail($serviceSparepart->sparepart_id);
             $sparepart->increment('jumlah', $serviceSparepart->quantity);
 
-            SparepartHistory::create([
-                'sparepart_id' => $sparepart->id_sparepart,
-                'jumlah_changed' => $serviceSparepart->quantity,
-                'action' => 'add',
-            ]);
+            // SparepartHistory::create([
+            //     'sparepart_id' => $sparepart->id_sparepart,
+            //     'jumlah_changed' => $serviceSparepart->quantity,
+            //     'action' => 'add',
+            // ]);
         }
 
         $service->serviceSpareparts()->delete();
@@ -391,11 +407,11 @@ class ServiceController extends Controller
             if ($sparepart && $sparepart->jumlah >= $request->input('jumlah')[$key]) {
                 $sparepart->decrement('jumlah', $request->input('jumlah')[$key]);
 
-                SparepartHistory::create([
-                    'sparepart_id' => $sparepart_id,
-                    'jumlah_changed' => -$request->input('jumlah')[$key],
-                    'action' => 'subtract',
-                ]);
+                // SparepartHistory::create([
+                //     'sparepart_id' => $sparepart_id,
+                //     'jumlah_changed' => -$request->input('jumlah')[$key],
+                //     'action' => 'subtract',
+                // ]);
 
                 $keuntungan_per_sparepart = $sparepart->harga_jual - $sparepart->harga_beli;
                 $total_keuntungan += $keuntungan_per_sparepart * $request->input('jumlah')[$key];

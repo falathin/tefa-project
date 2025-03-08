@@ -63,7 +63,8 @@
                                             </td>
                                             <td>
                                                 <input type="number" name="quantity[]" class="form-control jumlah"
-                                                    value="{{ number_format($detail['quantity']) }}" min="1" required>
+                                                    value="{{ number_format($detail['quantity']) }}" min="1"
+                                                    required>
                                             </td>
 
                                             <td>
@@ -198,36 +199,73 @@
             }
 
             document.getElementById('addRow').addEventListener('click', function() {
+                // Ambil semua sparepart_id yang sudah dipilih
+                const selectedIds = Array.from(document.querySelectorAll('.sparepart_id'))
+                    .map(select => select.value)
+                    .filter(value => value !== "");
+
                 const tableBody = document.querySelector('#sparepartTable tbody');
                 const row = tableBody.insertRow();
+
+                // Bangun opsi dengan filter
+                let optionsHtml = '<option value="">Pilih Sparepart</option>';
+                @foreach ($spareparts as $sparepart)
+                    if (!selectedIds.includes("{{ $sparepart->id_sparepart }}")) {
+                        optionsHtml += `
+                <option 
+                    value="{{ $sparepart->id_sparepart }}" 
+                    data-harga="{{ $sparepart->harga_jual }}"
+                >
+                    {{ $sparepart->nama_sparepart }}
+                </option>
+            `;
+                    }
+                @endforeach
+
                 row.innerHTML = ` 
-                    <td>
-                        <select name="sparepart_id[]" class="form-control sparepart_id" required>
-                            <option value="">Pilih Sparepart</option>
-                            @foreach ($spareparts as $sparepart)
-                                <option value="{{ $sparepart->id_sparepart }}" data-harga="{{ $sparepart->harga_jual }}">
-                                    {{ $sparepart->nama_sparepart }}
-                                </option> 
-                            @endforeach
-                        </select>
-                    </td>
-                    <td><input type="text" class="form-control harga" readonly></td>
-                    <td><input type="number" name="quantity[]" class="form-control jumlah" min="1" required></td>
-                    <td><input type="text" class="form-control subtotal" readonly></td>
-                    <td><button type="button" class="btn btn-danger remove-row">Hapus</button></td>
-                `;
+        <td>
+            <select name="sparepart_id[]" class="form-control sparepart_id" required>
+                ${optionsHtml}
+            </select>
+        </td>
+        <td><input type="text" class="form-control harga" readonly></td>
+        <td><input type="number" name="quantity[]" class="form-control jumlah" min="1" required></td>
+        <td><input type="text" class="form-control subtotal" readonly></td>
+        <td><button type="button" class="btn btn-danger remove-row">Hapus</button></td>
+    `;
 
-                const newRow = tableBody.lastElementChild;
-                newRow.querySelector('.sparepart_id').addEventListener('change', function() {
-                    const price = this.options[this.selectedIndex].getAttribute('data-harga') || 0;
-                    newRow.querySelector('.harga').value = parseFloat(price).toFixed(2);
-                    calculateSubtotal(newRow);
-                });
-                newRow.querySelector('.jumlah').addEventListener('input', function() {
-                    calculateSubtotal(newRow);
+                // Tambahkan event listener untuk update opsi saat ada perubahan
+                const newSelect = row.querySelector('.sparepart_id');
+                newSelect.addEventListener('change', function() {
+                    updateAllSelectOptions();
                 });
 
-                updateTotalCost();
+                updateAllSelectOptions();
+            });
+
+            // Fungsi untuk update semua opsi select
+            function updateAllSelectOptions() {
+                const allSelects = document.querySelectorAll('.sparepart_id');
+                const selectedIds = Array.from(allSelects)
+                    .map(select => select.value)
+                    .filter(value => value !== "");
+
+                allSelects.forEach(select => {
+                    const currentValue = select.value;
+                    const options = Array.from(select.options);
+
+                    // Sembunyikan opsi yang dipilih di select lain
+                    options.forEach(option => {
+                        if (option.value && option.value !== currentValue) {
+                            option.hidden = selectedIds.includes(option.value);
+                        }
+                    });
+                });
+            }
+
+            // Panggil fungsi saat halaman pertama kali load
+            document.addEventListener('DOMContentLoaded', function() {
+                updateAllSelectOptions();
             });
 
             document.querySelector('#sparepartTable').addEventListener('click', function(event) {
