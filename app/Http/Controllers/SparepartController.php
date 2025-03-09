@@ -264,7 +264,10 @@ class SparepartController extends Controller
     // }
     
     public function history($id, Request $request) {
-        $data = SparepartHistory::all()->where('sparepart_id', 'like', $id);
+        $data = SparepartHistory::where('sparepart_id', $id)
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+            
         return view('sparepart.history', compact('data'));
-    }
+    }    
 }
