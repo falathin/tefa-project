@@ -93,7 +93,7 @@
                             value="{{ old('transaction_date', \Carbon\Carbon::parse($transaction->transaction_date)->toDateString()) }}"
                             required>
                     </div>
-
+                    
                     <div class="form-group mt-3">
                         <label for="transaction_type">
                             <i class="bi bi-arrow-up-down"></i> Jenis Transaksi
@@ -109,7 +109,17 @@
                             </option>
                         </select>
                     </div>
-
+                    
+                    <div class="form-group mt-3">
+                        <label for="payment_method"><i class="bi bi-credit-card-2-front"></i> Metode Pembayaran</label>
+                        <select name="payment_method" id="payment_method" class="form-control" required>
+                            <option value="cash" {{ old('payment_method', $transaction->payment_method) == 'cash' ? 'selected' : '' }}>Tunai</option>
+                            <option value="cooperative" {{ old('payment_method', $transaction->payment_method) == 'cooperative' ? 'selected' : '' }}>Kooperasi</option>
+                            <option value="administration" {{ old('payment_method', $transaction->payment_method) == 'administration' ? 'selected' : '' }}>Tata Usaha</option>
+                            <option value="transfer" {{ old('payment_method', $transaction->payment_method) == 'transfer' ? 'selected' : '' }}>Transfer</option>
+                        </select>
+                    </div>
+                    
                     <div class="form-group mt-3">
                         <label for="total_price">
                             <i class="bi bi-wallet2"></i> Total Biaya
@@ -118,7 +128,7 @@
                             value="{{ old('total_price', $transaction->total_price) }}" readonly>
                         <input type="hidden" id="total_price_asli" name="total_price">
                     </div>
-
+                    
                     <div class="form-group mt-3">
                         <label for="purchase_price">
                             <i class="bi bi-credit-card"></i> Uang Masuk
@@ -127,7 +137,7 @@
                             value="{{ old('purchase_price', $transaction->purchase_price) }}">
                         <input type="hidden" id="purchase_price_asli" name="purchase_price">
                     </div>
-
+                    
                     <div class="form-group mt-3">
                         <label for="change">
                             <i class="bi bi-cash-coin"></i> Kembalian
@@ -135,10 +145,11 @@
                         <input type="text" id="change" class="form-control"
                             value="{{ old('change', $transaction->change) }}" readonly>
                     </div>
-
+                    
                     <button type="submit" class="btn btn-success mt-4">
                         <i class="bi bi-save"></i> Simpan Transaksi
                     </button>
+                    
             </form>
         </div>
     </div>

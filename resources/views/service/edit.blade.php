@@ -112,7 +112,7 @@
                                                 @foreach (old('sparepart_id') as $index => $sparepart_id)
                                                     <tr>
                                                         <td>
-                                                            <select name="sparepart_id[]" class="form-control">
+                                                            <select name="sparepart_id[]" class="form-control sparepart_id">
                                                                 @foreach ($spareparts as $sparepart)
                                                                     <option value="{{ $sparepart->id_sparepart }}"
                                                                         {{ $sparepart->id_sparepart == $sparepart_id ? 'selected' : '' }}>
@@ -126,24 +126,23 @@
                                                         </td>
                                                         <td>
                                                             <input type="text" class="form-control harga"
-                                                                value="{{ $spareparts->where('id_sparepart', $sparepart_id)->first()->harga_jual ?? 0 }}"
+                                                                value="{{ number_format($spareparts->where('id_sparepart', $sparepart_id)->first()->harga_jual ?? 0, 0, ',', '.') }}"
                                                                 readonly>
                                                         </td>
                                                         <td>
-                                                            <input type="number" name="jumlah[]" id="jumlah"
-                                                                class="form-control jumlah"
-                                                                value="{{ old('jumlah')[$index] }}">
+                                                            <input type="number" name="jumlah[]" class="form-control jumlah"
+                                                                value="{{ old('jumlah')[$index] }}" min="1">
                                                             @error('jumlah.' . $index)
                                                                 <div class="text-danger">{{ $message }}</div>
                                                             @enderror
                                                         </td>
                                                         <td>
-                                                            <input type="text" class="form-control subtotal" id="subtotal"
-                                                                value="0" readonly>
+                                                            <input type="text" class="form-control subtotal"
+                                                                value="{{ number_format(($spareparts->where('id_sparepart', $sparepart_id)->first()->harga_jual ?? 0) * old('jumlah')[$index], 0, ',', '.') }}"
+                                                                readonly>
                                                         </td>
                                                         <td>
-                                                            <button type="button" class="btn btn-danger removeRow"><i
-                                                                    class="fas fa-trash-alt"></i></button>
+                                                            <button type="button" class="btn btn-danger removeRow"><i class="fas fa-trash-alt"></i></button>
                                                         </td>
                                                     </tr>
                                                 @endforeach
@@ -151,7 +150,7 @@
                                                 @foreach ($service->serviceSpareparts as $serviceSparepart)
                                                     <tr data-sparepart-id="{{ $serviceSparepart->sparepart_id }}">
                                                         <td>
-                                                            <select name="sparepart_id[]" class="form-control">
+                                                            <select name="sparepart_id[]" class="form-control sparepart_id">
                                                                 @foreach ($spareparts as $sparepart)
                                                                     <option value="{{ $sparepart->id_sparepart }}"
                                                                         {{ $sparepart->id_sparepart == $serviceSparepart->sparepart_id ? 'selected' : '' }}>
@@ -165,30 +164,28 @@
                                                         </td>
                                                         <td>
                                                             <input type="text" class="form-control harga"
-                                                                value="{{ $serviceSparepart->sparepart->harga_jual }}"
+                                                                value="{{ number_format($serviceSparepart->sparepart->harga_jual, 0, ',', '.') }}"
                                                                 readonly>
                                                         </td>
                                                         <td>
-                                                            <input type="number" name="jumlah[]" id="jumlah"
-                                                                class="form-control jumlah"
-                                                                value="{{ $serviceSparepart->quantity }}">
+                                                            <input type="number" name="jumlah[]" class="form-control jumlah"
+                                                                value="{{ $serviceSparepart->quantity }}" min="1">
                                                             @error('jumlah.' . $loop->index)
                                                                 <div class="text-danger">{{ $message }}</div>
                                                             @enderror
                                                         </td>
                                                         <td>
-                                                            <input type="text" class="form-control subtotal" id="subtotal"
-                                                                value="{{ $serviceSparepart->sparepart->harga_jual * $serviceSparepart->quantity }}"
+                                                            <input type="text" class="form-control subtotal"
+                                                                value="{{ number_format($serviceSparepart->sparepart->harga_jual * $serviceSparepart->quantity, 0, ',', '.') }}"
                                                                 readonly>
                                                         </td>
                                                         <td>
-                                                            <button type="button" class="btn btn-danger removeRow"><i
-                                                                    class="fas fa-trash-alt"></i></button>
+                                                            <button type="button" class="btn btn-danger removeRow"><i class="fas fa-trash-alt"></i></button>
                                                         </td>
                                                     </tr>
                                                 @endforeach
                                             @endif
-                                        </tbody>
+                                        </tbody>                                        
                                     </table>
                                     <br>
                                     <button type="button" class="btn btn-primary" id="addRow">+ Tambah
@@ -229,8 +226,6 @@
                 </script>
                 <script>
 document.addEventListener('DOMContentLoaded', function() {
-
-    // Simpan semua data sparepart dalam bentuk JavaScript
     var allSpareparts = @json($spareparts->map(function($sparepart) {
         return [
             'id_sparepart' => $sparepart->id_sparepart,
@@ -238,8 +233,7 @@ document.addEventListener('DOMContentLoaded', function() {
             'harga_jual' => $sparepart->harga_jual
         ];
     }));
-    
-    // Fungsi untuk mendapatkan sparepart yang belum dipilih
+
     function getAvailableSpareparts() {
         let selectedIds = [];
         $('select[name="sparepart_id[]"]').each(function() {
@@ -249,18 +243,15 @@ document.addEventListener('DOMContentLoaded', function() {
         return allSpareparts.filter(sparepart => !selectedIds.includes(sparepart.id_sparepart.toString()));
     }
 
-    // Fungsi untuk update opsi di semua dropdown
     function updateAllDropdowns() {
         $('select[name="sparepart_id[]"]').each(function() {
             let currentValue = $(this).val();
             let availableSpareparts = getAvailableSpareparts();
             
-            // Simpan opsi yang sudah dipilih sebelumnya
             let existingOptions = $(this).find('option').filter((i, opt) => opt.value === currentValue);
             
             $(this).empty().append(existingOptions);
             
-            // Tambahkan opsi yang tersedia
             availableSpareparts.forEach(sparepart => {
                 if(sparepart.id_sparepart != currentValue) {
                     $(this).append(
@@ -275,7 +266,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Event untuk menambah baris baru
     $('#addRow').on('click', function() {
         let availableSpareparts = getAvailableSpareparts();
         if(availableSpareparts.length === 0) {
@@ -296,8 +286,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     </select>
                 </td>
                 <td><input type="text" class="form-control harga" readonly></td>
-                <td><input type="number" name="jumlah[]" class="form-control jumlah" id="jumlah" min="1" value="1"></td>
-                <td><input type="text" class="form-control subtotal" id="subtotal" readonly></td>
+                <td><input type="number" name="jumlah[]" class="form-control jumlah" min="1" value="1"></td>
+                <td><input type="text" class="form-control subtotal" readonly></td>
                 <td>
                     <button type="button" class="btn btn-danger remove-row">
                         <i class="fas fa-trash-alt"></i>
@@ -308,28 +298,102 @@ document.addEventListener('DOMContentLoaded', function() {
         
         $('#sparepartTable tbody').append(newRow);
         updateAllDropdowns();
+        updateTotal();
     });
 
-    // Event ketika ada perubahan pilihan sparepart
     $(document).on('change', '.sparepart_id', function() {
         updateAllDropdowns();
         
-        // Update harga dan subtotal
         const selectedOption = $(this).find('option:selected');
         const price = selectedOption.data('harga') || 0;
-        $(this).closest('tr').find('.harga').val(price);
+        $(this).closest('tr').find('.harga').val(formatCurrency(price));
         calculateSubtotal($(this).closest('tr'));
+        updateTotal();
     });
 
-    // Inisialisasi pertama kali
+    $(document).on('input', '.jumlah', function() {
+        calculateSubtotal($(this).closest('tr'));
+        updateTotal();
+    });
+
+    $(document).on('click', '.remove-row', function() {
+        $(this).closest('tr').remove();
+        updateAllDropdowns();
+        updateTotal();
+    });
+
+    function calculateSubtotal(row) {
+        const price = parseFloat(row.find('.harga').val().replace(/[^0-9,-]+/g,"")) || 0;
+        const quantity = parseInt(row.find('.jumlah').val()) || 1;
+        const subtotal = price * quantity;
+
+        row.find('.subtotal').val(formatCurrency(subtotal));
+    }
+
+    function updateTotal() {
+        let total = 0;
+        $('.subtotal').each(function() {
+            let value = $(this).val().replace(/[^0-9,-]+/g, "") || "0";
+            total += parseFloat(value);
+        });
+        $('#totalHarga').text(formatCurrency(total));
+    }
+
+    function formatCurrency(amount) {
+        return new Intl.NumberFormat('id-ID', { 
+            style: 'currency', 
+            currency: 'IDR' 
+        }).format(amount);
+    }
+
     updateAllDropdowns();
 });
-</script>
 
-
+                </script>
+    
             </div>
         </div>
     </div>
     </div>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            function formatCurrency(amount) {
+                return 'Rp ' + new Intl.NumberFormat('id-ID', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }).format(amount);
+            }
+    
+            function calculateSubtotal(row) {
+                const harga = parseFloat(row.querySelector('.harga').value.replace(/[^\d,-]/g, '')) || 0;
+                const jumlah = parseInt(row.querySelector('.jumlah').value) || 1;
+                const subtotal = harga * jumlah;
+                row.querySelector('.subtotal').value = formatCurrency(subtotal);
+            }
+    
+            document.addEventListener('input', function (event) {
+                if (event.target.classList.contains('jumlah')) {
+                    calculateSubtotal(event.target.closest('tr'));
+                }
+            });
+    
+            document.addEventListener('change', function (event) {
+                if (event.target.classList.contains('sparepart_id')) {
+                    const selectedOption = event.target.options[event.target.selectedIndex];
+                    const harga = selectedOption.getAttribute('data-harga') || '0';
+                    const row = event.target.closest('tr');
+                    row.querySelector('.harga').value = formatCurrency(parseFloat(harga));
+                    calculateSubtotal(row);
+                }
+            });
+    
+            document.addEventListener('click', function (event) {
+                if (event.target.classList.contains('removeRow')) {
+                    event.target.closest('tr').remove();
+                }
+            });
+        });
+    </script>
+    
 @endsection

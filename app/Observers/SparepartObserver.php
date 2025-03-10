@@ -40,20 +40,6 @@ class SparepartObserver
         ]);
     }
 
-    // Catat history saat Sparepart dihapus
-    public function deleting(Sparepart $sparepart)
-    {
-        // dd($sparepart->id_sparepart);
-        SparepartHistory::create([
-            'sparepart_id' => $sparepart->id_sparepart,
-            'field_changed' => 'deleted',
-            'old_value' => $sparepart->jumlah,
-            'new_value' => null,
-            'action' => 'delete',
-            'user_id' => Auth::user()->id,
-        ]);
-    }
-
     // untuk pengingat notifikasi sparepart menipis
     public function updating(Sparepart $sparepart)
     {

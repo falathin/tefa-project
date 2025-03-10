@@ -14,56 +14,62 @@
             </div>
             <div class="row g-3 mt-3">
                 <div class="col-md-4 animate__animated animate__fadeIn">
-                    <label for="brand" class="form-label">
+                    <label for="brand" class="form-label fw-bold text-primary">
                         <i class="bi bi-tags"></i> Merek Kendaraan
                     </label>
-                    <input type="text" class="form-control" id="brand" value="{{ $vehicle->brand }}" disabled>
+                    <input type="text" class="form-control bg-light border-primary rounded-3 shadow-sm" 
+                           id="brand" value="{{ $vehicle->brand }}" disabled>
                 </div>
                 <div class="col-md-4 animate__animated animate__fadeIn">
-                    <label for="jenisKendaraan" class="form-label">
+                    <label for="jenisKendaraan" class="form-label fw-bold text-success">
                         <i class="bi bi-car-front"></i> Tipe Kendaraan
                     </label>
-                    <input type="text" class="form-control" id="jenisKendaraan" value="{{ $vehicle->vehicle_type }}" disabled>
+                    <input type="text" class="form-control bg-light border-success rounded-3 shadow-sm" 
+                           id="jenisKendaraan" value="{{ $vehicle->vehicle_type }}" disabled>
                 </div>
                 <div class="col-md-4 animate__animated animate__fadeIn">
-                    <label for="kodeMesin" class="form-label">
+                    <label for="kodeMesin" class="form-label fw-bold text-danger">
                         <i class="bi bi-gear-wide"></i> Kode Mesin
                     </label>
-                    <input type="text" class="form-control" id="kodeMesin" value="{{ $vehicle->engine_code }}" disabled>
+                    <input type="text" class="form-control bg-light border-danger rounded-3 shadow-sm" 
+                           id="kodeMesin" value="{{ $vehicle->engine_code }}" disabled>
                 </div>
                 <div class="col-md-4 animate__animated animate__fadeIn">
-                    <label for="noPolisi" class="form-label">
+                    <label for="noPolisi" class="form-label fw-bold text-warning">
                         <i class="bi bi-key"></i> No Polisi
                     </label>
-                    <input type="text" class="form-control" id="noPolisi" value="{{ $vehicle->license_plate }}" disabled>
+                    <input type="text" class="form-control bg-light border-warning rounded-3 shadow-sm" 
+                           id="noPolisi" value="{{ $vehicle->license_plate }}" disabled>
                 </div>
                 <div class="col-md-4 animate__animated animate__fadeIn">
-                    <label for="tahunProduksi" class="form-label">
+                    <label for="tahunProduksi" class="form-label fw-bold text-info">
                         <i class="bi bi-calendar-event"></i> Tahun Produksi
                     </label>
-                    <input type="text" class="form-control" id="tahunProduksi" value="{{ $vehicle->production_year }}" disabled>
+                    <input type="text" class="form-control bg-light border-info rounded-3 shadow-sm" 
+                           id="tahunProduksi" value="{{ $vehicle->production_year }}" disabled>
                 </div>
                 <div class="col-md-4 animate__animated animate__fadeIn">
-                    <label for="warna" class="form-label">
+                    <label for="warna" class="form-label fw-bold text-secondary">
                         <i class="bi bi-palette"></i> Warna
                     </label>
-                    <input type="text" class="form-control" id="warna" value="{{ $vehicle->color }}" disabled>
+                    <input type="text" class="form-control bg-light border-secondary rounded-3 shadow-sm" 
+                           id="warna" value="{{ $vehicle->color }}" disabled>
                 </div>
                 <div class="col-md-12 animate__animated animate__zoomIn text-center">
-                    <label for="image" class="form-label">
+                    <label for="image" class="form-label fw-bold text-dark">
                         <i class="bi bi-image"></i> Gambar Kendaraan
                     </label>
                     <br>
                     @if ($vehicle->image)
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                            data-bs-target="#vehicleImageModal">
+                        <button type="button" class="btn btn-gradient-primary shadow-lg" data-bs-toggle="modal"
+                                data-bs-target="#vehicleImageModal">
                             <i class="bi bi-image"></i> Lihat Gambar
                         </button>
                     @else
-                        <p>No image available.</p>
+                        <p class="text-muted">No image available.</p>
                     @endif
                 </div>
-            </div>
+            </div>            
             
             <!-- Service History Section -->
             <h5 class="mt-5 animate__animated animate__slideInUp">Riwayat Service</h5>
@@ -105,74 +111,82 @@
             <br>
             <div class="container mt-3">
                 <!-- Services List -->
-                <div class="row text-center">
+                <div class="row row-cols-1 row-cols-md-2 g-4 text-center">
                     @forelse($services->sortByDesc('created_at') as $index => $service)
-                        <div
-                            class="col-md-6 mb-3 animate__animated animate__slideInUp animate__delay-{{ $index + 1 }}s">
-                            <div class="card bg-light shadow-sm p-3 hover-effect"
-                                style="background-image: url('{{ asset('storage/' . $vehicle->image ?? '') }}'); background-size: cover; background-position: center;">
-                                <!-- Service Type (e.g., Berkala) -->
-                                <div class="card-body text-white">
-                                    <h6 class="text-muted text-light">
-                                        <i class="bi bi-tools"></i> 
-                                        {{ $service->service_type }}
-                                    
-                                        @if ($service->service_type == 'light')
-                                            <span class="fw-bold">10.000 KM (Ringan)</span>
-                                        @elseif ($service->service_type == 'medium')
-                                            <span class="fw-bold">10.000 KM (Sedang)</span>
-                                        @elseif ($service->service_type == 'heavy')
-                                            <span class="fw-bold">10.000 KM (Berat)</span>
-                                        @endif
+                        <div class="col animate__animated animate__fadeInUp animate__delay-{{ $index + 1 }}s">
+                            <div class="card shadow-lg border-0 rounded-4 overflow-hidden position-relative">
+                                <!-- Background Gambar Kendaraan -->
+                                <div class="position-absolute top-0 start-0 w-100 h-100 bg-dark opacity-50"></div>
+                                <div class="position-absolute top-0 start-0 w-100 h-100" 
+                                     style="background: url('{{ asset('storage/' . ($vehicle->image ?? 'default.jpg')) }}') center/cover no-repeat;">
+                                </div>
+                
+                                <div class="card-body position-relative text-white">
+                                    <!-- Jenis Service -->
+                                    <h6 class="fw-bold">
+                                        <i class="bi bi-tools"></i> {{ ucfirst($service->service_type) }}
+                                        <span class="badge bg-light text-dark ms-2">
+                                            @if ($service->service_type == 'light')
+                                                10.000 KM (Ringan)
+                                            @elseif ($service->service_type == 'medium')
+                                                10.000 KM (Sedang)
+                                            @elseif ($service->service_type == 'heavy')
+                                                10.000 KM (Berat)
+                                            @endif
+                                        </span>
                                     </h6>
-
-                                    <!-- Service Status with Icons -->
-                                    @if ($service->status == 0)
-                                        <p class="text-light">
-                                            <i class="bi bi-x-circle text-danger"></i> Status servis: Belum selesai
-                                        </p>
-                                    @else
-                                        <p class="text-light">
-                                            <i class="bi bi-check-circle text-success"></i> Status servis: Selesai
-                                        </p>
-                                    @endif
-
-                                    <p class="text-muted text-light">Total Biaya</p>
-                                    <p class="fw-bold">Rp. {{ number_format($service->total_cost, 0, ',', '.') }}</p>
-
-                                    <!-- Service Date -->
-                                    <p class="fw-bold">
-                                        <i class="bi bi-calendar-check"></i> Tanggal:
-                                        {{ \Carbon\Carbon::parse($service->service_date)->format('d-m-Y') }} -
+                
+                                    <!-- Status Servis -->
+                                    <p class="mt-2">
+                                        @if ($service->status == 0)
+                                            <span class="badge bg-danger">
+                                                <i class="bi bi-x-circle"></i> Belum Selesai
+                                            </span>
+                                        @else
+                                            <span class="badge bg-success">
+                                                <i class="bi bi-check-circle"></i> Selesai
+                                            </span>
+                                        @endif
+                                    </p>
+                
+                                    <!-- Total Biaya -->
+                                    <p class="fw-bold text-warning fs-5">
+                                        <i class="bi bi-cash-coin"></i> Rp. {{ number_format($service->total_cost, 2, ',', '.') }}
+                                    </p>
+                
+                                    <!-- Tanggal Service -->
+                                    <p class="fw-light">
+                                        <i class="bi bi-calendar-check"></i> 
+                                        {{ \Carbon\Carbon::parse($service->service_date)->format('d-m-Y') }} - 
                                         {{ $service->created_at->format('d-m-Y H:i') }}
                                     </p>
-
-                                    <!-- Actions (Detail, Edit, Delete) -->
-                                    <div class="d-flex justify-content-between mt-3">
-                                        <a href="{{ route('service.show', $service->id) }}" class="btn btn-outline-info btn-sm">
+                
+                                    <!-- Tombol Aksi -->
+                                    <div class="d-flex justify-content-center gap-2 mt-3">
+                                        <a href="{{ route('service.show', $service->id) }}" class="btn btn-info btn-sm w-100">
                                             <i class="bi bi-info-circle"></i> Detail
                                         </a>
-                                        <a href="{{ route('service.edit', $service->id) }}" class="btn btn-outline-warning btn-sm">
+                                        <a href="{{ route('service.edit', $service->id) }}" class="btn btn-warning btn-sm w-100">
                                             <i class="bi bi-pencil-square"></i> Edit
                                         </a>
-                                        <form action="{{ route('service.destroy', $service->id) }}" method="POST" class="d-inline-block">
+                                        <a href="#" class="btn btn-danger btn-sm w-100" onclick="event.preventDefault(); document.getElementById('delete-form-{{ $service->id }}').submit();">
+                                            <i class="bi bi-trash"></i> Hapus
+                                        </a>
+                                        <form id="delete-form-{{ $service->id }}" action="{{ route('service.destroy', $service->id) }}" method="POST" class="d-none">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-outline-danger btn-sm">
-                                                <i class="bi bi-trash"></i> Hapus
-                                            </button>
                                         </form>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     @empty
-                        <div class="col-12 animate__animated animate__slideInUp">
-                            <p class="text-center text-danger font-weight-bold bounce-animation fs-6 mt-3">Tidak ada
-                                riwayat service untuk kendaraan ini.</p>
+                        <div class="col-12 animate__animated animate__fadeInUp">
+                            <p class="text-danger fw-bold fs-6 mt-3">Tidak ada riwayat servis untuk kendaraan ini.</p>
                         </div>
                     @endforelse
                 </div>
+                
 
                 <!-- Pagination links -->
                 <div class="d-flex justify-content-center mt-4">

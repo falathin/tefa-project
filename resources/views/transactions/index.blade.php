@@ -55,6 +55,7 @@
                             <thead class="table-dark">
                                 <tr>
                                     <th>No</th>
+                                    <th>Nama Pelanggan</th>
                                     <th><i class="bi bi-calendar"></i> Tanggal</th>
                                     <th><i class="bi bi-cash"></i> Total Biaya</th>
                                     <th><i class="bi bi-tag"></i> Jenis</th>
@@ -81,6 +82,7 @@
                                     @endphp
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $firstTransaction->name }}</td>
                                         <td>{{ \Carbon\Carbon::parse($firstTransaction->created_at)->format('d-m-Y H:i') }}
                                         </td>
                                         <td>{{ number_format($totalPrice, 2, ',', '.') }}</td>

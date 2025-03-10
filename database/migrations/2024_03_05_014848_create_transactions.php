@@ -13,12 +13,14 @@ class CreateTransactions extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
-            // $table->string('nama_pelanggan');
-            $table->decimal('purchase_price', 10, 2);
-            $table->decimal('total_price', 10, 2);
-            $table->date('transaction_date');
-            $table->enum('transaction_type', ['purchase', 'sale']);
-            $table->enum('jurusan', ['TSM', 'TKRO', 'General']);
+            $table->string('name'); // Nama transaksi
+            $table->decimal('purchase_price', 10, 2); // Harga beli
+            $table->decimal('total_price', 10, 2); // Harga total
+            $table->integer('discount')->default(0); // Diskon dalam angka (persentase atau nominal)
+            $table->string('payment_method'); // Metode pembayaran
+            $table->date('transaction_date'); // Tanggal transaksi
+            $table->enum('transaction_type', ['purchase', 'sale']); // Jenis transaksi
+            $table->enum('jurusan', ['TSM', 'TKRO', 'General']); // Jurusan
             $table->timestamps();
         });
     }
@@ -30,4 +32,4 @@ class CreateTransactions extends Migration
     {
         Schema::dropIfExists('transactions');
     }
-};
+}
