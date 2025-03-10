@@ -104,12 +104,6 @@ class TransactionController extends Controller
                 if ($sparepart->jumlah >= $quantity) {
                     $sparepart->decrement('jumlah', $quantity);
 
-                    SparepartHistory::create([
-                        'sparepart_id' => $sparepart_id,
-                        'jumlah_changed' => -$quantity,
-                        'action' => 'subtract',
-                    ]);
-
                     SparepartTransaction::create([
                         'transaction_id' => $transaction->id,
                         'sparepart_id' => $sparepart_id,
@@ -126,12 +120,6 @@ class TransactionController extends Controller
                 $purchase_price = $request->purchase_price[$index];
 
                 $sparepart->increment('jumlah', $quantity);
-
-                SparepartHistory::create([
-                    'sparepart_id' => $sparepart_id,
-                    'jumlah_changed' => $quantity,
-                    'action' => 'add',
-                ]);
 
                 SparepartTransaction::create([
                     'transaction_id' => $transaction->id,
@@ -166,26 +154,6 @@ class TransactionController extends Controller
         return view('transactions.show', compact('transaction', 'totalPrice', 'change'));
     }
 
-    // public function edit($id)
-    // {
-    //     // Ambil data Transaction berdasarkan ID, bukan SparepartTransaction
-    //     $transaction = Transaction::with('transactionSpareparts.sparepart')->findOrFail($id);
-
-    //     if (! Gate::allows('isSameJurusan', [$transaction])) {
-    //         abort(403, 'Data tidak ditemukan!');
-    //     }
-
-    //     if (! Gate::allows('isAdminOrEngineer')) {
-    //         abort(403, 'Butuh level Admin');
-    //     }
-    //     // $transaction = SparepartTransaction::findOrFail($id);
-    //     $spareparts = Sparepart::all();
-    //     dd($transaction->transactionSpareparts);
-    //     $transactionDate = \Carbon\Carbon::parse($transaction->transaction_date);
-    //     $formattedDate = $transactionDate->toDateString();
-    //     $transactionDetails = $transaction->sparepart ?? collect();
-    //     return view('transactions.edit', compact('transaction', 'spareparts', 'transactionDetails', 'formattedDate'));
-    // }
 
     public function edit($id)
     {
@@ -228,11 +196,11 @@ class TransactionController extends Controller
             'quantity' => 'required|array',
             'quantity.*' => 'required|numeric|min:1',
             'purchase_price.*' => 'numeric|min:0',
-            'total_price' => 'required',    
+            'total_price' => 'required',
         ], [
             'transaction_type.required' => 'Jenis transaksi harus dipilih.',
             'transaction_type.in' => 'Jenis transaksi tidak valid.',
-            'sparepart_id.required' => 'Kolom ID sparepart harus diisi.',
+            'sparepart_id.required' => 'Kolom nama sparepart harus diisi.',
             'sparepart_id.*.exists' => 'Beberapa sparepart tidak ditemukan.',
             'quantity.required' => 'Kolom jumlah harus diisi.',
             'quantity.array' => 'Jumlah harus dalam bentuk array.',
@@ -242,91 +210,67 @@ class TransactionController extends Controller
             'purchase_price.*.numeric' => 'Harga beli harus berupa angka.',
             'purchase_price.*.min' => 'Harga beli tidak boleh kurang dari 0.',
         ]);
-    
+
         $transaction = Transaction::with('transactionSpareparts.sparepart')->findOrFail($id);
-        
-        $changes = []; // Menyimpan perubahan untuk ditampilkan
-    
-        // Kembalikan stok lama sebelum update
-        foreach ($transaction->transactionSpareparts as $transactionSparepart) {
-            $sparepart = $transactionSparepart->sparepart;
-            $quantity = $transactionSparepart->quantity;
-            $oldStock = $sparepart->jumlah; // Stok sebelum perubahan
-    
-            if ($transaction->transaction_type == 'sale') {
-                $sparepart->increment('jumlah', $quantity);
-                SparepartHistory::create([
-                    'sparepart_id' => $sparepart->id_sparepart,
-                    'jumlah_changed' => $quantity,
-                    'action' => 'add',
-                ]);
-            } else {
-                $sparepart->decrement('jumlah', $quantity);
-                SparepartHistory::create([
-                    'sparepart_id' => $sparepart->id_sparepart,
-                    'jumlah_changed' => -$quantity,
-                    'action' => 'subtract',
-                ]);
-            }
-    
-            $transactionSparepart->delete();
-    
-            // Catat perubahan yang terjadi
-            $changes[] = "Stok {$sparepart->nama_sparepart} dikembalikan dari {$oldStock} ke " . ($sparepart->jumlah);
-            
-        }
-    
-        // Update transaksi baru
-        $totalPrice = 0;
-        foreach ($request->sparepart_id as $index => $sparepart_id) {
-            $sparepart = Sparepart::findOrFail($sparepart_id);
-            $quantity = $request->quantity[$index];
-            $oldStock = $sparepart->jumlah; // Stok sebelum perubahan
-    
-            if ($request->transaction_type == 'sale') {
-                if ($sparepart->jumlah < $quantity) {
-                    return redirect()->back()->withErrors(['sparepart_id' => 'Stok tidak cukup untuk ' . $sparepart->nama_sparepart]);
+
+        // 1. Simpan data lama SEBELUM dihapus
+        $oldSpareparts = $transaction->transactionSpareparts->keyBy('sparepart_id');
+
+        // 2. Hapus semua relasi lama SEKALIGUS
+        $transaction->transactionSpareparts()->delete();
+
+        // 3. Update data service
+        $transaction->update($request->except('sparepart_id', 'quantity',));
+
+        // 4. Proses sparepart baru
+        $total_keuntungan = 0;
+
+        if ($request->sparepart_id) {
+            foreach ($request->sparepart_id as $index => $sparepart_id) {
+                $sparepart = Sparepart::findOrFail($sparepart_id);
+                $newQuantity = $request->quantity[$index];
+
+                // 5. Cari kuantitas lama
+                $oldQuantity = $oldSpareparts->has($sparepart_id)
+                    ? $oldSpareparts[$sparepart_id]->quantity
+                    : 0;
+
+                // 6. Hitung selisih
+                $difference = $newQuantity - $oldQuantity;
+
+                // 7. Update stok
+                if ($sparepart->jumlah + $oldQuantity < $newQuantity) {
+                    return back()->withErrors(['sparepart_id' => 'Stok tidak cukup untuk ' . $sparepart->nama_sparepart]);
                 }
-                $sparepart->decrement('jumlah', $quantity);
-                SparepartHistory::create([
-                    'sparepart_id' => $sparepart->id_sparepart,
-                    'jumlah_changed' => -$quantity,
-                    'action' => 'subtract',
+
+                $sparepart->decrement('jumlah', $difference);
+
+                // 8. Simpan relasi baru
+                SparepartTransaction::create([
+                    'transaction_id' => $transaction->id,
+                    'sparepart_id' => $sparepart_id,
+                    'quantity' => $newQuantity
                 ]);
-                $totalPrice += $sparepart->harga_jual * $quantity;
-            } else {
-                $purchasePrice = $request->purchase_price[$index] ?? 0;
-                $sparepart->increment('jumlah', $quantity);
-                SparepartHistory::create([
-                    'sparepart_id' => $sparepart->id_sparepart,
-                    'jumlah_changed' => $quantity,
-                    'action' => 'add',
-                ]);
-                $totalPrice += $purchasePrice * $quantity;
             }
-    
-            SparepartTransaction::create([
-                'transaction_id' => $transaction->id,
-                'sparepart_id' => $sparepart_id,
-                'quantity' => $quantity,
-            ]);
-    
-            // Catat perubahan stok setelah transaksi diperbarui
-            $changes[] = "Stok {$sparepart->nama_sparepart} berubah dari {$oldStock} ke " . ($sparepart->jumlah);
         }
-    
-        $transaction->update([
-            'transaction_type' => $request->transaction_type,
-            'transaction_date' => $request->transaction_date,
-            'purchase_price' => $request->purchase_price[0] ?? null,
-            'total_price' => $totalPrice,
-        ]);
-    
+
+        // 9. Kembalikan stok untuk sparepart yang dihapus
+        foreach ($oldSpareparts as $old) {
+            if (!in_array($old->sparepart_id, $request->sparepart_id ?? [])) {
+                Sparepart::find($old->sparepart_id)->increment('jumlah', $old->quantity);
+            }
+        }
+        // Handle payment proof
+        if ($request->hasFile('payment_proof')) {
+            $paymentProof = $request->file('payment_proof')->store('payment_proofs', 'public');
+            $transaction->update(['payment_proof' => $paymentProof]);
+        }
+
         return redirect()->route('transactions.index')
-            ->with('success', 'Transaksi berhasil diperbarui! Total harga: Rp' . number_format($totalPrice, 0, ',', '.') . '<br>' . implode('<br>', $changes));
+            ->with('success', 'Transaksi berhasil diperbarui!');
     }
-    
-    
+
+
     public function destroy($id)
     {
         $transaction = Transaction::findOrFail($id);

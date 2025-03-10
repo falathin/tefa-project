@@ -130,7 +130,7 @@
                                                                 readonly>
                                                         </td>
                                                         <td>
-                                                            <input type="number" name="jumlah[]"
+                                                            <input type="number" name="jumlah[]" id="jumlah"
                                                                 class="form-control jumlah"
                                                                 value="{{ old('jumlah')[$index] }}">
                                                             @error('jumlah.' . $index)
@@ -138,7 +138,7 @@
                                                             @enderror
                                                         </td>
                                                         <td>
-                                                            <input type="text" class="form-control subtotal"
+                                                            <input type="text" class="form-control subtotal" id="subtotal"
                                                                 value="0" readonly>
                                                         </td>
                                                         <td>
@@ -169,7 +169,7 @@
                                                                 readonly>
                                                         </td>
                                                         <td>
-                                                            <input type="number" name="jumlah[]"
+                                                            <input type="number" name="jumlah[]" id="jumlah"
                                                                 class="form-control jumlah"
                                                                 value="{{ $serviceSparepart->quantity }}">
                                                             @error('jumlah.' . $loop->index)
@@ -177,7 +177,7 @@
                                                             @enderror
                                                         </td>
                                                         <td>
-                                                            <input type="text" class="form-control subtotal"
+                                                            <input type="text" class="form-control subtotal" id="subtotal"
                                                                 value="{{ $serviceSparepart->sparepart->harga_jual * $serviceSparepart->quantity }}"
                                                                 readonly>
                                                         </td>
@@ -228,121 +228,103 @@
                     });
                 </script>
                 <script>
-                    document.addEventListener('DOMContentLoaded', function() {
-                        $(document).ready(function() {
-                            $('.sparepart_id').select2();
+document.addEventListener('DOMContentLoaded', function() {
 
-                            $('#addRow').on('click', function() {
-                                const tableBody = $('#sparepartTable tbody');
-                                const newRow = $(`
-                                    <tr>
-                                        <td>
-                                            <select name="sparepart_id[]" class="form-control sparepart_id">
-                                                <option value="">Pilih Sparepart</option>
-                                                @foreach ($spareparts as $sparepart)
-                                                    <option value="{{ $sparepart->id_sparepart }}" data-harga="{{ $sparepart->harga_jual }}">
-                                                        {{ $sparepart->nama_sparepart }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </td>
-                                        <td><input type="text" class="form-control harga" readonly></td>
-                                        <td><input type="number" name="jumlah[]" class="form-control jumlah" min="1" value="1"></td>
-                                        <td><input type="text" class="form-control subtotal" readonly></td>
-                                        <td>
-                                            <button type="button" class="btn btn-danger remove-row">
-                                                <i class="fas fa-trash-alt"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                `);
-                                tableBody.append(newRow);
-                                newRow.find('.sparepart_id').select2();
+    // Simpan semua data sparepart dalam bentuk JavaScript
+    var allSpareparts = @json($spareparts->map(function($sparepart) {
+        return [
+            'id_sparepart' => $sparepart->id_sparepart,
+            'nama_sparepart' => $sparepart->nama_sparepart,
+            'harga_jual' => $sparepart->harga_jual
+        ];
+    }));
+    
+    // Fungsi untuk mendapatkan sparepart yang belum dipilih
+    function getAvailableSpareparts() {
+        let selectedIds = [];
+        $('select[name="sparepart_id[]"]').each(function() {
+            let val = $(this).val();
+            if(val) selectedIds.push(val);
+        });
+        return allSpareparts.filter(sparepart => !selectedIds.includes(sparepart.id_sparepart.toString()));
+    }
 
-                                // Event change pada select sparepart
-                                newRow.find('.sparepart_id').on('change', function() {
-                                    const selectedOption = $(this).find('option:selected');
-                                    const price = selectedOption.attr('data-harga') || 0;
-                                    newRow.find('.harga').val(parseFloat(price).toFixed(2));
-                                    calculateSubtotal(newRow);
-                                });
+    // Fungsi untuk update opsi di semua dropdown
+    function updateAllDropdowns() {
+        $('select[name="sparepart_id[]"]').each(function() {
+            let currentValue = $(this).val();
+            let availableSpareparts = getAvailableSpareparts();
+            
+            // Simpan opsi yang sudah dipilih sebelumnya
+            let existingOptions = $(this).find('option').filter((i, opt) => opt.value === currentValue);
+            
+            $(this).empty().append(existingOptions);
+            
+            // Tambahkan opsi yang tersedia
+            availableSpareparts.forEach(sparepart => {
+                if(sparepart.id_sparepart != currentValue) {
+                    $(this).append(
+                        $('<option>', {
+                            value: sparepart.id_sparepart,
+                            'data-harga': sparepart.harga_jual,
+                            text: sparepart.nama_sparepart
+                        })
+                    );
+                }
+            });
+        });
+    }
 
-                                // Event untuk update subtotal
-                                newRow.find('.jumlah').on('input', function() {
-                                    calculateSubtotal(newRow);
-                                });
+    // Event untuk menambah baris baru
+    $('#addRow').on('click', function() {
+        let availableSpareparts = getAvailableSpareparts();
+        if(availableSpareparts.length === 0) {
+            alert('Semua sparepart sudah dipilih!');
+            return;
+        }
+        
+        let optionsHtml = '<option value="">Pilih Sparepart</option>';
+        availableSpareparts.forEach(sparepart => {
+            optionsHtml += `<option value="${sparepart.id_sparepart}" data-harga="${sparepart.harga_jual}">${sparepart.nama_sparepart}</option>`;
+        });
 
-                                // Event hapus baris
-                                newRow.find('.remove-row').on('click', function() {
-                                    newRow.remove();
-                                    updateTotal();
-                                });
-                            });
+        const newRow = $(`
+            <tr>
+                <td>
+                    <select name="sparepart_id[]" class="form-control sparepart_id">
+                        ${optionsHtml}
+                    </select>
+                </td>
+                <td><input type="text" class="form-control harga" readonly></td>
+                <td><input type="number" name="jumlah[]" class="form-control jumlah" id="jumlah" min="1" value="1"></td>
+                <td><input type="text" class="form-control subtotal" id="subtotal" readonly></td>
+                <td>
+                    <button type="button" class="btn btn-danger remove-row">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </td>
+            </tr>
+        `);
+        
+        $('#sparepartTable tbody').append(newRow);
+        updateAllDropdowns();
+    });
 
-                            // Fungsi untuk menghitung subtotal
-                            function calculateSubtotal(row) {
-                                const price = parseFloat(row.find('.harga').val()) || 0;
-                                const quantity = parseInt(row.find('.jumlah').val()) || 1;
-                                const subtotal = price * quantity;
-                                row.find('.subtotal').val(subtotal.toFixed(2));
-                                updateTotal();
-                            }
+    // Event ketika ada perubahan pilihan sparepart
+    $(document).on('change', '.sparepart_id', function() {
+        updateAllDropdowns();
+        
+        // Update harga dan subtotal
+        const selectedOption = $(this).find('option:selected');
+        const price = selectedOption.data('harga') || 0;
+        $(this).closest('tr').find('.harga').val(price);
+        calculateSubtotal($(this).closest('tr'));
+    });
 
-                            // Fungsi update total keseluruhan
-                            function updateTotal() {
-                                let total = 0;
-                                $('.subtotal').each(function() {
-                                    total += parseFloat($(this).val()) || 0;
-                                });
-                                $('#totalHarga').text(total.toFixed(2));
-                            }
-
-                            // Event untuk menghapus baris dari database jika ada ID
-                            $(document).on('click', '.remove-row', function() {
-                                const row = $(this).closest('tr');
-                                const sparepartId = row.data('sparepart-id');
-
-                                if (sparepartId) {
-                                    if (confirm("Yakin ingin menghapus sparepart ini?")) {
-                                        $.ajax({
-                                            url: '/hapus-sparepart/' + sparepartId,
-                                            type: 'DELETE',
-                                            data: {
-                                                _token: '{{ csrf_token() }}'
-                                            },
-                                            success: function(response) {
-                                                row.remove();
-                                                updateTotal();
-                                                alert("Data sparepart berhasil dihapus!");
-                                            },
-                                            error: function() {
-                                                alert("Terjadi kesalahan, coba lagi.");
-                                            }
-                                        });
-                                    }
-                                } else {
-                                    row.remove();
-                                    updateTotal();
-                                }
-                            });
-
-                            // Event untuk update harga otomatis
-                            $(document).on('change', '.sparepart_id', function() {
-                                const row = $(this).closest('tr');
-                                const selectedOption = $(this).find('option:selected');
-                                const price = selectedOption.attr('data-harga') || 0;
-                                row.find('.harga').val(parseFloat(price).toFixed(2));
-                                calculateSubtotal(row);
-                            });
-
-                            $(document).on('input', '.jumlah', function() {
-                                const row = $(this).closest('tr');
-                                calculateSubtotal(row);
-                            });
-
-                        });
-                    });
-                </script>
+    // Inisialisasi pertama kali
+    updateAllDropdowns();
+});
+</script>
 
 
             </div>

@@ -75,15 +75,6 @@ class SparepartController extends Controller
             'jurusan' => $request->jurusan
         ]);
 
-        // Insert into SparepartHistory
-        // SparepartHistory::create([
-        //     'sparepart_id' => $sparepart->id_sparepart,
-        //     'jumlah_changed' => $request->jumlah,
-        //     'action' => 'add',
-        //     'remaining_stock' => $sparepart->jumlah, // Add the remaining stock here
-        //     'description' => 'Menambah stok sebanyak ' . $request->jumlah . ' unit.',
-        // ]);
-
         return redirect()->route('sparepart.index')->with('success', 'Sparepart berhasil ditambahkan.');
     }
 
@@ -100,11 +91,6 @@ class SparepartController extends Controller
         ]);
 
         $sparepart = Sparepart::findOrFail($id);
-
-        $old_quantity = $sparepart->jumlah;
-        $new_quantity = $request->jumlah;
-        $quantity_changed = $new_quantity - $old_quantity;
-
         $sparepart->update([
             'nama_sparepart' => $request->nama_sparepart,
             'jumlah' => $request->jumlah,
@@ -115,18 +101,6 @@ class SparepartController extends Controller
             'tanggal_masuk' => $request->tanggal_masuk,
             'deskripsi' => $request->deskripsi,
         ]);
-
-        if ($quantity_changed != 0) {
-            $action = $quantity_changed > 0 ? 'add' : 'use';
-            // SparepartHistory::create([
-            //     'sparepart_id' => $sparepart->id_sparepart,
-            //     'jumlah_changed' => $quantity_changed,
-            //     'action' => $action,
-            //     'description' => $action == 'add' ?
-            //         'Menambah stok sebanyak ' . abs($quantity_changed) . ' unit.' :
-            //         'Mengurangi stok sebanyak ' . abs($quantity_changed) . ' unit.',
-            // ]);
-        }
 
         return redirect()->route('sparepart.index')->with('success', 'Sparepart berhasil diperbarui.');
     }
@@ -166,108 +140,13 @@ class SparepartController extends Controller
         $sparepart->delete();
         return redirect()->route('sparepart.index')->with('success', 'Sparepart berhasil dihapus.');
     }
-
-    // public function history($id, Request $request)
-    // {
-    //     $sparepart = Sparepart::find($id);
-    //     if (! Gate::allows('isSameJurusan', [$sparepart])) {
-    //         abort(403, 'data tidak ditemukan!!');
-    //     }
-
-    //     // semua level
-    //     // if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
-    //     //     abort(403, 'Butuh level Admin & Kasir');
-    //     // }
-    //     $sparepart = Sparepart::findOrFail($id);
-
-    //     $query = SparepartHistory::where('sparepart_id', $id);
-    //     // $sparepartHistory = SparepartHistory::when();
-    //     // $sparepartHistory = SparepartHistory::when(function ($query, $id) {
-    //     //     return $query->where('nama_sparepart', 'like', '%' . $id . '%');
-    //     // })
-    //         // ->orderBy('created_at', 'desc')
-    //         // ->paginate(4);
-    //     $oldValue = $query->orderBy('created_at', 'desc')->paginate(50);
-    //     // dd($oldValue);
-
-    //     if ($request->search) {
-    //         $query->where('action', 'like', '%' . $request->search . '%');
-    //     }
-
-    //     if ($request->filter_date) {
-    //         $query->whereDate('created_at', $request->filter_date);
-    //     }
-
-    //     $histories = $query->orderBy('created_at', 'desc')->paginate(50);
-
-    //     // $todayChanges = SparepartHistory::where('sparepart_id', $id)
-    //     //     ->whereDate('created_at', Carbon::today())
-    //     //     ->get()
-    //     //     ->sum(function ($history) {
-    //     //         return $history->action == 'add' ? $history->jumlah_changed : -$history->jumlah_changed;
-    //     //     });
-
-    //     // $todayActionsCount = SparepartHistory::where('sparepart_id', $id)
-    //     //     ->whereDate('created_at', Carbon::today())
-    //     //     ->count();
-
-    //     // $todayAdded = SparepartHistory::where('sparepart_id', $id)
-    //     //     ->whereDate('created_at', Carbon::today())
-    //     //     ->where('action', 'add')
-    //     //     ->sum('jumlah_changed');
-
-    //     // $todaySubtracted = SparepartHistory::where('sparepart_id', $id)
-    //     //     ->whereDate('created_at', Carbon::today())
-    //     //     ->where('action', 'subtract')
-    //     //     ->sum('jumlah_changed');
-
-    //     // $monthlyChanges = SparepartHistory::where('sparepart_id', $id)
-    //     //     ->whereMonth('created_at', Carbon::now()->month)
-    //     //     ->get()
-    //     //     ->sum(function ($history) {
-    //     //         return $history->action == 'add' ? $history->jumlah_changed : -$history->jumlah_changed;
-    //     //     });
-
-    //     // $monthlyActionsCount = SparepartHistory::where('sparepart_id', $id)
-    //     //     ->whereMonth('created_at', Carbon::now()->month)
-    //     //     ->count();
-
-    //     // $monthlyAdded = SparepartHistory::where('sparepart_id', $id)
-    //     //     ->whereMonth('created_at', Carbon::now()->month)
-    //     //     ->where('action', 'add')
-    //     //     ->sum('jumlah_changed');
-
-    //     // $monthlySubtracted = SparepartHistory::where('sparepart_id', $id)
-    //     //     ->whereMonth('created_at', Carbon::now()->month)
-    //     //     ->where('action', 'subtract')
-    //     //     ->sum('jumlah_changed');
-
-    //     // $totalChanges = SparepartHistory::where('sparepart_id', $id)
-    //     //     ->get()
-    //     //     ->sum(function ($history) {
-    //     //         return $history->action == 'add' ? $history->jumlah_changed : -$history->jumlah_changed;
-    //     //     });
-
-    //     // $totalActionsCount = SparepartHistory::where('sparepart_id', $id)
-    //     //     ->count();
-
-    //     // $totalAdded = SparepartHistory::where('sparepart_id', $id)
-    //     //     ->where('action', 'add')
-    //     //     ->sum('jumlah_changed');
-
-    //     // $totalSubtracted = SparepartHistory::where('sparepart_id', $id)
-    //     //     ->where('action', 'subtract')
-    //     //     ->sum('jumlah_changed');
-
-    //     // return view('sparepart.history', compact('sparepart', 'query', 'histories', 'todayChanges', 'todayActionsCount', 'todayAdded', 'todaySubtracted', 'monthlyChanges', 'monthlyActionsCount', 'monthlyAdded', 'monthlySubtracted', 'totalChanges', 'totalActionsCount', 'totalAdded', 'totalSubtracted'));
-    //     return view('sparepart.history', compact('sparepart', 'query', 'histories',));
-    // }
-    
+   
     public function history($id, Request $request) {
         $data = SparepartHistory::where('sparepart_id', $id)
             ->orderBy('created_at', 'desc')
             ->paginate(10);
+        $sparepart = Sparepart::findOrFail($id);
             
-        return view('sparepart.history', compact('data'));
+        return view('sparepart.history', compact('data', 'sparepart'));
     }    
 }

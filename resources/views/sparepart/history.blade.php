@@ -10,7 +10,8 @@
             </ol>
         </nav>
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
-            <h1 class="fw-bold mb-3 mb-md-0">Riwayat Sparepart</h1>
+            <h1 class="fw-bold mb-3 mb-md-0">Riwayat Sparepart {{ $sparepart->nama_sparepart }} spek {{ $sparepart->spek }}
+            </h1>
             <div class="d-flex flex-column flex-sm-row align-items-center">
                 <button class="btn btn-info mb-2 mb-sm-0 me-sm-2" data-bs-toggle="modal" data-bs-target="#infoModal">
                     <i class="fas fa-info-circle"></i> Informasi
@@ -20,7 +21,6 @@
                 </a>
             </div>
         </div>
-        
         <!-- Tabel Riwayat Sparepart -->
         <div class="card shadow-sm">
             <div class="card-body">
@@ -29,19 +29,15 @@
                     <table class="table table-striped table-hover table-bordered">
                         <thead class="table-light">
                             <tr>
-                                <th>No</th>
                                 <th>Stok Awal</th> <!-- Stok Awal -->
                                 <th>Perubahan</th> <!-- Perubahan -->
                                 <th>Stok Akhir</th> <!-- Stok Akhir -->
-                                <th>Aksi</th> <!-- Aksi -->
-                                <th>Tanggal</th> <!-- Tanggal -->
+                                <th>Tanggal dan Waktu</th> <!-- Tanggal -->
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($data as $history)
                                 <tr>
-                                    <td>{{ $loop->iteration }}</td>
-
                                     <!-- Initial Stock -->
                                     <td>
                                         {{-- @dd($query) --}}
@@ -50,35 +46,21 @@
 
                                     <!-- Change -->
                                     <td>
-                                        @if ($history->action == 'add')
-                                            <span class="text-success">+{{ $history->jumlah_changed }} unit
-                                                (Penambahan)
+                                        @if ($history->old_value - $history->new_value < 0)
+                                            <span class="text-success">+{{ $history->jumlah_changed }} unit 
+                                                {{ $history->new_value - $history->old_value }} (Penambahan)
                                             </span>
-                                        @elseif($history->action == 'subtract' || $history->action == 'use')
-                                            <span class="text-danger">-{{ $history->jumlah_changed }} unit
-                                                (Pemakaian)</span>
-                                        @elseif($history->action == 'edit')
-                                            <span class="text-warning">Edit Data</span>
+                                        @elseif($history->old_value - $history->new_value > 0)
+                                            <span class="text-danger">-{{ $history->jumlah_changed }}
+                                                {{ $history->old_value - $history->new_value }} unit (Pemakaian)</span>
                                         @endif
                                     </td>
 
                                     <!-- Final Stock -->
                                     <td>{{ $history->new_value }} unit</td>
 
-                                    <!-- Action -->
-                                    <td
-                                        class="{{ $history->action == 'add' ? 'text-success' : ($history->action == 'edit' ? 'text-warning' : 'text-danger') }}">
-                                        @if ($history->action == 'subtract' || $history->action == 'use')
-                                            Pemakaian
-                                        @elseif($history->action == 'add')
-                                            Penambahan
-                                        @elseif($history->action == 'edit')
-                                            Perubahan Data (Edit)
-                                        @endif
-                                    </td>
-
                                     <!-- Date -->
-                                    <td>{{ $history->created_at->format('d-m-Y H:i') }}</td>
+                                    <td>{{ $history->created_at->format('d-m-Y H:i:s') }}</td>
                                 </tr>
 
                                 {{-- @php
@@ -102,8 +84,8 @@
                     <p>
                         <span class="text-muted animate_animated animate_fadeInLeft">Baca Riwayat Perubahan Stok dari
                             kiri ke kanan</span>
-                            &nbsp;&nbsp;&nbsp;
-                            <span class="bi bi-arrow-right animate_animated animate_bounceInLeft"></span>
+                        &nbsp;&nbsp;&nbsp;
+                        <span class="bi bi-arrow-right animate_animated animate_bounceInLeft"></span>
                     </p>
                 </div>
 
@@ -113,8 +95,8 @@
 
                         setTimeout(function() {
                             document.getElementById("stock-history-message").style.display = 'none';
-                        }, 1000); 
-                    }, 5000); 
+                        }, 1000);
+                    }, 5000);
                 </script>
 
             </div>
@@ -151,17 +133,17 @@
                                         <th>Tanggal</th> <!-- Tanggal -->
                                     </tr>
                                 </thead>
-                                <tbody>        
+                                <tbody>
                                     @forelse($data as $history)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
-        
+
                                             <!-- Initial Stock -->
                                             <td>
                                                 {{-- @dd($history->old_value) --}}
                                                 {{ $history->old_value }} unit
                                             </td>
-        
+
                                             <!-- Change -->
                                             <td>
                                                 @if ($history->action == 'add')
@@ -175,10 +157,10 @@
                                                     <span class="text-warning">Edit Data</span>
                                                 @endif
                                             </td>
-        
+
                                             <!-- Final Stock -->
                                             <td>{{ $history->new_value }} unit</td>
-        
+
                                             <!-- Action -->
                                             <td
                                                 class="{{ $history->action == 'add' ? 'text-success' : ($history->action == 'edit' ? 'text-warning' : 'text-danger') }}">
@@ -190,11 +172,11 @@
                                                     Perubahan Data (Edit)
                                                 @endif
                                             </td>
-        
+
                                             <!-- Date -->
                                             <td>{{ $history->created_at->format('d-m-Y H:i') }}</td>
                                         </tr>
-        
+
                                     @empty
                                         <tr>
                                             <td colspan="6" class="text-center">Tidak ada histori perubahan stok.</td>
