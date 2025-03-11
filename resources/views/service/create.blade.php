@@ -5,7 +5,7 @@
         <div class="card shadow-lg border-0 rounded-3">
             <div class="card-body">
                 <h4 class="text-center mb-4">Tambah Service untuk Kendaraan: {{ $vehicle->license_plate }}</h4>
-                <form method="POST" action='{{ route('service.storeServis') }}'>
+                <form method="POST" action="{{ route('service.storeServis') }}">
                     @csrf
                     <input type="hidden" name="jurusan" id="jurusan" value="{{ Auth::user()->jurusan }}">
                     <input type="hidden" name="vehicle_id" value="{{ $vehicle->id }}">
@@ -31,8 +31,7 @@
                         <div class="col-md-6 mb-3">
                             <label for="current_mileage" class="form-label text-dark">Kilometer Saat Ini</label>
                             <div class="input-group">
-                                <span class="input-group-text bg-info text-white"><i
-                                        class="fas fa-tachometer-alt"></i></span>
+                                <span class="input-group-text bg-info text-white"><i class="fas fa-tachometer-alt"></i></span>
                                 <input type="number" name="current_mileage" class="form-control border-info"
                                     placeholder="Masukkan kilometer kendaraan" value="{{ old('current_mileage') }}"
                                     required>
@@ -45,10 +44,10 @@
                         <div class="col-md-6 mb-3">
                             <label for="service_date" class="form-label text-dark">Tanggal Service</label>
                             <div class="input-group">
-                                <span class="input-group-text bg-success text-white"><i
-                                        class="fas fa-calendar-alt"></i></span>
-                                <input type="date" name="service_date" id="service_date"
-                                    class="form-control border-success" value="{{ old('service_date') }}" required>
+                                <span class="input-group-text bg-success text-white"><i class="fas fa-calendar-alt"></i></span>
+                                <!-- Tanggal otomatis hari ini jika tidak ada nilai lama -->
+                                <input type="date" name="service_date" id="service_date" class="form-control border-success"
+                                    value="{{ old('service_date', \Carbon\Carbon::now()->toDateString()) }}" required>
                             </div>
                             @error('service_date')
                                 <div class="text-danger">{{ $message }}</div>
@@ -65,18 +64,15 @@
                                             Ringan</option>
                                         <option value="medium" {{ old('service_type') == 'medium' ? 'selected' : '' }}>
                                             Sedang</option>
-                                        <option value="heavy" {{ old('service_type') == 'heavy' ? 'selected' : '' }}>Berat
-                                        </option>
+                                        <option value="heavy" {{ old('service_type') == 'heavy' ? 'selected' : '' }}>
+                                            Berat</option>
                                     @elseif (Auth::user()->jurusan == 'TKRO')
                                         <option value="light" {{ old('service_type') == 'light' ? 'selected' : '' }}>
-                                            10.000 KM
-                                            (Ringan)</option>
+                                            10.000 KM (Ringan)</option>
                                         <option value="medium" {{ old('service_type') == 'medium' ? 'selected' : '' }}>
-                                            30.000 KM
-                                            (Sedang)</option>
+                                            30.000 KM (Sedang)</option>
                                         <option value="heavy" {{ old('service_type') == 'heavy' ? 'selected' : '' }}>
-                                            50.000 KM
-                                            (Berat)</option>
+                                            50.000 KM (Berat)</option>
                                     @endif
                                 </select>
                             </div>
@@ -89,60 +85,63 @@
                             <label for="technician_name" class="form-label text-dark">Nama Teknisi</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-primary text-white"><i class="fas fa-user-cog"></i></span>
-                                <input type="text" name="technician_name" id="technician_name"
-                                    class="form-control border-primary" placeholder="Masukkan nama teknisi"
-                                    value="{{ old('technician_name') }}" required>
+                                <input type="text" name="technician_name" id="technician_name" class="form-control border-primary"
+                                    placeholder="Masukkan nama teknisi" value="{{ old('technician_name') }}" required>
                             </div>
                             @error('technician_name')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
+                    </div>
 
-                        <!-- Informasi Sparepart -->
-                        <div
-                            class="card-header mt-3 rounded bg-danger card-header text-white d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0"><i class="fas fa-wrench"></i> &nbsp; Tambah Informasi Sparepart</h5>
-                            <small class="text-right"><b>*</b> Hapus jika tidak diperlukan</small>
+                    <!-- Informasi Sparepart -->
+                    <div class="card-header mt-3 rounded bg-danger text-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="fas fa-wrench"></i> &nbsp; Tambah Informasi Sparepart</h5>
+                        <small class="text-white"><b>*</b> Hapus jika tidak diperlukan</small>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="sparepartTable">
+                                <thead>
+                                    <tr>
+                                        <th>Nama Sparepart</th>
+                                        <th>Harga Satuan</th>
+                                        <th>Jumlah</th>
+                                        <th>Subtotal</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Sparepart Rows akan ditambahkan secara dinamis -->
+                                </tbody>
+                            </table>
                         </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-bordered" id="sparepartTable">
-                                    <thead>
-                                        <tr>
-                                            <th>Nama Sparepart</th>
-                                            <th>Harga Satuan</th>
-                                            <th>Jumlah</th>
-                                            <th>Subtotal</th>
-                                            <th>Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <!-- Sparepart Rows -->
-                                    </tbody>
-                                </table>
-                            </div>
-                            <br>
-                            <button type="button" class="btn btn-primary" id="addRow">+ Tambah Sparepart</button>
-                        </div>
+                        <br>
+                        <button type="button" class="btn btn-primary" id="addRow">
+                            <i class="bi bi-plus-circle-fill"></i> Tambah Sparepart
+                        </button>
+                    </div>
 
-                        <!-- Kategori Catatan Tambahan -->
+                    <!-- Kategori Catatan Tambahan -->
+                    <div class="row">
                         <div class="col-md-12 mb-3">
                             <h5 class="fw-bold">Informasi Tambahan</h5>
                         </div>
-
                         <div class="col-md-12 mb-3">
                             <label for="additional_notes" class="form-label">Catatan Tambahan</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-sticky-note"></i></span>
-                                <textarea name="additional_notes" id="additional_notes" class="form-control" placeholder="Masukkan catatan tambahan"
-                                    rows="5" style="resize: vertical;">{{ old('additional_notes') }}</textarea>
+                                <!-- Tambahkan placeholder khusus -->
+                                <textarea name="additional_notes" id="additional_notes" class="form-control"
+                                    placeholder="Tambahkan catatan tambahan jika diperlukan!" rows="5" style="resize: vertical;">{{ old('additional_notes') }}</textarea>
                             </div>
                             @error('additional_notes')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
                     </div>
-                    <!-- Submit and Back Buttons -->
+
+                    <!-- Tombol Submit dan Navigasi -->
                     <div class="text-center mt-4">
                         <a href="{{ route('vehicle.show', $vehicle->id) }}" class="btn btn-secondary btn-md">
                             <i class="fas fa-arrow-left"></i> Kembali
@@ -155,99 +154,25 @@
                             <i class="fas fa-save"></i> Simpan Service
                         </button>
                     </div>
-
-                    <script>
-                        function confirmSubmit() {
-                            return confirm("Apakah Anda yakin ingin menyimpan data service ini?");
-                        }
-                    </script>
-
-                    <!-- Scripts -->
-                    {{-- <script>
-                        document.getElementById('submitButton').addEventListener('click', function() {
-                            const confirmAction = confirm("Apakah Anda yakin semua data sudah benar?");
-
-                            if (confirmAction) {
-                                document.querySelector('form').submit();
-                            }
-                        });
-                    </script> --}}
+                </form>
             </div>
         </div>
     </div>
+
+    <!-- Script untuk perhitungan, validasi, dan pengaturan sparepart -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Automatically set today's date for service date input
-            const serviceDateInput = document.getElementById('service_date');
-            if (!serviceDateInput.value) {
-                const today = new Date().toISOString().split('T')[0];
-                serviceDateInput.value = today;
+            // Fungsi format angka
+            function formatRibuan(angka) {
+                return new Intl.NumberFormat("id-ID").format(angka);
             }
-
-            // Function to calculate subtotal when spare part or quantity changes
-            function calculateSubtotal(row) {
-                const price = parseFloat(row.querySelector('.harga').value) || 0;
-                const quantity = parseFloat(row.querySelector('.jumlah').value) || 0;
-                const subtotal = price * quantity;
-                row.querySelector('.subtotal').value = subtotal.toFixed(2);
-                updateTotalBiaya();
+            function formatRupiah(angka) {
+                return "Rp " + formatRibuan(angka);
             }
-
-            // Show modal with custom message
-            function showModalMessage(message) {
-                const validationMessage = document.getElementById('validationMessage');
-                validationMessage.textContent = message;
-                const validationModal = new bootstrap.Modal(document.getElementById('validationModal'));
-                validationModal.show();
+            function unformat(angka) {
+                return parseInt(angka.replace(/\D/g, "")) || 0;
             }
-
-            // Validate sparepart and jumlah fields
-            function validateSparepartFields(row) {
-                const sparepartSelect = row.querySelector('.sparepart_id');
-                const quantityInput = row.querySelector('.jumlah');
-
-                sparepartSelect.addEventListener('change', function() {
-                    if (sparepartSelect.value && !quantityInput.value) {
-                        showModalMessage('Silakan masukkan jumlah jika Anda memilih spare part!');
-                    }
-                });
-
-                quantityInput.addEventListener('input', function() {
-                    if (quantityInput.value && !sparepartSelect.value) {
-                        showModalMessage('Silakan pilih spare part jika Anda memasukkan jumlah!');
-                    }
-                });
-            }
-
-            // Update total biaya based on harga jasa and spare part subtotal
-            function updateTotalBiaya() {
-                const hargaJasa = parseFloat(document.getElementById('service_fee').value) || 0;
-                let totalSparepart = 0;
-
-                // Calculate total spare part cost
-                document.querySelectorAll('#sparepartTable tbody tr').forEach(row => {
-                    const harga = parseFloat(row.querySelector('.harga').value.replace(/[^0-9.-]+/g, "")) ||
-                        0;
-                    const jumlah = parseInt(row.querySelector('.jumlah').value) || 0;
-                    const subtotal = harga * jumlah;
-                    row.querySelector('.subtotal').value = subtotal.toFixed(2);
-                    totalSparepart += subtotal;
-                });
-
-                // Update total biaya
-                const totalBiaya = hargaJasa + totalSparepart;
-                document.getElementById('total_cost').value = totalBiaya.toFixed(2);
-            }
-
-            // Update kembalian
-            function updateKembalian() {
-                const uangMasuk = parseFloat(document.getElementById('payment_received').value) || 0;
-                const totalBiaya = parseFloat(document.getElementById('total_cost').value) || 0;
-                const kembalian = uangMasuk - totalBiaya;
-                document.getElementById('change').value = kembalian.toFixed(2);
-            }
-
-            // Format currency function
+            // Fungsi format currency dengan Select2 (menggunakan Intl.NumberFormat untuk format IDR)
             function formatCurrency(value) {
                 return new Intl.NumberFormat('id-ID', {
                     style: 'currency',
@@ -256,122 +181,159 @@
                 }).format(value);
             }
 
-            // Add new row
-            document.getElementById('addRow').addEventListener('click', function() {
-                const tableBody = document.querySelector('#sparepartTable tbody');
-                const row = tableBody.insertRow();
-                row.innerHTML = `
-        <td>
-            <select name="sparepart_id[]" class="form-control sparepart_id select2">
-                <option value="">Pilih Sparepart</option>
-                @foreach ($spareparts as $sparepart)
-                    <option value="{{ $sparepart->id_sparepart }}" data-harga="{{ $sparepart->harga_jual }}">
-                        {{ $sparepart->nama_sparepart }}
-                    </option>                                      
-                @endforeach
-            </select>
-        </td>
-        <td><input type="text" class="form-control harga" readonly></td>
-        <td><input type="number" name="jumlah[]" class="form-control jumlah" min="1" style="width:100px"></td>
-        <td><input type="text" class="form-control subtotal" style="width:250px" readonly></td>
-        <td><button type="button" class="btn btn-danger remove-row">Hapus</button></td>
-        `;
-
-                // Re-add event listeners for the new row
-                const newRow = tableBody.lastElementChild;
-                validateSparepartFields(newRow);
-
-                // Initialize select2
-                $(newRow).find('.select2').select2();
-
-                // Use select2:select event instead of change event
-                $(newRow).find('.sparepart_id').on('select2:select', function() {
-                    const selectedOption = $(this).find('option:selected');
-                    const price = selectedOption.data('harga') || 0;
-                    $(newRow).find('.harga').val(formatCurrency(price)); // Format currency
-                    calculateSubtotal(newRow);
-                });
-
-                $(newRow).find('.jumlah').on('input', function() {
-                    calculateSubtotal(newRow);
-                });
-
-                updateTotalBiaya();
-            });
-
-            // Function to calculate subtotal
+            // Fungsi untuk menghitung subtotal pada satu baris sparepart
             function calculateSubtotal(row) {
                 const price = parseFloat($(row).find('.sparepart_id option:selected').data('harga')) || 0;
                 const quantity = parseInt($(row).find('.jumlah').val()) || 0;
                 const subtotal = price * quantity;
-
-                $(row).find('.subtotal').val(formatCurrency(subtotal)); // Format currency
-                updateTotalBiaya();
+                $(row).find('.subtotal').val(formatCurrency(subtotal));
+                updateTotalCost();
             }
 
-            // Function to update total biaya
-            function updateTotalBiaya() {
+            // Fungsi untuk mengupdate total biaya sparepart (dari semua baris)
+            function updateTotalCost() {
                 let total = 0;
                 $('.subtotal').each(function() {
-                    const value = $(this).val().replace(/[^\d]/g,
-                        ''); // Remove currency symbols for calculation
+                    const value = $(this).val().replace(/[^\d]/g, '');
                     total += parseInt(value) || 0;
                 });
-                $('#totalBiaya').text(formatCurrency(total)); // Update total biaya display
+                // Jika ada elemen untuk menampilkan total biaya, misalnya #totalBiaya, update disini
+                // $('#totalBiaya').text(formatCurrency(total));
+                document.getElementById('total_price_asli').value = total;
+                updateDiscount();
             }
 
-            $(document).ready(function() {
-                $('.select2').select2();
-                $('.select2').on('select2:select', function() {
+            // Fungsi untuk mengupdate opsi di select sparepart agar tidak ada duplikasi
+            function updateAllSelectOptions() {
+                const allSelects = document.querySelectorAll('.sparepart_id');
+                const selectedIds = Array.from(allSelects)
+                    .map(select => select.value)
+                    .filter(value => value !== "");
+                allSelects.forEach(select => {
+                    const currentValue = select.value;
+                    Array.from(select.options).forEach(option => {
+                        if (option.value && option.value !== currentValue) {
+                            option.hidden = selectedIds.includes(option.value);
+                        } else {
+                            option.hidden = false;
+                        }
+                    });
+                });
+            }
+
+            // Event: Tambah baris sparepart
+            document.getElementById('addRow').addEventListener('click', function() {
+                const selectedIds = Array.from(document.querySelectorAll('.sparepart_id'))
+                    .map(select => select.value)
+                    .filter(value => value !== "");
+                // Jika seluruh sparepart sudah dipilih, tampilkan alert dan batalkan penambahan
+                if (selectedIds.length >= {{ $spareparts->count() }}) {
+                    alert('Sparepart habis!');
+                    return;
+                }
+                const tableBody = document.querySelector('#sparepartTable tbody');
+                const row = tableBody.insertRow();
+                let optionsHtml = '<option value="">Pilih Sparepart</option>';
+                @foreach ($spareparts as $sparepart)
+                    if (!selectedIds.includes("{{ $sparepart->id_sparepart }}")) {
+                        optionsHtml += `
+                            <option value="{{ $sparepart->id_sparepart }}" data-harga="{{ $sparepart->harga_jual }}">
+                                {{ $sparepart->nama_sparepart }} {{ $sparepart->spek }}
+                            </option>
+                        `;
+                    }
+                @endforeach
+                row.innerHTML = `
+                    <td>
+                        <select name="sparepart_id[]" class="form-control sparepart_id select2" required>
+                            ${optionsHtml}
+                        </select>
+                    </td>
+                    <td><input type="text" class="form-control harga" readonly></td>
+                    <td><input type="number" name="jumlah[]" class="form-control jumlah" min="1" required style="width:100px"></td>
+                    <td><input type="text" class="form-control subtotal" readonly style="width:250px"></td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-danger remove-row">
+                            <i class="bi bi-trash-fill"></i> Hapus
+                        </button>
+                    </td>
+                `;
+                // Inisialisasi Select2 untuk baris baru
+                $(row.querySelector('.select2')).select2({ width: '100%' });
+                updateAllSelectOptions();
+                // Event: Saat sparepart dipilih di baris baru
+                $(row).find('.sparepart_id').on('select2:select', function() {
                     const selectedOption = $(this).find('option:selected');
                     const price = selectedOption.data('harga') || 0;
-                    $(this).closest('tr').find('.harga').val(parseFloat(price).toFixed(2));
+                    $(row).find('.harga').val(formatCurrency(price));
+                    calculateSubtotal(row);
                 });
+                // Event: Saat jumlah diubah di baris baru
+                $(row).find('.jumlah').on('input', function() {
+                    calculateSubtotal(row);
+                });
+                updateTotalCost();
             });
 
-            // Handle remove row
-            document.querySelector('#sparepartTable').addEventListener('click', function(event) {
-                if (event.target.classList.contains('remove-row')) {
-                    event.target.closest('tr').remove();
-                    updateTotalBiaya();
-                }
-            });
-
-            // Handle sparepart change
+            // Event: Saat terjadi perubahan pada select sparepart atau input jumlah
             document.querySelector('#sparepartTable').addEventListener('change', function(event) {
                 if (event.target.classList.contains('sparepart_id')) {
-                    const harga = parseFloat(event.target.selectedOptions[0].dataset.harga) || 0;
-                    event.target.closest('tr').querySelector('.harga').value = harga.toFixed(2);
-                    calculateSubtotal(event.target.closest('tr'));
-                    updateTotalBiaya();
+                    const row = event.target.closest('tr');
+                    const price = event.target.selectedOptions[0].getAttribute('data-harga') || 0;
+                    row.querySelector('.harga').value = formatCurrency(parseFloat(price));
+                    calculateSubtotal(row);
+                    updateAllSelectOptions();
+                }
+                if (event.target.classList.contains('jumlah')) {
+                    const row = event.target.closest('tr');
+                    calculateSubtotal(row);
+                    updateAllSelectOptions();
                 }
             });
 
-            // Handle quantity change
-            document.querySelector('#sparepartTable').addEventListener('input', function(event) {
-                if (event.target.classList.contains('jumlah') || event.target.classList.contains('harga')) {
-                    calculateSubtotal(event.target.closest('tr'));
-                    updateTotalBiaya();
+            // Event: Hapus baris sparepart
+            document.querySelector('#sparepartTable').addEventListener('click', function(event) {
+                if (event.target.closest('.remove-row')) {
+                    event.target.closest('tr').remove();
+                    updateTotalCost();
+                    updateAllSelectOptions();
                 }
             });
 
-            // Initial calculation and validation
-            document.querySelectorAll('#sparepartTable tbody tr').forEach(function(row) {
-                validateSparepartFields(row);
-                row.querySelector('.sparepart_id').addEventListener('change', function() {
-                    const price = this.options[this.selectedIndex].getAttribute('data-harga') || 0;
-                    row.querySelector('.harga').value = parseFloat(price).toFixed(2);
-                    calculateSubtotal(row);
-                });
-                row.querySelector('.jumlah').addEventListener('input', function() {
-                    calculateSubtotal(row);
-                });
+            // Inisialisasi Select2 untuk baris yang sudah ada (jika ada)
+            $(document).ready(function() {
+                $('.select2').select2({ width: '100%' });
             });
 
-            // Initial calculation of total biaya
-            updateTotalBiaya();
-            document.getElementById('service_fee').addEventListener('input', updateTotalBiaya);
-            document.getElementById('payment_received').addEventListener('input', updateKembalian);
+            // Inisialisasi nilai awal untuk input uang masuk
+            document.getElementById('purchase_price').addEventListener('input', function() {
+                let value = unformat(this.value);
+                this.value = formatRupiah(value);
+                document.getElementById('purchase_price_asli').value = value;
+            });
+            let initialValue = unformat(document.getElementById('purchase_price').value);
+            document.getElementById('purchase_price').value = formatRupiah(initialValue);
+            document.getElementById('purchase_price_asli').value = initialValue;
+
+            // Panggil update opsi pada saat halaman load
+            updateAllSelectOptions();
+            updateTotalCost();
         });
+
+        // Fungsi konfirmasi submit form untuk memastikan input sparepart tidak kosong
+        function confirmSubmit() {
+            const spareparts = document.querySelectorAll('.sparepart_id');
+            if (spareparts.length === 0) {
+                alert('Harap tambahkan minimal 1 sparepart.');
+                return false;
+            }
+            for (let select of spareparts) {
+                if (!select.value) {
+                    alert('Pastikan semua sparepart telah dipilih.');
+                    return false;
+                }
+            }
+            return confirm('Apakah Anda yakin ingin menyimpan data service ini?');
+        }
     </script>
 @endsection

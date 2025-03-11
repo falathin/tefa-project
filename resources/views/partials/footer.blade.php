@@ -3,54 +3,29 @@
         0%, 100% {
             transform: translateY(0) rotate(0deg);
         }
-        25% {
-            transform: translateY(-12px) rotate(-5deg);
+        20% {
+            transform: translateY(-10px) rotate(-3deg);
         }
-        50% {
-            transform: translateY(-18px) rotate(5deg);
+        40% {
+            transform: translateY(-15px) rotate(3deg);
         }
-        75% {
-            transform: translateY(-12px) rotate(-5deg);
+        60% {
+            transform: translateY(-10px) rotate(-3deg);
         }
-    }
-    
-    .wave-text span {
-        display: inline-block;
-        animation: wave 1s ease-in-out;
-    }
-    
-    .wave-text span:nth-child(odd) {
-        animation-delay: 0s;
-    }
-    
-    .wave-text span:nth-child(even) {
-        animation-delay: 0.2s;
-    }
-    
-    .wave-text span:nth-child(3n) {
-        animation-delay: 0.4s;
-    }
-    
-    .wave-text span:nth-child(4n) {
-        animation-delay: 0.6s;
+        80% {
+            transform: translateY(-5px) rotate(2deg);
+        }
     }
     
     .wave-icon {
         display: inline-block;
-        animation: wave 1s ease-in-out;
-    }
-    
-    .wave-text {
-        display: inline-flex;
-        flex-wrap: wrap;
-        justify-content: center;
+        animation: wave 1.5s ease-in-out infinite;
     }
     
     .social-icon {
-        font-size: 1.6em;
-        margin-left: 10px;
-        margin-right: 15px;
-        animation: wave 1s ease-in-out;
+        font-size: 1.8em;
+        margin: 0 10px;
+        animation: wave 1.5s ease-in-out infinite;
     }
     
     .social-links a {
@@ -90,20 +65,39 @@
 </style>
 
 <footer class="footer">
-    <div class="d-sm-flex justify-content-center justify-content-sm-between container">
-        <span class="float-none float-sm-end d-block mt-1 mt-sm-0 text-center">
-            <small>EduTech karya buatan I-Teenagers, dikembangkan oleh 
-                <a href="https://www.instagram.com/iteenagers_?igsh=cWZkMmU4bm1wdG41" target="_blank" class="font-weight-bold text-primary"> 
-                    <span class="wave-icon"><i class="fas fa-briefcase social-icon"></i></span>
-                    I-Teens</a>
+    <div class="d-flex flex-column flex-sm-row justify-content-center justify-content-sm-between container">
+        <div class="text-center mb-2 mb-sm-0">
+            <small>
+                EduTech karya buatan 
+                <a href="https://www.instagram.com/iteenagers_?igsh=cWZkMmU4bm1wdG41" target="_blank" class="font-weight-bold text-primary">
+                    <span class="wave-icon"><i class="fas fa-graduation-cap social-icon"></i></span>
+                    I-Teens
+                </a>
             </small>
-        </span>
-        <span class="float-none float-sm-end d-block mt-1 mt-sm-0 text-center">
-            <small>disupport oleh oleh 
-                <a href="https://inovindo.co.id/" target="_blank" class="font-weight-bold text-primary"> 
-                    <span class="wave-icon"><i class="fas fa-briefcase social-icon"></i></span>
-                    Inovindo Digital Meedia</a>
+        </div>
+        <div class="text-center">
+            <small>
+                Didukung oleh 
+                <a href="https://inovindo.co.id/" target="_blank" class="font-weight-bold text-primary">
+                    <span class="wave-icon"><i class="fas fa-laptop-code social-icon"></i></span>
+                    Inovindo Digital Media
+                </a>
+                &nbsp;|&nbsp;
+                <a href="https://www.facebook.com" target="_blank" class="font-weight-bold text-primary">
+                    <span class="wave-icon"><i class="fab fa-facebook-f social-icon"></i></span>
+                    Facebook
+                </a>
+                &nbsp;|&nbsp;
+                <a href="https://www.twitter.com" target="_blank" class="font-weight-bold text-primary">
+                    <span class="wave-icon"><i class="fab fa-twitter social-icon"></i></span>
+                    Twitter
+                </a>
+                &nbsp;|&nbsp;
+                <a href="https://www.linkedin.com" target="_blank" class="font-weight-bold text-primary">
+                    <span class="wave-icon"><i class="fab fa-linkedin-in social-icon"></i></span>
+                    LinkedIn
+                </a>
             </small>
-        </span>
+        </div>
     </div>
 </footer>

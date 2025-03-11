@@ -70,7 +70,11 @@ class TransactionController extends Controller
             'discount' => 'required|integer|min:0',
             'payment_method' => 'required|string|max:255',
             'jurusan' => 'required',
-        ]);
+        ], [
+            'sparepart_id.required' => 'Harap pilih minimal 1 sparepart.',
+            'sparepart_id.*.exists' => 'Sparepart yang dipilih tidak valid.',
+            'quantity.*.required' => 'Masukkan jumlah untuk setiap sparepart.',
+        ]);        
     
         $transaction = Transaction::create([
             'name' => $request->name,
@@ -94,7 +98,6 @@ class TransactionController extends Controller
             if ($request->transaction_type == 'sale') {
                 if ($sparepart->jumlah >= $quantity) {
                     $sparepart->decrement('jumlah', $quantity);
-    
                     SparepartTransaction::create([
                         'transaction_id' => $transaction->id,
                         'sparepart_id' => $sparepart_id,
@@ -107,11 +110,8 @@ class TransactionController extends Controller
                 if (!isset($request->purchase_price[$index])) {
                     return redirect()->back()->withErrors(['purchase_price' => 'Harga beli tidak valid.']);
                 }
-    
                 $purchase_price = $request->purchase_price[$index];
-    
                 $sparepart->increment('jumlah', $quantity);
-    
                 SparepartTransaction::create([
                     'transaction_id' => $transaction->id,
                     'sparepart_id' => $sparepart_id,
@@ -122,8 +122,8 @@ class TransactionController extends Controller
     
         return redirect()->route('transactions.index')
             ->with('success', 'Transaksi sparepart berhasil disimpan! Total harga: Rp' . number_format($request->total_price, 0, ',', '.'));
-    }    
-
+    }
+    
     public function show($id)
     {
         // Ambil data transaksi beserta sparepart

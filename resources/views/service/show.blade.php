@@ -26,13 +26,14 @@
                     <!-- Kolom Kiri -->
                     <div class="col-12 col-md-6 mb-4 mb-md-0">
                         <!-- Informasi Kendaraan -->
-                        <div class="border p-3 rounded shadow-sm bg-white animate_animated animate_fadeInLeft"
+                            <div class="border p-3 rounded shadow-sm bg-white animate_animated animate_fadeInLeft"
                             style="animation-duration: 1.5s; animation-delay: 0.5s; border-color: #e3e6f0;">
                             <h6 class="text-muted"><i class="mdi mdi-car"></i> Informasi Kendaraan</h6>
-                            <p><strong>Warna:</strong> {{ $service->vehicle->color }}</p>
-                            <p><strong>Tahun Produksi:</strong> {{ $service->vehicle->production_year }}</p>
-                            <p><strong>Kode Mesin:</strong> {{ $service->vehicle->engine_code }}</p>
+                            <p><strong>Warna:</strong> {{ $service->vehicle->color ?? 'Data tidak dimasukkan' }}</p>
+                            <p><strong>Tahun Produksi:</strong> {{ $service->vehicle->production_year ?? 'Data tidak dimasukkan' }}</p>
+                            <p><strong>Kode Mesin:</strong> {{ $service->vehicle->engine_code ?? 'Data tidak dimasukkan' }}</p>
                         </div>
+                                       
 
                         <!-- Informasi Pelanggan -->
                         <div class="border p-3 rounded shadow-sm bg-white mt-4 animate_animated animate_fadeInLeft"
