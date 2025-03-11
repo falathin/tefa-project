@@ -126,25 +126,27 @@ class TransactionController extends Controller
 
     public function show($id)
     {
-        // Ambil data Transaction berdasarkan ID, bukan SparepartTransaction
+        // Ambil data transaksi beserta sparepart
         $transaction = Transaction::with('transactionSpareparts.sparepart')->findOrFail($id);
-
-
+    
         // Cek izin jurusan
         if (!Gate::allows('isSameJurusan', [$transaction])) {
             abort(403, 'Data tidak ditemukan!');
         }
-
-        // Hitung total harga dan kembalian
-        // dd($transaction->sparepart->harga_jual);
-
+    
+        // Hitung total harga & kembalian
         $totalPrice = $transaction->total_price;
         $purchasePrice = $transaction->purchase_price;
-        $change = $purchasePrice - $totalPrice;
-
-        return view('transactions.show', compact('transaction', 'totalPrice', 'change'));
-    }
-
+        $discount = $transaction->discount;
+        $change = $purchasePrice - ($totalPrice - $discount);
+    
+        // Hitung subtotal sebelum diskon
+        $subtotalBeforeDiscount = $transaction->transactionSpareparts->sum(function ($sparepart) {
+            return $sparepart->quantity * $sparepart->sparepart->harga_jual;
+        });
+    
+        return view('transactions.show', compact('transaction', 'totalPrice', 'change', 'subtotalBeforeDiscount'));
+    }    
 
     public function edit($id)
     {
@@ -174,8 +176,8 @@ class TransactionController extends Controller
                 'subtotal' => $subtotal, // Menambahkan subtotal
             ];
         });
-
-        return view('transactions.edit', compact('transaction', 'spareparts', 'transactionDetails', 'formattedDate'));
+        $subtotalBeforeDiscount = $transactionDetails->sum('subtotal');
+        return view('transactions.edit', compact('transaction', 'spareparts', 'transactionDetails', 'formattedDate', 'subtotalBeforeDiscount'));        
     }
 
     public function update(Request $request, $id)

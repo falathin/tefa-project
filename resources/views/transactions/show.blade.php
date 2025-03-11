@@ -4,35 +4,59 @@
 <div class="container mt-5">
     <div class="card shadow-lg p-4">
         <h2 class="text-center mb-4">
-            <i class="fas fa-tools"></i> Detail Transaksi Sparepart
+            <i class="fas fa-tools"></i> Detail Transaksi Sparepart {{ $transaction->name}}
         </h2>
 
-        <div class="row mt-4">
-            <div class="col-md-4">
-                <div class="card text-white bg-success shadow-sm p-3">
+        <div class="row mt-4 g-3">
+            <div class="col-md-6 col-lg-3">
+                <div class="card text-white bg-success shadow-sm p-3 text-center">
                     <h5 class="fw-bold mb-2"><i class="fas fa-shopping-cart"></i> Total Harga</h5>
-                    <p class="fs-4 fw-bold mb-0">Rp {{ number_format($totalPrice) }}</p>
+                    <p class="fs-4 fw-bold mb-0">Rp {{ number_format($subtotalBeforeDiscount) }}</p>
                 </div>
             </div>
         
-            <div class="col-md-4">
-                <div class="card text-white bg-primary shadow-sm p-3">
+            <div class="col-md-6 col-lg-3">
+                <div class="card text-white bg-info shadow-sm p-3 text-center">
+                    <h5 class="fw-bold mb-2"><i class="fas fa-percent"></i> Diskon</h5>
+                    <p class="fs-4 fw-bold mb-0">Rp {{ number_format($transaction->discount) }}</p>
+                </div>
+            </div>
+        
+            <div class="col-md-6 col-lg-3">
+                <div class="card text-white bg-secondary shadow-sm p-3 text-center">
+                    <h5 class="fw-bold mb-2"><i class="fas fa-calculator"></i> Total Setelah Diskon</h5>
+                    <p class="fs-4 fw-bold mb-0">Rp {{ number_format($totalPrice - $transaction->discount) }}</p>
+                </div>
+            </div>
+        
+            <div class="col-md-6 col-lg-3">
+                <div class="card text-white bg-primary shadow-sm p-3 text-center">
                     <h5 class="fw-bold mb-2"><i class="fas fa-wallet"></i> Uang Diterima</h5>
                     <p class="fs-4 fw-bold mb-0">Rp {{ number_format($transaction->purchase_price) }}</p>
                 </div>
             </div>
+        </div>
         
-            <div class="col-md-4">
-                <div class="card text-white shadow-sm p-3 
-                    {{ $transaction->purchase_price >= $totalPrice ? 'bg-success' : 'bg-danger' }}">
+        <div class="row mt-4">
+            <div class="col-6">
+                <div class="card text-white shadow-sm p-3 text-center 
+                    {{ $transaction->purchase_price >= ($totalPrice - $transaction->discount) ? 'bg-success' : 'bg-danger' }}">
                     <h5 class="fw-bold mb-2">
-                        <i class="fas {{ $transaction->purchase_price >= $totalPrice ? 'fa-money-bill-wave' : 'fa-exclamation-circle' }}"></i> 
-                        {{ $transaction->purchase_price >= $totalPrice ? 'Kembalian' : 'Hutang' }}
+                        <i class="fas {{ $transaction->purchase_price >= ($totalPrice - $transaction->discount) ? 'fa-money-bill-wave' : 'fa-exclamation-circle' }}"></i> 
+                        {{ $transaction->purchase_price >= ($totalPrice - $transaction->discount) ? 'Kembalian' : 'Hutang' }}
                     </h5>
-                    <p class="fs-4 fw-bold mb-0">Rp {{ number_format(abs($transaction->purchase_price - $totalPrice)) }}</p>
+                    <p class="fs-4 fw-bold mb-0">Rp {{ number_format(abs($transaction->purchase_price - ($totalPrice - $transaction->discount))) }}</p>
                 </div>
             </div>
-        </div>        
+            
+            <div class="col-6">
+                <div class="card text-white bg-dark shadow-sm p-3 text-center">
+                    <h5 class="fw-bold mb-2"><i class="fas fa-credit-card"></i> Metode Pembayaran</h5>
+                    <p class="fs-4 fw-bold mb-0">{{ $transaction->payment_method }}</p>
+                </div>
+            </div>
+        </div>
+        
 
         <div class="table-responsive mt-3">
             <table class="table table-striped table-hover">
@@ -103,21 +127,20 @@
             
             text += `🧾 **Total Harga**: Rp {{ number_format($totalPrice) }}\n`;
             text += `💵 **Uang Diterima**: Rp {{ number_format($transaction->purchase_price) }}\n`;
-            text += `💰 **${{ $transaction->purchase_price >= $totalPrice ? 'Kembalian' : 'Hutang' }}**: Rp {{ number_format(abs($transaction->purchase_price - $totalPrice)) }}\n`;
+            text += `💰 **{{ $transaction->purchase_price >= ($totalPrice - $transaction->discount) ? 'Kembalian' : 'Hutang' }}**: Rp {{ number_format(abs($transaction->purchase_price - ($totalPrice - $transaction->discount))) }}\n`;
             text += "===================================\n\n";
 
-            document.querySelectorAll("tbody tr").forEach((row, index) => {
-                let cells = row.querySelectorAll("td");
-                text += `🛠️ **Transaksi #${index + 1}**\n`;
-                text += `📌 Nama Sparepart: ${cells[0].innerText}\n`;
-                text += `🔍 Spesifikasi: ${cells[1].innerText}\n`;
-                text += `📦 Jumlah: ${cells[2].innerText} unit\n`;
-                text += `💰 Harga Beli: Rp ${cells[3].innerText}\n`;
-                text += `💵 Harga Jual: Rp ${cells[4].innerText}\n`;
-                text += `📈 Keuntungan: Rp ${cells[5].innerText}\n`;
-                text += `🧮 Subtotal: Rp ${cells[6].innerText}\n`;
-                text += "-----------------------------------\n\n";
-            });
+            @foreach($transaction->transactionSpareparts as $index => $trans)
+            text += `🛠️ **Transaksi #{{ $index + 1 }}**\n`;
+            text += `📌 Nama Sparepart: {{ $trans->sparepart->name }}\n`;
+            text += `🔍 Spesifikasi: {{ $trans->sparepart->specification }}\n`;
+            text += `📦 Jumlah: {{ $trans->quantity }} unit\n`;
+            text += `💰 Harga Beli: Rp {{ number_format($trans->sparepart->harga_beli) }}\n`;
+            text += `💵 Harga Jual: Rp {{ number_format($trans->sparepart->harga_jual) }}\n`;
+            text += `📈 Keuntungan: Rp {{ number_format($trans->sparepart->keuntungan) }}\n`;
+            text += `🧮 Subtotal: Rp {{ number_format($trans->subtotal) }}\n`;
+            text += "-----------------------------------\n\n";
+            @endforeach
 
             navigator.clipboard.writeText(text).then(() => {
                 showToast("🚀 Laporan transaksi telah disalin! ✅");
@@ -141,6 +164,7 @@
         }
     });
 </script>
+
 
 <style>
     .toast-message {
