@@ -102,6 +102,7 @@
                             <label for="change"><i class="bi bi-cash-coin"></i> Kembalian</label>
                             <input type="text" id="change" class="form-control mt-2" readonly>
                             <input type="hidden" id="change_asli">
+                            <input type="hidden" id="sparepart_ids" name="sparepart_id">
                         </div>
                     </div>
                     
@@ -120,6 +121,7 @@
     
     <!-- Script untuk sparepart dan perhitungan -->
     <script>
+        var selectedSprtIds = [];
         document.addEventListener('DOMContentLoaded', function () {
             function formatRibuan(angka) {
                 return new Intl.NumberFormat("id-ID").format(angka);
@@ -138,7 +140,8 @@
                     Array.from(document.querySelectorAll('.sparepart_id')).map(select => select.value)
                 );
                 document.querySelectorAll('.sparepart_id option').forEach(option => {
-                    option.disabled = selectedValues.has(option.value) && option.value !== "";
+                    option.disabled = selectedValues.has(option.value) && option.value !== "" ;
+                    $('#sparepart_ids').val(Array.from(selectedValues));
                 });
             }
 

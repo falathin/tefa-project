@@ -58,11 +58,12 @@ class TransactionController extends Controller
 
     public function store(Request $request)
     {
+        // dd($request->all());
         $request->validate([
             'name' => 'required|string|max:255',
             'transaction_type' => 'required|in:sale,purchase',
-            'sparepart_id' => 'required|array',
-            'sparepart_id.*' => 'exists:spareparts,id_sparepart',
+            'sparepart_id' => 'required',
+            // 'sparepart_id.*' => 'exists:spareparts,id_sparepart',
             'quantity' => 'required|array',
             'quantity.*' => 'required|numeric|min:1',
             'purchase_price.*' => 'numeric|min:0',
@@ -75,7 +76,9 @@ class TransactionController extends Controller
             'sparepart_id.*.exists' => 'Sparepart yang dipilih tidak valid.',
             'quantity.*.required' => 'Masukkan jumlah untuk setiap sparepart.',
         ]);        
-    
+
+        $sparepartIds = explode(',',$request->sparepart_id);
+        
         $transaction = Transaction::create([
             'name' => $request->name,
             'purchase_price' => $request->purchase_price,
@@ -87,7 +90,7 @@ class TransactionController extends Controller
             'jurusan' => $request->jurusan
         ]);
     
-        foreach ($request->sparepart_id as $index => $sparepart_id) {
+        foreach ($sparepartIds as $index => $sparepart_id) {
             if (!isset($request->quantity[$index])) {
                 return redirect()->back()->withErrors(['quantity' => 'Jumlah tidak valid untuk sparepart tertentu.']);
             }
