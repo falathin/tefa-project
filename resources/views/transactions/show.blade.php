@@ -120,7 +120,7 @@
     </div>
 </div>
 
-<!-- Script untuk animasi, copy, dan print -->
+<!-- JavaScript untuk animasi, copy, dan print menggunakan hidden iframe -->
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     // Animasi baris tabel
@@ -130,7 +130,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }, index * 100);
     });
 
-    // Event copy individual
+    // Copy individual
     document.querySelectorAll(".copy-btn").forEach(button => {
         button.addEventListener("click", function() {
             const text = this.dataset.text;
@@ -140,13 +140,13 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     });
 
-    // Event copy semua data
+    // Copy semua data
     document.getElementById("copyAll").addEventListener("click", function() {
         let text = "📌 **Laporan Transaksi Sparepart**\n";
         text += "===================================\n\n";
         text += `🧾 **Total Harga**: Rp {{ number_format($totalPrice) }}\n`;
         text += `💵 **Uang Diterima**: Rp {{ number_format($transaction->purchase_price) }}\n`;
-        text += `💰 **{{ $transaction->purchase_price >= ($totalPrice - $transaction->discount) ? 'Kembalian' : 'Hutang' }}**: Rp {{ number_format(abs($transaction->purchase_price - ($totalPrice - $transaction->discount))) }}\n`;
+        text += `💰 **${{ $transaction->purchase_price >= ($totalPrice - $transaction->discount) ? 'Kembalian' : 'Hutang' }}**: Rp {{ number_format(abs($transaction->purchase_price - ($totalPrice - $transaction->discount))) }}\n`;
         text += "===================================\n\n";
         @foreach($transaction->transactionSpareparts as $index => $trans)
             text += `🛠️ **Transaksi #{{ $index + 1 }}**\n`;
@@ -159,12 +159,12 @@ document.addEventListener("DOMContentLoaded", function() {
             text += `🧮 Subtotal: Rp {{ number_format($trans->subtotal) }}\n`;
             text += "-----------------------------------\n\n";
         @endforeach
-
         navigator.clipboard.writeText(text).then(() => {
             showToast("🚀 Laporan transaksi telah disalin! ✅");
         });
     });
 
+    // Fungsi untuk menampilkan toast
     function showToast(message) {
         let toast = document.createElement("div");
         toast.className = "toast-message";
