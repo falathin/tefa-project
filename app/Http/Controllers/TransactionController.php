@@ -17,34 +17,31 @@ class TransactionController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
+    
         if (Gate::allows('isBendahara')) {
-            // $transactions = SparepartTransaction::with('sparepart')
             $transactions = Transaction::query()
                 ->when($search, function ($query, $search) {
-                    return $query->whereHas('sparepart', function ($query) use ($search) {
+                    return $query->whereHas('spareparts', function ($query) use ($search) {
                         $query->where('nama_sparepart', 'like', "%{$search}%");
                     });
                 })
                 ->orderBy('created_at', 'desc')
                 ->paginate(5);
-
-            return view('transactions.index', compact('transactions'));
         } else {
-            $transactions = Transaction::query()->where('jurusan', 'like', Auth::user()->jurusan);
             $transactions = Transaction::query()
+                ->where('jurusan', 'like', Auth::user()->jurusan)
                 ->when($search, function ($query, $search) {
-                    return $query->whereHas('sparepart', function ($query) use ($search) {
+                    return $query->whereHas('spareparts', function ($query) use ($search) {
                         $query->where('nama_sparepart', 'like', "%{$search}%");
                     });
                 })
-                ->where('jurusan', 'like', Auth::user()->jurusan)
                 ->orderBy('created_at', 'desc')
                 ->paginate(5);
-
-            return view('transactions.index', compact('transactions'));
         }
+    
+        return view('transactions.index', compact('transactions'));
     }
-
+    
     public function create()
     {
         // Admin & kasir

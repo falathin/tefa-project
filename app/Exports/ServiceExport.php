@@ -19,8 +19,8 @@ class ServiceExport implements FromCollection, WithHeadings, WithMapping, WithSt
     public function __construct($startDate, $endDate, $category)
     {
         $this->startDate = $startDate;
-        $this->endDate = $endDate;
-        $this->category = $category;
+        $this->endDate   = $endDate;
+        $this->category  = $category;
     }
 
     public function collection()
@@ -29,7 +29,6 @@ class ServiceExport implements FromCollection, WithHeadings, WithMapping, WithSt
                            ->whereBetween('created_at', [$this->startDate, $this->endDate])
                            ->where('jurusan', $this->category)
                            ->get();
-        
         $this->totalIncome = $services->sum('total_cost');
         return $services;
     }
@@ -37,10 +36,14 @@ class ServiceExport implements FromCollection, WithHeadings, WithMapping, WithSt
     public function headings(): array
     {
         return [
-            'No', 'ID Service', 'Nama Pelanggan', 'Plat Nomor', 'Keluhan',
-            'Kilometer', 'Biaya Servis', 'Total Biaya', 'Pembayaran', 'Kembalian',
-            'Tipe Servis', 'Status', 'Catatan', 'Teknisi', 'Jurusan',
-            'Diskon', 'Metode Pembayaran', 'Tanggal Servis', 'Checklist Servis'
+            ["🛠 Laporan Servis PKB Bengkel"],
+            ["Periode: " . $this->startDate . " s/d " . $this->endDate],
+            [
+                'No', 'ID Service', 'Nama Pelanggan', 'Plat Nomor', 'Keluhan',
+                'Kilometer', 'Biaya Servis', 'Total Biaya', 'Pembayaran', 'Kembalian',
+                'Tipe Servis', 'Status', 'Catatan', 'Teknisi', 'Jurusan',
+                'Diskon', 'Metode Pembayaran', 'Tanggal Servis', 'Checklist Servis'
+            ]
         ];
     }
 
@@ -48,19 +51,26 @@ class ServiceExport implements FromCollection, WithHeadings, WithMapping, WithSt
     {
         static $index = 0;
         $index++;
-    
-        $diskon = $service->diskon ?? 0; 
+
+        $diskon     = $service->diskon ?? 0;
         $totalBiaya = $service->total_cost - $diskon;
-    
+
         $checklist = optional($service->serviceChecklists)->map(function ($task) {
             return ($task->is_completed ? '✔' : '✘') . ' ' . $task->task;
-        })->implode(', ') ?? 'Tidak ada checklist';
-    
+        })->implode("\n");
+
+        $licensePlate = optional($service->vehicle)->license_plate ?? '-';
+        if ($service->jurusan == 'TKRO') {
+            $licensePlate = '🚗 ' . $licensePlate;
+        } elseif ($service->jurusan == 'TSM') {
+            $licensePlate = '🏍 ' . $licensePlate;
+        }
+
         return [
             $index, 
             $service->id,
             optional($service->vehicle->customer)->name ?? '-',
-            optional($service->vehicle)->license_plate ?? '-',
+            $licensePlate,
             $service->complaint ?? '-',
             $service->current_mileage ?? 0,
             number_format($service->service_fee, 2),
@@ -72,7 +82,7 @@ class ServiceExport implements FromCollection, WithHeadings, WithMapping, WithSt
             $service->additional_notes ?? '-',
             $service->technician_name ?? '-',
             $service->jurusan ?? '-',
-            $diskon > 0 ? number_format($diskon, 2) : 'Tanpa Diskon',
+            $diskon > 0 ? number_format($diskon, 2) : '',
             ucfirst($service->payment_method),
             $service->service_date,
             $checklist,
@@ -82,45 +92,50 @@ class ServiceExport implements FromCollection, WithHeadings, WithMapping, WithSt
     private function translateServiceType($type)
     {
         $translations = [
-            'light' => 'Ringan',
+            'light'  => 'Ringan',
             'medium' => 'Sedang',
-            'heavy' => 'Berat',
+            'heavy'  => 'Berat',
         ];
-
         if (Auth::check()) {
             if (Auth::user()->jurusan == 'TKRO') {
                 $translations = [
-                    'light' => '10.000 KM (Ringan)',
+                    'light'  => '10.000 KM (Ringan)',
                     'medium' => '30.000 KM (Sedang)',
-                    'heavy' => '50.000 KM (Berat)',
+                    'heavy'  => '50.000 KM (Berat)',
                 ];
             } elseif (Auth::user()->jurusan == 'TSM') {
                 $translations = [
-                    'light' => 'Service Kecil',
+                    'light'  => 'Service Kecil',
                     'medium' => 'Service Sedang',
-                    'heavy' => 'Service Besar',
+                    'heavy'  => 'Service Besar',
                 ];
             }
         }
-    
         return $translations[$type] ?? ucfirst($type);
     }    
 
     public function styles(Worksheet $sheet)
     {
         $lastRow = $sheet->getHighestRow();
-
-        foreach (range('A', 'R') as $col) {
+        foreach (range('A', 'S') as $col) {
             $sheet->getColumnDimension($col)->setAutoSize(true);
         }
-
         return [
-            1 => ['font' => ['bold' => true, 'color' => ['argb' => 'FFFFFF']], 'fill' => ['fillType' => 'solid', 'startColor' => ['argb' => '0070C0']]],
-            'A1:R' . $lastRow => [
-                'borders' => ['allBorders' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN]],
+            1 => [
+                'font'      => ['bold' => true, 'size' => 16, 'color' => ['argb' => '000000']],
+                'alignment' => ['horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER],
             ],
-            'S1:S' . $lastRow => [
-                'borders' => ['allBorders' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN]], // Border untuk checklist servis
+            2 => [
+                'font'      => ['bold' => true, 'size' => 12, 'color' => ['argb' => '000000']],
+                'alignment' => ['horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER],
+            ],
+            3 => [
+                'font'      => ['bold' => true, 'color' => ['argb' => 'FFFFFF']],
+                'fill'      => ['fillType' => 'solid', 'startColor' => ['argb' => '0070C0']],
+                'alignment' => ['horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER],
+            ],
+            'A3:S' . $lastRow => [
+                'borders' => ['allBorders' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN]],
             ],
         ];
     }
@@ -129,24 +144,39 @@ class ServiceExport implements FromCollection, WithHeadings, WithMapping, WithSt
     {
         return [
             AfterSheet::class => function (AfterSheet $event) {
-                $sheet = $event->sheet;
-                $highestRow = $sheet->getHighestRow();
+                $sheet         = $event->sheet;
+                $highestRow    = $sheet->getHighestRow();
                 $highestColumn = $sheet->getHighestColumn();
-    
-                // Menambahkan total penghasilan di bawah tabel
+
+                $sheet->mergeCells('A1:S1');
+                $sheet->mergeCells('A2:S2');
+
+                if ($highestRow == 3) {
+                    $sheet->mergeCells('A4:S4');
+                    $sheet->setCellValue('A4', 'Tidak ada data');
+                    $sheet->getStyle('A4')->applyFromArray([
+                        'font' => ['bold' => true, 'size' => 12],
+                        'alignment' => [
+                            'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                        ],
+                        'fill' => [
+                            'fillType' => 'solid',
+                            'startColor' => ['argb' => 'FFFF00'],
+                        ],
+                    ]);
+                    $highestRow = 4;
+                }
+
                 $totalRow = $highestRow + 2;
                 $sheet->setCellValue('F' . $totalRow, 'Total Penghasilan:');
                 $sheet->setCellValue('G' . $totalRow, number_format($this->totalIncome, 2));
                 $sheet->getStyle('F' . $totalRow)->getFont()->setBold(true);
-    
-                // Looping melalui setiap baris untuk memberikan style berdasarkan status dan pembayaran
-                for ($row = 2; $row <= $highestRow; $row++) {
-                    $statusCell = 'L' . $row;
+
+                for ($row = 4; $row <= $highestRow; $row++) {
+                    $statusCell  = 'L' . $row;
                     $paymentCell = 'I' . $row;
-    
-                    $statusValue = $sheet->getCell($statusCell)->getValue();
+                    $statusValue  = $sheet->getCell($statusCell)->getValue();
                     $paymentValue = $sheet->getCell($paymentCell)->getValue();
-    
                     if ($statusValue === 'Selesai') {
                         $sheet->getStyle($statusCell)->applyFromArray([
                             'fill' => ['fillType' => 'solid', 'startColor' => ['argb' => '00FF00']]
@@ -156,7 +186,6 @@ class ServiceExport implements FromCollection, WithHeadings, WithMapping, WithSt
                             'fill' => ['fillType' => 'solid', 'startColor' => ['argb' => 'FF0000']]
                         ]);
                     }
-    
                     if ($paymentValue > 0) {
                         $sheet->getStyle($paymentCell)->applyFromArray([
                             'fill' => ['fillType' => 'solid', 'startColor' => ['argb' => '00FF00']]
@@ -167,13 +196,26 @@ class ServiceExport implements FromCollection, WithHeadings, WithMapping, WithSt
                         ]);
                     }
                 }
-    
-                // Otomatis menyesuaikan lebar semua kolom berdasarkan kontennya
-                foreach (range('A', $highestColumn) as $col) {
-                    $sheet->getColumnDimension($col)->setAutoSize(true);
+
+                $sheet->getStyle("S4:S{$highestRow}")->getAlignment()->setWrapText(true);
+
+                foreach ($sheet->getColumnIterator() as $column) {
+                    $col = $column->getColumnIndex();
+                    $maxLength = 0;
+                    foreach ($sheet->getRowIterator() as $row) {
+                        $cell = $sheet->getCell($col . $row->getRowIndex());
+                        $cellValue = $cell->getCalculatedValue();
+                        if ($cellValue !== null) {
+                            $length = strlen($cellValue);
+                            if ($length > $maxLength) {
+                                $maxLength = $length;
+                            }
+                        }
+                    }
+                    $width = $maxLength < 10 ? 10 : $maxLength;
+                    $sheet->getColumnDimension($col)->setWidth($width);
                 }
             },
         ];
     }
-    
 }

@@ -18,26 +18,10 @@ class SparepartTransactionExport implements WithMultipleSheets
     public function sheets(): array
     {
         $sheets = [];
-        // Ambil seluruh transaksi dengan relasi sparepart dan transaction
+        // Sertakan relasi transaction dan sparepart
         $transactions = SparepartTransaction::with(['sparepart', 'transaction'])->get();
 
-        // Hitung jumlah transaksi untuk jurusan TSM dan TKRO
-        $tsmCount = $transactions->filter(function ($item) {
-            return $item->transaction->jurusan == 'TSM';
-        })->count();
-        $tkroCount = $transactions->filter(function ($item) {
-            return $item->transaction->jurusan == 'TKRO';
-        })->count();
-
-        // Pilih jurusan yang lebih banyak, jika sama pilih TSM
-        $filterJurusan = $tsmCount >= $tkroCount ? 'TSM' : 'TKRO';
-
-        // Filter transaksi berdasarkan jurusan yang dipilih
-        $transactions = $transactions->filter(function ($item) use ($filterJurusan) {
-            return $item->transaction->jurusan == $filterJurusan;
-        });
-
-        // Grouping berdasarkan minggu transaksi (menggunakan data dari relasi transaction)
+        // Grouping berdasarkan minggu transaksi (dari relasi transaction)
         $groupedTransactions = $transactions->groupBy(function ($item) {
             $startOfWeek = Carbon::parse($item->transaction->transaction_date)->startOfWeek()->format('d-m-Y');
             $endOfWeek   = Carbon::parse($item->transaction->transaction_date)->endOfWeek()->format('d-m-Y');
@@ -45,7 +29,7 @@ class SparepartTransactionExport implements WithMultipleSheets
         });
 
         foreach ($groupedTransactions as $week => $data) {
-            $sheets[] = new SparepartTransactionWeeklySheet($week, $data, $filterJurusan);
+            $sheets[] = new SparepartTransactionWeeklySheet($week, $data);
         }
 
         return $sheets;
@@ -56,18 +40,16 @@ class SparepartTransactionWeeklySheet implements FromCollection, WithHeadings, S
 {
     protected $week;
     protected $data;
-    protected $jurusan;
 
-    public function __construct($week, $data, $jurusan)
+    public function __construct($week, $data)
     {
         $this->week = $week;
         $this->data = $data;
-        $this->jurusan = $jurusan;
     }
 
     public function collection()
     {
-        // Filter data lagi (misalnya jika diperlukan tambahan filter)
+        // Filter data berdasarkan Gate atau jurusan
         $filteredData = $this->data->filter(function ($transaction) {
             if (Gate::allows('isBendahara')) {
                 return $transaction;
@@ -76,47 +58,104 @@ class SparepartTransactionWeeklySheet implements FromCollection, WithHeadings, S
             }
         });
 
-        // Map data dengan mengakses properti dari relasi transaction
-        return $filteredData->map(function ($transaction) {
-            return [
-                'ID'                 => $transaction->id,
-                'Nama Sparepart'     => $transaction->sparepart->nama_sparepart ?? 'Tidak Diketahui',
-                'Jumlah'             => $transaction->quantity,
-                // Menggunakan purchase_price dan total_price dari transaksi, 
-                // sesuaikan jika diperlukan. Contoh berikut:
-                'Harga Satuan'       => number_format($transaction->transaction->purchase_price, 0, ',', '.'),
-                'Total Harga'        => number_format($transaction->transaction->total_price, 0, ',', '.'),
-                'Tanggal Transaksi'  => Carbon::parse($transaction->transaction->transaction_date)->format('d-m-Y'),
-                'Jenis Transaksi'    => $transaction->transaction->transaction_type == 'sale' ? 'Penjualan' : 'Pembelian',
-                'Jurusan'            => $transaction->transaction->jurusan,
-            ];
+        // Group berdasarkan ID transaksi (jika transaksi yang sama)
+        $grouped = $filteredData->groupBy(function ($item) {
+            return $item->transaction->id;
         });
+
+        // Untuk setiap grup transaksi, gabungkan detail sparepart menjadi satu baris
+        return $grouped->map(function ($group) {
+            // Ambil data transaksi (semua item dalam grup memiliki data transaksi yang sama)
+            $transaction = $group->first()->transaction;
+
+            // Agregasi detail sparepart: gabungkan nama, jumlah, harga satuan, dan subtotal.
+            // Setiap detail dipisahkan dengan baris kosong
+            $sparepartDetails = $group->map(function ($item) {
+                // Bagi harga_jual dengan 1000 untuk menghilangkan "000" di belakang (ubah jika perlu)
+                $unitPrice = $item->sparepart->harga_jual / 1000;
+                $subtotal = $item->quantity * $unitPrice;
+                return "Nama: " . ($item->sparepart->nama_sparepart ?? 'Tidak Diketahui') .
+                       "\nJumlah: " . $item->quantity .
+                       "\nHarga Satuan: Rp" . number_format($unitPrice, 0, ',', '.') .
+                       "\nSubtotal: Rp" . number_format($subtotal, 0, ',', '.');
+            })->implode("\n\n");
+
+            // Hitung kembalian: uang diterima - (total harga - diskon)
+            $change = $transaction->purchase_price - ($transaction->total_price - $transaction->discount);
+
+            return [
+                'ID'                => $transaction->id,
+                'Nama Pelanggan'    => $transaction->name,
+                'Tanggal Transaksi' => Carbon::parse($transaction->transaction_date)->format('d-m-Y'),
+                'Metode Pembayaran' => $transaction->payment_method,
+                'Diskon'            => number_format($transaction->discount, 0, ',', '.'),
+                'Total Harga'       => number_format($transaction->total_price, 0, ',', '.'),
+                'Kembalian'         => number_format($change, 0, ',', '.'),
+                'Detail Sparepart'  => $sparepartDetails,
+                'Jurusan'           => $transaction->jurusan,
+            ];
+        })->values();
     }
 
     public function headings(): array
     {
+        // Baris 1: Judul laporan
+        // Baris 2: Periode laporan (gunakan $this->week, yang sudah berupa "start - end")
+        // Baris 3: Header kolom dengan ikon
         return [
-            ['Laporan Transaksi Sparepart (' . $this->jurusan . ') - ' . $this->week],
-            ['ID', 'Nama Sparepart', 'Jumlah', 'Harga Satuan', 'Total Harga', 'Tanggal Transaksi', 'Jenis Transaksi', 'Jurusan']
+            ['Laporan Transaksi Sparepart: ' . $this->week],
+            ['Periode: ' . $this->week],
+            [
+                'ID', 
+                '👤 Nama Pelanggan', 
+                '📅 Tanggal Transaksi', 
+                '💳 Metode Pembayaran', 
+                '💸 Diskon', 
+                '💰 Total Harga', 
+                '🤑 Kembalian', 
+                '🛠 Detail Sparepart', 
+                '🏫 Jurusan'
+            ]
         ];
     }
 
     public function styles(Worksheet $sheet)
     {
-        // Merge header judul
-        $sheet->mergeCells('A1:H1');
-        $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(14);
+        // Merge baris 1 dan 2 untuk judul dan periode
+        $sheet->mergeCells('A1:I1');
+        $sheet->mergeCells('A2:I2');
+        $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(16);
+        $sheet->getStyle('A1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle('A2')->getFont()->setBold(true)->setSize(12);
+        $sheet->getStyle('A2')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
 
-        // Style header tabel
-        $sheet->getStyle('A2:H2')->applyFromArray([
+        // Style header tabel (baris 3)
+        $sheet->getStyle('A3:I3')->applyFromArray([
             'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
             'fill' => ['fillType' => 'solid', 'startColor' => ['rgb' => '0073e6']],
         ]);
 
-        // Tambahkan border pada seluruh tabel
+        // Set alignment untuk seluruh data (mulai baris 3)
+        $sheet->getStyle('A3:I' . $sheet->getHighestRow())
+              ->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
+        $sheet->getStyle('A3:I' . $sheet->getHighestRow())
+              ->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+
+        // Atur lebar kolom agar tampilan lebih rapi (meniru layout PKB kerja bengkel)
+        $sheet->getColumnDimension('A')->setWidth(8);
+        $sheet->getColumnDimension('B')->setWidth(20);
+        $sheet->getColumnDimension('C')->setWidth(16);
+        $sheet->getColumnDimension('D')->setWidth(20);
+        $sheet->getColumnDimension('E')->setWidth(16);
+        $sheet->getColumnDimension('F')->setWidth(18);
+        $sheet->getColumnDimension('G')->setWidth(18);
+        $sheet->getColumnDimension('H')->setWidth(40);
+        $sheet->getColumnDimension('I')->setWidth(12);
+
+        // Beri border pada seluruh tabel (mulai dari header kolom)
         $highestRow = $sheet->getHighestRow();
         $highestColumn = $sheet->getHighestColumn();
-        $sheet->getStyle("A2:{$highestColumn}{$highestRow}")->applyFromArray([
+        $sheet->getStyle("A3:{$highestColumn}{$highestRow}")->applyFromArray([
             'borders' => [
                 'allBorders' => [
                     'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
@@ -124,5 +163,9 @@ class SparepartTransactionWeeklySheet implements FromCollection, WithHeadings, S
                 ]
             ]
         ]);
+
+        // Set wrap text untuk kolom Detail Sparepart (kolom H) agar baris baru tampil rapi
+        $sheet->getStyle('H4:H' . $sheet->getHighestRow())
+              ->getAlignment()->setWrapText(true);
     }
 }

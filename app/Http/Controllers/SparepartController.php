@@ -14,31 +14,27 @@ class SparepartController extends Controller
     public function index(Request $request)
     {
         $jurusan = Auth::user()->jurusan;
-        $search = $request->search;
-
-        // // Admin & kasir
-        // if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
-        //     abort(403, 'Butuh level Admin & Kasir');
-        // }
-
-        if (Auth::user()->jurusan == 'General') {
-            $spareparts = Sparepart::when($search, function ($query, $search) {
-                return $query->where('nama_sparepart', 'like', '%' . $search . '%');
-            })
-                ->orderBy('created_at', 'desc')
-                ->paginate(4);
-            return view('sparepart.index', compact('spareparts'));
-        } else {
-            $spareparts = Sparepart::when($search, function ($query, $search) {
-                return $query->where('nama_sparepart', 'like', '%' . $search . '%');
-            })
-                ->where('jurusan', 'like', $jurusan)
-                ->orderBy('created_at', 'desc')
-                ->paginate(4);
-            return view('sparepart.index', compact('spareparts'));
+        $search = $request->input('search');
+    
+        $query = Sparepart::query();
+    
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_sparepart', 'like', "%{$search}%")
+                  ->orWhere('spek', 'like', "%{$search}%")
+                  ->orWhere('deskripsi', 'like', "%{$search}%");
+            });
         }
+    
+        if (Auth::user()->jurusan != 'General') {
+            $query->where('jurusan', 'like', $jurusan);
+        }
+    
+        $spareparts = $query->orderBy('created_at', 'desc')->paginate(4);
+    
+        return view('sparepart.index', compact('spareparts'));
     }
-
+    
     public function create()
     {
         // Admin & kasir

@@ -14,7 +14,6 @@ class CustomerController extends Controller
 {
     public function index(Request $request)
     {
-        // Admin & kasir
         if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
             abort(403, 'Butuh level Admin & Kasir');
         }
@@ -24,13 +23,13 @@ class CustomerController extends Controller
         $deletedSearch = $request->input('deletedSearch');
         
         $customers = Customer::when($searchTerm, function ($query, $searchTerm) {
-            return $query->where('name', 'like', '%' . $searchTerm . '%')
-                         ->orWhere('contact', 'like', '%' . $searchTerm . '%')
-                         ->orWhere('address', 'like', '%' . $searchTerm . '%');
-        })
-        ->where('jurusan', 'like', $jurusan)
-        ->orderBy('created_at', 'desc')  // Ordering by created_at in descending order
-        ->paginate(5);
+                return $query->where('name', 'like', '%' . $searchTerm . '%')
+                             ->orWhere('contact', 'like', '%' . $searchTerm . '%')
+                             ->orWhere('address', 'like', '%' . $searchTerm . '%');
+            })
+            ->where('jurusan', 'like', $jurusan)
+            ->orderBy('created_at', 'desc')
+            ->paginate(5);
         
         $deletedCustomers = Customer::onlyTrashed()
             ->when($deletedSearch, function ($query, $deletedSearch) {
@@ -38,13 +37,13 @@ class CustomerController extends Controller
                              ->orWhere('contact', 'like', '%' . $deletedSearch . '%')
                              ->orWhere('address', 'like', '%' . $deletedSearch . '%');
             })
-            ->orderBy('created_at', 'desc')  // Ordering by created_at in descending order
+            ->orderBy('created_at', 'desc')
             ->paginate(5);
         
         $noData = $customers->isEmpty() && $deletedCustomers->isEmpty();
         
         return view('customer.index', compact('customers', 'deletedCustomers', 'noData', 'searchTerm', 'deletedSearch'));
-    }    
+    }     
 
     public function create()
     {

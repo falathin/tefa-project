@@ -20,66 +20,61 @@ class ServiceController extends Controller
 {
     public function index(Request $request)
     {
-        // Admin & kasir
-        // if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
-        //     abort(403, 'Butuh level Admin & Kasir');
-        // }
-
         $paymentStatus = $request->get('payment_status', 'all');
         $request->session()->put('payment_status', $paymentStatus);
-
+    
         if (Auth::user()->jurusan == 'General') {
             $servicesQuery = Service::query();
         } else {
             $servicesQuery = Service::query()->where('jurusan', 'like', Auth::user()->jurusan);
         }
-
+    
         if ($paymentStatus !== 'all') {
             $servicesQuery = $servicesQuery->when($paymentStatus === 'paid', function ($query) {
                 return $query->where('payment_received', '>=', DB::raw('total_cost'));
             })
-                ->where('Jurusan', 'like', 'TSM')
-                ->when($paymentStatus === 'unpaid', function ($query) {
-                    return $query->where('payment_received', '<', DB::raw('total_cost'));
-                });
+            ->where('jurusan', 'like', 'TSM')
+            ->when($paymentStatus === 'unpaid', function ($query) {
+                return $query->where('payment_received', '<', DB::raw('total_cost'));
+            });
         }
-
-        // Apply search filter across multiple related tables
+    
+        // Tambahkan pencarian di beberapa kolom tambahan
         if ($search = $request->get('search')) {
             $servicesQuery = $servicesQuery->where(function ($query) use ($search) {
-                // Search in 'vehicle' table's 'license_plate' and 'customer' table's 'name'
                 $query->whereHas('vehicle', function ($query) use ($search) {
                     $query->where('license_plate', 'like', "%{$search}%");
                 })
-                    ->orWhereHas('vehicle.customer', function ($query) use ($search) {
-                        $query->where('name', 'like', "%{$search}%");
-                    })
-                    ->orWhere('complaint', 'like', "%{$search}%")
-                    ->orWhere('service_type', 'like', "%{$search}%")
-                    ->orWhere('status', 'like', "%{$search}%");
+                ->orWhereHas('vehicle.customer', function ($query) use ($search) {
+                    $query->where('name', 'like', "%{$search}%");
+                })
+                ->orWhere('complaint', 'like', "%{$search}%")
+                ->orWhere('service_type', 'like', "%{$search}%")
+                ->orWhere('status', 'like', "%{$search}%")
+                ->orWhere('additional_notes', 'like', "%{$search}%")
+                ->orWhere('technician_name', 'like', "%{$search}%")
+                ->orWhere('payment_method', 'like', "%{$search}%");
             });
         }
-
-        // Apply date filter
+    
         if ($date = $request->get('date')) {
             $servicesQuery = $servicesQuery->whereDate('created_at', $date);
         }
-
-        // Apply year filter
+    
         if ($year = $request->get('year')) {
             $servicesQuery = $servicesQuery->whereYear('created_at', $year);
         }
-
-        // Apply day of the week filter
+    
         if ($dayOfWeek = $request->get('day_of_week')) {
             $servicesQuery = $servicesQuery->whereRaw('DAYOFWEEK(created_at) = ?', [$dayOfWeek]);
         }
-
+    
         $services = $servicesQuery->paginate(10);
-
+    
         return view('service.index', compact('services'));
     }
 
+    
     public function create($vehicle_id)
     {
         $vehicle = Vehicle::find($vehicle_id);
