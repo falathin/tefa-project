@@ -17,43 +17,43 @@
                     <label for="brand" class="form-label fw-bold text-primary">
                         <i class="bi bi-tags"></i> Merek Kendaraan
                     </label>
-                    <input type="text" class="form-control bg-light border-primary rounded-3 shadow-sm" 
-                           id="brand" value="{{ $vehicle->brand }}" disabled>
+                    <input type="text" class="form-control bg-light border-primary rounded-3 shadow-sm" id="brand"
+                        value="{{ $vehicle->brand }}" disabled>
                 </div>
                 <div class="col-md-4 animate__animated animate__fadeIn">
                     <label for="jenisKendaraan" class="form-label fw-bold text-success">
                         <i class="bi bi-car-front"></i> Tipe Kendaraan
                     </label>
-                    <input type="text" class="form-control bg-light border-success rounded-3 shadow-sm" 
-                           id="jenisKendaraan" value="{{ $vehicle->vehicle_type }}" disabled>
+                    <input type="text" class="form-control bg-light border-success rounded-3 shadow-sm"
+                        id="jenisKendaraan" value="{{ $vehicle->vehicle_type }}" disabled>
                 </div>
                 <div class="col-md-4 animate__animated animate__fadeIn">
                     <label for="kodeMesin" class="form-label fw-bold text-danger">
                         <i class="bi bi-gear-wide"></i> Kode Mesin
                     </label>
-                    <input type="text" class="form-control bg-light border-danger rounded-3 shadow-sm" 
-                           id="kodeMesin" value="{{ $vehicle->engine_code }}" disabled>
+                    <input type="text" class="form-control bg-light border-danger rounded-3 shadow-sm" id="kodeMesin"
+                        value="{{ $vehicle->engine_code }}" disabled>
                 </div>
                 <div class="col-md-4 animate__animated animate__fadeIn">
                     <label for="noPolisi" class="form-label fw-bold text-warning">
                         <i class="bi bi-key"></i> No Polisi
                     </label>
-                    <input type="text" class="form-control bg-light border-warning rounded-3 shadow-sm" 
-                           id="noPolisi" value="{{ $vehicle->license_plate }}" disabled>
+                    <input type="text" class="form-control bg-light border-warning rounded-3 shadow-sm" id="noPolisi"
+                        value="{{ $vehicle->license_plate }}" disabled>
                 </div>
                 <div class="col-md-4 animate__animated animate__fadeIn">
                     <label for="tahunProduksi" class="form-label fw-bold text-info">
                         <i class="bi bi-calendar-event"></i> Tahun Produksi
                     </label>
-                    <input type="text" class="form-control bg-light border-info rounded-3 shadow-sm" 
-                           id="tahunProduksi" value="{{ $vehicle->production_year }}" disabled>
+                    <input type="text" class="form-control bg-light border-info rounded-3 shadow-sm" id="tahunProduksi"
+                        value="{{ $vehicle->production_year }}" disabled>
                 </div>
                 <div class="col-md-4 animate__animated animate__fadeIn">
                     <label for="warna" class="form-label fw-bold text-secondary">
                         <i class="bi bi-palette"></i> Warna
                     </label>
-                    <input type="text" class="form-control bg-light border-secondary rounded-3 shadow-sm" 
-                           id="warna" value="{{ $vehicle->color }}" disabled>
+                    <input type="text" class="form-control bg-light border-secondary rounded-3 shadow-sm" id="warna"
+                        value="{{ $vehicle->color }}" disabled>
                 </div>
                 <div class="col-md-12 animate__animated animate__zoomIn text-center">
                     <label for="image" class="form-label fw-bold text-dark">
@@ -62,15 +62,15 @@
                     <br>
                     @if ($vehicle->image)
                         <button type="button" class="btn btn-gradient-primary shadow-lg" data-bs-toggle="modal"
-                                data-bs-target="#vehicleImageModal">
+                            data-bs-target="#vehicleImageModal">
                             <i class="bi bi-image"></i> Lihat Gambar
                         </button>
                     @else
                         <p class="text-muted">No image available.</p>
                     @endif
                 </div>
-            </div>            
-            
+            </div>
+
             <!-- Service History Section -->
             <h5 class="mt-5 animate__animated animate__slideInUp">Riwayat Service</h5>
             <!-- Search Form -->
@@ -117,25 +117,23 @@
                             <div class="card shadow-lg border-0 rounded-4 overflow-hidden position-relative">
                                 <!-- Background Gambar Kendaraan -->
                                 <div class="position-absolute top-0 start-0 w-100 h-100 bg-dark opacity-50"></div>
-                                <div class="position-absolute top-0 start-0 w-100 h-100" 
-                                     style="background: url('{{ asset('storage/' . ($vehicle->image ?? 'default.jpg')) }}') center/cover no-repeat;">
+                                <div class="position-absolute top-0 start-0 w-100 h-100"
+                                    style="background: url('{{ asset('storage/' . ($vehicle->image ?? 'default.jpg')) }}') center/cover no-repeat;">
                                 </div>
-                
+
                                 <div class="card-body position-relative text-white">
                                     <!-- Jenis Service -->
                                     <h6 class="fw-bold">
                                         <i class="bi bi-tools"></i> {{ ucfirst($service->service_type) }}
                                         <span class="badge bg-light text-dark ms-2">
-                                            @if ($service->service_type == 'light')
-                                                10.000 KM (Ringan)
-                                            @elseif ($service->service_type == 'medium')
-                                                10.000 KM (Sedang)
-                                            @elseif ($service->service_type == 'heavy')
-                                                10.000 KM (Berat)
+                                            @if (Auth::user()->jurusan == 'TSM')
+                                                {{ ucfirst($service->service_type == 'light' ? 'Ringan' : ($service->service_type == 'medium' ? 'Sedang' : 'Berat')) }}
+                                            @elseif (Auth::user()->jurusan == 'TKRO')
+                                                {{ ucfirst($service->service_type == 'light' ? '10.000 KM (Ringan)' : ($service->service_type == 'medium' ? '30.000 KM (Sedang)' : '50.000 KM (Berat)')) }}
                                             @endif
                                         </span>
                                     </h6>
-                
+
                                     <!-- Status Servis -->
                                     <p class="mt-2">
                                         @if ($service->status == 0)
@@ -148,31 +146,37 @@
                                             </span>
                                         @endif
                                     </p>
-                
+
                                     <!-- Total Biaya -->
                                     <p class="fw-bold text-warning fs-5">
-                                        <i class="bi bi-cash-coin"></i> Rp. {{ number_format($service->total_cost, 2, ',', '.') }}
+                                        <i class="bi bi-cash-coin"></i> Rp.
+                                        {{ number_format($service->total_cost, 2, ',', '.') }}
                                     </p>
-                
+
                                     <!-- Tanggal Service -->
                                     <p class="fw-light">
-                                        <i class="bi bi-calendar-check"></i> 
-                                        {{ \Carbon\Carbon::parse($service->service_date)->format('d-m-Y') }} - 
+                                        <i class="bi bi-calendar-check"></i>
+                                        {{ \Carbon\Carbon::parse($service->service_date)->format('d-m-Y') }} -
                                         {{ $service->created_at->format('d-m-Y H:i') }}
                                     </p>
-                
+
                                     <!-- Tombol Aksi -->
                                     <div class="d-flex justify-content-center gap-2 mt-3">
-                                        <a href="{{ route('service.show', $service->id) }}" class="btn btn-info btn-sm w-100">
+                                        <a href="{{ route('service.show', $service->id) }}"
+                                            class="btn btn-info btn-sm w-100">
                                             <i class="bi bi-info-circle"></i> Detail
                                         </a>
-                                        <a href="{{ route('service.edit', $service->id) }}" class="btn btn-warning btn-sm w-100">
+                                        <a href="{{ route('service.edit', $service->id) }}"
+                                            class="btn btn-warning btn-sm w-100">
                                             <i class="bi bi-pencil-square"></i> Edit
                                         </a>
-                                        <a href="#" class="btn btn-danger btn-sm w-100" onclick="event.preventDefault(); document.getElementById('delete-form-{{ $service->id }}').submit();">
+                                        <a href="#" class="btn btn-danger btn-sm w-100"
+                                            onclick="event.preventDefault(); document.getElementById('delete-form-{{ $service->id }}').submit();">
                                             <i class="bi bi-trash"></i> Hapus
                                         </a>
-                                        <form id="delete-form-{{ $service->id }}" action="{{ route('service.destroy', $service->id) }}" method="POST" class="d-none">
+                                        <form id="delete-form-{{ $service->id }}"
+                                            action="{{ route('service.destroy', $service->id) }}" method="POST"
+                                            class="d-none">
                                             @csrf
                                             @method('DELETE')
                                         </form>
@@ -186,7 +190,7 @@
                         </div>
                     @endforelse
                 </div>
-                
+
 
                 <!-- Pagination links -->
                 <div class="d-flex justify-content-center mt-4">
