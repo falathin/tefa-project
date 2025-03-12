@@ -653,7 +653,7 @@
                     <!-- Tombol lainnya (Cetak, Salin, Kembali, Edit, Hapus) -->
                     <div class="action-buttons-left d-flex gap-2">
                         <!-- Cetak Button -->
-                        <button id="printBtn" class="btn btn-primary btn-sm">
+                        <button id="printBtn" class="btn btn-primary btn-sm" @if ($service->status == false) disabled @endif>
                             <i class="mdi mdi-printer me-2"></i> Cetak
                         </button>
 

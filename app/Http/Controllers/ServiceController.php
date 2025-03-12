@@ -22,59 +22,59 @@ class ServiceController extends Controller
     {
         $paymentStatus = $request->get('payment_status', 'all');
         $request->session()->put('payment_status', $paymentStatus);
-    
+
         if (Auth::user()->jurusan == 'General') {
             $servicesQuery = Service::query();
         } else {
             $servicesQuery = Service::query()->where('jurusan', 'like', Auth::user()->jurusan);
         }
-    
+
         if ($paymentStatus !== 'all') {
             $servicesQuery = $servicesQuery->when($paymentStatus === 'paid', function ($query) {
                 return $query->where('payment_received', '>=', DB::raw('total_cost'));
             })
-            ->where('jurusan', 'like', 'TSM')
-            ->when($paymentStatus === 'unpaid', function ($query) {
-                return $query->where('payment_received', '<', DB::raw('total_cost'));
-            });
+                ->where('jurusan', 'like', 'TSM')
+                ->when($paymentStatus === 'unpaid', function ($query) {
+                    return $query->where('payment_received', '<', DB::raw('total_cost'));
+                });
         }
-    
+
         // Tambahkan pencarian di beberapa kolom tambahan
         if ($search = $request->get('search')) {
             $servicesQuery = $servicesQuery->where(function ($query) use ($search) {
                 $query->whereHas('vehicle', function ($query) use ($search) {
                     $query->where('license_plate', 'like', "%{$search}%");
                 })
-                ->orWhereHas('vehicle.customer', function ($query) use ($search) {
-                    $query->where('name', 'like', "%{$search}%");
-                })
-                ->orWhere('complaint', 'like', "%{$search}%")
-                ->orWhere('service_type', 'like', "%{$search}%")
-                ->orWhere('status', 'like', "%{$search}%")
-                ->orWhere('additional_notes', 'like', "%{$search}%")
-                ->orWhere('technician_name', 'like', "%{$search}%")
-                ->orWhere('payment_method', 'like', "%{$search}%");
+                    ->orWhereHas('vehicle.customer', function ($query) use ($search) {
+                        $query->where('name', 'like', "%{$search}%");
+                    })
+                    ->orWhere('complaint', 'like', "%{$search}%")
+                    ->orWhere('service_type', 'like', "%{$search}%")
+                    ->orWhere('status', 'like', "%{$search}%")
+                    ->orWhere('additional_notes', 'like', "%{$search}%")
+                    ->orWhere('technician_name', 'like', "%{$search}%")
+                    ->orWhere('payment_method', 'like', "%{$search}%");
             });
         }
-    
+
         if ($date = $request->get('date')) {
             $servicesQuery = $servicesQuery->whereDate('created_at', $date);
         }
-    
+
         if ($year = $request->get('year')) {
             $servicesQuery = $servicesQuery->whereYear('created_at', $year);
         }
-    
+
         if ($dayOfWeek = $request->get('day_of_week')) {
             $servicesQuery = $servicesQuery->whereRaw('DAYOFWEEK(created_at) = ?', [$dayOfWeek]);
         }
-    
+
         $services = $servicesQuery->paginate(10);
-    
+
         return view('service.index', compact('services'));
     }
 
-    
+
     public function create($vehicle_id)
     {
         $vehicle = Vehicle::find($vehicle_id);
@@ -157,9 +157,12 @@ class ServiceController extends Controller
 
     public function completeService($id)
     {
-        $service = Service::findOrFail($id);
-
-        // Ubah status menjadi selesai
+        $service = Service::with('serviceSpareparts')->findOrFail($id);
+        $serviceSpareparts = $service->serviceSpareparts;
+        foreach ($serviceSpareparts as $serviceSparepart) {
+            $sparepart = Sparepart::findOrFail($serviceSparepart->sparepart_id);
+            $sparepart->decrement('jumlah', $serviceSparepart->quantity);
+        }
         $service->status = 1;
         $service->save();
 
@@ -220,8 +223,8 @@ class ServiceController extends Controller
                 $sparepart = Sparepart::findOrFail($sparepart_id);
 
                 if ($sparepart->jumlah >= $request->jumlah[$index]) {
-                    $oldSparepart = $sparepart->jumlah;
-                    $sparepart->decrement('jumlah', $request->jumlah[$index]);
+                    // $oldSparepart = $sparepart->jumlah;
+                    // $sparepart->decrement('jumlah', $request->jumlah[$index]);
 
                     // ini untuk jumlah_before
                     // dd($oldSparepart);
@@ -256,66 +259,66 @@ class ServiceController extends Controller
     }
 
     public function update(Request $request, $id)
-{
-    $service = Service::with('serviceSpareparts')->findOrFail($id);
-    
-    // 1. Simpan data lama SEBELUM dihapus
-    $oldSpareparts = $service->serviceSpareparts->keyBy('sparepart_id');
-    
-    // 2. Hapus semua relasi lama SEKALIGUS
-    $service->serviceSpareparts()->delete();
+    {
+        $service = Service::with('serviceSpareparts')->findOrFail($id);
 
-    // 3. Update data service
-    $service->update($request->except('sparepart_id', 'jumlah', 'payment_proof'));
+        // 1. Simpan data lama SEBELUM dihapus
+        $oldSpareparts = $service->serviceSpareparts->keyBy('sparepart_id');
 
-    // 4. Proses sparepart baru
-    $total_keuntungan = 0;
-    
-    if($request->sparepart_id) {
-        foreach($request->sparepart_id as $index => $sparepart_id) {
-            $sparepart = Sparepart::findOrFail($sparepart_id);
-            $newQuantity = $request->jumlah[$index];
-            
-            // 5. Cari kuantitas lama
-            $oldQuantity = $oldSpareparts->has($sparepart_id) 
-                ? $oldSpareparts[$sparepart_id]->quantity 
-                : 0;
+        // 2. Hapus semua relasi lama SEKALIGUS
+        $service->serviceSpareparts()->delete();
 
-            // 6. Hitung selisih
-            $difference = $newQuantity - $oldQuantity;
-            
-            // 7. Update stok
-            if($sparepart->jumlah + $oldQuantity < $newQuantity) {
-                return back()->withErrors(['sparepart_id' => 'Stok tidak cukup untuk '.$sparepart->nama_sparepart]);
+        // 3. Update data service
+        $service->update($request->except('sparepart_id', 'jumlah', 'payment_proof'));
+
+        // 4. Proses sparepart baru
+        $total_keuntungan = 0;
+
+        if ($request->sparepart_id) {
+            foreach ($request->sparepart_id as $index => $sparepart_id) {
+                $sparepart = Sparepart::findOrFail($sparepart_id);
+                $newQuantity = $request->jumlah[$index];
+
+                // 5. Cari kuantitas lama
+                $oldQuantity = $oldSpareparts->has($sparepart_id)
+                    ? $oldSpareparts[$sparepart_id]->quantity
+                    : 0;
+
+                // 6. Hitung selisih
+                $difference = $newQuantity - $oldQuantity;
+
+                // 7. Update stok
+                if ($sparepart->jumlah + $oldQuantity < $newQuantity) {
+                    return back()->withErrors(['sparepart_id' => 'Stok tidak cukup untuk ' . $sparepart->nama_sparepart]);
+                }
+
+                $sparepart->decrement('jumlah', $difference);
+
+                // 8. Simpan relasi baru
+                ServiceSparepart::create([
+                    'service_id' => $service->id,
+                    'sparepart_id' => $sparepart_id,
+                    'quantity' => $newQuantity
+                ]);
             }
-            
-            $sparepart->decrement('jumlah', $difference);
-
-            // 8. Simpan relasi baru
-            ServiceSparepart::create([
-                'service_id' => $service->id,
-                'sparepart_id' => $sparepart_id,
-                'quantity' => $newQuantity
-            ]);
         }
-    }
 
-    // 9. Kembalikan stok untuk sparepart yang dihapus
-    foreach($oldSpareparts as $old) {
-        if(!in_array($old->sparepart_id, $request->sparepart_id ?? [])) {
-            Sparepart::find($old->sparepart_id)->increment('jumlah', $old->quantity);
+        // 9. Kembalikan stok untuk sparepart yang dihapus
+        foreach ($oldSpareparts as $old) {
+            if (!in_array($old->sparepart_id, $request->sparepart_id ?? [])) {
+                Sparepart::find($old->sparepart_id)->increment('jumlah', $old->quantity);
+            }
         }
-    }
 
-    // Handle payment proof
-    if ($request->hasFile('payment_proof')) {
-        $paymentProof = $request->file('payment_proof')->store('payment_proofs', 'public');
-        $service->update(['payment_proof' => $paymentProof]);
-    }
+        // Handle payment proof
+        if ($request->hasFile('payment_proof')) {
+            $paymentProof = $request->file('payment_proof')->store('payment_proofs', 'public');
+            $service->update(['payment_proof' => $paymentProof]);
+        }
 
-    return redirect()->route('service.show', $service->id)
-        ->with('success', 'Layanan berhasil diperbarui!');
-}
+        return redirect()->route('service.show', $service->id)
+            ->with('success', 'Layanan berhasil diperbarui!');
+    }
 
     public function updateService(Request $request, $id)
     {

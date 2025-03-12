@@ -95,11 +95,13 @@
                                                     <i class="fas fa-eye"></i> Lihat
                                                 </a>
                                                 @if (!Gate::allows('isBendahara'))
-                                                    <a href="{{ route('service.edit', $service->id) }}"
-                                                        class="btn btn-warning btn-sm" data-bs-toggle="tooltip"
-                                                        data-bs-placement="top" title="Edit">
-                                                        <i class="fas fa-edit"></i> Edit
-                                                    </a>
+                                                    @if ($service->status == false)
+                                                        <a href="{{ route('service.edit', $service->id) }}"
+                                                            class="btn btn-warning btn-sm" data-bs-toggle="tooltip"
+                                                            data-bs-placement="top" title="Edit">
+                                                            <i class="fas fa-edit"></i> Edit
+                                                        </a>
+                                                    @endif
                                                     <form action="{{ route('service.destroy', $service->id) }}"
                                                         method="POST" style="display:inline;" class="d-inline">
                                                         @csrf
