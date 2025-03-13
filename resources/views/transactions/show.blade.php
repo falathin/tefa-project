@@ -20,14 +20,14 @@
                 <div class="col-md-6 col-lg-3">
                     <div class="card text-white bg-info shadow-sm p-3 text-center">
                         <h5 class="fw-bold mb-2"><i class="fas fa-percent"></i> Diskon</h5>
-                        <p class="fs-4 fw-bold mb-0">Rp {{ number_format($transaction->discount) }}</p>
+                        <p class="fs-4 fw-bold mb-0">{{ number_format($transaction->discount) }}</p>
                     </div>
                 </div>
             
                 <div class="col-md-6 col-lg-3">
                     <div class="card text-white bg-secondary shadow-sm p-3 text-center">
                         <h5 class="fw-bold mb-2"><i class="fas fa-calculator"></i> Total Setelah Diskon</h5>
-                        <p class="fs-4 fw-bold mb-0">Rp {{ number_format($totalPrice - $transaction->discount) }}</p>
+                        <p class="fs-4 fw-bold mb-0">Rp {{ number_format($totalPrice) }}</p>
                     </div>
                 </div>
             
@@ -179,37 +179,219 @@ document.addEventListener("DOMContentLoaded", function() {
         }, 3000);
     }
 
-    // Print menggunakan hidden iframe
-    document.getElementById("printBtn").addEventListener("click", function() {
-        var content = document.querySelector('.printable').innerHTML;
-        var iframe = document.createElement('iframe');
-        iframe.style.position = 'fixed';
-        iframe.style.right = '0';
-        iframe.style.bottom = '0';
-        iframe.style.width = '0';
-        iframe.style.height = '0';
-        iframe.style.border = '0';
-        document.body.appendChild(iframe);
 
-        var doc = iframe.contentWindow.document;
-        doc.open();
-        doc.write('<html><head><title>Struk Transaksi Sparepart</title>');
-        doc.write('<link rel="stylesheet" href="/css/app.css" type="text/css" />');
-        doc.write('<style>@media print { body { -webkit-print-color-adjust: exact; } }</style>');
-        doc.write('</head><body>');
-        doc.write(content);
-        doc.write('</body></html>');
-        doc.close();
-
-        iframe.contentWindow.focus();
-        iframe.contentWindow.print();
-
-        setTimeout(function() {
-            document.body.removeChild(iframe);
-        }, 1000);
-    });
 });
 </script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById("printBtn").addEventListener("click", function() {
+            // Template invoice dengan Bootstrap 4 dan Font Awesome, dengan tambahan ikon, penyesuaian margin,
+            // dan invoice-card ditengahkan secara horizontal & vertikal
+            const template = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <title>Struk Transaksi Sparepart</title>
+                <!-- Bootstrap 4 CDN -->
+                <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.6.0/css/bootstrap.min.css">
+                <!-- Font Awesome CDN -->
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+                <style>
+                    html, body {
+                        min-height: 100vh;
+                        height: 100%;
+                        margin: 0;
+                        font-family: 'Arial', sans-serif;
+                        font-size: 12px;
+                        line-height: 1.4;
+                        color: #333;
+                        background-color: #f7f7f7;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                    }
+                    .invoice-card {
+                        width: 100%;
+                        max-width: 650px;
+                        padding: 15px;
+                        background-color: #fff;
+                        border: 1px solid #ccc;
+                        border-radius: 8px;
+                        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+                    }
+                    .invoice-header {
+                        text-align: center;
+                        padding-bottom: 10px;
+                        border-bottom: 2px solid #007bff;
+                        margin-bottom: 15px;
+                    }
+                    .invoice-header h1 {
+                        font-size: 22px;
+                        margin: 0;
+                        color: #007bff;
+                    }
+                    .invoice-header p {
+                        font-size: 12px;
+                        margin: 0;
+                    }
+                    .invoice-table {
+                        margin-top: 10px;
+                    }
+                    .invoice-table table {
+                        width: 100%;
+                        border-collapse: collapse;
+                    }
+                    .invoice-table th, .invoice-table td {
+                        border: 1px solid #ddd;
+                        padding: 6px;
+                        text-align: center;
+                    }
+                    .invoice-table th {
+                        background-color: #007bff;
+                        color: #fff;
+                        font-size: 11px;
+                    }
+                    .invoice-table td {
+                        font-size: 10px;
+                    }
+                    .invoice-info {
+                        margin-top: 10px;
+                        padding: 10px;
+                        background-color: #f1f1f1;
+                        border: 1px solid #ddd;
+                        border-radius: 4px;
+                        font-size: 11px;
+                    }
+                    .invoice-info .row > div {
+                        margin-bottom: 5px;
+                    }
+                    .invoice-footer {
+                        text-align: center;
+                        margin-top: 10px;
+                        padding-top: 8px;
+                        border-top: 1px solid #ddd;
+                        font-weight: bold;
+                        font-size: 12px;
+                        color: #007bff;
+                    }
+                    .invoice-footer small {
+                        display: block;
+                        font-size: 10px;
+                        margin-top: 4px;
+                        color: #666;
+                    }
+                    @media print {
+                        html, body { margin: 0; height: auto; display: block; }
+                        .invoice-card { width: 80%; margin: auto; padding: 5px; }
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="invoice-card">
+                    <div class="invoice-header">
+                        <img width="40px" src="{{ asset('assets/images/logo-mini.svg') }}" alt="Logo" class="mb-1">
+                        <h1><i class="fas fa-tools"></i> Struk Transaksi Sparepart</h1>
+                        <p><i class="fas fa-info-circle"></i> Detail: {{ $transaction->name }}</p>
+                    </div>
+                    <div class="invoice-table">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th><i class="fas fa-cog"></i> Nama Sparepart</th>
+                                    <th><i class="fas fa-info"></i> Spesifikasi</th>
+                                    <th><i class="fas fa-sort-numeric-up"></i> Jumlah</th>
+                                    <th><i class="fas fa-dollar-sign"></i> Harga Beli</th>
+                                    <th><i class="fas fa-dollar-sign"></i> Harga Jual</th>
+                                    <th><i class="fas fa-chart-line"></i> Keuntungan</th>
+                                    <th><i class="fas fa-calculator"></i> Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($transaction->transactionSpareparts as $sparepart)
+                                <tr>
+                                    <td><i class="fas fa-toolbox"></i> {{ $sparepart->sparepart->nama_sparepart }}</td>
+                                    <td><i class="fas fa-info-circle"></i> {{ $sparepart->sparepart->spek }}</td>
+                                    <td>{{ $sparepart->quantity }}</td>
+                                    <td>Rp {{ number_format($sparepart->sparepart->harga_beli) }}</td>
+                                    <td>Rp {{ number_format($sparepart->sparepart->harga_jual) }}</td>
+                                    <td>Rp {{ number_format($sparepart->sparepart->keuntungan) }}</td>
+                                    <td>Rp {{ number_format($sparepart->quantity * $sparepart->sparepart->harga_jual) }}</td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="invoice-info">
+                        <div class="row">
+                            <div class="col-6">
+                                <strong><i class="fas fa-shopping-cart"></i> Total Harga:</strong><br>
+                                Rp {{ number_format($subtotalBeforeDiscount) }}
+                            </div>
+                            <div class="col-6">
+                                <strong><i class="fas fa-percent"></i> Diskon:</strong><br>
+                                Rp {{ number_format($transaction->discount) }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <strong><i class="fas fa-calculator"></i> Total Setelah Diskon:</strong><br>
+                                Rp {{ number_format($totalPrice - $transaction->discount) }}
+                            </div>
+                            <div class="col-6">
+                                <strong><i class="fas fa-wallet"></i> Uang Diterima:</strong><br>
+                                Rp {{ number_format($transaction->purchase_price) }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <strong><i class="fas fa-hand-holding-usd"></i> Status:</strong><br>
+                                {{ $transaction->purchase_price >= ($totalPrice - $transaction->discount) ? 'Kembalian' : 'Hutang' }}<br>
+                                (Rp {{ number_format(abs($transaction->purchase_price - ($totalPrice - $transaction->discount))) }})
+                            </div>
+                            <div class="col-6">
+                                <strong><i class="fas fa-credit-card"></i> Pembayaran:</strong><br>
+                                {{ $transaction->payment_method }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="invoice-footer">
+                        Terima kasih atas kepercayaan Anda!
+                        <small>Hubungi kami: 0812-3456-7890 | email@example.com</small>
+                    </div>
+                </div>
+            </body>
+            </html>
+            `;
+                    
+            // Buat iframe tersembunyi untuk cetak
+            const iframe = document.createElement('iframe');
+            iframe.style.position = 'fixed';
+            iframe.style.right = '0';
+            iframe.style.bottom = '0';
+            iframe.style.width = '0';
+            iframe.style.height = '0';
+            iframe.style.border = '0';
+            document.body.appendChild(iframe);
+                    
+            const doc = iframe.contentWindow.document;
+            doc.open();
+            doc.write(template);
+            doc.close();
+                    
+            // Tunggu hingga iframe termuat, lalu print dan hapus iframe
+            iframe.onload = function() {
+                iframe.contentWindow.focus();
+                iframe.contentWindow.print();
+                setTimeout(() => {
+                    document.body.removeChild(iframe);
+                }, 1000);
+            };
+        });
+    });
+    </script>
+    
 
 <style>
 .toast-message {
