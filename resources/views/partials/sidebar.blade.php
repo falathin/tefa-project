@@ -12,7 +12,7 @@
 
         <!-- Program Service Menu Item -->
         @if (Gate::allows('isAdminOrEngineer') xor Gate::allows('isKasir'))
-        <li class="nav-item {{ request()->is('service*') ? 'active' : '' }} animate__animated animate__slideInLeft animate__delay-3.3s">
+        <li class="nav-item {{ request()->is('customer.index') ? 'active' : '' && request()->is('service*') ? 'active' : '' }} animate__animated animate__slideInLeft animate__delay-3.3s">
             <a class="nav-link" href="{{ route('customer.index') }}">
                 <i class="mdi mdi-cog-outline menu-icon"></i>
                 <span class="menu-title">Layanan Servis</span>
@@ -41,7 +41,7 @@
         </li>
 
         <!-- Riwayat Service Menu Item -->
-        <li class="nav-item {{ request()->is('service*') ? 'active' : '' }} animate__animated animate__slideInLeft animate__delay-9.3s">
+        <li class="nav-item {{ request()->is('service.index') ? 'active' : '' }} animate__animated animate__slideInLeft animate__delay-9.3s">
             <a class="nav-link" href="{{ route('service.index') }}">
                 <i class="mdi mdi-history menu-icon"></i>
                 <span class="menu-title">Riwayat Servis</span>
