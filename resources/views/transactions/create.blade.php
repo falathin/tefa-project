@@ -35,7 +35,7 @@
                             <table class="table table-bordered text-center" id="sparepartTable">
                                 <thead class="thead-dark">
                                     <tr>
-                                        <th>Nama Sparepart</th>
+                                        <th>Nama Sparepart + Spek</th>
                                         <th>Harga Satuan</th>
                                         <th>Jumlah</th>
                                         <th>Subtotal</th>

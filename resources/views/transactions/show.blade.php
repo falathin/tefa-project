@@ -18,16 +18,16 @@
                 </div>
             
                 <div class="col-md-6 col-lg-3">
-                    <div class="card text-white bg-info shadow-sm p-3 text-center">
-                        <h5 class="fw-bold mb-2"><i class="fas fa-percent"></i> Diskon</h5>
-                        <p class="fs-4 fw-bold mb-0">{{ number_format($transaction->discount) }}</p>
-                    </div>
-                </div>
-            
-                <div class="col-md-6 col-lg-3">
                     <div class="card text-white bg-secondary shadow-sm p-3 text-center">
                         <h5 class="fw-bold mb-2"><i class="fas fa-calculator"></i> Total Setelah Diskon</h5>
                         <p class="fs-4 fw-bold mb-0">Rp {{ number_format($totalPrice) }}</p>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-3">
+                    <div class="card text-white bg-info shadow-sm p-3 text-center">
+                        <h5 class="fw-bold mb-2"><i class="fas fa-percent"></i> Diskon</h5>
+                        <p class="fs-4 fw-bold mb-0">{{ $transaction->discount }}</p>
                     </div>
                 </div>
             
@@ -44,9 +44,9 @@
                     <div class="card text-white shadow-sm p-3 text-center {{ $transaction->purchase_price >= ($totalPrice - $transaction->discount) ? 'bg-success' : 'bg-danger' }}">
                         <h5 class="fw-bold mb-2">
                             <i class="fas {{ $transaction->purchase_price >= ($totalPrice - $transaction->discount) ? 'fa-money-bill-wave' : 'fa-exclamation-circle' }}"></i> 
-                            {{ $transaction->purchase_price >= ($totalPrice - $transaction->discount) ? 'Kembalian' : 'Hutang' }}
+                            {{ $transaction->purchase_price >= ($totalPrice * $transaction->discount / 100) ? 'Kembalian' : 'Hutang' }}
                         </h5>
-                        <p class="fs-4 fw-bold mb-0">Rp {{ number_format(abs($transaction->purchase_price - ($totalPrice - $transaction->discount))) }}</p>
+                        <p class="fs-4 fw-bold mb-0">Rp {{ number_format($transaction->purchase_price - $totalPrice) }}</p>
                     </div>
                 </div>
                 

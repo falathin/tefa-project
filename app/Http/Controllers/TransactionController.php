@@ -76,10 +76,12 @@ class TransactionController extends Controller
 
         $sparepartIds = explode(',',$request->sparepart_id);
         
+        $total_price = $request->total_price - ($request->total_price * $request->discount / 100);
+        // dd($total_price);
         $transaction = Transaction::create([
             'name' => $request->name,
             'purchase_price' => $request->purchase_price,
-            'total_price' => $request->total_price,
+            'total_price' => $total_price,
             'discount' => $request->discount,
             'payment_method' => $request->payment_method,
             'transaction_date' => $request->transaction_date,
