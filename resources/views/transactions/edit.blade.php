@@ -92,6 +92,14 @@
 
                     <!-- Grid Form 2 kolom -->
                     <div class="row">
+                        <div class="row mt-3">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="name"><i class="bi bi-person-fill"></i> Nama Pelanggan</label>
+                                    <input type="text" name="name" id="name" class="form-control" value="{{ old('name', $transaction->name ?? '') }}" required>
+                                </div>
+                            </div>
+                        </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="transaction_date">
@@ -120,7 +128,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="row mt-3">
                         <div class="col-md-6">
                             <div class="form-group">
@@ -157,7 +165,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="row mt-3">
                         <div class="col-md-6">
                             <div class="form-group">
@@ -178,11 +186,12 @@
                                 @endphp
                                 <input type="text" id="total_price" class="form-control"
                                     value="Rp {{ number_format($totalSetelahDiskon) }}" readonly>
-                                <input type="hidden" id="total_price_asli" name="total_price" value="{{ $totalSetelahDiskon }}">
+                                <input type="hidden" id="total_price_asli" name="total_price"
+                                    value="{{ $totalSetelahDiskon }}">
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="row mt-3">
                         <div class="col-md-6">
                             <div class="form-group">
@@ -207,7 +216,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="d-flex justify-content-between mt-4">
                         <a href="{{ route('transactions.index') }}" class="btn btn-secondary">
                             <i class="bi bi-arrow-left-circle-fill"></i> Kembali
@@ -220,10 +229,13 @@
             </form>
         </div>
     </div>
+    </script>
+
 
     <!-- Script untuk perhitungan dan validasi sparepart -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Fungsi helper format
             function formatRibuan(angka) {
                 return new Intl.NumberFormat("id-ID").format(angka);
             }
@@ -236,16 +248,38 @@
                 return parseInt(angka.replace(/\D/g, "")) || 0;
             }
 
-            // Perhitungan subtotal untuk baris sparepart
+            // Update opsi pada select sparepart agar opsi yang sudah dipilih tidak muncul di select lainnya
+            function updateAllSelectOptions() {
+                const allSelects = document.querySelectorAll('.sparepart_id');
+                const selectedIds = Array.from(allSelects)
+                    .map(select => select.value)
+                    .filter(value => value !== "");
+                allSelects.forEach(select => {
+                    const currentValue = select.value;
+                    Array.from(select.options).forEach(option => {
+                        if (option.value && option.value !== currentValue && selectedIds.includes(
+                                option.value)) {
+                            option.disabled = true;
+                            option.hidden = true;
+                        } else {
+                            option.disabled = false;
+                            option.hidden = false;
+                        }
+                    });
+                });
+            }
+
+            // Hitung subtotal untuk satu baris (harga satuan x jumlah)
             function calculateSubtotal(row) {
-                const price = parseFloat(unformat(row.querySelector('.harga').value)) || 0;
+                const priceStr = row.querySelector('.harga').value;
+                const price = parseFloat(unformat(priceStr)) || 0;
                 const quantity = parseInt(row.querySelector('.jumlah').value) || 0;
                 const subtotal = price * quantity;
                 row.querySelector('.subtotal').value = formatRupiah(subtotal);
                 updateTotalCost();
             }
 
-            // Update total biaya
+            // Hitung total biaya seluruh sparepart dan simpan nilai asli di hidden input
             function updateTotalCost() {
                 let totalSparepart = 0;
                 document.querySelectorAll('#sparepartTable tbody tr').forEach(row => {
@@ -258,122 +292,103 @@
                 updateChange();
             }
 
-            // Update kembalian/hutang
+            // Hitung kembalian/hutang berdasarkan uang yang diterima dan total biaya
             function updateChange() {
-                const paymentReceived = parseFloat(unformat(document.getElementById('purchase_price_asli').value)) || 0;
+                const paymentReceived = parseFloat(unformat(document.getElementById('purchase_price').value)) || 0;
                 const totalCost = parseFloat(unformat(document.getElementById('total_price').value)) || 0;
                 const change = paymentReceived - totalCost;
                 document.getElementById('change').value = formatRupiah(change);
             }
 
-            // Update opsi select sparepart supaya tidak ada duplikasi
-            function updateAllSelectOptions() {
-                const allSelects = document.querySelectorAll('.sparepart_id');
-                const selectedIds = Array.from(allSelects)
-                    .map(select => select.value)
-                    .filter(value => value !== "");
-                allSelects.forEach(select => {
-                    const currentValue = select.value;
-                    Array.from(select.options).forEach(option => {
-                        if (option.value && option.value !== currentValue) {
-                            option.hidden = selectedIds.includes(option.value);
-                        } else {
-                            option.hidden = false;
-                        }
-                    });
-                });
-            }
-
-            // Event: Tambah baris sparepart
-            document.getElementById('addRow').addEventListener('click', function() {
-                const selectedIds = Array.from(document.querySelectorAll('.sparepart_id'))
-                    .map(select => select.value)
-                    .filter(value => value !== "");
-
-                if (selectedIds.length >= {{ $spareparts->count() }}) {
-                    alert('Sparepart habis!');
-                    return;
-                }
-
-                const tableBody = document.querySelector('#sparepartTable tbody');
-                const row = tableBody.insertRow();
-
-                let optionsHtml = '<option value="">Pilih Sparepart</option>';
-                @foreach ($spareparts as $sparepart)
-                    if (!selectedIds.includes("{{ $sparepart->id_sparepart }}")) {
-                        optionsHtml += `
-                            <option value="{{ $sparepart->id_sparepart }}" data-harga="{{ $sparepart->harga_jual }}">
-                                {{ $sparepart->nama_sparepart }}
-                            </option>
-                        `;
+            $(document).ready(function() {
+                // Event: Tambah baris sparepart
+                $(document).on('click', '#addRow', function() {
+                    const selectedIds = Array.from(document.querySelectorAll('.sparepart_id'))
+                        .map(select => select.value)
+                        .filter(value => value !== "");
+                    // Jika jumlah sparepart yang sudah dipilih sama atau lebih besar dari total sparepart yang tersedia, tampilkan alert
+                    if (selectedIds.length >= {{ $spareparts->count() }}) {
+                        alert('Sparepart habis!');
+                        return;
                     }
-                @endforeach
+                    const tableBody = document.querySelector('#sparepartTable tbody');
+                    const newRow = document.createElement('tr');
 
-                row.innerHTML = `
-                    <td>
-                        <select name="sparepart_id[]" class="form-control sparepart_id" required>
-                            ${optionsHtml}
-                        </select>
-                    </td>
-                    <td><input type="text" class="form-control harga" readonly></td>
-                    <td><input type="number" name="quantity[]" class="form-control jumlah" min="1" required></td>
-                    <td><input type="text" class="form-control subtotal" readonly></td>
-                    <td class="text-center">
-                        <button type="button" class="btn btn-danger remove-row">
-                            <i class="bi bi-trash-fill"></i> Hapus
-                        </button>
-                    </td>
-                `;
+                    let optionsHtml = '<option value="">Pilih Sparepart</option>';
+                    @foreach ($spareparts as $sparepart)
+                        // Hanya tampilkan opsi yang belum dipilih
+                        optionsHtml += ` 
+                    <option value="{{ $sparepart->id_sparepart }}" data-harga="{{ $sparepart->harga_jual }}">
+                        {{ $sparepart->nama_sparepart }}
+                    </option>`;
+                    @endforeach
 
-                $(row.querySelector('.sparepart_id')).select2({ width: '100%' });
-                updateAllSelectOptions();
-            });
+                    newRow.innerHTML = `
+                <td>
+                    <select name="sparepart_id[]" class="form-control sparepart_id" required>
+                        ${optionsHtml}
+                    </select>
+                </td>
+                <td><input type="text" class="form-control harga" readonly></td>
+                <td><input type="number" name="quantity[]" class="form-control jumlah" min="1" required></td>
+                <td><input type="text" class="form-control subtotal" readonly></td>
+                <td class="text-center">
+                    <button type="button" class="btn btn-danger remove-row">
+                        <i class="bi bi-trash-fill"></i> Hapus
+                    </button>
+                </td>
+            `;
+                    tableBody.appendChild(newRow);
+                    $(newRow.querySelector('.sparepart_id')).select2({
+                        width: '100%'
+                    });
+                    updateAllSelectOptions();
+                });
 
-            // Event: Saat terjadi perubahan pada select sparepart atau input quantity
-            document.querySelector('#sparepartTable').addEventListener('change', function(event) {
-                if (event.target.classList.contains('sparepart_id') || event.target.classList.contains('jumlah')) {
-                    const row = event.target.closest('tr');
-                    if (event.target.classList.contains('sparepart_id')) {
-                        const price = event.target.selectedOptions[0].getAttribute('data-harga') || 0;
+                // Event: Perubahan pada select sparepart atau input quantity
+                $('#sparepartTable').on('change', '.sparepart_id, .jumlah', function(e) {
+                    const row = $(this).closest('tr')[0];
+                    if ($(this).hasClass('sparepart_id')) {
+                        const selectedOption = this.options[this.selectedIndex];
+                        const price = selectedOption.getAttribute('data-harga') || 0;
                         row.querySelector('.harga').value = formatRupiah(price);
                     }
                     calculateSubtotal(row);
                     updateAllSelectOptions();
-                }
-            });
+                });
 
-            // Event: Hapus baris sparepart
-            document.querySelector('#sparepartTable').addEventListener('click', function(event) {
-                if (event.target.closest('.remove-row')) {
-                    event.target.closest('tr').remove();
+                // Event: Hapus baris sparepart
+                $('#sparepartTable').on('click', '.remove-row', function() {
+                    $(this).closest('tr').remove();
                     updateTotalCost();
                     updateAllSelectOptions();
-                }
-            });
+                });
 
-            // Format input uang masuk dan update nilai aslinya
-            document.getElementById('purchase_price').addEventListener('input', function() {
-                let value = unformat(this.value);
-                this.value = formatRupiah(value);
-                document.getElementById('purchase_price_asli').value = value;
+                // Format input uang masuk dan update change
+                $('#purchase_price').on('input', function() {
+                    let value = unformat($(this).val());
+                    $(this).val(formatRupiah(value));
+                    $('#purchase_price_asli').val(value);
+                    updateChange();
+                });
+
+                let initialValue = unformat($('#purchase_price').val());
+                $('#purchase_price').val(formatRupiah(initialValue));
+                $('#purchase_price_asli').val(initialValue);
+
+                // Validasi form sebelum submit
+                $('#transactionForm').on('submit', function(e) {
+                    if ($('.sparepart_id').length === 0) {
+                        alert('Harap tambahkan minimal 1 sparepart.');
+                        e.preventDefault();
+                        return false;
+                    }
+                });
+
+                updateAllSelectOptions();
+                updateTotalCost();
                 updateChange();
             });
-
-            let initialValue = unformat(document.getElementById('purchase_price').value);
-            document.getElementById('purchase_price').value = formatRupiah(initialValue);
-            document.getElementById('purchase_price_asli').value = initialValue;
-
-            updateAllSelectOptions();
-            updateTotalCost();
-            updateChange();
         });
-
-        function confirmSubmit() {
-            if (document.querySelectorAll('.sparepart_id').length === 0) {
-                alert('Harap tambahkan minimal 1 sparepart.');
-                return false;
-            }
-            return confirm('Apakah Anda yakin ingin menyimpan transaksi ini?');
-        }
     </script>
 @endsection
