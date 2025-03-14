@@ -292,7 +292,9 @@ class ServiceController extends Controller
                     return back()->withErrors(['sparepart_id' => 'Stok tidak cukup untuk ' . $sparepart->nama_sparepart]);
                 }
 
-                $sparepart->decrement('jumlah', $difference);
+                if ($difference != 0) {
+                    $sparepart->decrement('jumlah', $difference);
+                }
 
                 // 8. Simpan relasi baru
                 ServiceSparepart::create([
