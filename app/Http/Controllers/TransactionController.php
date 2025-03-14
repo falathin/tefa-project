@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Sparepart;
 use Illuminate\Http\Request;
 use App\Models\SparepartHistory;
+use App\Models\Customer;
 use App\Models\SparepartTransaction;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -49,8 +50,9 @@ class TransactionController extends Controller
             abort(403, 'Butuh level Admin & Kasir');
         }
         $spareparts = Sparepart::all();
+        $customers = Customer::all();
         $transactions = SparepartTransaction::all();
-        return view('transactions.create', compact('spareparts', 'transactions'));
+        return view('transactions.create', compact('spareparts', 'transactions','customers'));
     }
 
     public function store(Request $request)
@@ -123,7 +125,9 @@ class TransactionController extends Controller
         }
     
         return redirect()->route('transactions.index')
-            ->with('success', 'Transaksi sparepart berhasil disimpan! Total harga: Rp' . number_format($request->total_price, 0, ',', '.'));
+        ->with('success', 'Transaksi sparepart berhasil disimpan! Total harga: Rp' 
+        . number_format($request->total_price * ((100 - $request->discount) / 100), 0, ',', '.') 
+        . ' (Diskon ' . number_format($request->discount, 0, ',', '.') . '%)');    
     }
     
     public function show($id)
@@ -152,22 +156,21 @@ class TransactionController extends Controller
 
     public function edit($id)
     {
-        // Ambil data Transaction berdasarkan ID, bukan SparepartTransaction
         $transaction = Transaction::with('transactionSpareparts.sparepart')->findOrFail($id);
-
+    
         if (! Gate::allows('isSameJurusan', [$transaction])) {
             abort(403, 'Data tidak ditemukan!');
         }
-
+    
         if (! Gate::allows('isAdminOrEngineer')) {
             abort(403, 'Butuh level Admin');
         }
-
+    
         $spareparts = Sparepart::all();
+        $customers = Customer::all(); // Pastikan variabel ini tersedia
         $transactionDate = \Carbon\Carbon::parse($transaction->transaction_date);
         $formattedDate = $transactionDate->toDateString();
-
-        // Hitung subtotal untuk setiap sparepart dalam transaksi
+    
         $transactionDetails = $transaction->transactionSpareparts->map(function ($transactionSparepart) {
             $subtotal = $transactionSparepart->quantity * $transactionSparepart->sparepart->harga_jual;
             return [
@@ -175,11 +178,12 @@ class TransactionController extends Controller
                 'nama_sparepart' => $transactionSparepart->sparepart->nama_sparepart,
                 'harga_jual' => $transactionSparepart->sparepart->harga_jual,
                 'quantity' => $transactionSparepart->quantity,
-                'subtotal' => $subtotal, // Menambahkan subtotal
+                'subtotal' => $subtotal,
             ];
         });
         $subtotalBeforeDiscount = $transactionDetails->sum('subtotal');
-        return view('transactions.edit', compact('transaction', 'spareparts', 'transactionDetails', 'formattedDate', 'subtotalBeforeDiscount'));        
+    
+        return view('transactions.edit', compact('transaction', 'spareparts', 'customers', 'transactionDetails', 'formattedDate', 'subtotalBeforeDiscount'));        
     }
 
     public function update(Request $request, $id)

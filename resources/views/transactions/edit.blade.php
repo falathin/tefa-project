@@ -3,6 +3,15 @@
 @section('content')
     <div class="container my-4">
         <div class="card shadow">
+            @php
+                // Ambil nama-nama customer sesuai jurusan user dan cek apakah nama transaksi sudah termasuk di sana
+                $customerNames = $customers
+                    ->where('jurusan', Auth::user()->jurusan)
+                    ->pluck('name')
+                    ->toArray();
+                $isExistingCustomer = in_array($transaction->name, $customerNames);
+            @endphp
+
             <form action="{{ route('transactions.update', $transaction->id) }}" method="POST" id="transactionForm">
                 @method('PUT')
                 @csrf
@@ -90,17 +99,107 @@
                         </div>
                     @endif
 
-                    <!-- Grid Form 2 kolom -->
-                    <div class="row">
-                        <div class="row mt-3">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="name"><i class="bi bi-person-fill"></i> Nama Pelanggan</label>
-                                    <input type="text" name="name" id="name" class="form-control"
-                                        value="{{ old('name', $transaction->name ?? '') }}" required>
+                    <!-- Input tambahan -->
+                    <input type="hidden" name="jurusan" value="{{ Auth::user()->jurusan }}">
+
+                    <!-- Grid Form 2 kolom untuk Nama Pelanggan dengan dua opsi -->
+                    <div class="row mt-3">
+                        <!-- Baris pilihan metode input nama pelanggan -->
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-6 mt-1">
+                                    <label>
+                                        <i class="bi bi-person"></i> Pilih Metode Input Nama Pelanggan
+                                    </label>
+                                    <div class="form-check mt-2">
+                                        <input class="form-check-input" type="radio" name="customer_option"
+                                            id="option_existing" value="existing"
+                                            {{ $isExistingCustomer ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="option_existing">
+                                            Pilih dari data yang sudah ada
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="customer_option"
+                                            id="option_manual" value="manual" {{ !$isExistingCustomer ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="option_manual">
+                                            Isi secara manual
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
+
+                    <!-- Field untuk opsi "Pilih dari data yang sudah ada" -->
+                    <div class="row" id="existingCustomerDiv">
+                        <div class="col-md-6 mt-1">
+                            <label for="customer_name_existing">
+                                <i class="bi bi-person"></i> Nama Pelanggan
+                            </label>
+                            <select id="customer_name_existing" class="form-control select2 mt-2" name="name" required>
+                                <option value="">Pilih Customer</option>
+                                @foreach ($customers->where('jurusan', Auth::user()->jurusan) as $customer)
+                                    <option value="{{ $customer->name }}"
+                                        {{ $isExistingCustomer && $customer->name == $transaction->name ? 'selected' : '' }}>
+                                        {{ $customer->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Field untuk opsi "Isi secara manual" -->
+                    <div class="row" id="manualCustomerDiv"
+                        style="display: {{ $isExistingCustomer ? 'none' : 'block' }};">
+                        <div class="col-md-6 mt-1">
+                            <label for="customer_name_manual">
+                                <i class="bi bi-person"></i> Nama Pelanggan
+                            </label>
+                            <input type="text" id="customer_name_manual" class="form-control mt-2"
+                                placeholder="Masukkan nama pelanggan"
+                                value="{{ !$isExistingCustomer ? $transaction->name : '' }}"
+                                {{ !$isExistingCustomer ? 'required' : '' }}>
+                        </div>
+                    </div>
+
+                    <!-- Include jQuery dan Select2 (jangan rubah script) -->
+                    <!-- jQuery (diperlukan oleh Select2) -->
+                    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                    <!-- Select2 JS -->
+                    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+                    <script>
+                        $(document).ready(function() {
+                            // Inisialisasi Select2 untuk dropdown
+                            $('#customer_name_existing').select2({
+                                width: '100%'
+                            });
+
+                            // Fungsi toggle untuk input nama pelanggan
+                            function toggleCustomerInput() {
+                                if ($('input[name="customer_option"]:checked').val() === 'existing') {
+                                    $('#existingCustomerDiv').show();
+                                    $('#customer_name_existing').prop('name', 'name').prop('required', true);
+                                    $('#manualCustomerDiv').hide();
+                                    $('#customer_name_manual').removeAttr('name').prop('required', false);
+                                } else {
+                                    $('#manualCustomerDiv').show();
+                                    $('#customer_name_manual').prop('name', 'name').prop('required', true);
+                                    $('#existingCustomerDiv').hide();
+                                    $('#customer_name_existing').removeAttr('name').prop('required', false);
+                                }
+                            }
+
+                            // Panggil fungsi toggle saat halaman dimuat
+                            toggleCustomerInput();
+
+                            // Bind event change untuk radio button
+                            $('input[name="customer_option"]').on('change', toggleCustomerInput);
+                        });
+                    </script>
+
+                    <!-- Grid Form 2 kolom untuk Transaksi -->
+                    <div class="row mt-3">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="transaction_date">
@@ -173,8 +272,9 @@
                                 <label for="discount">
                                     <i class="bi bi-tags-fill text-info"></i> Diskon (%)
                                 </label>
-                                <!-- Asumsikan $transaction->discount menyimpan nilai persen, misalnya "10" -->
-                                <input type="text" name="discount" id="discount" class="form-control" value="{{ $transaction->discount }}">
+                                <!-- Asumsikan $transaction->discount menyimpan nilai persen -->
+                                <input type="text" name="discount" id="discount" class="form-control"
+                                    value="{{ $transaction->discount }}">
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -183,7 +283,9 @@
                                     <i class="bi bi-wallet2 text-info"></i> Total Biaya Setelah Diskon
                                 </label>
                                 @php
-                                    $totalSetelahDiskon = $subtotalBeforeDiscount - $transaction->discount;
+                                    // Hitung total setelah diskon persen: Total = Subtotal * ((100 - discount) / 100)
+                                    $totalSetelahDiskon =
+                                        $subtotalBeforeDiscount * ((100 - $transaction->discount) / 100);
                                 @endphp
                                 <input type="text" id="total_price" class="form-control"
                                     value="Rp {{ number_format($totalSetelahDiskon) }}" readonly>
@@ -228,6 +330,7 @@
                     </div>
                 </div>
             </form>
+
         </div>
     </div>
     </script>
@@ -238,14 +341,16 @@
             function formatRibuan(angka) {
                 return new Intl.NumberFormat("id-ID").format(angka);
             }
+
             function formatRupiah(angka) {
                 return "Rp " + formatRibuan(angka);
             }
+
             function unformat(angka) {
                 // Menghapus karakter non-numerik, misalnya "Rp", spasi, koma, titik
                 return parseFloat(angka.replace(/[Rp\s,.]/g, "")) || 0;
             }
-    
+
             // Hitung subtotal sparepart dan update total biaya setelah diskon persen
             function updateTotalCost() {
                 let totalSparepart = 0;
@@ -261,7 +366,7 @@
                 document.getElementById('total_price_asli').value = totalAfterDiscount;
                 updateChange();
             }
-    
+
             // Hitung kembalian/hutang berdasarkan uang masuk dan total biaya setelah diskon
             function updateChange() {
                 const paymentReceived = parseFloat(unformat(document.getElementById('purchase_price').value)) || 0;
@@ -269,18 +374,19 @@
                 const change = paymentReceived - totalCost;
                 document.getElementById('change').value = formatRupiah(change);
             }
-    
+
             // Event listener untuk input diskon (sebagai persen)
             document.getElementById('discount').addEventListener('input', function() {
                 // Tidak perlu diformat seperti rupiah karena ini persen
                 updateTotalCost();
             });
-    
+
             // Event listener lainnya (contoh: untuk sparepart, uang masuk, dll.)
             $(document).ready(function() {
                 // Event: Tambah baris sparepart
                 $(document).on('click', '#addRow', function() {
-                    var availableCount = {{ $spareparts->where('jurusan', Auth::user()->jurusan)->count() }};
+                    var availableCount =
+                        {{ $spareparts->where('jurusan', Auth::user()->jurusan)->count() }};
                     var currentCount = $('.sparepart_id').length;
                     if (currentCount >= availableCount) {
                         alert('Sparepart habis!');
@@ -288,7 +394,7 @@
                     }
                     const tableBody = document.querySelector('#sparepartTable tbody');
                     const newRow = document.createElement('tr');
-    
+
                     let optionsHtml = '<option value="">Pilih Sparepart</option>';
                     @foreach ($spareparts->where('jurusan', Auth::user()->jurusan) as $sparepart)
                         optionsHtml += ` 
@@ -296,7 +402,7 @@
                                 {{ $sparepart->nama_sparepart }}
                             </option>`;
                     @endforeach
-    
+
                     newRow.innerHTML = `
                         <td>
                             <select name="sparepart_id[]" class="form-control sparepart_id" required>
@@ -318,7 +424,7 @@
                     });
                     updateAllSelectOptions();
                 });
-    
+
                 // Event: Perubahan pada select sparepart atau input quantity
                 $('#sparepartTable').on('change', '.sparepart_id, .jumlah', function(e) {
                     const row = $(this).closest('tr')[0];
@@ -330,14 +436,14 @@
                     calculateSubtotal(row);
                     updateAllSelectOptions();
                 });
-    
+
                 // Event: Hapus baris sparepart
                 $('#sparepartTable').on('click', '.remove-row', function() {
                     $(this).closest('tr').remove();
                     updateTotalCost();
                     updateAllSelectOptions();
                 });
-    
+
                 // Format input uang masuk dan update change
                 $('#purchase_price').on('input', function() {
                     let value = unformat($(this).val());
@@ -345,11 +451,11 @@
                     $('#purchase_price_asli').val(value);
                     updateChange();
                 });
-    
+
                 let initialValue = unformat($('#purchase_price').val());
                 $('#purchase_price').val(formatRupiah(initialValue));
                 $('#purchase_price_asli').val(initialValue);
-    
+
                 // Validasi form sebelum submit
                 $('#transactionForm').on('submit', function(e) {
                     if ($('.sparepart_id').length === 0) {
@@ -358,12 +464,12 @@
                         return false;
                     }
                 });
-    
+
                 updateAllSelectOptions();
                 updateTotalCost();
                 updateChange();
             });
-    
+
             // Fungsi tambahan: Hitung subtotal untuk satu baris sparepart
             function calculateSubtotal(row) {
                 const priceStr = row.querySelector('.harga').value;
@@ -373,7 +479,7 @@
                 row.querySelector('.subtotal').value = formatRupiah(subtotal);
                 updateTotalCost();
             }
-    
+
             // Fungsi tambahan: Update opsi pada select sparepart agar opsi yang sudah dipilih tidak muncul di select lainnya
             function updateAllSelectOptions() {
                 const allSelects = document.querySelectorAll('.sparepart_id');
@@ -383,7 +489,8 @@
                 allSelects.forEach(select => {
                     const currentValue = select.value;
                     Array.from(select.options).forEach(option => {
-                        if (option.value && option.value !== currentValue && selectedIds.includes(option.value)) {
+                        if (option.value && option.value !== currentValue && selectedIds.includes(
+                                option.value)) {
                             option.disabled = true;
                             option.hidden = true;
                         } else {
@@ -394,5 +501,5 @@
                 });
             }
         });
-    </script>    
+    </script>
 @endsection
