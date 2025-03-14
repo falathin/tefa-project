@@ -121,71 +121,7 @@
                             <p class="text-muted" style="font-size: 0.85rem;">Halaman ini menampilkan riwayat perubahan
                                 stok untuk sparepart tertentu. Berikut adalah detail perubahan yang telah terjadi:</p>
                         </div>
-                        <div class="table-responsive">
-                            <table class="table table-striped table-hover table-bordered">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>No</th>
-                                        <th>Stok Awal</th> <!-- Stok Awal -->
-                                        <th>Perubahan</th> <!-- Perubahan -->
-                                        <th>Stok Akhir</th> <!-- Stok Akhir -->
-                                        <th>Aksi</th> <!-- Aksi -->
-                                        <th>Tanggal</th> <!-- Tanggal -->
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse($data as $history)
-                                        <tr>
-                                            <td>{{ $loop->iteration }}</td>
-
-                                            <!-- Initial Stock -->
-                                            <td>
-                                                {{-- @dd($history->old_value) --}}
-                                                {{ $history->old_value }} unit
-                                            </td>
-
-                                            <!-- Change -->
-                                            <td>
-                                                @if ($history->action == 'add')
-                                                    <span class="text-success">+{{ $history->jumlah_changed }} unit
-                                                        (Penambahan)
-                                                    </span>
-                                                @elseif($history->action == 'subtract' || $history->action == 'use')
-                                                    <span class="text-danger">-{{ $history->jumlah_changed }} unit
-                                                        (Pemakaian)</span>
-                                                @elseif($history->action == 'edit')
-                                                    <span class="text-warning">Edit Data</span>
-                                                @endif
-                                            </td>
-
-                                            <!-- Final Stock -->
-                                            <td>{{ $history->new_value }} unit</td>
-
-                                            <!-- Action -->
-                                            <td
-                                                class="{{ $history->action == 'add' ? 'text-success' : ($history->action == 'edit' ? 'text-warning' : 'text-danger') }}">
-                                                @if ($history->action == 'subtract' || $history->action == 'use')
-                                                    Pemakaian
-                                                @elseif($history->action == 'add')
-                                                    Penambahan
-                                                @elseif($history->action == 'edit')
-                                                    Perubahan Data (Edit)
-                                                @endif
-                                            </td>
-
-                                            <!-- Date -->
-                                            <td>{{ $history->created_at->format('d-m-Y H:i') }}</td>
-                                        </tr>
-
-                                    @empty
-                                        <tr>
-                                            <td colspan="6" class="text-center">Tidak ada histori perubahan stok.</td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                        </div>
-                        <hr class="border-muted mt-2 mb-3">
+                        {{-- <hr class="border-muted mt-2 mb-3"> --}}
 
                         {{-- <div class="text-start">
                             <p><strong>Perubahan Hari Ini:</strong> <span class="text-warning">{{ $todayChanges }}
