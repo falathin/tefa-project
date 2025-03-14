@@ -600,7 +600,7 @@
                     });
                 </script>
 
-                <script>
+                {{-- <script>
                     document.getElementById('diskon').addEventListener('input', function() {
                         let diskon = parseFloat(this.value.replace(/\D/g, '')) || 0; // Hanya angka
                         if (diskon > 100) {
@@ -609,7 +609,7 @@
                         this.value = diskon;
                         document.getElementById('diskon_asli').value = diskon;
                     });
-                </script>
+                </script> --}}
 
                 <script>
                     document.addEventListener("DOMContentLoaded", function() {

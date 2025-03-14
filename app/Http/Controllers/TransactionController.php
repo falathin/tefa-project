@@ -230,8 +230,9 @@ class TransactionController extends Controller
                 if ($sparepart->jumlah + $oldQuantity < $newQuantity) {
                     return back()->withErrors(['sparepart_id' => 'Stok tidak cukup untuk ' . $sparepart->nama_sparepart]);
                 }
-    
-                $sparepart->decrement('jumlah', $difference);
+                if($difference != 0) {
+                    $sparepart->decrement('jumlah', $difference);
+                }
                 SparepartTransaction::create([
                     'transaction_id' => $transaction->id,
                     'sparepart_id' => $sparepart_id,
