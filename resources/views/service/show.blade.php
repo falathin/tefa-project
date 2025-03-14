@@ -470,7 +470,7 @@
                                         <input type="text" class="form-control border-danger" id="diskon"
                                             name="diskon" placeholder="Masukkan Diskon"
                                             value="{{ old('diskon', number_format($service->diskon, 0, ',', '.')) }}">
-                                        <input type="hidden" name="diskon" id="diskon_asli"
+                                        <input type="hiddengit" name="diskon" id="diskon_asli"
                                             value="{{ old('diskon', $service->diskon) }}">
                                     </div>
                                 </div>
