@@ -171,5 +171,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/export-service/{category}', [ServiceReportController::class, 'export'])->name('export.service');
     Route::get('/export-transactions', [TransactionController::class, 'export'])->name('transactions.export');
     Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
+    Route::get('/services/{id}/export-pkb', [ServiceController::class, 'exportPkb'])->name('services.exportPkb');
 
 });

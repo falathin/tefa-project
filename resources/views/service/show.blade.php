@@ -470,7 +470,7 @@
                                         <input type="text" class="form-control border-danger" id="diskon"
                                             name="diskon" placeholder="Masukkan Diskon"
                                             value="{{ old('diskon', number_format($service->diskon, 0, ',', '.')) }}">
-                                        <input type="hiddengit" name="diskon" id="diskon_asli"
+                                        <input type="hidden" name="diskon" id="diskon_asli"
                                             value="{{ old('diskon', $service->diskon) }}">
                                     </div>
                                 </div>
@@ -662,6 +662,10 @@
                             <i class="mdi mdi-content-copy me-2"></i> Salin Laporan
                         </button>
 
+                        <a href="{{ route('services.exportPkb', $service->id) }}" class="btn btn-success" target="_blank">
+                            <i class="bi bi-file-earmark-excel"></i> PKB Kerja Excel
+                        </a>                        
+
                         @if (!Gate::allows('isBendahara'))
                             <!-- Kembali ke Kendaraan -->
                             @if ($service->vehicle)
@@ -715,122 +719,59 @@
             </div>
         </div>
     </div>
-
     <script>
         document.getElementById('copyReportBtn').addEventListener('click', function() {
-                    var vehicleInfo =
-                        `*🚗 Informasi Kendaraan:*\nNomor Polisi: ${'{{ $service->vehicle->license_plate }}'} (${{ $service->vehicle->vehicle_type }})\nWarna: ${'{{ $service->vehicle->color }}'}\nTahun Produksi: ${
-                    '{{ $service->vehicle->production_year }}'}\nKode Mesin: ${'{{ $service->vehicle->engine_code }}'}`;
-
-                    var customerInfo = ** 👤Informasi Pelanggan: ** \nNama: $ {
-                        '{{ $service->vehicle->customer->name }}'
-                    }\
-                    nKontak: $ {
-                        '{{ $service->vehicle->customer->contact }}'
-                    }\
-                    nAlamat: $ {
-                        '{{ $service->vehicle->customer->address }}'
-                    };
-
-                    var serviceInfo = ** 🛠Informasi Servis: ** \nKeluhan: $ {
-                        '{{ $service->complaint }}'
-                    }\
-                    nKilometer Saat Ini: $ {
-                        '{{ $service->current_mileage }}'
-                    }
-                    km\ nBiaya Servis: Rp.$ {
-                        '{{ number_format($service->service_fee, 0, ',', '.') }}'
-                    }\
-                    nTotal Biaya: Rp.$ {
-                        '{{ number_format($service->total_cost, 0, ',', '.') }}'
-                    }\
-                    nPembayaran Diterima: Rp.$ {
-                        '{{ number_format($service->payment_received, 0, ',', '.') }}'
-                    }\
-                    nKembalian: Rp.$ {
-                        '{{ number_format($service->change, 0, ',', '.') }}'
-                    }\
-                    nJenis Servis: $ {
-                        '{{ ucfirst($service->service_type) }}'
-                    }\
-                    nTanggal Servis: $ {
-                        '{{ \Carbon\Carbon::parse($service->service_date)->format('d-m-Y') }}'
-                    };
-
-                    var sparepartsInfo = '🔧 Sparepart yang Digunakan:\n';
-
-                    // Loop through the service spareparts dynamically
-                    @foreach ($service->serviceSpareparts as $serviceSparepart)
-                        sparepartsInfo +=
-                            Nama: ** $ {
-                                '{{ $serviceSparepart->sparepart->nama_sparepart }}'
-                            } ** | Jumlah: $ {
-                                '{{ $serviceSparepart->quantity }}'
-                            } | Harga: Rp.$ {
-                                '{{ number_format($serviceSparepart->sparepart->harga_jual, 0, ',', '.') }}'
-                            }\
-                        n;
-                    @endforeach
-
-                    var checklistInfo = '📝 Pekerjaan yang Dikerjakan:\n';
-
-                    // Loop through the service checklists dynamically
-                    @foreach ($service->checklists as $checklist)
-                        checklistInfo +=
-                            - ** $ {
-                                '{{ $checklist->task }}'
-                            } ** $ {
-                                '{{ $checklist->is_completed ? '✅ Selesai' : '❌ Tertunda' }}'
-                            }\
-                        n;
-                    @endforeach
-
-                    // Adding Additional Notes and Technician Name
-                    var additionalNotes = ** 📝Catatan Tambahan: ** \n$ {
-                        '{{ $service->additional_notes }}'
-                    };
-                    var technicianName = ** 👨‍🔧Nama Teknisi: ** \n$ {
-                        '{{ $service->technician_name }}'
-                    };
-
-                    var linkInfo = \nAda masalah ? Telepon via WhatsApp : [Chat dengan Jamat](https: //wa.me/6285715467500);
-
-                        var fullReport =
-                            $ {
-                                vehicleInfo
-                            }\
-                        n\ n$ {
-                            customerInfo
-                        }\
-                        n\ n$ {
-                            serviceInfo
-                        }\
-                        n\ n$ {
-                            sparepartsInfo
-                        }\
-                        n\ n$ {
-                            checklistInfo
-                        }\
-                        n\ n$ {
-                            additionalNotes
-                        }\
-                        n\ n$ {
-                            technicianName
-                        }
-                        $ {
-                            linkInfo
-                        };
-
-                        var textarea = document.createElement('textarea'); textarea.value = fullReport; document.body
-                        .appendChild(textarea);
-
-                        textarea.select(); document.execCommand('copy');
-
-                        document.body.removeChild(textarea);
-
-                        alert('Laporan berhasil disalin ke clipboard! 📋');
-                    });
-    </script>
+            var vehicleInfo = `*🚗 Informasi Kendaraan:*
+        Nomor Polisi: {{ $service->vehicle->license_plate }} ({{ $service->vehicle->vehicle_type }})
+        Warna: {{ $service->vehicle->color }}
+        Tahun Produksi: {{ $service->vehicle->production_year }}
+        Kode Mesin: {{ $service->vehicle->engine_code }}`;
+        
+            var customerInfo = `*👤 Informasi Pelanggan:*
+        Nama: {{ $service->vehicle->customer->name }}
+        Kontak: {{ $service->vehicle->customer->contact }}
+        Alamat: {{ $service->vehicle->customer->address }}`;
+        
+            var serviceInfo = `*🛠 Informasi Servis:*
+        Keluhan: {{ $service->complaint }}
+        Kilometer Saat Ini: {{ $service->current_mileage }} km
+        Biaya Servis: Rp.{{ number_format($service->service_fee, 0, ',', '.') }}
+        Total Biaya: Rp.{{ number_format($service->total_cost, 0, ',', '.') }}
+        Pembayaran Diterima: Rp.{{ number_format($service->payment_received, 0, ',', '.') }}
+        Kembalian: Rp.{{ number_format($service->change, 0, ',', '.') }}
+        Jenis Servis: {{ ucfirst($service->service_type) }}
+        Tanggal Servis: {{ \Carbon\Carbon::parse($service->service_date)->format('d-m-Y') }}`;
+        
+            var sparepartsInfo = '🔧 Sparepart yang Digunakan:\n';
+            @foreach ($service->serviceSpareparts as $serviceSparepart)
+                sparepartsInfo += `Nama: {{ $serviceSparepart->sparepart->nama_sparepart }} | Jumlah: {{ $serviceSparepart->quantity }} | Harga: Rp.{{ number_format($serviceSparepart->sparepart->harga_jual, 0, ',', '.') }}\n`;
+            @endforeach
+        
+            var checklistInfo = '📝 Pekerjaan yang Dikerjakan:\n';
+            @foreach ($service->checklists as $checklist)
+                checklistInfo += `- {{ $checklist->task }} {{ $checklist->is_completed ? '✅ Selesai' : '❌ Tertunda' }}\n`;
+            @endforeach
+        
+            var additionalNotes = `*📝 Catatan Tambahan:*
+        {{ $service->additional_notes }}`;
+        
+            var technicianName = `*👨‍🔧 Nama Teknisi:*
+        {{ $service->technician_name }}`;
+        
+            var linkInfo = `\nAda masalah? Telepon via WhatsApp: [Chat dengan Jamat](https://wa.me/6285715467500)`;
+        
+            var fullReport = `${vehicleInfo}\n\n${customerInfo}\n\n${serviceInfo}\n\n${sparepartsInfo}\n\n${checklistInfo}\n\n${additionalNotes}\n\n${technicianName}\n${linkInfo}`;
+        
+            var textarea = document.createElement('textarea');
+            textarea.value = fullReport;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            alert('Laporan berhasil disalin ke clipboard! 📋');
+        });
+        </script>
+        
 
     <script>
         document.getElementById('printBtn').addEventListener('click', function() {

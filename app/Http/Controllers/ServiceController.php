@@ -10,9 +10,11 @@ use Illuminate\Http\Request;
 use App\Models\ServiceChecklist;
 use App\Models\ServiceSparepart;
 use App\Models\SparepartHistory;
+use App\Exports\ServicePKBExport;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Maatwebsite\Excel\Facades\Excel;
 
 use function PHPUnit\Framework\isEmpty;
 
@@ -453,5 +455,18 @@ class ServiceController extends Controller
         $spareparts = Sparepart::where('jumlah', '>=', 2)->get();
 
         return response()->json($spareparts);
+    }
+
+    public function exportPkb($id)
+    {
+        // Ambil data service beserta relasinya
+        $service = Service::with([
+            'vehicle.customer',
+            'serviceSpareparts.sparepart',
+            'checklists'
+        ])->findOrFail($id);
+
+        // Unduh Excel
+        return Excel::download(new ServicePKBExport($service), 'PKB_Service_'.$id.'.xlsx');
     }
 }
