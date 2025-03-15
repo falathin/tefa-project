@@ -662,9 +662,9 @@
                             <i class="mdi mdi-content-copy me-2"></i> Salin Laporan
                         </button>
 
-                        <a href="{{ route('services.exportPkb', $service->id) }}" class="btn btn-success" target="_blank">
+                        <a href="{{ route('services.exportPkb', $service->id) }}" class="btn btn-success btn-sm flex-grow-1" target="_blank">
                             <i class="bi bi-file-earmark-excel"></i> PKB Kerja Excel
-                        </a>                        
+                        </a>                    
 
                         @if (!Gate::allows('isBendahara'))
                             <!-- Kembali ke Kendaraan -->
