@@ -58,7 +58,8 @@ class CustomerController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'contact' => 'nullable|regex:/^[0-9+\-()\s]*$/|max:255',
+            // Validasi: jika diisi, nomor harus diawali dengan 08 dan hanya mengandung angka, spasi, tanda kurung, dan strip.
+            'contact' => 'nullable|regex:/^08[0-9\-\s()]*$/|max:255',
             'address' => 'nullable|string',
             'vehicles.*.vehicle_type' => 'string|max:255',
             'vehicles.*.brand' => 'string|max:255',
@@ -107,7 +108,8 @@ class CustomerController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'contact' => 'nullable|regex:/^[0-9+\-()\s]*$/|max:255',
+            // Validasi nomor telepon harus diawali dengan 08
+            'contact' => 'nullable|regex:/^08[0-9\-\s()]*$/|max:255',
             'address' => 'nullable|string',
         ]);
 
