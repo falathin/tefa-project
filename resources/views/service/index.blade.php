@@ -10,8 +10,10 @@
                 <a href="{{ route('customer.index') }}" class="btn btn-primary mb-3">
                     <i class="fas fa-users"></i> Daftar Pelanggan
                 </a>
+
+                <!-- Filter Form -->
                 <form method="GET" action="{{ route('service.index') }}" class="mb-4 row g-2 align-items-center">
-                    <div class="col-12 col-md-6">
+                    <div class="col-12 col-md-4">
                         <!-- Search Box with Icon -->
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-search"></i></span>
@@ -26,120 +28,123 @@
                             @endif
                         </div>
                     </div>
-                    <div class="col-12 col-md-6">
-                        <!-- Filter Tanggal with Icon -->
+                    <div class="col-12 col-md-2">
+                        <!-- Date Filter using Date Input -->
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
-                            <input type="date" name="date" class="form-control" value="{{ request('date') }}"
-                                onchange="this.form.submit()">
+                            <input type="date" name="date" class="form-control" value="{{ request('date') }}" onchange="this.form.submit()">
                         </div>
+                    </div>
+                    <div class="col-12 col-md-2">
+                        <!-- Payment Status Filter -->
+                        <select name="payment_status" class="form-select" onchange="this.form.submit()">
+                            <option value="all" {{ request('payment_status', 'all') == 'all' ? 'selected' : '' }}>Semua Pembayaran</option>
+                            <option value="paid" {{ request('payment_status') == 'paid' ? 'selected' : '' }}>Lunas</option>
+                            <option value="unpaid" {{ request('payment_status') == 'unpaid' ? 'selected' : '' }}>Hutang</option>
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-2">
+                        <!-- Service Status Filter -->
+                        <select name="service_status" class="form-select" onchange="this.form.submit()">
+                            <option value="all" {{ request('service_status', 'all') == 'all' ? 'selected' : '' }}>Semua Status Servis</option>
+                            <option value="completed" {{ request('service_status') == 'completed' ? 'selected' : '' }}>Selesai</option>
+                            <option value="not_completed" {{ request('service_status') == 'not_completed' ? 'selected' : '' }}>Belum Selesai</option>
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-2">
+                        <!-- Pagination Per Page Filter -->
+                        <select name="per_page" class="form-select" onchange="this.form.submit()">
+                            <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10 per halaman</option>
+                            <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>20 per halaman</option>
+                            <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50 per halaman</option>
+                        </select>
                     </div>
                 </form>
 
-                @php
-                    // Mengelompokkan data servis berdasarkan hari dengan urutan tanggal terbaru
-                    $groupedByDay = $services->sortByDesc('created_at')->groupBy(function ($service) {
-                        return \Carbon\Carbon::parse($service->created_at)->locale('id')->dayName;
-                    });
-                @endphp
+                <!-- Tampilan Grid Service (3 card per baris untuk layar medium ke atas) -->
+                <div class="row">
+                    @forelse ($services as $service)
+                        <div class="col-12 col-md-4 mb-3 animate__animated animate__fadeIn">
+                            <div class="card shadow-sm h-100">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <h5 class="mb-2">
+                                            {{ $service->vehicle->vehicle_type ?? 'Belum Ada Kendaraan yang Ditugaskan' }}
+                                        </h5>
+                                        <small class="text-muted">
+                                            {{ \Carbon\Carbon::parse($service->created_at)->format('d M Y, H:i') }}
+                                        </small>
+                                    </div>
+                                    <p><strong>Keluhan:</strong> {{ $service->complaint ?? 'Tidak ada keluhan' }}</p>
+                                    <p><strong>Jenis Layanan:</strong> {{ ucfirst($service->service_type) }}</p>
+                                    <p><strong>Status Pembayaran:</strong>
+                                        @if ($service->change < 0)
+                                            <span class="badge bg-warning">Hutang</span>
+                                        @else
+                                            <span class="badge bg-success">Lunas</span>
+                                        @endif
+                                    </p>
+                                    <p><strong>Status Servis:</strong>
+                                        @if ($service->status == true)
+                                            <span class="badge bg-success">Selesai</span>
+                                        @else
+                                            <span class="badge" style="background-color: #FBA518">Belum Selesai</span>
+                                        @endif
+                                    </p>
+                                    @if (Gate::allows('isBendahara'))
+                                        <p>{{ $service->jurusan }}</p>
+                                    @endif
 
-                @if ($groupedByDay->isEmpty())
-                    <div class="alert alert-warning text-center" role="alert">
-                        <i class="fas fa-info-circle"></i> Tidak ada data servis yang ditemukan.
-                    </div>
-                @else
-                    @foreach ($groupedByDay as $day => $dayServices)
-                        <h6 class="mt-4 mb-3">{{ $day }}</h6>
-
-                        <div class="row">
-                            @foreach ($dayServices as $index => $service)
-                                <div
-                                    class="col-12 col-md-6 mb-3 animate__animated animate__fadeIn animate__delay-{{ ($index + 1) * 5 }}00ms">
-                                    <div class="card shadow-sm h-100">
-                                        <div class="card-body">
-                                            <div class="d-flex justify-content-between">
-                                                <h5 class="mb-2">
-                                                    {{ $service->vehicle->vehicle_type ?? 'Belum Ada Kendaraan yang Ditugaskan' }}
-                                                </h5>
-                                                <small
-                                                    class="text-muted">{{ \Carbon\Carbon::parse($service->created_at)->format('l, d M Y, H:i') }}</small>
-                                            </div>
-                                            <p><strong>Keluhan:</strong> {{ $service->complaint ?? 'Tidak ada keluhan' }}
-                                            </p>
-                                            <p><strong>Jenis Layanan:</strong> {{ ucfirst($service->service_type) }}</p>
-                                            <p><strong>Status Pembayaran:</strong>
-                                                @if ($service->payment_received == 0)
-                                                    <span class="badge bg-danger">Belum Bayar</span>
-                                                @elseif($service->payment_received >= $service->total_cost)
-                                                    <span class="badge bg-success">Lunas</span>
-                                                @else
-                                                    <span class="badge bg-warning">Hutang</span>
-                                                @endif
-                                            </p>
-                                            <p><strong>Status servis</strong>
-                                                @if ($service->status == true)
-                                                    <span class="badge bg-success">selesai</span>
-                                                @else
-                                                    <span class="badge" style="background-color: #FBA518">belum
-                                                        selesai</span>
-                                                @endif
-                                            </p>
-                                            @if (Gate::allows('isBendahara'))
-                                                <p>{{ $service->jurusan }}</p>
-                                            @endif
-
-                                            <div class="d-flex justify-content-between mt-3">
-                                                <a href="{{ route('service.show', $service->id) }}"
-                                                    class="btn btn-info btn-sm" data-bs-toggle="tooltip"
-                                                    data-bs-placement="top" title="Lihat">
-                                                    <i class="fas fa-eye"></i> Lihat
+                                    <div class="d-flex justify-content-between mt-3">
+                                        <a href="{{ route('service.show', $service->id) }}"
+                                           class="btn btn-info btn-sm" data-bs-toggle="tooltip"
+                                           data-bs-placement="top" title="Lihat">
+                                            <i class="fas fa-eye"></i> Lihat
+                                        </a>
+                                        @if (!Gate::allows('isBendahara'))
+                                            @if ($service->status == false)
+                                                <a href="{{ route('service.edit', $service->id) }}"
+                                                   class="btn btn-warning btn-sm" data-bs-toggle="tooltip"
+                                                   data-bs-placement="top" title="Edit">
+                                                    <i class="fas fa-edit"></i> Edit
                                                 </a>
-                                                @if (!Gate::allows('isBendahara'))
-                                                    @if ($service->status == false)
-                                                        <a href="{{ route('service.edit', $service->id) }}"
-                                                            class="btn btn-warning btn-sm" data-bs-toggle="tooltip"
-                                                            data-bs-placement="top" title="Edit">
-                                                            <i class="fas fa-edit"></i> Edit
-                                                        </a>
-                                                    @endif
-                                                    <form action="{{ route('service.destroy', $service->id) }}"
-                                                        method="POST" style="display:inline;" class="d-inline">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="btn btn-danger btn-sm"
-                                                            onclick="return confirm('Apakah Anda yakin ingin menghapus servis ini?')"
-                                                            data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus">
-                                                            <i class="fas fa-trash-alt"></i> Hapus
-                                                        </button>
-                                                    </form>
-                                                @endif
-                                            </div>
-                                        </div>
+                                            @endif
+                                            <form action="{{ route('service.destroy', $service->id) }}"
+                                                  method="POST" style="display:inline;" class="d-inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm"
+                                                        onclick="return confirm('Apakah Anda yakin ingin menghapus servis ini?')"
+                                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus">
+                                                    <i class="fas fa-trash-alt"></i> Hapus
+                                                </button>
+                                            </form>
+                                        @endif
                                     </div>
                                 </div>
-                            @endforeach
+                            </div>
                         </div>
-                    @endforeach
-                @endif
+                    @empty
+                        <div class="col-12">
+                            <div class="alert alert-warning text-center" role="alert">
+                                <i class="fas fa-info-circle"></i> Tidak ada data servis yang ditemukan.
+                            </div>
+                        </div>
+                    @endforelse
+                </div>
 
                 <!-- Pagination -->
                 <div class="d-flex justify-content-center mt-4">
-                    {{ $services->links('vendor.pagination.simple-bootstrap-5') }}
+                    {{ $services->appends(request()->all())->links('vendor.pagination.simple-bootstrap-5') }}
                 </div>
             </div>
         </div>
     </div>
 
-    @push('scripts')
-        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
-
-        <script>
-            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-            var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
-                return new bootstrap.Tooltip(tooltipTriggerEl);
-            });
-        </script>
-    @endpush
-
+    <script>
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    </script>
 @endsection

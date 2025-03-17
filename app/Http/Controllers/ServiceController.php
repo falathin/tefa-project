@@ -23,60 +23,74 @@ class ServiceController extends Controller
 {
     public function index(Request $request)
     {
+        // Ambil filter dari request atau gunakan default 'all' untuk status pembayaran & servis,
+        // dan ambil tanggal jika ada
         $paymentStatus = $request->get('payment_status', 'all');
+        $serviceStatus = $request->get('service_status', 'all');
+        $date = $request->get('date'); // filter berdasarkan tanggal spesifik
+        $perPage = $request->get('per_page', 10);
+        $search = $request->get('search');
+    
+        // Simpan filter di session jika diperlukan
         $request->session()->put('payment_status', $paymentStatus);
-
+        $request->session()->put('service_status', $serviceStatus);
+        $request->session()->put('date', $date);
+    
+        // Query dasar: jika jurusan user General, tampilkan semua, selain itu filter berdasarkan jurusan user
         if (Auth::user()->jurusan == 'General') {
             $servicesQuery = Service::query();
         } else {
             $servicesQuery = Service::query()->where('jurusan', 'like', Auth::user()->jurusan);
         }
-
+    
+        // Filter status pembayaran
         if ($paymentStatus !== 'all') {
-            $servicesQuery = $servicesQuery->when($paymentStatus === 'paid', function ($query) {
-                return $query->where('payment_received', '>=', DB::raw('total_cost'));
-            })
-                ->where('jurusan', 'like', 'TSM')
-                ->when($paymentStatus === 'unpaid', function ($query) {
-                    return $query->where('payment_received', '<', DB::raw('total_cost'));
-                });
+            if ($paymentStatus === 'paid') {
+                $servicesQuery->whereRaw('payment_received >= total_cost');
+            } elseif ($paymentStatus === 'unpaid') {
+                $servicesQuery->whereRaw('payment_received < total_cost');
+            }
         }
-
-        // Tambahkan pencarian di beberapa kolom tambahan
-        if ($search = $request->get('search')) {
-            $servicesQuery = $servicesQuery->where(function ($query) use ($search) {
-                $query->whereHas('vehicle', function ($query) use ($search) {
-                    $query->where('license_plate', 'like', "%{$search}%");
+    
+        // Filter status servis
+        if ($serviceStatus !== 'all') {
+            if ($serviceStatus === 'completed') {
+                $servicesQuery->where('status', true);
+            } elseif ($serviceStatus === 'not_completed') {
+                $servicesQuery->where('status', false);
+            }
+        }
+    
+        // Filter berdasarkan tanggal spesifik jika diisi
+        if ($date) {
+            $servicesQuery->whereDate('created_at', $date);
+        }
+    
+        // Filter pencarian
+        if ($search) {
+            $servicesQuery->where(function($query) use ($search) {
+                $query->whereHas('vehicle', function($q) use ($search) {
+                    $q->where('license_plate', 'like', "%{$search}%");
                 })
-                    ->orWhereHas('vehicle.customer', function ($query) use ($search) {
-                        $query->where('name', 'like', "%{$search}%");
-                    })
-                    ->orWhere('complaint', 'like', "%{$search}%")
-                    ->orWhere('service_type', 'like', "%{$search}%")
-                    ->orWhere('status', 'like', "%{$search}%")
-                    ->orWhere('additional_notes', 'like', "%{$search}%")
-                    ->orWhere('technician_name', 'like', "%{$search}%")
-                    ->orWhere('payment_method', 'like', "%{$search}%");
+                ->orWhereHas('vehicle.customer', function($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%");
+                })
+                ->orWhere('complaint', 'like', "%{$search}%")
+                ->orWhere('service_type', 'like', "%{$search}%")
+                ->orWhere('additional_notes', 'like', "%{$search}%")
+                ->orWhere('technician_name', 'like', "%{$search}%")
+                ->orWhere('payment_method', 'like', "%{$search}%");
             });
         }
-
-        if ($date = $request->get('date')) {
-            $servicesQuery = $servicesQuery->whereDate('created_at', $date);
-        }
-
-        if ($year = $request->get('year')) {
-            $servicesQuery = $servicesQuery->whereYear('created_at', $year);
-        }
-
-        if ($dayOfWeek = $request->get('day_of_week')) {
-            $servicesQuery = $servicesQuery->whereRaw('DAYOFWEEK(created_at) = ?', [$dayOfWeek]);
-        }
-
-        $services = $servicesQuery->paginate(10);
-
-        return view('service.index', compact('services'));
-    }
-
+    
+        // Urutkan berdasarkan tanggal terbaru
+        $servicesQuery->orderBy('created_at', 'desc');
+    
+        $services = $servicesQuery->paginate($perPage);
+    
+        return view('service.index', compact('services', 'paymentStatus', 'serviceStatus', 'date', 'perPage', 'search'));
+    }    
+    
     function validatePhoneNumber($phone)
     {
         // Regex untuk nomor handphone diawali 08

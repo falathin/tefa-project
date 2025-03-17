@@ -24,8 +24,7 @@
       <!-- Baris Header -->
       <tr>
         <td colspan="5" style="text-align: center; font-weight: bold; font-size: 22px; padding: 10px; background-color: #dc3545; color: #fff; border: 2px solid #000; white-space: normal; word-break: break-word;">
-          {{ $emoji }}🔥 PERINTAH KERJA BENGKEL 🔥
-        </td>
+          {{ $emoji }} PERINTAH KERJA BENGKEL </td>
       </tr>
       <tr>
         <td colspan="5" style="padding: 10px; border: 1px solid #000;"></td>
