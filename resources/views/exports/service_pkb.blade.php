@@ -8,13 +8,23 @@
     @php
       $jurusan = strtolower($service->jurusan);
       $emoji = ($jurusan == 'tkro') ? '🚗' : (($jurusan == 'tsm') ? '🏍️' : '🚘');
+      
+      // Penentuan emoji untuk kilometer: hijau (dekat), kuning (sedang), merah (jauh)
+      $currentMileage = $service->current_mileage;
+      if ($currentMileage < 50000) {
+        $kmEmoji = '🟢';
+      } elseif ($currentMileage < 150000) {
+        $kmEmoji = '🟡';
+      } else {
+        $kmEmoji = '🔴';
+      }
     @endphp
     <!-- Tabel Utama PKB Service -->
     <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; background-color: #fff; border: 2px solid #000;">
       <!-- Baris Header -->
       <tr>
-        <td colspan="5" style="text-align: center; font-weight: bold; font-size: 20px; padding: 10px; background-color: #dc3545; color: #fff; border: 2px solid #000; white-space: normal; word-break: break-word;">
-          {{ $emoji }} PERINTAH KERJA BENGKEL
+        <td colspan="5" style="text-align: center; font-weight: bold; font-size: 22px; padding: 10px; background-color: #dc3545; color: #fff; border: 2px solid #000; white-space: normal; word-break: break-word;">
+          {{ $emoji }}🔥 PERINTAH KERJA BENGKEL 🔥
         </td>
       </tr>
       <tr>
@@ -27,10 +37,10 @@
         <td style="padding-left: 5px; border: 1px solid #000; padding: 10px 12px; white-space: normal; word-break: break-word;">{{ $service->vehicle->customer->name ?? '-' }}</td>
         <td style="border: 1px solid #000;"></td>
         <td rowspan="4" style="vertical-align: top; padding: 10px 12px; border: 1px solid #000; white-space: normal; word-break: break-word;">
-          <strong>No. Polisi:</strong> {{ $service->vehicle->license_plate ?? '-' }}<br>
-          <strong>Tipe Kendaraan:</strong> {{ $service->vehicle->vehicle_type ?? '-' }}<br>
-          <strong>Warna:</strong> {{ $service->vehicle->color ?? '-' }}<br>
-          <strong>Tahun:</strong> {{ $service->vehicle->production_year ?? '-' }}
+          <strong>🚦 No. Polisi:</strong> {{ $service->vehicle->license_plate ?? '-' }}<br>
+          <strong>🚘 Tipe Kendaraan:</strong> {{ $service->vehicle->vehicle_type ?? '-' }}<br>
+          <strong>🎨 Warna:</strong> {{ $service->vehicle->color ?? '-' }}<br>
+          <strong>📅 Tahun:</strong> {{ $service->vehicle->production_year ?? '-' }}
         </td>
       </tr>
       <tr>
@@ -61,13 +71,17 @@
       <tr>
         <td style="font-weight: bold; color: #007bff; border: 1px solid #000; padding: 10px 12px; white-space: normal; word-break: break-word;">⏱️ Kilometer</td>
         <td style="padding: 10px 12px; border: 1px solid #000; white-space: normal; word-break: break-word;">:</td>
-        <td colspan="3" style="padding-left: 5px; border: 1px solid #000; padding: 10px 12px; white-space: normal; word-break: break-word;">{{ $service->current_mileage }} KM</td>
+        <!-- Tampilkan emoji kilometer sesuai nilai -->
+        <td colspan="3" style="padding-left: 5px; border: 1px solid #000; padding: 10px 12px; white-space: normal; word-break: break-word;">
+          {{ $kmEmoji }} {{ $service->current_mileage }} KM
+        </td>
       </tr>
       <tr>
         <td style="font-weight: bold; color: #007bff; border: 1px solid #000; padding: 10px 12px; white-space: normal; word-break: break-word;">😷 Keluhan</td>
         <td style="padding: 10px 12px; border: 1px solid #000; white-space: normal; word-break: break-word;">:</td>
-        <td colspan="3" style="padding-left: 5px; border: 1px solid #000; padding: 10px 12px; white-space: normal; word-break: break-word;">{{ $service->complaint }}<br>
-          <textarea style="width: 100%; min-height: 100px; border: 1px dashed #007bff; padding: 10px; margin-top: 5px; background-color: #fff; resize: vertical;" placeholder="Tuliskan keluhan tambahan di sini..."></textarea>
+        <td colspan="3" style="padding-left: 5px; border: 1px solid #000; padding: 10px 12px; white-space: normal; word-break: break-word;">
+          {{ $service->complaint }}<br>
+          <textarea style="width: 100%; min-height: 200px; border: 1px dashed #007bff; padding: 10px; margin-top: 5px; background-color: #fff; resize: vertical;" placeholder="Tuliskan keluhan tambahan di sini..."></textarea>
         </td>
       </tr>
       <tr>
@@ -83,8 +97,9 @@
       <tr>
         <td style="font-weight: bold; color: #007bff; border: 1px solid #000; padding: 10px 12px; white-space: normal; word-break: break-word;">📝 Catatan Tambahan</td>
         <td style="padding: 10px 12px; border: 1px solid #000; white-space: normal; word-break: break-word;">:</td>
-        <td colspan="3" style="padding-left: 5px; border: 1px solid #000; padding: 10px 12px; white-space: normal; word-break: break-word;">{{ $service->additional_notes }}<br>
-          <textarea style="width: 100%; min-height: 100px; border: 1px dashed #007bff; padding: 10px; margin-top: 5px; background-color: #fff; resize: vertical;" placeholder="Tuliskan pekerjaan tambahan di sini..."></textarea>
+        <td colspan="3" style="padding-left: 5px; border: 1px solid #000; padding: 10px 12px; white-space: normal; word-break: break-word;">
+          {{ $service->additional_notes }}<br>
+          <textarea style="width: 100%; min-height: 200px; border: 1px dashed #007bff; padding: 10px; margin-top: 5px; background-color: #fff; resize: vertical;" placeholder="Tuliskan pekerjaan tambahan di sini..."></textarea>
         </td>
       </tr>
       <tr>
@@ -92,7 +107,7 @@
       </tr>
       <!-- Sparepart yang Digunakan -->
       <tr>
-        <td colspan="5" style="font-weight: bold; background-color: #e2efda; text-transform: uppercase; padding: 10px 12px; border: 1px solid #000; white-space: normal; word-break: break-word;">🔩 Sparepart yang Digunakan</td>
+        <td colspan="5" style="font-weight: bold; background-color: #e2efda; text-transform: uppercase; padding: 10px 12px; border: 1px solid #000; white-space: normal; word-break: break-word;">🔩🛠 Sparepart yang Digunakan</td>
       </tr>
       <tr>
         <td style="font-weight: bold; text-align: center; border: 1px solid #000; padding: 10px 12px; white-space: normal; word-break: break-word;">🔧 Nama Sparepart</td>
@@ -169,13 +184,27 @@
       <tr>
         <td style="font-weight: bold; color: #007bff; border: 1px solid #000; padding: 10px 12px; white-space: normal; word-break: break-word;">⏱️ Interval Servis</td>
         <td style="padding: 10px 12px; border: 1px solid #000; white-space: normal; word-break: break-word;">:</td>
-        <td colspan="3" style="padding-left: 5px; border: 1px solid #000; padding: 10px 12px; white-space: normal; word-break: break-word;">@if(strtolower($service->service_type) == 'light') 10.000 KM @elseif(strtolower($service->service_type) == 'medium') 30.000 KM @elseif(strtolower($service->service_type) == 'heavy') 50.000 KM @endif</td>
+        <td colspan="3" style="padding-left: 5px; border: 1px solid #000; padding: 10px 12px; white-space: normal; word-break: break-word;">
+          @if(strtolower($service->service_type) == 'light')
+            10.000 KM
+          @elseif(strtolower($service->service_type) == 'medium')
+            30.000 KM
+          @elseif(strtolower($service->service_type) == 'heavy')
+            50.000 KM
+          @endif
+        </td>
       </tr>
       @endif
       <tr>
         <td style="font-weight: bold; color: #007bff; border: 1px solid #000; padding: 10px 12px; white-space: normal; word-break: break-word;">📊 Status</td>
         <td style="padding: 10px 12px; border: 1px solid #000; white-space: normal; word-break: break-word;">:</td>
-        <td colspan="3" style="padding-left: 5px; text-align: center; border: 1px solid #000; padding: 10px 12px; white-space: normal; word-break: break-word;">@if($service->status == 1) <span style="color: #28a745; font-weight: bold;">🟢 Selesai</span> @else <span style="color: #dc3545; font-weight: bold;">🔴 Belum Selesai</span> @endif</td>
+        <td colspan="3" style="padding-left: 5px; text-align: center; border: 1px solid #000; padding: 10px 12px; white-space: normal; word-break: break-word;">
+          @if($service->status == 1)
+            <span style="color: #28a745; font-weight: bold;">🟢 Selesai</span>
+          @else
+            <span style="color: #dc3545; font-weight: bold;">🔴 Belum Selesai</span>
+          @endif
+        </td>
       </tr>
       <tr>
         <td style="font-weight: bold; color: #007bff; border: 1px solid #000; padding: 10px 12px; white-space: normal; word-break: break-word;">🏫 Jurusan</td>
@@ -223,7 +252,7 @@
       } elseif ($tipeServis === 'heavy') {
         $waktuDasar = 90;
       }
-      // Multiplier yang lebih akurat: tiap checklist 7 menit, tiap sparepart 3 menit
+      // Multiplier: tiap checklist 7 menit, tiap sparepart 3 menit
       $waktuChecklist = $numChecklists * 7;
       $waktuSparepart = $numSpareparts * 3;
       $totalWaktu = $waktuDasar + $waktuChecklist + $waktuSparepart;

@@ -27,8 +27,9 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="contact" class="form-label">No Whatsapp</label>
+                            <!-- Ubah placeholder untuk contoh format nomor dengan strip -->
                             <input type="text" class="form-control" id="contact" name="contact"
-                                value="{{ old('contact') }}" placeholder="contoh : 0857xxxxxxxx">
+                                value="{{ old('contact') }}" placeholder="contoh: 0812-3456-7890">
                             @error('contact')
                                 <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror
@@ -52,7 +53,6 @@
                     <div id="vehicle-fields">
                         <div class="vehicle-group mb-3" id="vehicle-0">
                             <div class="row">
-
                                 <div class="col-md-6 mb-3">
                                     <label>Merk</label>
                                     <input type="text" name="vehicles[0][brand]" class="form-control mb-2"
@@ -140,9 +140,8 @@
         </div>
     </div>
 
-    
+    <!-- Script untuk penambahan field kendaraan -->
     <script>
-        
         let vehicleIndex = 1;
 
         // Add new vehicle fields with slide-up animation
@@ -224,19 +223,40 @@
                 `;
                 
             vehicleFields.appendChild(newVehicleGroup);
-
             newVehicleGroup.classList.add('animate__animated', 'animate__fadeInUp');
-
             vehicleIndex++;
         });
 
         function deleteVehicle(index) {
             const vehicleGroup = document.getElementById(`vehicle-${index}`);
             vehicleGroup.classList.add('animate__animated', 'animate__fadeOutDown');
-
             setTimeout(() => {
                 vehicleGroup.remove();
             }, 500); // Duration of animation
         }
+    </script>
+
+    <!-- Script untuk format nomor telepon pada tampilan -->
+    <script>
+        const contactInput = document.getElementById('contact');
+        contactInput.addEventListener('input', function(e) {
+            let inputVal = e.target.value;
+            // Jika dimulai dengan +62, ubah menjadi 08
+            if (inputVal.startsWith('+62')) {
+                inputVal = '08' + inputVal.slice(3);
+            }
+            // Hapus karakter selain angka
+            let digits = inputVal.replace(/\D/g, '');
+            // Terapkan format strip:
+            // Misalnya, format: 4 digit pertama - 4 digit berikutnya - sisa digit
+            if (digits.length > 4 && digits.length <= 8) {
+                inputVal = digits.substring(0, 4) + '-' + digits.substring(4);
+            } else if (digits.length > 8) {
+                inputVal = digits.substring(0, 4) + '-' + digits.substring(4, 8) + '-' + digits.substring(8);
+            } else {
+                inputVal = digits;
+            }
+            e.target.value = inputVal;
+        });
     </script>
 @endsection
