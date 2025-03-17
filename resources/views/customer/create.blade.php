@@ -26,9 +26,9 @@
                             @enderror
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="contact" class="form-label">No HP</label>
+                            <label for="contact" class="form-label">No Whatsapp</label>
                             <input type="text" class="form-control" id="contact" name="contact"
-                                value="{{ old('contact') }}" placeholder="Masukkan nomor HP">
+                                value="{{ old('contact') }}" placeholder="contoh : 0857xxxxxxxx">
                             @error('contact')
                                 <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror
@@ -140,7 +140,9 @@
         </div>
     </div>
 
+    
     <script>
+        
         let vehicleIndex = 1;
 
         // Add new vehicle fields with slide-up animation

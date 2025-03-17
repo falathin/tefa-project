@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Service extends Model
 {
@@ -61,5 +62,9 @@ class Service extends Model
     {
         return $this->hasMany(ServiceChecklist::class, 'service_id');
     }
-
+    public function isEligibleForReminder()
+    {
+        // return Carbon::parse($this->service_date)->addDays(30)->isToday();
+        return Carbon::parse($this->service_date)->addMinutes(1)->isToday();
+    }
 }

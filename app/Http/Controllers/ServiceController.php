@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Maatwebsite\Excel\Facades\Excel;
+use Carbon\Carbon;
 
 use function PHPUnit\Framework\isEmpty;
 
@@ -76,9 +77,17 @@ class ServiceController extends Controller
         return view('service.index', compact('services'));
     }
 
+    function validatePhoneNumber($phone)
+    {
+        // Regex untuk nomor handphone diawali 08
+        $regex = '/^08\d{8,12}$/';
+        return preg_match($regex, $phone);
+    }
 
     public function create($vehicle_id)
     {
+        // dd($this->validatePhoneNumber('08933737377'));    
+        // dd(Carbon::now()->subDays(1)->toDateString());
         $vehicle = Vehicle::find($vehicle_id);
         if (!Gate::allows('isSameJurusan', [$vehicle])) {
             abort(403, 'data tidak ditemukan!!');
@@ -467,6 +476,6 @@ class ServiceController extends Controller
         ])->findOrFail($id);
 
         // Unduh Excel
-        return Excel::download(new ServicePKBExport($service), 'PKB_Service_'.$id.'.xlsx');
+        return Excel::download(new ServicePKBExport($service), 'PKB_Service_' . $id . '.xlsx');
     }
 }
