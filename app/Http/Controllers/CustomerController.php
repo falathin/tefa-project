@@ -56,20 +56,46 @@ class CustomerController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            // Validasi: jika diisi, nomor harus diawali dengan 08 dan hanya mengandung angka, spasi, tanda kurung, dan strip.
-            'contact' => 'nullable|regex:/^08[0-9\-\s()]*$/|max:255',
-            'address' => 'nullable|string',
-            'vehicles.*.vehicle_type' => 'string|max:255',
-            'vehicles.*.brand' => 'string|max:255',
-            'vehicles.*.license_plate' => 'nullable|string|max:255|unique:vehicles,license_plate',
-            'vehicles.*.color' => 'nullable|string|max:255',
-            'vehicles.*.production_year' => 'nullable|integer|lte:' . Carbon::now()->year,
-            'vehicles.*.engine_code' => 'nullable|string|max:255',
-            'vehicles.*.image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'jurusan' => 'required'
-        ]);
+        $request->validate(
+            [
+                'name' => 'required|string|max:255',
+                // Validasi: jika diisi, nomor harus diawali dengan 08 dan hanya mengandung angka, spasi, tanda kurung, dan strip.
+                'contact' => 'nullable|regex:/^08[0-9\-\s()]*$/|max:255',
+                'address' => 'nullable|string',
+                'vehicles.*.vehicle_type' => 'string|max:255',
+                'vehicles.*.brand' => 'string|max:255',
+                'vehicles.*.license_plate' => 'nullable|string|max:255|unique:vehicles,license_plate',
+                'vehicles.*.color' => 'nullable|string|max:255',
+                'vehicles.*.production_year' => 'nullable|integer|lte:' . Carbon::now()->year,
+                'vehicles.*.engine_code' => 'nullable|string|max:255',
+                'vehicles.*.image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'jurusan' => 'required'
+            ],
+            [
+                'name.required' => 'Nama pelanggan wajib diisi.',
+                'name.string' => 'Nama pelanggan harus berupa teks.',
+                'name.max' => 'Nama pelanggan tidak boleh lebih dari 255 karakter.',
+                'contact.regex' => 'Nomor telepon harus diawali dengan 08 dan hanya mengandung angka, spasi, tanda kurung, dan strip.',
+                'contact.max' => 'Nomor telepon tidak boleh lebih dari 255 karakter.',
+                'address.string' => 'Alamat harus berupa teks.',
+                'vehicles.*.vehicle_type.string' => 'Tipe kendaraan harus berupa teks.',
+                'vehicles.*.vehicle_type.max' => 'Tipe kendaraan tidak boleh lebih dari 255 karakter.',
+                'vehicles.*.brand.string' => 'Merk kendaraan harus berupa teks.',
+                'vehicles.*.brand.max' => 'Merk kendaraan tidak boleh lebih dari 255 karakter.',
+                'vehicles.*.license_plate.unique' => 'Nomor plat sudah digunakan.',
+                'vehicles.*.license_plate.max' => 'Nomor plat tidak boleh lebih dari 255 karakter.',
+                'vehicles.*.color.string' => 'Warna harus berupa teks.',
+                'vehicles.*.color.max' => 'Warna tidak boleh lebih dari 255 karakter.',
+                'vehicles.*.production_year.integer' => 'Tahun produksi harus berupa angka.',
+                'vehicles.*.production_year.lte' => 'Tahun produksi tidak boleh melebihi tahun sekarang.',
+                'vehicles.*.engine_code.string' => 'Kode mesin harus berupa teks.',
+                'vehicles.*.engine_code.max' => 'Kode mesin tidak boleh lebih dari 255 karakter.',
+                'vehicles.*.image.image' => 'File harus berupa gambar.',
+                'vehicles.*.image.mimes' => 'Format gambar harus jpeg, png, jpg, atau gif.',
+                'vehicles.*.image.max' => 'Ukuran gambar tidak boleh melebihi 2MB.',
+                'jurusan.required' => 'Jurusan wajib diisi.'
+            ]
+        );
 
         $customer = Customer::create($request->only(['name', 'contact', 'address', 'jurusan']));
 
@@ -87,14 +113,14 @@ class CustomerController extends Controller
         }
 
         return redirect()->route('customer.show', $customer->id)
-                        ->with('success', 'Customer and vehicles created successfully!');
+                        ->with('success', 'Customer dan kendaraan berhasil dibuat!');
     }
 
     public function edit($id)
     {
         $customer = Customer::find($id);
         if (! Gate::allows('isSameJurusan', [$customer])) {
-            abort(403, 'data tidak ditemukan!!');
+            abort(403, 'Data tidak ditemukan!');
         }
         // Admin & kasir
         if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
@@ -106,25 +132,35 @@ class CustomerController extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            // Validasi nomor telepon harus diawali dengan 08
-            'contact' => 'nullable|regex:/^08[0-9\-\s()]*$/|max:255',
-            'address' => 'nullable|string',
-        ]);
+        $request->validate(
+            [
+                'name' => 'required|string|max:255',
+                // Validasi nomor telepon harus diawali dengan 08
+                'contact' => 'nullable|regex:/^08[0-9\-\s()]*$/|max:255',
+                'address' => 'nullable|string',
+            ],
+            [
+                'name.required' => 'Nama pelanggan wajib diisi.',
+                'name.string' => 'Nama pelanggan harus berupa teks.',
+                'name.max' => 'Nama pelanggan tidak boleh lebih dari 255 karakter.',
+                'contact.regex' => 'Nomor telepon harus diawali dengan 08 dan hanya mengandung angka, spasi, tanda kurung, dan strip.',
+                'contact.max' => 'Nomor telepon tidak boleh lebih dari 255 karakter.',
+                'address.string' => 'Alamat harus berupa teks.'
+            ]
+        );
 
         $customer = Customer::findOrFail($id);
         $customer->update($request->only(['name', 'contact', 'address']));
 
         return redirect()->route('customer.show', $customer->id)
-                        ->with('success', 'Customer updated successfully!');
+                        ->with('success', 'Customer berhasil diperbarui!');
     }
 
     public function show(Request $request, $id)
     {
         $customer = Customer::find($id);
         if (! Gate::allows('isSameJurusan', [$customer])) {
-            abort(403, 'data tidak ditemukan!!');
+            abort(403, 'Data tidak ditemukan!');
         }
 
         // Admin & kasir
@@ -155,9 +191,9 @@ class CustomerController extends Controller
         if ($customer) {
             $customer->delete();
             session(['deleted_customer' => $customer]);
-            return redirect()->route('customer.index')->with('success', 'Customer deleted successfully.');
+            return redirect()->route('customer.index')->with('success', 'Customer berhasil dihapus.');
         }
-        return redirect()->route('customer.index')->with('error', 'Customer not found.');
+        return redirect()->route('customer.index')->with('error', 'Customer tidak ditemukan.');
     }
 
     public function restore($id)
@@ -176,9 +212,9 @@ class CustomerController extends Controller
         $customer = Customer::withTrashed()->find($id);
         if ($customer) {
             $customer->forceDelete();
-            return redirect()->route('customer.index')->with('success', 'Customer deleted permanently.');
+            return redirect()->route('customer.index')->with('success', 'Customer berhasil dihapus secara permanen.');
         }
-        return redirect()->route('customer.index')->with('error', 'Customer not found.');
+        return redirect()->route('customer.index')->with('error', 'Customer tidak ditemukan.');
     }
 
     public function forceDeleteAll()
