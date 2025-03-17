@@ -11,7 +11,7 @@
         <li class="nav-item nav-category animate__animated animate__slideInLeft animate__delay-1.8s">Pengaturan</li>
 
         <!-- Program Service Menu Item -->
-        @if (Gate::allows('isAdminOrEngineer') xor Gate::allows('isKasir'))
+        @if (Gate::allows('isAdmin') xor Gate::allows('isKasir'))
         <li class="nav-item {{ request()->is('service*') ? 'active' : '' }} animate__animated animate__slideInLeft animate__delay-3.3s">
             <a class="nav-link" href="{{ route('customer.index') }}">
                 <i class="mdi mdi-cog-outline menu-icon"></i>

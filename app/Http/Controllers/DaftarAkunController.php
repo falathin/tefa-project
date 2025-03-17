@@ -15,7 +15,7 @@ class DaftarAkunController extends Controller
 {
     public function create(): View
     {
-        if (! Gate::allows('isAdminOrEngineer')) {
+        if (! Gate::allows('isAdmin')) {
             abort(403, 'waduh, bukan Admin!');
         }
         return view('auth.daftar-akun');

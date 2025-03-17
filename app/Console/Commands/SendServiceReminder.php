@@ -14,9 +14,9 @@ class SendServiceReminder
 
     public function __invoke()
     {
-        // ->whereDate('service_date', '=', Carbon::now()->subDays(30)->toDateString())
         $services = Service::where('status', true)
-            ->whereDate('service_date', '<=', Carbon::now()->subDays(1)->toDateString())
+        ->whereDate('service_date', '=', Carbon::now()->subDays(30)->toDateString())
+            // ->whereDate('service_date', '<=', Carbon::now()->subDays(1)->toDateString())
             ->with('vehicle.customer')
             ->get();
 

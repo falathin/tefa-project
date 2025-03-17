@@ -107,7 +107,7 @@ class ServiceController extends Controller
             abort(403, 'data tidak ditemukan!!');
         }
         // Admin & kasir
-        if (!Gate::allows('isAdminOrEngineer') && !Gate::allows('isKasir')) {
+        if (!Gate::allows('isAdmin') && !Gate::allows('isKasir')) {
             abort(403, 'Butuh level Admin & Kasir');
         }
 
@@ -125,7 +125,7 @@ class ServiceController extends Controller
         }
 
         // Admin & kasir
-        if (!Gate::allows('isAdminOrEngineer') && !Gate::allows('isKasir')) {
+        if (!Gate::allows('isAdmin') && !Gate::allows('isKasir')) {
             abort(403, 'Butuh level Admin & Kasir');
         }
         $auth = Auth::user()->jurusan;
@@ -446,7 +446,7 @@ class ServiceController extends Controller
     public function editChecklist($id)
     {
         // Admin & kasir
-        if (!Gate::allows('isAdminOrEngineer') && !Gate::allows('isKasir')) {
+        if (!Gate::allows('isAdmin') && !Gate::allows('isKasir')) {
             abort(403, 'Butuh level Admin & Kasir');
         }
         $checklist = ServiceChecklist::findOrFail($id);

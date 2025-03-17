@@ -15,7 +15,7 @@ class ForgotPasswordController extends Controller
 
     public function index()
     {
-        if (! Gate::allows('isEngineer')) {
+        if (! Gate::allows('isAdmin')) {
             abort(404, 'not found');
         }
         return view('superPrograms.gantiEmergencyPassword', ['data' => EmergencyPassword::find(1)]);
@@ -23,7 +23,7 @@ class ForgotPasswordController extends Controller
 
     public function ganti(Request $request)
     {
-        if (! Gate::allows('isEngineer')) {
+        if (! Gate::allows('isAdmin')) {
             abort(404, 'not found');
         }
 

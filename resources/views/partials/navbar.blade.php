@@ -49,12 +49,10 @@
                             src="{{ asset('assets/images/profile2.png') }}" width="28"></img>Akun saya
                     </a>
 
-                    @if (Auth::user()->level == 'admin' || Auth::user()->level == 'engineer')
+                    @if (Auth::user()->level == 'admin')
                         <a class="dropdown-item" href="{{ route('profile.daftar') }}"><img class="me-2"
                                 src="{{ asset('assets/images/add_account.png') }}" width="28"></img>Buat akun baru
                         </a>
-                    @endif
-                    @if (Auth::user()->level == 'engineer')
                         <a class="dropdown-item " href="{{ route('hapusAkunUser') }}"><img class="me-2"
                                 src="{{ asset('assets/images/manage_account.png') }}" width="28"></img>Hapus akun
                             {{ Auth::user()->jurusan }}

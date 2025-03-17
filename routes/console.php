@@ -11,5 +11,5 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote')->hourly();
 
-Schedule::call(new SendServiceReminder)->everyMinute();
+Schedule::call(new SendServiceReminder)->dailyAt('05:50');
 // Schedule::call(new SendServiceReminder)->dailyAt('05:00');

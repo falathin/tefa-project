@@ -103,13 +103,13 @@
                                                 class="btn btn-info btn-sm">
                                                 <i class="bi bi-eye"></i> Detail
                                             </a>
-                                            @if (Gate::allows('isAdminOrEngineer'))
+                                            @if (Gate::allows('isAdmin'))
                                                 <a href="{{ route('transactions.edit', $firstTransaction->id) }}"
                                                     class="btn btn-warning btn-sm">
                                                     <i class="fas fa-edit"></i> Edit
                                                 </a>
                                             @endif
-                                            @if (Gate::allows('isKasir') xor Gate::allows('isAdminOrEngineer'))
+                                            @if (Gate::allows('isKasir') xor Gate::allows('isAdmin'))
                                                 <form action="{{ route('transactions.destroy', $firstTransaction->id) }}"
                                                     method="POST" class="d-inline">
                                                     @csrf

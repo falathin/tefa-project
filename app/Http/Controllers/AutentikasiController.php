@@ -7,8 +7,10 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
+
 class AutentikasiController extends Controller
 {
+
     /**
      * Display the login view.
      */
@@ -22,6 +24,7 @@ class AutentikasiController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+
         // $request->authenticate();
         // $request->session()->regenerate();
 
@@ -32,17 +35,17 @@ class AutentikasiController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
- 
+
             return redirect(route('dashboard'));
         }
 
         return back()->withErrors([
             'email' => 'Input tidak sesuai!',
         ])->onlyInput('email');
-
     }
 
-    public function confirmLogout () {
+    public function confirmLogout()
+    {
         return back()->with('confirmLogout', 'Konfirmasi logout?');
     }
 

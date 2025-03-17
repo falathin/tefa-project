@@ -225,7 +225,7 @@
                         </h6>
 
                         @if (!Gate::allows('isBendahara'))
-                            @if ($service->status == false || Gate::allows('isAdminOrEngineer'))
+                            @if ($service->status == false || Gate::allows('isAdmin'))
                                 <!-- Form Tambah Item Pekerjaan -->
                                 <form action="{{ route('service.addChecklist', $service->id) }}" method="POST"
                                     class="mb-4">
@@ -263,7 +263,7 @@
                                                 @csrf
                                                 @method('PATCH')
                                                 @if (!Gate::allows('isBendahara'))
-                                                    @if ($service->status == false || Gate::allows('isAdminOrEngineer'))
+                                                    @if ($service->status == false || Gate::allows('isAdmin'))
                                                         <input type="checkbox" name="is_completed"
                                                             onchange="this.form.submit()" class="form-check-input me-3"
                                                             {{ $checklist->is_completed ? 'checked' : '' }}>
@@ -287,7 +287,7 @@
                                         </span>
                                         <!-- Time and Actions -->
                                         @if (!Gate::allows('isBendahara'))
-                                            @if ($service->status == false || Gate::allows('isAdminOrEngineer'))
+                                            @if ($service->status == false || Gate::allows('isAdmin'))
                                                 <div class="ms-3 text-end">
                                                     <small class="text-muted">Ditambahkan:
                                                         {{ $checklist->created_at->format('H:i') }}</small>
@@ -429,7 +429,7 @@
                 </div>
                 
                 @if (!Gate::allows('isBendahara'))
-                    @if ($service->status == false || Gate::allows('isAdminOrEngineer'))
+                    @if ($service->status == false || Gate::allows('isAdmin'))
                         {{-- informasi pembayaran --}}
                         <h6 class="mb-3 mt-3 animate_animated animate_fadeInUp"
                             style="animation-duration: 1.5s; animation-delay: 0.8s; color: #6c757d;">

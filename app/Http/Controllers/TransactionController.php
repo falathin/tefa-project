@@ -46,7 +46,7 @@ class TransactionController extends Controller
     public function create()
     {
         // Admin & kasir
-        if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
+        if (! Gate::allows('isAdmin') && ! Gate::allows('isKasir')) {
             abort(403, 'Butuh level Admin & Kasir');
         }
         $spareparts = Sparepart::all();
@@ -162,7 +162,7 @@ class TransactionController extends Controller
             abort(403, 'Data tidak ditemukan!');
         }
     
-        if (! Gate::allows('isAdminOrEngineer')) {
+        if (! Gate::allows('isAdmin')) {
             abort(403, 'Butuh level Admin');
         }
     

@@ -14,7 +14,7 @@ class CustomerController extends Controller
 {
     public function index(Request $request)
     {
-        if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
+        if (! Gate::allows('isAdmin') && ! Gate::allows('isKasir')) {
             abort(403, 'Butuh level Admin & Kasir');
         }
         
@@ -48,7 +48,7 @@ class CustomerController extends Controller
     public function create()
     {
         // Admin & kasir
-        if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
+        if (! Gate::allows('isAdmin') && ! Gate::allows('isKasir')) {
             abort(403, 'Butuh level Admin & Kasir');
         }
         return view('customer.create');
@@ -123,7 +123,7 @@ class CustomerController extends Controller
             abort(403, 'Data tidak ditemukan!');
         }
         // Admin & kasir
-        if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
+        if (! Gate::allows('isAdmin') && ! Gate::allows('isKasir')) {
             abort(403, 'Butuh level Admin & Kasir');
         }
         $customer = Customer::with('vehicles')->findOrFail($id);
@@ -164,7 +164,7 @@ class CustomerController extends Controller
         }
 
         // Admin & kasir
-        if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
+        if (! Gate::allows('isAdmin') && ! Gate::allows('isKasir')) {
             abort(403, 'Butuh level Admin & Kasir');
         }
         

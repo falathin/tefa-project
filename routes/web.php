@@ -27,7 +27,7 @@ Route::middleware('guest')->group(function () {
 
     // login
     Route::get('/login', [AutentikasiController::class, 'create'])->name('login');
-    Route::post('/login', [AutentikasiController::class, 'store']);
+    Route::post('/login', [AutentikasiController::class, 'store'])->middleware('throttle:10,1');
     
     // lupa password
     Route::get('/lupa-password', [ForgotPasswordController::class, 'showResetForm'])->name('lupa.password');

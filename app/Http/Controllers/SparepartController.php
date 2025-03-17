@@ -38,7 +38,7 @@ class SparepartController extends Controller
     public function create()
     {
         // Admin & kasir
-        if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
+        if (! Gate::allows('isAdmin') && ! Gate::allows('isKasir')) {
             abort(403, 'Butuh level Admin & Kasir');
         }
         return view('sparepart.create');
@@ -123,7 +123,7 @@ class SparepartController extends Controller
         }
 
         // Admin & kasir
-        if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
+        if (! Gate::allows('isAdmin') && ! Gate::allows('isKasir')) {
             abort(403, 'Butuh level Admin & Kasir');
         }
         $sparepart = Sparepart::findOrFail($id);
