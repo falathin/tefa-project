@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container">
+    <div class="container my-4">
         <div class="card shadow-lg">
             <div class="card-body">
                 <h5 class="card-title mb-4">Riwayat Servis</h5>
@@ -32,43 +32,62 @@
                         <!-- Date Filter using Date Input -->
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
-                            <input type="date" name="date" class="form-control" value="{{ request('date') }}" onchange="this.form.submit()">
+                            <input type="date" name="date" class="form-control" value="{{ request('date') }}"
+                                onchange="this.form.submit()">
                         </div>
                     </div>
                     <div class="col-12 col-md-2">
                         <!-- Payment Status Filter -->
                         <select name="payment_status" class="form-select" onchange="this.form.submit()">
-                            <option value="all" {{ request('payment_status', 'all') == 'all' ? 'selected' : '' }}>Semua Pembayaran</option>
-                            <option value="paid" {{ request('payment_status') == 'paid' ? 'selected' : '' }}>Lunas</option>
-                            <option value="unpaid" {{ request('payment_status') == 'unpaid' ? 'selected' : '' }}>Hutang</option>
+                            <option value="all" {{ request('payment_status', 'all') == 'all' ? 'selected' : '' }}>
+                                Semua Pembayaran
+                            </option>
+                            <option value="paid" {{ request('payment_status') == 'paid' ? 'selected' : '' }}>
+                                Lunas
+                            </option>
+                            <option value="unpaid" {{ request('payment_status') == 'unpaid' ? 'selected' : '' }}>
+                                Hutang
+                            </option>
                         </select>
                     </div>
                     <div class="col-12 col-md-2">
                         <!-- Service Status Filter -->
                         <select name="service_status" class="form-select" onchange="this.form.submit()">
-                            <option value="all" {{ request('service_status', 'all') == 'all' ? 'selected' : '' }}>Semua Status Servis</option>
-                            <option value="completed" {{ request('service_status') == 'completed' ? 'selected' : '' }}>Selesai</option>
-                            <option value="not_completed" {{ request('service_status') == 'not_completed' ? 'selected' : '' }}>Belum Selesai</option>
+                            <option value="all" {{ request('service_status', 'all') == 'all' ? 'selected' : '' }}>
+                                Semua Status Servis
+                            </option>
+                            <option value="completed" {{ request('service_status') == 'completed' ? 'selected' : '' }}>
+                                Selesai
+                            </option>
+                            <option value="not_completed" {{ request('service_status') == 'not_completed' ? 'selected' : '' }}>
+                                Belum Selesai
+                            </option>
                         </select>
                     </div>
                     <div class="col-12 col-md-2">
                         <!-- Pagination Per Page Filter -->
                         <select name="per_page" class="form-select" onchange="this.form.submit()">
-                            <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10 per halaman</option>
-                            <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>20 per halaman</option>
-                            <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50 per halaman</option>
+                            <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>
+                                10 per halaman
+                            </option>
+                            <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>
+                                20 per halaman
+                            </option>
+                            <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>
+                                50 per halaman
+                            </option>
                         </select>
                     </div>
                 </form>
 
-                <!-- Tampilan Grid Service (3 card per baris untuk layar medium ke atas) -->
-                <div class="row">
+                <!-- Tampilan Grid Service (row-cols-1 sm, row-cols-md-2, row-cols-lg-3) -->
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
                     @forelse ($services as $service)
-                        <div class="col-12 col-md-4 mb-3 animate__animated animate__fadeIn">
-                            <div class="card shadow-sm h-100">
+                        <div class="col">
+                            <div class="card shadow-sm h-100 animate__animated animate__fadeIn">
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between">
-                                        <h5 class="mb-2">
+                                        <h5 class="card-title mb-2">
                                             {{ $service->vehicle->vehicle_type ?? 'Belum Ada Kendaraan yang Ditugaskan' }}
                                         </h5>
                                         <small class="text-muted">
@@ -94,7 +113,6 @@
                                     @if (Gate::allows('isBendahara'))
                                         <p>{{ $service->jurusan }}</p>
                                     @endif
-
                                     <div class="d-flex justify-content-between mt-3">
                                         <a href="{{ route('service.show', $service->id) }}"
                                            class="btn btn-info btn-sm" data-bs-toggle="tooltip"
