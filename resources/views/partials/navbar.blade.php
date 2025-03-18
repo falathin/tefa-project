@@ -7,12 +7,12 @@
         </div>
         <div>
             <a class="navbar-brand brand-logo" href="{{ url('/') }}">
-                <img src="{{ asset('assets/images/logo.svg') }}" alt="logo" class="img-fluid" style="max-width: 150px; height: auto;">
-            </a>
-            
+                <img src="{{ asset('assets/images/logo-mini.svg') }}" alt="logo" width="300px" height="500px">
+            </a>            
+
             <a class="navbar-brand brand-logo-mini" href="{{ url('/') }}">
-                <img src="{{ asset('assets/images/logo-mini.svg') }}" alt="logo" class="img-fluid" style="max-width: 300px; height: auto;">
-            </a>                      
+                <img src="{{ asset('assets/images/UNIT.png') }}" alt="logo" />
+            </a>
         </div>
     </div>
     <div class="navbar-menu-wrapper d-flex align-items-top">

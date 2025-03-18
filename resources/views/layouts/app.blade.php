@@ -34,7 +34,7 @@
     <!-- Core CSS -->
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     
-    <link rel="shortcut icon" href="{{ asset('assets/images/logo-mini.svg') }}" />
+    <link rel="shortcut icon" href="{{ asset('assets/images/UNIT.png') }}" />
 </head>
 
 <body class="d-flex flex-column min-vh-100">
