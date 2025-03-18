@@ -4,6 +4,9 @@
     <div class="container mt-4">
         <div class="card shadow-sm">
             <form action="{{ route('transactions.store') }}" method="POST" id="transactionForm">
+                @csrf
+                <input type="hidden" name="jurusan" value="{{ Auth::user()->jurusan }}">
+            
                 <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
                     <h5 class="mb-0"><i class="fas fa-wrench"></i> Tambah Informasi Sparepart</h5>
                     <small><b>*</b> Hapus jika tidak diperlukan</small>
@@ -48,122 +51,62 @@
                         <button type="button" class="btn btn-primary mt-3" id="addRow">+ Tambah Sparepart</button>
                     @endif
             
-                    @csrf
-                    <input type="hidden" name="jurusan" value="{{ Auth::user()->jurusan }}">
-            
-                    <!-- Baris untuk pilihan metode input nama pelanggan -->
+                    <!-- Pilih Metode Input Nama Pelanggan -->
                     <div class="row mt-3">
                         <div class="col-md-12">
-                            <div class="row">
-                                <div class="col-md-6 mt-1">
-                                    <label>
-                                        <i class="bi bi-person"></i> Pilih Metode Input Nama Pelanggan
-                                    </label>
-                                    <div class="form-check mt-2">
-                                        <input class="form-check-input" type="radio" name="customer_option"
-                                            id="option_existing" value="existing" checked>
-                                        <label class="form-check-label" for="option_existing">
-                                            Pilih dari data yang sudah ada
-                                        </label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="customer_option"
-                                            id="option_manual" value="manual">
-                                        <label class="form-check-label" for="option_manual">
-                                            Isi secara manual
-                                        </label>
-                                    </div>
-                                </div>
+                            <label><i class="bi bi-person"></i> Pilih Metode Input Nama Pelanggan</label>
+                            <div class="form-check mt-2">
+                                <input class="form-check-input" type="radio" name="customer_option" id="option_existing" value="existing" checked>
+                                <label class="form-check-label" for="option_existing">
+                                    Pilih dari data yang sudah ada
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="customer_option" id="option_manual" value="manual">
+                                <label class="form-check-label" for="option_manual">
+                                    Isi secara manual
+                                </label>
                             </div>
                         </div>
                     </div>
             
-                    <!-- Field untuk opsi "Pilih dari data yang sudah ada" -->
-                    <div class="row" id="existingCustomerDiv">
-                        <div class="col-md-6 mt-1">
-                            <label for="customer_name_existing">
-                                <i class="bi bi-person"></i> Nama Pelanggan
-                            </label>
-                            <select id="customer_name_existing" class="form-control select2 mt-2" name="name" required>
-                                <option value="">Pilih Customer</option>
-                                @foreach ($customers->where('jurusan', Auth::user()->jurusan) as $customer)
-                                    <option value="{{ $customer->name }}">{{ $customer->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-            
-                    <!-- Field untuk opsi "Isi secara manual" -->
-                    <div class="row" id="manualCustomerDiv" style="display:none;">
-                        <div class="col-md-6 mt-1">
-                            <label for="customer_name_manual">
-                                <i class="bi bi-person"></i> Nama Pelanggan
-                            </label>
-                            <!-- Tidak ada name dan required di sini, akan ditambahkan saat opsi manual dipilih -->
-                            <input type="text" id="customer_name_manual" class="form-control mt-2"
-                                placeholder="Masukkan nama pelanggan">
-                        </div>
-                    </div>
-            
-                    <!-- Include jQuery dan Select2 (jangan rubah script) -->
-                    <!-- jQuery (diperlukan oleh Select2) -->
-                    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-                    <!-- Select2 JS -->
-                    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
-                    <script>
-                        $(document).ready(function() {
-                            // Inisialisasi Select2 untuk dropdown
-                            $('#customer_name_existing').select2({
-                                width: '100%'
-                            });
-            
-                            // Toggle antar opsi input dan required attribute
-                            $('input[name="customer_option"]').on('change', function() {
-                                if ($(this).val() === 'existing') {
-                                    // Tampilkan dropdown Select2 dan aktifkan name & required attribute
-                                    $('#existingCustomerDiv').show();
-                                    $('#customer_name_existing').prop('name', 'name').prop('required', true);
-                                    // Sembunyikan input manual dan hapus name & required attribute-nya
-                                    $('#manualCustomerDiv').hide();
-                                    $('#customer_name_manual').removeAttr('name').prop('required', false);
-                                } else {
-                                    // Tampilkan input manual dan aktifkan name & required attribute-nya
-                                    $('#manualCustomerDiv').show();
-                                    $('#customer_name_manual').prop('name', 'name').prop('required', true);
-                                    // Sembunyikan dropdown dan hapus name & required attribute-nya
-                                    $('#existingCustomerDiv').hide();
-                                    $('#customer_name_existing').removeAttr('name').prop('required', false);
-                                }
-                            });
-                        });
-                    </script>
-            
+                    <!-- Grid: Nama Pelanggan & Tanggal Transaksi -->
                     <div class="row mt-3">
-                        <div class="col-md-6 mt-1">
-                            <label for="transaction_date">
-                                <i class="bi bi-calendar-event"></i> Tanggal Transaksi
-                            </label>
+                        <div class="col-md-6" id="customerFieldContainer">
+                            <!-- Field untuk opsi "Pilih dari data yang sudah ada" -->
+                            <div id="existingCustomerDiv">
+                                <label for="customer_name_existing"><i class="bi bi-person"></i> Nama Pelanggan</label>
+                                <select id="customer_name_existing" class="form-control select2 mt-2" name="name" required>
+                                    <option value="">Pilih Customer</option>
+                                    @foreach ($customers->where('jurusan', Auth::user()->jurusan) as $customer)
+                                        <option value="{{ $customer->name }}">{{ $customer->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <!-- Field untuk opsi "Isi secara manual" -->
+                            <div id="manualCustomerDiv" style="display:none;">
+                                <label for="customer_name_manual"><i class="bi bi-person"></i> Nama Pelanggan</label>
+                                <input type="text" id="customer_name_manual" class="form-control mt-2" placeholder="Masukkan nama pelanggan">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="transaction_date"><i class="bi bi-calendar-event"></i> Tanggal Transaksi</label>
                             <input type="date" name="transaction_date" id="transaction_date" class="form-control mt-2"
                                 value="{{ old('transaction_date', now()->toDateString()) }}" required>
                         </div>
                     </div>
             
+                    <!-- Field tambahan -->
                     <div class="row mt-3">
                         <div class="col-md-6 mt-1">
-                            <label for="transaction_type">
-                                <i class="bi bi-arrow-up-down"></i> Jenis Transaksi
-                            </label>
+                            <label for="transaction_type"><i class="bi bi-arrow-up-down"></i> Jenis Transaksi</label>
                             <select name="transaction_type" id="transaction_type" class="form-control mt-2" required>
-                                <option value="purchase"
-                                    {{ old('transaction_type', 'sale') == 'purchase' ? 'selected' : '' }}>Pembelian</option>
-                                <option value="sale"
-                                    {{ old('transaction_type', 'sale') == 'sale' ? 'selected' : '' }}>Penjualan</option>
+                                <option value="purchase" {{ old('transaction_type', 'sale') == 'purchase' ? 'selected' : '' }}>Pembelian</option>
+                                <option value="sale" {{ old('transaction_type', 'sale') == 'sale' ? 'selected' : '' }}>Penjualan</option>
                             </select>
                         </div>
                         <div class="col-md-6 mt-1">
-                            <label for="payment_method">
-                                <i class="bi bi-credit-card-2-front"></i> Metode Pembayaran
-                            </label>
+                            <label for="payment_method"><i class="bi bi-credit-card-2-front"></i> Metode Pembayaran</label>
                             <select name="payment_method" id="payment_method" class="form-control mt-2" required>
                                 <option value="Bayar Tunai">Bayar Cash</option>
                                 <option value="Kooperasi">Kooperasi</option>
@@ -174,36 +117,24 @@
             
                     <div class="row mt-3">
                         <div class="col-md-6 mt-1">
-                            <label for="purchase_price">
-                                <i class="bi bi-credit-card"></i> Uang Masuk
-                            </label>
-                            <input type="text" id="purchase_price" class="form-control mt-2"
-                                value="{{ old('purchase_price', 0) }}" required>
-                            <input type="hidden" name="purchase_price" id="purchase_price_asli"
-                                value="{{ old('purchase_price', 0) }}">
+                            <label for="purchase_price"><i class="bi bi-credit-card"></i> Uang Masuk</label>
+                            <input type="text" id="purchase_price" class="form-control mt-2" value="{{ old('purchase_price', 0) }}" required>
+                            <input type="hidden" name="purchase_price" id="purchase_price_asli" value="{{ old('purchase_price', 0) }}">
                         </div>
                         <div class="col-md-6 mt-1">
-                            <label for="discount">
-                                <i class="bi bi-tag"></i> Diskon (%)
-                            </label>
-                            <input type="number" name="discount" id="discount" class="form-control mt-2"
-                                min="0" max="100">
+                            <label for="discount"><i class="bi bi-tag"></i> Diskon (%)</label>
+                            <input type="number" name="discount" id="discount" class="form-control mt-2" min="0" max="100">
                         </div>
                     </div>
             
                     <div class="row mt-3">
                         <div class="col-md-6 mt-1">
-                            <label for="total_price">
-                                <i class="bi bi-wallet2"></i> Total Biaya
-                            </label>
-                            <input type="text" id="total_price" class="form-control mt-2"
-                                value="{{ old('total_price', 0) }}" readonly>
+                            <label for="total_price"><i class="bi bi-wallet2"></i> Total Biaya</label>
+                            <input type="text" id="total_price" class="form-control mt-2" value="{{ old('total_price', 0) }}" readonly>
                             <input type="hidden" name="total_price" id="total_price_asli">
                         </div>
                         <div class="col-md-6 mt-1">
-                            <label for="change">
-                                <i class="bi bi-cash-coin"></i> Kembalian
-                            </label>
+                            <label for="change"><i class="bi bi-cash-coin"></i> Kembalian</label>
                             <input type="text" id="change" class="form-control mt-2" readonly>
                             <input type="hidden" id="change_asli">
                             <input type="hidden" id="sparepart_ids" name="sparepart_id">
@@ -219,7 +150,35 @@
                         </button>
                     </div>
                 </div>
-            </form>            
+            </form>
+            
+            <!-- Include jQuery dan Select2 (jangan rubah script) -->
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+            <script>
+                $(document).ready(function() {
+                    // Inisialisasi Select2 untuk dropdown
+                    $('#customer_name_existing').select2({
+                        width: '100%'
+                    });
+            
+                    // Toggle antar opsi input dan required attribute
+                    $('input[name="customer_option"]').on('change', function() {
+                        if ($(this).val() === 'existing') {
+                            $('#existingCustomerDiv').show();
+                            $('#customer_name_existing').prop('name', 'name').prop('required', true);
+                            $('#manualCustomerDiv').hide();
+                            $('#customer_name_manual').removeAttr('name').prop('required', false);
+                        } else {
+                            $('#manualCustomerDiv').show();
+                            $('#customer_name_manual').prop('name', 'name').prop('required', true);
+                            $('#existingCustomerDiv').hide();
+                            $('#customer_name_existing').removeAttr('name').prop('required', false);
+                        }
+                    });
+                });
+            </script>
+                      
         </div>
     </div>
 
