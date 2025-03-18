@@ -1,12 +1,18 @@
 <!-- As a heading -->
 <nav class="navbar navbar-light bg-light">
     <div class="container-fluid mx-5 py-2">
-        <a class="navbar-brand brand-logo" href="{{ url('/') }}">
-            <img src="{{ asset('assets/images/logo.svg') }}" alt="logo" width="125px" />
-        </a>
+        @if (Auth::user()->jurusan == 'TKRO')
+            <a class="navbar-brand brand-logo" href="{{ url('/') }}">
+                <img src="{{ asset('assets/images/logo-mini.svg') }}" alt="logo" width="125px" />
+            </a>
+        @else
+            <a class="navbar-brand brand-logo" href="{{ url('/') }}">
+                <img src="{{ asset('assets/images/logo-miniii.svg') }}" alt="logo" width="125px" />
+            </a>
+        @endif
         <a class="nav-link" href="{{ url('/') }}">
             <i class=""></i>
-                <span class="menu-title">Dashboard</span>
+            <span class="menu-title">Dashboard</span>
         </a>
     </div>
 </nav>

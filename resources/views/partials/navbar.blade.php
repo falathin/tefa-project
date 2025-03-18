@@ -6,9 +6,16 @@
             </button>
         </div>
         <div>
-            <a class="navbar-brand brand-logo" href="{{ url('/') }}">
-                <img src="{{ asset('assets/images/logo-mini.svg') }}" alt="logo" width="300px" height="500px">
-            </a>            
+            @if (Auth::user()->jurusan == 'TKRO')
+                <a class="navbar-brand brand-logo" href="{{ url('/') }}">
+                    <img src="{{ asset('assets/images/logo-mini.svg') }}" alt="logo" width="300px" height="500px">
+                </a>
+            @else
+                <a class="navbar-brand brand-logo" href="{{ url('/') }}">
+                    <img src="{{ asset('assets/images/logo-miniii.svg') }}" alt="logo" width="300px"
+                        height="500px">
+                </a>
+            @endif
 
             <a class="navbar-brand brand-logo-mini" href="{{ url('/') }}">
                 <img src="{{ asset('assets/images/UNIT.png') }}" alt="logo" />
