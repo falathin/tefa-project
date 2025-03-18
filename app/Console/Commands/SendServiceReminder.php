@@ -15,7 +15,7 @@ class SendServiceReminder
     public function __invoke()
     {
         $services = Service::where('status', true)
-        ->whereDate('service_date', '=', Carbon::now()->subDays(30)->toDateString())
+            ->whereDate('service_date', '=', Carbon::now()->subDays(30)->toDateString())
             // ->whereDate('service_date', '<=', Carbon::now()->subDays(1)->toDateString())
             ->with('vehicle.customer')
             ->get();
@@ -42,8 +42,14 @@ class SendServiceReminder
             return;
         }
 
-        $message = "Halo {$customer->name}, sudah 30 hari sejak servis terakhir kendaraan Anda dengan merk {$service->vehicle->brand} dan tipe {$service->vehicle->vehicle_type} . 
-        Jangan lupa untuk melakukan servis rutin agar kendaraan tetap prima!";
+        $message = <<<EOD
+        Halo {$customer->name}        
+        
+            Kami dari Unit Production ingin mengingatkan anda, bahwa sudah 30 hari sejak servis terakhir kendaraan Anda dengan merk Daihatsu dan tipe Xenia 1.5 A/T . 
+        Jangan lupa untuk melakukan servis rutin agar kendaraan tetap prima!
+        
+        
+        EOD;
 
         $token = 'TnP9LcqKBZGTA8royRMA';
         $curl = curl_init();

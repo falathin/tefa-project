@@ -12,4 +12,4 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote')->hourly();
 
 Schedule::call(new SendServiceReminder)->dailyAt('05:50');
-// Schedule::call(new SendServiceReminder)->dailyAt('05:00');
+// Schedule::call(new SendServiceReminder)->everyMinute();
