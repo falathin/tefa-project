@@ -36,7 +36,7 @@
                 <!-- Alamat -->
                 <div class="form-group">
                     <label for="address"><i class="fas fa-map-marker-alt"></i> Alamat</label>
-                    <textarea class="form-control" id="address" name="address" required>{{ old('address', $customer->address) }}</textarea>
+                    <textarea class="form-control" id="address" name="address">{{ old('address', $customer->address) }}</textarea>
                 </div>
 
                 <button type="submit" class="btn btn-warning mt-3">

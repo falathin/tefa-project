@@ -131,7 +131,6 @@
                             <label for="additional_notes" class="form-label">Catatan Tambahan</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-sticky-note"></i></span>
-                                <!-- Tambahkan placeholder khusus -->
                                 <textarea name="additional_notes" id="additional_notes" class="form-control"
                                     placeholder="Tambahkan catatan tambahan jika diperlukan!" rows="5" style="resize: vertical;">{{ old('additional_notes') }}</textarea>
                             </div>
@@ -197,8 +196,6 @@
                     const value = $(this).val().replace(/[^\d]/g, '');
                     total += parseInt(value) || 0;
                 });
-                // Jika ada elemen untuk menampilkan total biaya, misalnya #totalBiaya, update disini
-                // $('#totalBiaya').text(formatCurrency(total));
                 document.getElementById('total_price_asli').value = total;
                 updateDiscount();
             }
@@ -320,19 +317,8 @@
             updateTotalCost();
         });
 
-        // Fungsi konfirmasi submit form untuk memastikan input sparepart tidak kosong
+        // Fungsi konfirmasi submit form sederhana (tidak validasi minimal sparepart)
         function confirmSubmit() {
-            const spareparts = document.querySelectorAll('.sparepart_id');
-            if (spareparts.length === 0) {
-                alert('Harap tambahkan minimal 1 sparepart.');
-                return false;
-            }
-            for (let select of spareparts) {
-                if (!select.value) {
-                    alert('Pastikan semua sparepart telah dipilih.');
-                    return false;
-                }
-            }
             return confirm('Apakah Anda yakin ingin menyimpan data service ini?');
         }
     </script>

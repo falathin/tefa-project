@@ -30,29 +30,26 @@
             <select class="col-6 form-select mb-4" aria-label="Pilih level akun" id="level" name="level" required>
                 <option value="admin">Admin</option>
                 <option value="bendahara">Bendahara</option>
-                <option value="kasir" selected >Kasir</option>
+                <option value="kasir" selected>Kasir</option>
             </select>
             @if (Gate::allows('isEngineer'))
-            <label for="level" class="form-label">Pilih jurusan akun</label>
-            <select class="col-6 form-select mb-4" aria-label="Pilih level akun" id="jurusan" name="jurusan" required>
-                <option value="TKRO">TKRO</option>
-                <option value="TSM">TSM</option>
-            </select>
-                @else
+                <label for="jurusan" class="form-label">Pilih jurusan akun</label>
+                <select class="col-6 form-select mb-4" aria-label="Pilih jurusan akun" id="jurusan" name="jurusan" required>
+                    <option value="TKRO">TKRO</option>
+                    <option value="TSM">TSM</option>
+                </select>
+            @else
                 <input type="text" value="{{ Auth::user()->jurusan }}" name="jurusan" hidden>
             @endif
-
-
 
             <div class="mb-1">
                 <label for="new_password" class="form-label">Masukkan Password</label>
                 <input type="password" class="form-control" id="new_password" name="new_password" required>
             </div>
 
-            <!-- 1 column grid layout for inline styling -->
+            <!-- Checkbox untuk menampilkan password -->
             <div class="row mb-3">
                 <div class="col d-flex">
-                    <!-- Checkbox -->
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" id="showPassword" />
                         <label class="form-check-label" for="showPassword">lihat password</label>
@@ -82,15 +79,34 @@
         </form>
     </div>
 </div>
+
 <script>
+    // Tampilkan atau sembunyikan password
     const passwordInput = document.getElementById('new_password');
     const showPasswordCheckbox = document.getElementById('showPassword');
 
     showPasswordCheckbox.addEventListener('change', function() {
-        if (this.checked) {
-            passwordInput.type = 'text';
-        } else {
-            passwordInput.type = 'password';
+        passwordInput.type = this.checked ? 'text' : 'password';
+    });
+
+    // Format otomatis untuk nomor telepon
+    const phoneInput = document.getElementById('phone_number');
+    phoneInput.addEventListener('input', function(e) {
+        let inputVal = e.target.value;
+        // Jika dimulai dengan +62, ganti menjadi 08
+        if (inputVal.startsWith('+62')) {
+            inputVal = '08' + inputVal.slice(3);
         }
+        // Hapus semua karakter selain angka
+        let digits = inputVal.replace(/\D/g, '');
+        // Format: 4 digit pertama, dash, 4 digit berikutnya, dash, sisa digit
+        if (digits.length > 4 && digits.length <= 8) {
+            inputVal = digits.substring(0, 4) + '-' + digits.substring(4);
+        } else if (digits.length > 8) {
+            inputVal = digits.substring(0, 4) + '-' + digits.substring(4, 8) + '-' + digits.substring(8);
+        } else {
+            inputVal = digits;
+        }
+        e.target.value = inputVal;
     });
 </script>

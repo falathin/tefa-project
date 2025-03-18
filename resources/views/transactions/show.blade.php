@@ -358,7 +358,11 @@ document.addEventListener("DOMContentLoaded", function() {
                     </div>
                     <div class="invoice-footer">
                         Terima kasih atas kepercayaan Anda!
-                        <small>Hubungi kami: 0812-3456-7890 | email@example.com</small>
+                        @if (Auth::user()->jurusan == 'TSM')
+                        <small>Hubungi kami: +62 857-1546-7500</small>
+                        @elseif
+                        <small>Hubungi kami: +62 858-8353-3001</small>
+                        @endif
                     </div>
                 </div>
             </body>

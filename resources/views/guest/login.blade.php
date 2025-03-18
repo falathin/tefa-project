@@ -29,13 +29,14 @@
                 @enderror
             </div>
 
-            <!-- Tampilkan pesan error rate limiting -->
+            <!-- Tampilkan pesan error rate limiting dalam card -->
             @if ($errors->has('throttle'))
-                <div class="text-danger mb-3">
-                    {{ $errors->first('throttle') }}
+                <div class="card border-danger mb-3" id="throttleMessage">
+                    <div class="card-body text-danger">
+                        {!! $errors->first('throttle') !!}
+                    </div>
                 </div>
             @endif
-
 
             <div class="row mb-4">
                 <div class="col d-flex">
@@ -52,7 +53,7 @@
             </div>
 
             <div class="py-1">
-                <button type="submit" class="btn btn-danger w-100 fw-bold">Masuk</button>
+                <button type="submit" class="btn btn-danger w-100 fw-bold" id="loginButton">Masuk</button>
             </div>
 
             @if (session('status'))
@@ -71,4 +72,24 @@
     showPasswordCheckbox.addEventListener('change', function() {
         passwordInput.type = this.checked ? 'text' : 'password';
     });
+
+    // Jika pesan throttle ada, jalankan countdown live
+    const countdownElement = document.getElementById('countdown');
+    if (countdownElement) {
+        const loginButton = document.getElementById('loginButton');
+        loginButton.disabled = true;
+        let timeLeft = parseInt(countdownElement.textContent);
+        const interval = setInterval(() => {
+            timeLeft--;
+            countdownElement.textContent = timeLeft;
+            if (timeLeft <= 0) {
+                clearInterval(interval);
+                loginButton.disabled = false;
+                const throttleMessage = document.getElementById('throttleMessage');
+                if (throttleMessage) {
+                    throttleMessage.style.display = 'none';
+                }
+            }
+        }, 1000);
+    }
 </script>
