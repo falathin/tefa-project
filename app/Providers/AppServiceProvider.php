@@ -39,6 +39,10 @@ class AppServiceProvider extends ServiceProvider
             return $user->level == 'kasir';
         });
 
+        Gate::define('isSA', function (User $user) {
+            return $user->level == 'service advisor';
+        });
+
         Gate::define('isSameJurusan', function (User $user, ?Model $id) {
             if ($id) {
                 if ($user->jurusan == 'General') {

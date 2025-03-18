@@ -75,14 +75,14 @@
         </p>
         <p>
             Laporan ini merupakan dokumentasi dari aplikasi web yang dikembangkan selama pelatihan kerja di <strong>Teaching
-                Factory Bengkel TKRO dan TBSM</strong> di <strong>PT Inovindo Digital Media</strong>, menggunakan framework
+                Factory Bengkel TKRO dan TSM</strong> di <strong>PT Inovindo Digital Media</strong>, menggunakan framework
             <strong>Laravel</strong>. Aplikasi ini bertujuan untuk mengelola berbagai aspek yang berkaitan dengan kegiatan
             operasional di bengkel, khususnya dalam manajemen kendaraan, sparepart, serta transaksi pembayaran yang terjadi
             dalam proses perawatan dan servis kendaraan.
         </p>
         <p>
             Dalam lingkungan bengkel yang melayani berbagai jenis kendaraan, terutama dalam bidang Teknik Kendaraan Ringan
-            Otomotif (TKRO) dan Teknik Bisnis Sepeda Motor (TBSM), pengelolaan data yang efisien dan cepat menjadi sangat
+            Otomotif (TKRO) dan Teknik Sepeda Motor (TSM), pengelolaan data yang efisien dan cepat menjadi sangat
             penting. Oleh karena itu, aplikasi ini dirancang dengan tujuan untuk mempercepat dan mempermudah proses
             pencatatan, pengelolaan, dan pelaporan data yang berkaitan dengan kendaraan, sparepart, dan transaksi. Dengan
             begitu, proses bisnis dapat berjalan lebih lancar dan lebih terstruktur.
@@ -383,7 +383,7 @@
                     </ol>
                     <div class="alert alert-info">
                         <strong>Catatan:</strong><br>
-                        - Pastikan data yang Anda berikan (nama, email, dan username) sesuai dengan data terdaftar.<br>
+                        - Pastikan data yang Anda berikan (email, nama, dan nomor WA) sesuai dengan data yang terdaftar di website TefaCashier!<br>
                         - Jika Anda mengalami kendala, jangan ragu untuk menghubungi pihak Iteens kembali.
                     </div>
                 </div>

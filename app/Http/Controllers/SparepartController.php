@@ -38,8 +38,11 @@ class SparepartController extends Controller
     public function create()
     {
         // Admin & kasir
-        if (! Gate::allows('isAdmin') && ! Gate::allows('isKasir')) {
-            abort(403, 'Butuh level Admin & Kasir');
+        // if (! Gate::allows('isAdmin') && ! Gate::allows('isKasir')) {
+        //     abort(403, 'Butuh level Admin & Kasir');
+        // }
+        if (Gate::allows('isBendahara')) {
+            abort(403, 'Butuh level Admin | Kasir | Service advisor');
         }
         return view('sparepart.create');
     }
@@ -111,6 +114,9 @@ class SparepartController extends Controller
         // if (! Gate::allows('isAdminOrEngineer') && ! Gate::allows('isKasir')) {
         //     abort(403, 'Butuh level Admin & Kasir');
         // }
+        if (Gate::allows('isBendahara')) {
+            abort(403, 'Butuh level Admin | Kasir | Service advisor');
+        }
         $sparepart = Sparepart::findOrFail($sparepart_id);
         return view('sparepart.show', compact('sparepart'));
     }
@@ -123,8 +129,11 @@ class SparepartController extends Controller
         }
 
         // Admin & kasir
-        if (! Gate::allows('isAdmin') && ! Gate::allows('isKasir')) {
-            abort(403, 'Butuh level Admin & Kasir');
+        // if (! Gate::allows('isAdmin') && ! Gate::allows('isKasir')) {
+        //     abort(403, 'Butuh level Admin & Kasir');
+        // }
+        if (Gate::allows('isBendahara')) {
+            abort(403, 'Butuh level Admin | Kasir | Service advisor');
         }
         $sparepart = Sparepart::findOrFail($id);
         return view('sparepart.edit', compact('sparepart'));

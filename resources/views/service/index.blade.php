@@ -59,7 +59,8 @@
                             <option value="completed" {{ request('service_status') == 'completed' ? 'selected' : '' }}>
                                 Selesai
                             </option>
-                            <option value="not_completed" {{ request('service_status') == 'not_completed' ? 'selected' : '' }}>
+                            <option value="not_completed"
+                                {{ request('service_status') == 'not_completed' ? 'selected' : '' }}>
                                 Belum Selesai
                             </option>
                         </select>
@@ -114,26 +115,31 @@
                                         <p>{{ $service->jurusan }}</p>
                                     @endif
                                     <div class="d-flex justify-content-between mt-3">
-                                        <a href="{{ route('service.show', $service->id) }}"
-                                           class="btn btn-info btn-sm" data-bs-toggle="tooltip"
-                                           data-bs-placement="top" title="Lihat">
-                                            <i class="fas fa-eye"></i> Lihat
+                                        @if (Gate::allows('isSA'))
+                                        <a href="{{ route('services.exportPkb', $service->id) }}" class="btn btn-success btn-sm flex-grow-1" target="_blank">
+                                            <i class="bi bi-file-earmark-excel"></i> PKB Kerja Excel
                                         </a>
+                                        @else
+                                            <a href="{{ route('service.show', $service->id) }}" class="btn btn-info btn-sm"
+                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Lihat">
+                                                <i class="fas fa-eye"></i> Lihat
+                                            </a>
+                                        @endif
                                         @if (!Gate::allows('isBendahara'))
                                             @if ($service->status == false)
                                                 <a href="{{ route('service.edit', $service->id) }}"
-                                                   class="btn btn-warning btn-sm" data-bs-toggle="tooltip"
-                                                   data-bs-placement="top" title="Edit">
+                                                    class="btn btn-warning btn-sm" data-bs-toggle="tooltip"
+                                                    data-bs-placement="top" title="Edit">
                                                     <i class="fas fa-edit"></i> Edit
                                                 </a>
                                             @endif
-                                            <form action="{{ route('service.destroy', $service->id) }}"
-                                                  method="POST" style="display:inline;" class="d-inline">
+                                            <form action="{{ route('service.destroy', $service->id) }}" method="POST"
+                                                style="display:inline;" class="d-inline">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="btn btn-danger btn-sm"
-                                                        onclick="return confirm('Apakah Anda yakin ingin menghapus servis ini?')"
-                                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus">
+                                                    onclick="return confirm('Apakah Anda yakin ingin menghapus servis ini?')"
+                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus">
                                                     <i class="fas fa-trash-alt"></i> Hapus
                                                 </button>
                                             </form>

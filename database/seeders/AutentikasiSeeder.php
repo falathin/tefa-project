@@ -17,9 +17,9 @@ class AutentikasiSeeder extends Seeder
         $userData = [
             [
                 'name' => 'Annida',
-                'email' => 'iteens.tefa@gmail.com',
-                'level' => 'engineer',
-                'jurusan' => 'TSM',
+                'email' => 'sa@gmail.com',
+                'level' => 'service advisor',
+                'jurusan' => 'TKRO',
                 'phone_number' => '087712134885',
                 'password' => bcrypt('admin123')
             ],

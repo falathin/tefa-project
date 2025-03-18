@@ -28,7 +28,10 @@ class TransactionController extends Controller
                 })
                 ->orderBy('created_at', 'desc')
                 ->paginate(5);
-        } else {
+        } elseif (Gate::allows('isSA')) {
+            abort(403, 'Butuh level Admin | Kasir | Bendahara');
+        }
+        else {
             $transactions = Transaction::query()
                 ->where('jurusan', 'like', Auth::user()->jurusan)
                 ->when($search, function ($query, $search) {
@@ -136,6 +139,9 @@ class TransactionController extends Controller
         $transaction = Transaction::with('transactionSpareparts.sparepart')->findOrFail($id);
     
         // Cek izin jurusan
+        if (!Gate::allows('isSameJurusan', [$transaction])) {
+            abort(403, 'Data tidak ditemukan!');
+        }
         if (!Gate::allows('isSameJurusan', [$transaction])) {
             abort(403, 'Data tidak ditemukan!');
         }

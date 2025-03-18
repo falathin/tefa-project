@@ -30,19 +30,19 @@ class ServiceController extends Controller
         $date = $request->get('date'); // filter berdasarkan tanggal spesifik
         $perPage = $request->get('per_page', 10);
         $search = $request->get('search');
-    
+
         // Simpan filter di session jika diperlukan
         $request->session()->put('payment_status', $paymentStatus);
         $request->session()->put('service_status', $serviceStatus);
         $request->session()->put('date', $date);
-    
+
         // Query dasar: jika jurusan user General, tampilkan semua, selain itu filter berdasarkan jurusan user
         if (Auth::user()->jurusan == 'General') {
             $servicesQuery = Service::query();
         } else {
             $servicesQuery = Service::query()->where('jurusan', 'like', Auth::user()->jurusan);
         }
-    
+
         // Filter status pembayaran
         if ($paymentStatus !== 'all') {
             if ($paymentStatus === 'paid') {
@@ -51,7 +51,7 @@ class ServiceController extends Controller
                 $servicesQuery->whereRaw('payment_received < total_cost');
             }
         }
-    
+
         // Filter status servis
         if ($serviceStatus !== 'all') {
             if ($serviceStatus === 'completed') {
@@ -60,37 +60,37 @@ class ServiceController extends Controller
                 $servicesQuery->where('status', false);
             }
         }
-    
+
         // Filter berdasarkan tanggal spesifik jika diisi
         if ($date) {
             $servicesQuery->whereDate('created_at', $date);
         }
-    
+
         // Filter pencarian
         if ($search) {
-            $servicesQuery->where(function($query) use ($search) {
-                $query->whereHas('vehicle', function($q) use ($search) {
+            $servicesQuery->where(function ($query) use ($search) {
+                $query->whereHas('vehicle', function ($q) use ($search) {
                     $q->where('license_plate', 'like', "%{$search}%");
                 })
-                ->orWhereHas('vehicle.customer', function($q) use ($search) {
-                    $q->where('name', 'like', "%{$search}%");
-                })
-                ->orWhere('complaint', 'like', "%{$search}%")
-                ->orWhere('service_type', 'like', "%{$search}%")
-                ->orWhere('additional_notes', 'like', "%{$search}%")
-                ->orWhere('technician_name', 'like', "%{$search}%")
-                ->orWhere('payment_method', 'like', "%{$search}%");
+                    ->orWhereHas('vehicle.customer', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%");
+                    })
+                    ->orWhere('complaint', 'like', "%{$search}%")
+                    ->orWhere('service_type', 'like', "%{$search}%")
+                    ->orWhere('additional_notes', 'like', "%{$search}%")
+                    ->orWhere('technician_name', 'like', "%{$search}%")
+                    ->orWhere('payment_method', 'like', "%{$search}%");
             });
         }
-    
+
         // Urutkan berdasarkan tanggal terbaru
         $servicesQuery->orderBy('created_at', 'desc');
-    
+
         $services = $servicesQuery->paginate($perPage);
-    
+
         return view('service.index', compact('services', 'paymentStatus', 'serviceStatus', 'date', 'perPage', 'search'));
-    }    
-    
+    }
+
     function validatePhoneNumber($phone)
     {
         // Regex untuk nomor handphone diawali 08
@@ -107,8 +107,11 @@ class ServiceController extends Controller
             abort(403, 'data tidak ditemukan!!');
         }
         // Admin & kasir
-        if (!Gate::allows('isAdmin') && !Gate::allows('isKasir')) {
-            abort(403, 'Butuh level Admin & Kasir');
+        // if (!Gate::allows('isAdmin') && !Gate::allows('isKasir')) {
+        //     abort(403, 'Butuh level Admin & Kasir');
+        // }
+        if (Gate::allows('isBendahara') xor Gate::allows('isKasir')) {
+            abort(403, 'Butuh level Admin | Service advisor');
         }
 
         $auth = Auth::user()->jurusan;
@@ -125,9 +128,13 @@ class ServiceController extends Controller
         }
 
         // Admin & kasir
-        if (!Gate::allows('isAdmin') && !Gate::allows('isKasir')) {
-            abort(403, 'Butuh level Admin & Kasir');
+        // if (!Gate::allows('isAdmin') && !Gate::allows('isKasir')) {
+        //     abort(403, 'Butuh level Admin & Kasir');
+        // }
+        if (Gate::allows('isBendahara')) {
+            abort(403, 'Butuh level Admin | Kasir | Service advisor');
         }
+
         $auth = Auth::user()->jurusan;
         $service = Service::findOrFail($id);
         $spareparts = Sparepart::all()->where('jurusan', 'like', $auth);
@@ -408,6 +415,9 @@ class ServiceController extends Controller
         $serviceId = Service::find($id);
         if (!Gate::allows('isSameJurusan', [$serviceId])) {
             abort(403, 'data tidak ditemukan!!');
+        } else if (Gate::allows('isSA')) {
+            return redirect()->route('customer.index')
+                ->with('success', 'Servis berhasil dibuat!');
         }
         $service = Service::with('checklists')->findOrFail($id);
 
@@ -446,8 +456,11 @@ class ServiceController extends Controller
     public function editChecklist($id)
     {
         // Admin & kasir
-        if (!Gate::allows('isAdmin') && !Gate::allows('isKasir')) {
-            abort(403, 'Butuh level Admin & Kasir');
+        // if (!Gate::allows('isAdmin') && !Gate::allows('isKasir')) {
+        //     abort(403, 'Butuh level Admin & Kasir');
+        // }
+        if (Gate::allows('isBendahara')) {
+            abort(403, 'Butuh level Admin | Kasir | Service advisor');
         }
         $checklist = ServiceChecklist::findOrFail($id);
         return view('service.editChecklist', compact('checklist'));

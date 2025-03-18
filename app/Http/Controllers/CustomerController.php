@@ -14,8 +14,11 @@ class CustomerController extends Controller
 {
     public function index(Request $request)
     {
-        if (! Gate::allows('isAdmin') && ! Gate::allows('isKasir')) {
-            abort(403, 'Butuh level Admin & Kasir');
+        // if (! Gate::allows('isAdmin') && ! Gate::allows('isKasir')) {
+        //     abort(403, 'Butuh level Admin & Kasir');
+        // }
+        if (Gate::allows('isBendahara')) {
+            abort(403, 'Butuh level Admin | Kasir | Service advisor');
         }
         
         $jurusan = Auth::user()->jurusan;
@@ -48,8 +51,8 @@ class CustomerController extends Controller
     public function create()
     {
         // Admin & kasir
-        if (! Gate::allows('isAdmin') && ! Gate::allows('isKasir')) {
-            abort(403, 'Butuh level Admin & Kasir');
+        if (Gate::allows('isBendahara')) {
+            abort(403, 'Butuh level Admin | Kasir | Bendahara');
         }
         return view('customer.create');
     }
@@ -123,9 +126,13 @@ class CustomerController extends Controller
             abort(403, 'Data tidak ditemukan!');
         }
         // Admin & kasir
-        if (! Gate::allows('isAdmin') && ! Gate::allows('isKasir')) {
-            abort(403, 'Butuh level Admin & Kasir');
+        // if (! Gate::allows('isAdmin') && ! Gate::allows('isKasir')) {
+        //     abort(403, 'Butuh level Admin & Kasir');
+        // }
+        if (Gate::allows('isBendahara')) {
+            abort(403, 'Butuh level Admin | Kasir | Service advisor');
         }
+
         $customer = Customer::with('vehicles')->findOrFail($id);
         return view('customer.edit', compact('customer'));
     }
@@ -164,10 +171,13 @@ class CustomerController extends Controller
         }
 
         // Admin & kasir
-        if (! Gate::allows('isAdmin') && ! Gate::allows('isKasir')) {
-            abort(403, 'Butuh level Admin & Kasir');
+        // if (! Gate::allows('isAdmin') && ! Gate::allows('isKasir')) {
+        //     abort(403, 'Butuh level Admin & Kasir');
+        // }
+        if (Gate::allows('isBendahara')) {
+            abort(403, 'Butuh level Admin | Kasir | Bendahara');
         }
-        
+
         $customer = Customer::findOrFail($id);
 
         $customer->contact = $customer->contact ?: 'Tidak ada data kontak';

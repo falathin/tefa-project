@@ -65,8 +65,11 @@ class VehicleController extends Controller
         if (!Gate::allows('isSameJurusan', [$vehicle])) {
             abort(403, 'Data tidak ditemukan!!');
         }
-        if (!Gate::allows('isAdmin') && !Gate::allows('isKasir')) {
-            abort(403, 'Butuh level Admin & Kasir');
+        // if (!Gate::allows('isAdmin') && !Gate::allows('isKasir')) {
+        //     abort(403, 'Butuh level Admin & Kasir');
+        // }
+        if (Gate::allows('isBendahara')) {
+            abort(403, 'Butuh level Admin | Kasir | Bendahara');
         }
         $vehicle = Vehicle::findOrFail($id);
 
