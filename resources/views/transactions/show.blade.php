@@ -360,7 +360,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         Terima kasih atas kepercayaan Anda!
                         @if (Auth::user()->jurusan == 'TSM')
                         <small>Hubungi kami: +62 857-1546-7500</small>
-                        @elseif
+                        @elseif(Auth::user()->jurusan == 'TKRO')
                         <small>Hubungi kami: +62 858-8353-3001</small>
                         @endif
                     </div>
