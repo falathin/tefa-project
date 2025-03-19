@@ -13,7 +13,9 @@ class ServiceSparepart extends Model
         'service_id',
         'sparepart_id',
         'quantity',
-        'price'
+        'nama_sparepart',
+        'harga_jual',
+        'spek'
     ];
 
     // Relasi ke Service

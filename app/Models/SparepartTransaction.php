@@ -11,8 +11,12 @@ class SparepartTransaction extends Model
 
     protected $fillable = [
         'transaction_id',
-        'sparepart_id',
         'quantity',
+        'sparepart_id',
+        'harga_beli',
+        'harga_jual',
+        'nama_sparepart',
+        'spek',
     ];
 
     protected $casts = [

@@ -75,15 +75,15 @@
                     <tbody>
                         @foreach ($transaction->transactionSpareparts as $sparepart)
                             <tr>
-                                <td>{{ $sparepart->sparepart->nama_sparepart }}</td>
-                                <td>{{ $sparepart->sparepart->spek }}</td>
+                                <td>{{ $sparepart->nama_sparepart }}</td>
+                                <td>{{ $sparepart->spek }}</td>
                                 <td class="fw-bold text-center">{{ $sparepart->quantity }}</td>
-                                <td>Rp {{ number_format($sparepart->sparepart->harga_beli) }}</td>
-                                <td class="text-success">Rp {{ number_format($sparepart->sparepart->harga_jual) }}</td>
-                                <td class="text-warning">Rp {{ number_format($sparepart->sparepart->keuntungan) }}</td>
-                                <td class="text-danger fw-bold">Rp {{ number_format($sparepart->quantity * $sparepart->sparepart->harga_jual) }}</td>
+                                <td>Rp {{ number_format($sparepart->harga_beli) }}</td>
+                                <td class="text-success">Rp {{ number_format($sparepart->harga_jual) }}</td>
+                                <td class="text-warning">Rp {{ number_format($sparepart->keuntungan) }}</td>
+                                <td class="text-danger fw-bold">Rp {{ number_format($sparepart->quantity * $sparepart->harga_jual) }}</td>
                                 <td>
-                                    <button class="btn btn-sm btn-secondary copy-btn" data-text="{{ $sparepart->sparepart->nama_sparepart }}">
+                                    <button class="btn btn-sm btn-secondary copy-btn" data-text="{{ $sparepart->nama_sparepart }}">
                                         <i class="fas fa-copy"></i>
                                     </button>
                                 </td>
@@ -100,11 +100,11 @@
                         <i class="fas fa-arrow-left"></i> Kembali
                     </a>
                 </div>
-                <div>
+                {{-- <div>
                     <a href="{{ route('transactions.edit', $transaction->id) }}" class="btn btn-success">
                         <i class="fas fa-edit"></i> Edit
                     </a>
-                </div>
+                </div> --}}
                 <div>
                     <button class="btn btn-warning" id="copyAll">
                         <i class="fas fa-clipboard"></i> Salin Semua
@@ -150,12 +150,12 @@ document.addEventListener("DOMContentLoaded", function() {
         text += "===================================\n\n";
         @foreach($transaction->transactionSpareparts as $index => $trans)
             text += `🛠️ **Transaksi #{{ $index + 1 }}**\n`;
-            text += `📌 Nama Sparepart: {{ $trans->sparepart->nama_sparepart }}\n`;
-            text += `🔍 Spesifikasi: {{ $trans->sparepart->spek }}\n`;
+            text += `📌 Nama Sparepart: {{ $trans->nama_sparepart }}\n`;
+            text += `🔍 Spesifikasi: {{ $trans->spek }}\n`;
             text += `📦 Jumlah: {{ $trans->quantity }} unit\n`;
-            text += `💰 Harga Beli: Rp {{ number_format($trans->sparepart->harga_beli) }}\n`;
-            text += `💵 Harga Jual: Rp {{ number_format($trans->sparepart->harga_jual) }}\n`;
-            text += `📈 Keuntungan: Rp {{ number_format($trans->sparepart->keuntungan) }}\n`;
+            text += `💰 Harga Beli: Rp {{ number_format($trans->harga_beli) }}\n`;
+            text += `💵 Harga Jual: Rp {{ number_format($trans->harga_jual) }}\n`;
+            text += `📈 Keuntungan: Rp {{ number_format($trans->keuntungan) }}\n`;
             text += `🧮 Subtotal: Rp {{ number_format($trans->subtotal) }}\n`;
             text += "-----------------------------------\n\n";
         @endforeach
@@ -311,13 +311,13 @@ document.addEventListener("DOMContentLoaded", function() {
                             <tbody>
                                 @foreach ($transaction->transactionSpareparts as $sparepart)
                                 <tr>
-                                    <td><i class="fas fa-toolbox"></i> {{ $sparepart->sparepart->nama_sparepart }}</td>
-                                    <td><i class="fas fa-info-circle"></i> {{ $sparepart->sparepart->spek }}</td>
+                                    <td><i class="fas fa-toolbox"></i> {{ $sparepart->nama_sparepart }}</td>
+                                    <td><i class="fas fa-info-circle"></i> {{ $sparepart->spek }}</td>
                                     <td>{{ $sparepart->quantity }}</td>
-                                    <td>Rp {{ number_format($sparepart->sparepart->harga_beli) }}</td>
-                                    <td>Rp {{ number_format($sparepart->sparepart->harga_jual) }}</td>
-                                    <td>Rp {{ number_format($sparepart->sparepart->keuntungan) }}</td>
-                                    <td>Rp {{ number_format($sparepart->quantity * $sparepart->sparepart->harga_jual) }}</td>
+                                    <td>Rp {{ number_format($sparepart->harga_beli) }}</td>
+                                    <td>Rp {{ number_format($sparepart->harga_jual) }}</td>
+                                    <td>Rp {{ number_format($sparepart->keuntungan) }}</td>
+                                    <td>Rp {{ number_format($sparepart->quantity * $sparepart->harga_jual) }}</td>
                                 </tr>
                                 @endforeach
                             </tbody>

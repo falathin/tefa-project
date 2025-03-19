@@ -193,7 +193,17 @@ class ServiceController extends Controller
         $serviceSpareparts = $service->serviceSpareparts;
         foreach ($serviceSpareparts as $serviceSparepart) {
             $sparepart = Sparepart::findOrFail($serviceSparepart->sparepart_id);
-            $sparepart->decrement('jumlah', $serviceSparepart->quantity);
+            if ($sparepart->jumlah >= $serviceSparepart->quantity) {
+                $sparepart->decrement('jumlah', $serviceSparepart->quantity);
+            } else {
+                // Jika stok tidak cukup, kembalikan pesan error
+                return redirect()->back()->with('error', 'Stok sparepart ' . $sparepart->nama_sparepart . ' tidak mencukupi!');
+            }
+            
+            $serviceSparepart->nama_sparepart = $sparepart->nama_sparepart;
+            $serviceSparepart->spek = $sparepart->spek;
+            $serviceSparepart->harga_jual = $sparepart->harga_jual;
+            $serviceSparepart->save();
         }
         $service->status = 1;
         $service->save();

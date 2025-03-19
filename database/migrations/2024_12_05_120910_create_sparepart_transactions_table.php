@@ -15,8 +15,12 @@ class CreateSparepartTransactionsTable extends Migration
                 ->references('id')
                 ->on('transactions')
                 ->onDelete('cascade');
-            $table->unsignedBigInteger('sparepart_id');
-            $table->foreign('sparepart_id')->references('id_sparepart')->on('spareparts')->onDelete('cascade');
+            $table->unsignedBigInteger('sparepart_id')->nullable();
+            $table->foreign('sparepart_id')->references('id_sparepart')->on('spareparts')->nullOnDelete();
+            $table->string('nama_sparepart')->nullable();
+            $table->string('spek')->nullable();
+            $table->string('harga_beli')->nullable();
+            $table->string('harga_jual')->nullable();
             $table->integer('quantity');
             $table->timestamps();
         });

@@ -26,14 +26,16 @@
                     <!-- Kolom Kiri -->
                     <div class="col-12 col-md-6 mb-4 mb-md-0">
                         <!-- Informasi Kendaraan -->
-                            <div class="border p-3 rounded shadow-sm bg-white animate_animated animate_fadeInLeft"
+                        <div class="border p-3 rounded shadow-sm bg-white animate_animated animate_fadeInLeft"
                             style="animation-duration: 1.5s; animation-delay: 0.5s; border-color: #e3e6f0;">
                             <h6 class="text-muted"><i class="mdi mdi-car"></i> Informasi Kendaraan</h6>
                             <p><strong>Warna:</strong> {{ $service->vehicle->color ?? 'Data tidak dimasukkan' }}</p>
-                            <p><strong>Tahun Produksi:</strong> {{ $service->vehicle->production_year ?? 'Data tidak dimasukkan' }}</p>
-                            <p><strong>Kode Mesin:</strong> {{ $service->vehicle->engine_code ?? 'Data tidak dimasukkan' }}</p>
+                            <p><strong>Tahun Produksi:</strong>
+                                {{ $service->vehicle->production_year ?? 'Data tidak dimasukkan' }}</p>
+                            <p><strong>Kode Mesin:</strong> {{ $service->vehicle->engine_code ?? 'Data tidak dimasukkan' }}
+                            </p>
                         </div>
-                                       
+
 
                         <!-- Informasi Pelanggan -->
                         <div class="border p-3 rounded shadow-sm bg-white mt-4 animate_animated animate_fadeInLeft"
@@ -400,22 +402,43 @@
                         </thead>
                         <tbody>
                             @php $total = 0; @endphp
-                            @forelse($service->serviceSpareparts as $serviceSparepart)
-                                @php
-                                    $subtotal = $serviceSparepart->quantity * $serviceSparepart->sparepart->harga_jual;
-                                    $total += $subtotal;
-                                @endphp
-                                <tr class="animate_animated animate_flipInX">
-                                    <td>{{ $serviceSparepart->sparepart->nama_sparepart }}</td>
-                                    <td>{{ $serviceSparepart->quantity }}</td>
-                                    <td>Rp. {{ number_format($serviceSparepart->sparepart->harga_jual, 0, ',', '.') }}</td>
-                                    <td>Rp. {{ number_format($subtotal, 0, ',', '.') }}</td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="4" class="text-center">Tidak ada sparepart yang digunakan.</td>
-                                </tr>
-                            @endforelse
+                            @if ($service->status == false)
+                                @forelse($service->serviceSpareparts as $serviceSparepart)
+                                    @php
+                                        $subtotal = $serviceSparepart->quantity * $serviceSparepart->harga_jual;
+                                        $total += $subtotal;
+                                    @endphp
+                                    <tr class="animate_animated animate_flipInX">
+                                        <td>{{ $serviceSparepart->sparepart->nama_sparepart }}
+                                            {{ $serviceSparepart->sparepart->spek }}</td>
+                                        <td>{{ $serviceSparepart->quantity }}</td>
+                                        <td>Rp. {{ number_format($serviceSparepart->sparepart->harga_jual, 0, ',', '.') }}
+                                        </td>
+                                        <td>Rp. {{ number_format($subtotal, 0, ',', '.') }}</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="4" class="text-center">Tidak ada sparepart yang digunakan.</td>
+                                    </tr>
+                                @endforelse
+                            @else
+                                @forelse($service->serviceSpareparts as $serviceSparepart)
+                                    @php
+                                        $subtotal = $serviceSparepart->quantity * $serviceSparepart->harga_jual;
+                                        $total += $subtotal;
+                                    @endphp
+                                    <tr class="animate_animated animate_flipInX">
+                                        <td>{{ $serviceSparepart->nama_sparepart }} {{ $serviceSparepart->spek }}</td>
+                                        <td>{{ $serviceSparepart->quantity }}</td>
+                                        <td>Rp. {{ number_format($serviceSparepart->harga_jual, 0, ',', '.') }}</td>
+                                        <td>Rp. {{ number_format($subtotal, 0, ',', '.') }}</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="4" class="text-center">Tidak ada sparepart yang digunakan.</td>
+                                    </tr>
+                                @endforelse
+                            @endif
                         </tbody>
                         @if ($total > 0)
                             <tfoot>
@@ -427,7 +450,7 @@
                         @endif
                     </table>
                 </div>
-                
+
                 @if (!Gate::allows('isBendahara'))
                     @if ($service->status == false || Gate::allows('isAdmin'))
                         {{-- informasi pembayaran --}}
@@ -653,7 +676,8 @@
                     <!-- Tombol lainnya (Cetak, Salin, Kembali, Edit, Hapus) -->
                     <div class="action-buttons-left d-flex gap-2">
                         <!-- Cetak Button -->
-                        <button id="printBtn" class="btn btn-primary btn-sm" @if ($service->status == false) disabled @endif>
+                        <button id="printBtn" class="btn btn-primary btn-sm"
+                            @if ($service->status == false) disabled @endif>
                             <i class="mdi mdi-printer me-2"></i> Cetak
                         </button>
 
@@ -662,9 +686,10 @@
                             <i class="mdi mdi-content-copy me-2"></i> Salin Laporan
                         </button>
 
-                        <a href="{{ route('services.exportPkb', $service->id) }}" class="btn btn-success btn-sm flex-grow-1" target="_blank">
+                        <a href="{{ route('services.exportPkb', $service->id) }}"
+                            class="btn btn-success btn-sm flex-grow-1" target="_blank">
                             <i class="bi bi-file-earmark-excel"></i> PKB Kerja Excel
-                        </a>                    
+                        </a>
 
                         @if (!Gate::allows('isBendahara'))
                             <!-- Kembali ke Kendaraan -->
@@ -726,12 +751,12 @@
         Warna: {{ $service->vehicle->color }}
         Tahun Produksi: {{ $service->vehicle->production_year }}
         Kode Mesin: {{ $service->vehicle->engine_code }}`;
-        
+
             var customerInfo = `*👤 Informasi Pelanggan:*
         Nama: {{ $service->vehicle->customer->name }}
         Kontak: {{ $service->vehicle->customer->contact }}
         Alamat: {{ $service->vehicle->customer->address }}`;
-        
+
             var serviceInfo = `*🛠 Informasi Servis:*
         Keluhan: {{ $service->complaint }}
         Kilometer Saat Ini: {{ $service->current_mileage }} km
@@ -741,27 +766,37 @@
         Kembalian: Rp.{{ number_format($service->change, 0, ',', '.') }}
         Jenis Servis: {{ ucfirst($service->service_type) }}
         Tanggal Servis: {{ \Carbon\Carbon::parse($service->service_date)->format('d-m-Y') }}`;
-        
+
             var sparepartsInfo = '🔧 Sparepart yang Digunakan:\n';
-            @foreach ($service->serviceSpareparts as $serviceSparepart)
-                sparepartsInfo += `Nama: {{ $serviceSparepart->sparepart->nama_sparepart }} | Jumlah: {{ $serviceSparepart->quantity }} | Harga: Rp.{{ number_format($serviceSparepart->sparepart->harga_jual, 0, ',', '.') }}\n`;
-            @endforeach
-        
+            @if ($service->status == false)
+                @foreach ($service->serviceSpareparts as $serviceSparepart)
+                    sparepartsInfo +=
+                        `Nama: {{ $serviceSparepart->sparepart->nama_sparepart }} | Jumlah: {{ $serviceSparepart->quantity }} | Harga: Rp.{{ number_format($serviceSparepart->sparepart->harga_jual, 0, ',', '.') }}\n`;
+                @endforeach
+            @else
+                @foreach ($service->serviceSpareparts as $serviceSparepart)
+                    sparepartsInfo +=
+                        `Nama: {{ $serviceSparepart->nama_sparepart }} | Jumlah: {{ $serviceSparepart->quantity }} | Harga: Rp.{{ number_format($serviceSparepart->harga_jual, 0, ',', '.') }}\n`;
+                @endforeach
+            @endif
+
             var checklistInfo = '📝 Pekerjaan yang Dikerjakan:\n';
             @foreach ($service->checklists as $checklist)
-                checklistInfo += `- {{ $checklist->task }} {{ $checklist->is_completed ? '✅ Selesai' : '❌ Tertunda' }}\n`;
+                checklistInfo +=
+                    `- {{ $checklist->task }} {{ $checklist->is_completed ? '✅ Selesai' : '❌ Tertunda' }}\n`;
             @endforeach
-        
+
             var additionalNotes = `*📝 Catatan Tambahan:*
         {{ $service->additional_notes }}`;
-        
+
             var technicianName = `*👨‍🔧 Nama Teknisi:*
         {{ $service->technician_name }}`;
-        
+
             var linkInfo = `\nAda masalah? Telepon via WhatsApp: [Chat dengan Jamat](https://wa.me/6285715467500)`;
-        
-            var fullReport = `${vehicleInfo}\n\n${customerInfo}\n\n${serviceInfo}\n\n${sparepartsInfo}\n\n${checklistInfo}\n\n${additionalNotes}\n\n${technicianName}\n${linkInfo}`;
-        
+
+            var fullReport =
+                `${vehicleInfo}\n\n${customerInfo}\n\n${serviceInfo}\n\n${sparepartsInfo}\n\n${checklistInfo}\n\n${additionalNotes}\n\n${technicianName}\n${linkInfo}`;
+
             var textarea = document.createElement('textarea');
             textarea.value = fullReport;
             document.body.appendChild(textarea);
@@ -770,8 +805,8 @@
             document.body.removeChild(textarea);
             alert('Laporan berhasil disalin ke clipboard! 📋');
         });
-        </script>
-        
+    </script>
+
 
     <script>
         document.getElementById('printBtn').addEventListener('click', function() {
@@ -915,13 +950,21 @@
                                 <div class="card-header">Sparepart yang Digunakan</div>
                                 <div class="card-body">
                                     <div class="list-group">
-                                        @foreach ($service->serviceSpareparts as $serviceSparepart)
-                                        <div class="list-group-item">
-                                            <span><i class="bi bi-gear"></i> <strong>{{ $serviceSparepart->sparepart->nama_sparepart }}</strong></span>
-                                            <span>{{ $serviceSparepart->quantity }} pcs</span>
-                                            <span>Rp. {{ number_format($serviceSparepart->sparepart->harga_jual, 0, ',', '.') }}</span>
-                                        </div>
-                                        @endforeach
+                                        @if ($service->status == false)
+                                            @foreach ($service->serviceSpareparts as $serviceSparepart)
+                                            <div class="list-group-item">
+                                                <span><i class="bi bi-gear"></i> <strong>{{ $serviceSparepart->sparepart->nama_sparepart }}</strong></span>
+                                                <span>{{ $serviceSparepart->quantity }} pcs</span>
+                                                <span>Rp. {{ number_format($serviceSparepart->sparepart->harga_jual, 0, ',', '.') }}</span>
+                                            </div>
+                                            @endforeach
+                                            <div class="list-group-item">
+                                                <span><i class="bi bi-gear"></i> <strong>{{ $serviceSparepart->nama_sparepart }}</strong></span>
+                                                <span>{{ $serviceSparepart->quantity }} pcs</span>
+                                                <span>Rp. {{ number_format($serviceSparepart->harga_jual, 0, ',', '.') }}</span>
+                                            </div>
+                                            @else
+                                        @endif
                                     </div>
                                 </div>
                             </div>

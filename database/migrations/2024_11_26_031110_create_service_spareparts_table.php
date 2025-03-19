@@ -14,12 +14,16 @@ class CreateServiceSparepartsTable extends Migration
             $table->foreignId('service_id')
                 ->constrained('services') // Relasi ke tabel services
                 ->cascadeOnDelete();
-            $table->unsignedBigInteger('sparepart_id'); // Use unsignedBigInteger for matching with spareparts id
+            $table->unsignedBigInteger('sparepart_id')->nullable(); // Use unsignedBigInteger for matching with spareparts id
             $table->foreign('sparepart_id') // Explicitly define the foreign key constraint
                 ->references('id_sparepart')
                 ->on('spareparts')
-                ->cascadeOnDelete(); // Ensure the foreign key is set correctly
-            $table->integer('quantity');
+                ->nullOnDelete();
+                // ->cascadeOnDelete(); // Ensure the foreign key is set correctly
+            $table->string('nama_sparepart')->nullable();
+            $table->string('spek')->nullable();
+            $table->integer('harga_jual')->nullable();
+            $table->integer('quantity')->unsigned();;
             $table->timestamps();
         });
     }

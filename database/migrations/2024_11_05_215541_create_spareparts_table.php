@@ -13,9 +13,6 @@ class CreateSparepartsTable extends Migration
             $table->string('nama_sparepart');
             $table->string('spek');
             $table->integer('jumlah');
-            // $table->decimal('harga_beli', 15, 2);
-            // $table->decimal('harga_jual', 15, 2);
-            // $table->decimal('keuntungan', 15, 2)->computedAs('harga_jual - harga_beli');
             $table->integer('harga_beli');
             $table->integer('harga_jual');
             $table->integer('keuntungan')->computedAs('harga_jual - harga_beli');

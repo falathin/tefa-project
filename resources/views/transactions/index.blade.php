@@ -28,6 +28,12 @@
                         <i class="bi bi-check-circle-fill"></i> {{ session('success') }}
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
+                    @elseif (session()->has('error'))
+                    <div class="alert alert-danger alert-dismissible fade show animate__animated animate__fadeIn"
+                        role="alert">
+                        <i class="bi bi-x-circle-fill"></i> {{ session('error') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
                 @endif
 
                 <!-- Search Form -->
@@ -103,13 +109,18 @@
                                                 class="btn btn-info btn-sm">
                                                 <i class="bi bi-eye"></i> Detail
                                             </a>
-                                            @if (Gate::allows('isAdmin'))
-                                                <a href="{{ route('transactions.edit', $firstTransaction->id) }}"
-                                                    class="btn btn-warning btn-sm">
-                                                    <i class="fas fa-edit"></i> Edit
-                                                </a>
-                                            @endif
+                                            {{-- @if (Gate::allows('isAdmin'))
+                                            @endif --}}
                                             @if (Gate::allows('isKasir') xor Gate::allows('isAdmin'))
+                                            <form action="{{ route('transactions.restoreQuantity', $firstTransaction->id) }}"
+                                                method="POST" class="d-inline">
+                                                @csrf
+                                                @method('PUT')
+                                                <button type="submit" class="btn btn-success btn-sm"
+                                                    onclick="return confirm('Yakin restore transaksi ini?')">
+                                                    <i class="bi bi-recycle"></i> Restore
+                                                </button>
+                                            </form>
                                                 <form action="{{ route('transactions.destroy', $firstTransaction->id) }}"
                                                     method="POST" class="d-inline">
                                                     @csrf
