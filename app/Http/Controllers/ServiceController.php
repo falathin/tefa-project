@@ -125,6 +125,8 @@ class ServiceController extends Controller
         $service = Service::find($id);
         if (!Gate::allows('isSameJurusan', [$service])) {
             abort(403, 'data tidak ditemukan!!');
+        } elseif ($service->status == true) {
+            abort(403, 'tidak dapat edit servis yang telah selesai!');
         }
 
         // Admin & kasir
