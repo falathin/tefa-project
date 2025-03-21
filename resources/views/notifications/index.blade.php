@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-
 <div class="container">
     <h1 class="mb-4">Notifikasi</h1>
 
@@ -19,24 +18,37 @@
         @foreach($notifications as $notification)
             <div class="col-12 mb-3">
                 <div class="card shadow-sm border-0">
-                    <div class="card-body d-flex justify-content-between align-items-start">
+                    <div class="card-body d-flex flex-column flex-md-row justify-content-between align-items-center">
                         <div class="flex-grow-1">
                             <h5 class="card-title">{{ $notification->message }}</h5>
-                            <p class="card-text"><small class="text-muted">{{ $notification->created_at->diffForHumans() }} | Jurusan {{ $notification->jurusan }}</small></p>
+                            <p class="card-text">
+                                <small class="text-muted">
+                                    {{ $notification->created_at->diffForHumans() }} | Jurusan {{ $notification->jurusan }}
+                                </small>
+                            </p>
                         </div>
+                        <div class="d-flex flex-column flex-md-row align-items-center">
+                            <!-- Jika sparepart tersedia, tampilkan tombol Edit -->
+                            @if($notification->sparepart)
+                                <a href="{{ route('sparepart.edit', $notification->sparepart->id_sparepart) }}" class="btn btn-sm btn-outline-primary mb-2 mb-md-0 me-md-2">Edit Sparepart</a>
+                            @else
+                                <span class="text-muted mb-2 mb-md-0 me-md-2">No Sparepart</span>
+                            @endif
 
-                        <!-- Check if there's a related sparepart and show the edit button -->
-                        @if($notification->sparepart)
-                            <a href="{{ route('sparepart.edit', $notification->sparepart->id_sparepart) }}" class="btn btn-sm btn-outline-primary">Edit</a>
-                        @else
-                            <span class="text-muted">No Sparepart</span>
-                        @endif
-                        
-                        <!-- Mark notification as read -->
-                        <form method="POST" action="{{ route('notifications.read', $notification->id) }}" class="m-0 ms-2">
-                            @csrf
-                            <button type="submit" class="btn btn-sm btn-link text-success p-0">Tandai Dibaca</button>
-                        </form>
+                            <!-- Tombol untuk menandai sebagai dibaca saja -->
+                            <form method="POST" action="{{ route('notifications.read', $notification->id) }}" class="m-0 me-md-2">
+                                @csrf
+                                <button type="submit" class="btn btn-sm btn-link text-success p-0">Tandai Dibaca</button>
+                            </form>
+
+                            <!-- Tombol gabungan: Tandai & Edit (jika sparepart ada) -->
+                            @if($notification->sparepart)
+                                <form method="POST" action="{{ route('notifications.read_and_edit', $notification->id) }}" class="m-0">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm btn-link text-warning p-0">Tandai & Edit</button>
+                                </form>
+                            @endif
+                        </div>
                     </div>
                 </div>
             </div>

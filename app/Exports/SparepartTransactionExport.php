@@ -23,8 +23,12 @@ class SparepartTransactionExport implements WithMultipleSheets
 
         // Grouping berdasarkan minggu transaksi (dari relasi transaction)
         $groupedTransactions = $transactions->groupBy(function ($item) {
-            $startOfWeek = Carbon::parse($item->transaction->transaction_date)->startOfWeek()->format('d-m-Y');
-            $endOfWeek   = Carbon::parse($item->transaction->transaction_date)->endOfWeek()->format('d-m-Y');
+            $startOfWeek = Carbon::parse($item->transaction->transaction_date)
+                                ->startOfWeek()
+                                ->format('d-m-Y');
+            $endOfWeek   = Carbon::parse($item->transaction->transaction_date)
+                                ->endOfWeek()
+                                ->format('d-m-Y');
             return $startOfWeek . ' - ' . $endOfWeek;
         });
 
@@ -47,6 +51,17 @@ class SparepartTransactionWeeklySheet implements FromCollection, WithHeadings, S
         $this->data = $data;
     }
 
+    /**
+     * Fungsi custom untuk memformat angka menjadi format ribuan dengan titik.
+     * Contoh: 14000 menjadi "14.000"
+     */
+    private function formatRibuan($value)
+    {
+        // Pastikan nilai adalah integer agar tidak menghasilkan desimal
+        $value = (int) $value;
+        return preg_replace('/\B(?=(\d{3})+(?!\d))/', '.', (string) $value);
+    }
+
     public function collection()
     {
         // Filter data berdasarkan Gate atau jurusan
@@ -57,50 +72,59 @@ class SparepartTransactionWeeklySheet implements FromCollection, WithHeadings, S
                 return $transaction->transaction->jurusan == Auth::user()->jurusan;
             }
         });
-
-        // Group berdasarkan ID transaksi (jika transaksi yang sama)
+    
+        // Grouping berdasarkan ID transaksi (jika transaksi yang sama)
         $grouped = $filteredData->groupBy(function ($item) {
             return $item->transaction->id;
         });
-
+    
         // Untuk setiap grup transaksi, gabungkan detail sparepart menjadi satu baris
         return $grouped->map(function ($group) {
             // Ambil data transaksi (semua item dalam grup memiliki data transaksi yang sama)
             $transaction = $group->first()->transaction;
-
+    
             // Agregasi detail sparepart: gabungkan nama, jumlah, harga satuan, dan subtotal.
             // Setiap detail dipisahkan dengan baris kosong
             $sparepartDetails = $group->map(function ($item) {
-                // Bagi harga_jual dengan 1000 untuk menghilangkan "000" di belakang (ubah jika perlu)
+                /* 
+                 * Pembagian harga_jual dengan 1000 untuk menampilkan angka dalam format ribuan.
+                 * Contoh: jika harga_jual = 1.000.000 maka unitPrice menjadi 1.000.
+                 */
                 $unitPrice = $item->sparepart->harga_jual / 1000;
-                $subtotal = $item->quantity * $unitPrice;
+                $subtotal  = $item->quantity * $unitPrice;
+                // Format quantity menggunakan fungsi custom
+                $formattedQuantity = $this->formatRibuan($item->quantity);
+                // Format harga satuan dan subtotal menggunakan fungsi custom
+                $formattedUnitPrice = $this->formatRibuan($unitPrice);
+                $formattedSubtotal  = $this->formatRibuan($subtotal);
+    
                 return "Nama: " . ($item->sparepart->nama_sparepart ?? 'Tidak Diketahui') .
-                       "\nJumlah: " . $item->quantity .
-                       "\nHarga Satuan: Rp" . number_format($unitPrice, 0, ',', '.') .
-                       "\nSubtotal: Rp" . number_format($subtotal, 0, ',', '.');
-            })->implode("\n\n");
-
+                       "\nJumlah: " . $formattedQuantity .
+                       "\nHarga Satuan: Rp" . $formattedUnitPrice .
+                       "\nSubtotal: Rp" . $formattedSubtotal;
+            })->implode("\n\n");            
+    
             // Hitung kembalian: uang diterima - (total harga - diskon)
             $change = $transaction->purchase_price - ($transaction->total_price - $transaction->discount);
-
+    
             return [
                 'ID'                => $transaction->id,
                 'Nama Pelanggan'    => $transaction->name,
                 'Tanggal Transaksi' => Carbon::parse($transaction->transaction_date)->format('d-m-Y'),
                 'Metode Pembayaran' => $transaction->payment_method,
-                'Diskon'            => number_format($transaction->discount, 0, ',', '.'),
-                'Total Harga'       => number_format($transaction->total_price, 0, ',', '.'),
-                'Kembalian'         => number_format($change, 0, ',', '.'),
+                'Diskon'            => $this->formatRibuan($transaction->discount),
+                'Total Harga'       => 'Rp' . $this->formatRibuan($transaction->total_price),
+                'Kembalian'         => 'Rp' . $this->formatRibuan($change),
                 'Detail Sparepart'  => $sparepartDetails,
                 'Jurusan'           => $transaction->jurusan,
             ];
         })->values();
     }
-
+    
     public function headings(): array
     {
         // Baris 1: Judul laporan
-        // Baris 2: Periode laporan (gunakan $this->week, yang sudah berupa "start - end")
+        // Baris 2: Periode laporan (menggunakan $this->week yang sudah berupa "start - end")
         // Baris 3: Header kolom dengan ikon
         return [
             ['Laporan Transaksi Sparepart: ' . $this->week],
@@ -129,7 +153,7 @@ class SparepartTransactionWeeklySheet implements FromCollection, WithHeadings, S
         $sheet->getStyle('A2')->getFont()->setBold(true)->setSize(12);
         $sheet->getStyle('A2')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
 
-        // Style header tabel (baris 3)
+        // Styling header tabel (baris 3)
         $sheet->getStyle('A3:I3')->applyFromArray([
             'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
             'fill' => ['fillType' => 'solid', 'startColor' => ['rgb' => '0073e6']],

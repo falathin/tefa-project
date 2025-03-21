@@ -83,19 +83,19 @@
                     Inovindo Digital Media
                 </a>
                 &nbsp;|&nbsp;
-                <a href="https://www.facebook.com" target="_blank" class="font-weight-bold text-primary">
+                <a href="https://www.facebook.com/inovindo" target="_blank" class="font-weight-bold text-primary">
                     <span class="wave-icon"><i class="fab fa-facebook-f social-icon"></i></span>
                     Facebook
                 </a>
                 &nbsp;|&nbsp;
-                <a href="https://www.twitter.com" target="_blank" class="font-weight-bold text-primary">
-                    <span class="wave-icon"><i class="fab fa-twitter social-icon"></i></span>
-                    Twitter
+                <a href="https://www.tiktok.com/@jasawebsitebandung" target="_blank" class="font-weight-bold text-primary">
+                    <span class="wave-icon"><i class="fab fa-tiktok social-icon"></i></span>
+                    TikTok
                 </a>
                 &nbsp;|&nbsp;
-                <a href="https://www.linkedin.com" target="_blank" class="font-weight-bold text-primary">
-                    <span class="wave-icon"><i class="fab fa-linkedin-in social-icon"></i></span>
-                    LinkedIn
+                <a href="https://www.instagram.com/inovindo?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" class="font-weight-bold text-primary">
+                    <span class="wave-icon"><i class="fab fa-instagram social-icon"></i></span>
+                    Instagram
                 </a>
             </small>
         </div>

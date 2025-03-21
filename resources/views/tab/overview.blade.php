@@ -190,7 +190,7 @@
                                         Total Kendaraan / 車両合計 </p>
                                     <h4 class="mb-0 fw-bold"
                                         style="font-family: 'Poppins', sans-serif; font-weight: 600;">
-                                        {{ $totalVehicles }} / {{ $totalVehicles }}台 </h4>
+                                        {{ $totalVehicles }}台 </h4>
                                 </div> <i class="fas fa-car-side fa-2x" style="color: white;"></i>
                             </div>
                         </div> <svg class="sakura-hover" xmlns="http://www.w3.org/2000/svg" width="100"
@@ -243,7 +243,7 @@
                                         Total Pengunjung / 訪問者数 </p>
                                     <h4 class="mb-0 fw-bold"
                                         style="font-family: 'Poppins', sans-serif; font-weight: 600;">
-                                        {{ $totalVisitors }} / {{ $totalVisitors }}人 </h4>
+                                        {{ $totalVisitors }}人 </h4>
                                 </div>
                                 <div> <i
                                         class="fas fa-users fa-2x group-hover:scale-125 group-hover:text-yellow-400 transition-all duration-300"></i>

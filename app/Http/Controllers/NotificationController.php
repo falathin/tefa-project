@@ -15,26 +15,31 @@ class NotificationController extends Controller
         $search = $request->input('search');
         $notifications = Notification::query();
 
+        // Untuk Bendahara, ambil semua notifikasi (dengan pencarian jika ada)
         if (Gate::allows('isBendahara')) {
             if ($search) {
                 $notifications = $notifications
                     ->where('message', 'like', '%' . $search . '%');
             }
-            $notifications = $notifications->with('sparepart')->where('is_read', false)->latest()->paginate(5);
-            return view('notifications.index', compact('notifications', 'search'));
+            $notifications = $notifications->with('sparepart')
+                ->where('is_read', false)
+                ->latest() // data terbaru di atas
+                ->paginate(5);
         } else {
+            // Untuk user lain, filter berdasarkan jurusan
             if ($search) {
                 $notifications = $notifications
                     ->where('jurusan', 'like', Auth::user()->jurusan)
                     ->where('message', 'like', '%' . $search . '%');
             }
-
             $notifications = $notifications->with('sparepart')
                 ->where('jurusan', 'like', Auth::user()->jurusan)
-                ->where('is_read', false)->latest()->paginate(5);
-
-            return view('notifications.index', compact('notifications', 'search'));
+                ->where('is_read', false)
+                ->latest() // data terbaru di atas
+                ->paginate(5);
         }
+
+        return view('notifications.index', compact('notifications', 'search'));
     }
 
     public function markAsRead($id)
@@ -43,7 +48,21 @@ class NotificationController extends Controller
         if ($notification) {
             $notification->update(['is_read' => true]);
         }
-
+        return redirect()->back();
+    }
+    
+    /**
+     * Metode baru: Tandai notifikasi sebagai dibaca lalu langsung menuju ke halaman edit sparepart
+     */
+    public function markAsReadAndEdit($id)
+    {
+        $notification = Notification::find($id);
+        if ($notification) {
+            $notification->update(['is_read' => true]);
+            if ($notification->sparepart) {
+                return redirect()->route('sparepart.edit', $notification->sparepart->id_sparepart);
+            }
+        }
         return redirect()->back();
     }
 
@@ -94,5 +113,4 @@ class NotificationController extends Controller
     
         return back()->with('success', 'Semua notifikasi telah ditandai sebagai dibaca.');
     }    
-
 }
