@@ -206,7 +206,8 @@ class TransactionController extends Controller
     public function restore($id)
     {
         $transaction = Transaction::with('transactionSpareparts.sparepart')->findOrFail($id);
-        if (isEmpty($transaction->spareparts) == true) {
+        // dd(isset($transaction->spareparts));
+        if (!isset($transaction->spareparts)) {
             return redirect()->route('transactions.index')
                 ->with('error', 'sparepart telah dihapus sebelumnya!');
         }
