@@ -67,11 +67,6 @@
                                         <td>{{ $sparepart->jurusan }}</td>
                                     @endif
                                     <td>
-                                        <!-- Detail Button -->
-                                        <a href="{{ route('sparepart.show', $sparepart->id_sparepart) }}"
-                                            class="btn btn-info btn-sm">
-                                            <i class="bi bi-eye"></i> Detail
-                                        </a>
                                         <!-- History Button -->
                                         <a href="{{ route('sparepart.history', $sparepart->id_sparepart) }}"
                                             class="btn btn-secondary btn-sm">
@@ -79,6 +74,12 @@
                                         </a>
 
                                         @if (!Gate::allows('isBendahara'))
+                                            <!-- Detail Button -->
+                                            <a href="{{ route('sparepart.show', $sparepart->id_sparepart) }}"
+                                                class="btn btn-info btn-sm">
+                                                <i class="bi bi-eye"></i> Detail
+                                            </a>
+                                            
                                             <!-- Edit Button -->
                                             <a href="{{ route('sparepart.edit', $sparepart->id_sparepart) }}"
                                                 class="btn btn-warning btn-sm">
