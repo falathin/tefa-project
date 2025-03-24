@@ -64,9 +64,9 @@
                                 src="{{ asset('assets/images/manage_account.png') }}" width="28"></img>Hapus akun
                             {{ Auth::user()->jurusan }}
                         </a>
-                        <a class="dropdown-item" href="{{ route('gantiEmergencyPassword') }}"><img class="me-2"
+                        {{-- <a class="dropdown-item" href="{{ route('gantiEmergencyPassword') }}"><img class="me-2"
                                 src="{{ asset('assets/images/emergency_password.png') }}" width="28"></img>
-                            Ganti Emergency password</a>
+                            Ganti Emergency password</a> --}}
                     @endif
 
                     <a class="dropdown-item" href="{{ route('confirm.logout') }}"><img class="me-2"
