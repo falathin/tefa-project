@@ -1,4 +1,4 @@
-<script>
+{{-- <script>
     function toggleTheme() {
         let currentTheme = localStorage.getItem('theme') || 'light';
         let newTheme = currentTheme === 'light' ? 'dark' : 'light';
@@ -69,7 +69,7 @@
     <button class="btn btn-link nav-link" id="themeSwitchButton" onclick="toggleTheme()">
         <i class="bi bi-moon" id="themeIcon"></i>
     </button>
-</li>
+</li> --}}
 
 <!-- Calendar Date Picker -->
 <li class="nav-item d-none d-lg-block">

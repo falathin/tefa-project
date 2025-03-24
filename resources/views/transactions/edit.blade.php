@@ -49,11 +49,11 @@
 
                             <!-- Pilih Metode Input Nama Pelanggan -->
                             <div class="row">
-                                <div class="col-12">
+                                <div class="col-12" style="margin-left: 50px;">
                                     <label>
                                         <i class="bi bi-person"></i> Pilih Metode Input Nama Pelanggan
                                     </label>
-                                    <div class="form-check form-check-inline">
+                                    <div class="form-check form-check-inline mt-3">
                                         <input class="form-check-input" type="radio" name="customer_option" id="option_existing"
                                             value="existing" {{ $isExistingCustomer ? 'checked' : '' }}>
                                         <label class="form-check-label" for="option_existing">Pilih dari data yang sudah ada</label>
@@ -112,10 +112,10 @@
                                         <i class="bi bi-arrow-up-down text-info"></i> Jenis Transaksi
                                     </label>
                                     <select name="transaction_type" id="transaction_type" class="form-control mt-2" required>
-                                        <option value="purchase"
+                                        {{-- <option value="purchase" disabled
                                             {{ old('transaction_type', $transaction->transaction_type) == 'purchase' ? 'selected' : '' }}>
                                             Pembelian
-                                        </option>
+                                        </option> --}}
                                         <option value="sale"
                                             {{ old('transaction_type', $transaction->transaction_type) == 'sale' ? 'selected' : '' }}>
                                             Penjualan

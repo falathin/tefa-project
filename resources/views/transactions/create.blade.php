@@ -53,9 +53,9 @@
             
                     <!-- Pilih Metode Input Nama Pelanggan -->
                     <div class="row mt-3">
-                        <div class="col-md-12">
+                        <div class="col-md-12" style="margin-left:50px;">
                             <label><i class="bi bi-person"></i> Pilih Metode Input Nama Pelanggan</label>
-                            <div class="form-check mt-2">
+                            <div class="form-check mt-3">
                                 <input class="form-check-input" type="radio" name="customer_option" id="option_existing" value="existing" checked>
                                 <label class="form-check-label" for="option_existing">
                                     Pilih dari data yang sudah ada
@@ -101,7 +101,7 @@
                         <div class="col-md-6 mt-1">
                             <label for="transaction_type"><i class="bi bi-arrow-up-down"></i> Jenis Transaksi</label>
                             <select name="transaction_type" id="transaction_type" class="form-control mt-2" required>
-                                <option value="purchase" {{ old('transaction_type', 'sale') == 'purchase' ? 'selected' : '' }}>Pembelian</option>
+                                {{-- <option value="purchase" {{ old('transaction_type', 'sale') == 'purchase' ? 'selected' : '' }} disabled>Pembelian</option> --}}
                                 <option value="sale" {{ old('transaction_type', 'sale') == 'sale' ? 'selected' : '' }}>Penjualan</option>
                             </select>
                         </div>

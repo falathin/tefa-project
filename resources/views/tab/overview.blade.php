@@ -171,7 +171,6 @@
             </div>
         </div>
         <script>
-
             const chartLabels = @json($chartLabels);
             const chartValues = @json($chartValues);
             const monthlyChartValues = @json($monthlyChartValues);
@@ -187,11 +186,23 @@
                                 <div>
                                     <p class="text-small mb-2"
                                         style="font-family: 'Poppins', sans-serif; font-weight: 400;">
-                                        Total Kendaraan / 車両合計 </p>
+                                        Total Kendaraan / 車両合計
+                                    </p>
                                     <h4 class="mb-0 fw-bold"
                                         style="font-family: 'Poppins', sans-serif; font-weight: 600;">
-                                        {{ $totalVehicles }}台 </h4>
-                                </div> <i class="fas fa-car-side fa-2x" style="color: white;"></i>
+                                        {{ $totalVehicles }}台
+                                    </h4>
+                                </div>
+                                @if (Auth::user()->jurusan === 'TSM')
+                                    <!-- Jika dari halaman TSM, tampilkan ikon motor -->
+                                    <i class="fas fa-motorcycle fa-2x" style="color: white;"></i>
+                                @elseif(Auth::user()->jurusan === 'TKRO')
+                                    <!-- Jika dari halaman TKRO, tampilkan ikon mobil -->
+                                    <i class="fas fa-car-side fa-2x" style="color: white;"></i>
+                                @else
+                                    <!-- Jika tidak ada kondisi, defaultnya ikon perkakas -->
+                                    <i class="fas fa-tools fa-2x" style="color: white;"></i>
+                                @endif
                             </div>
                         </div> <svg class="sakura-hover" xmlns="http://www.w3.org/2000/svg" width="100"
                             height="100" viewBox="0 0 100 100"
@@ -230,7 +241,7 @@
                         });
                     });
                 </script>
-                
+
                 <div class="col-md-6 col-lg-12 grid-margin stretch-card">
                     <div class="card card-rounded hover-effect"
                         style="background-image: url('https://st3.depositphotos.com/4080643/17799/i/450/depositphotos_177995342-stock-photo-fuji-mountain-and-cherry-blossoms.jpg'); background-size: cover; background-position: center; color: white; border-radius: 20px; overflow: hidden; transition: transform 0.5s ease, box-shadow 0.5s ease, filter 0.3s ease; height: 160px; width: 100%;"
@@ -327,7 +338,6 @@
         </div>
     </div>
     <script>
-        
         function printDailyReport() {
             const reportContent = `
             <html>
@@ -442,7 +452,7 @@
 
 <div class="tab-pane fade" id="audiences" role="tabpanel" aria-labelledby="profile-tab">
     @include('tab.audiences')
-    
+
 </div>
 {{-- <div class="tab-pane fade" id="demographics" role="tabpanel" aria-labelledby="contact-tab">
     @include('tab.demographics')
