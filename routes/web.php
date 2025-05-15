@@ -16,6 +16,7 @@ use App\Http\Controllers\{
     DaftarAkunController,
     DashboardController,
     hapusAkunUserController,
+    NewForgotPasswordController,
     ProfileController,
 };
 
@@ -24,6 +25,12 @@ Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
 // Guest
 Route::middleware('guest')->group(function () {
+
+    Route::get('lupa-sandi', [NewForgotPasswordController::class, 'request'])->name('password.request');
+    Route::post('lupa-sandi', [NewForgotPasswordController::class, 'send'])->name('password.email');
+    Route::get('reset-sandi/{token}', [NewForgotPasswordController::class, 'create'])->name('password.reset');
+    Route::post('reset-sandi', [NewForgotPasswordController::class, 'store'])->name('password.store');
+
 
     // login
     Route::get('/login', [AutentikasiController::class, 'create'])->name('login');

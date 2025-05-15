@@ -19,7 +19,7 @@
                 @enderror
             </div>
             <div class="mb-3">
-                <label for="password" class="form-label">Kata Sandi</label>
+                <label for="password" class="form-label">password</label>
                 <input type="password" class="form-control @error('password') is-invalid @enderror" id="password"
                     name="password" required autocomplete="current-password">
                 @error('password')
@@ -42,12 +42,12 @@
                 <div class="col d-flex">
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" id="showPassword" />
-                        <label class="form-check-label" for="showPassword">Tampilkan Sandi</label>
+                        <label class="form-check-label" for="showPassword">Lihat password</label>
                     </div>
                 </div>
                 <div class="col text-end">
-                    <a href="{{ route('lupa.password') }}" class="text-danger text-decoration-none">
-                        Lupa Sandi?
+                    <a href="{{ route('password.request') }}" class="text-danger text-decoration-none">
+                        Lupa password?
                     </a>
                 </div>
             </div>
