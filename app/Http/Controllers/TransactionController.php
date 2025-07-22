@@ -26,7 +26,7 @@ class TransactionController extends Controller
             $transactions = Transaction::query()
                 ->when($search, function ($query, $search) {
                     return $query->whereHas('spareparts', function ($query) use ($search) {
-                        $query->where('nama_sparepart', 'like', "%{$search}%");
+                        $query->where('spareparts.nama_sparepart', 'like', "%{$search}%");
                     });
                 })
                 ->orderBy('created_at', 'desc')
@@ -38,7 +38,7 @@ class TransactionController extends Controller
                 ->where('jurusan', 'like', Auth::user()->jurusan)
                 ->when($search, function ($query, $search) {
                     return $query->whereHas('spareparts', function ($query) use ($search) {
-                        $query->where('nama_sparepart', 'like', "%{$search}%");
+                        $query->where('spareparts.nama_sparepart', 'like', "%{$search}%");
                     });
                 })
                 ->orderBy('created_at', 'desc')
