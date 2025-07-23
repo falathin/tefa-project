@@ -96,9 +96,7 @@ Route::middleware('auth')->group(function () {
         Route::put('/{id}', [SparepartController::class, 'update'])->name('update');
         Route::delete('/{id}', [SparepartController::class, 'destroy'])->name('destroy');
         Route::get('/{id}/history', [SparepartController::class, 'history'])->name('history');
-
-        // ✅ Export route sesuai contoh kamu
-        Route::get('/export-spareparts', [SparepartController::class, 'export'])->name('export');
+        Route::get('/export-sparepart', [SparepartController::class, 'export'])->name('export');
     });
     /**
      * Transaction Routes

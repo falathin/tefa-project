@@ -3,41 +3,27 @@
 namespace App\Exports;
 
 use App\Models\Sparepart;
-use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
-use Carbon\Carbon;
 
 class SparepartExport implements FromCollection, WithHeadings
 {
-    protected $fromDate;
-    protected $toDate;
+    protected $from;
+    protected $to;
     protected $jurusan;
 
-    /**
-     * Constructor untuk inisialisasi filter ekspor.
-     *
-     * @param string $from     Tanggal awal dalam format Y-m-d
-     * @param string $to       Tanggal akhir dalam format Y-m-d
-     * @param string $jurusan  Jurusan pengguna
-     */
-    public function __construct(string $from, string $to, string $jurusan)
+    public function __construct($from, $to, $jurusan = null)
     {
-        $this->fromDate = Carbon::parse($from)->startOfDay();
-        $this->toDate   = Carbon::parse($to)->endOfDay();
-        $this->jurusan  = $jurusan;
+        $this->from = $from;
+        $this->to = $to;
+        $this->jurusan = $jurusan;
     }
 
-    /**
-     * Ambil data sparepart sesuai filter tanggal dan jurusan.
-     *
-     * @return \Illuminate\Support\Collection
-     */
     public function collection()
     {
-        $query = Sparepart::whereBetween('created_at', [$this->fromDate, $this->toDate]);
+        $query = Sparepart::whereBetween('created_at', [$this->from, $this->to]);
 
-        if ($this->jurusan !== 'General') {
+        if (!empty($this->jurusan)) {
             $query->where('jurusan', $this->jurusan);
         }
 
@@ -46,27 +32,29 @@ class SparepartExport implements FromCollection, WithHeadings
             'nama_sparepart',
             'spek',
             'jumlah',
+            'harga_beli',
             'harga_jual',
+            'keuntungan',
+            'tanggal_masuk',
             'jurusan',
-            'created_at'
+            'created_at',
         ]);
     }
 
-    /**
-     * Judul kolom untuk file Excel.
-     *
-     * @return array
-     */
     public function headings(): array
     {
         return [
             'ID',
             'Nama Sparepart',
-            'Spek',
-            'Stok',
-            'Harga Satuan',
+            'Spesifikasi',
+            'Jumlah',
+            'Harga Beli',
+            'Harga Jual',
+            'Keuntungan',
+            'Tanggal Masuk',
             'Jurusan',
-            'Tanggal Masuk'
+            'Tanggal Dibuat', // created_at
         ];
     }
+
 }
