@@ -202,7 +202,9 @@
                                     @if (Auth::user()->jurusan == 'TSM')
                                         {{ ucfirst($service->service_type == 'light' ? 'Ringan' : ($service->service_type == 'medium' ? 'Sedang' : 'Berat')) }}
                                     @elseif (Auth::user()->jurusan == 'TKRO')
-                                        {{ ucfirst($service->service_type == 'light' ? '10.000 KM (Ringan)' : ($service->service_type == 'medium' ? '30.000 KM (Sedang)' : '50.000 KM (Berat)')) }}
+                                        {{ ucfirst($service->service_type == 'light' ? '10.000 KM (Ringan)' :
+                                         ($service->service_type == 'medium' ? '30.000 KM (Sedang)' :
+                                          '50.000 KM (Berat)')) }}
                                     @endif
                                 </span>
                             </p>

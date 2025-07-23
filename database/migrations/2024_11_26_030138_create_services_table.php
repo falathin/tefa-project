@@ -18,7 +18,7 @@ class CreateServicesTable extends Migration
             $table->decimal('total_cost', 10, 2)->nullable(); // Total biaya
             $table->decimal('payment_received', 10, 2)->nullable(); // Pembayaran diterima
             $table->decimal('change', 10, 2)->nullable(); // Kembalian pembayaran
-            $table->enum('service_type', ['light', 'medium', 'heavy'])->default('light'); // Jenis servis
+            $table->string('service_type'); // Jenis servis
             $table->boolean('status')->default(false); // false = in progress, true = completed
             $table->text('additional_notes')->nullable(); // Deskripsi tambahan terkait servis
             $table->string('technician_name')->nullable(); // Nama teknisi yang menangani

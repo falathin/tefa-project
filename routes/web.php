@@ -1,9 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Exports\SparepartExport;
-use Illuminate\Http\Request;
-use Maatwebsite\Excel\Facades\Excel;
 
 use App\Http\Controllers\{
     SparepartController,
@@ -89,15 +86,15 @@ Route::middleware('auth')->group(function () {
      */
     Route::prefix('sparepart')->name('sparepart.')->group(function () {
         Route::get('/', [SparepartController::class, 'index'])->name('index');
-        Route::get('/create', [SparepartController::class, 'create'])->name('create');
+        Route::get('create', [SparepartController::class, 'create'])->name('create');
         Route::post('/', [SparepartController::class, 'store'])->name('store');
-        Route::get('/{id}', [SparepartController::class, 'show'])->name('show');
-        Route::get('/{id}/edit', [SparepartController::class, 'edit'])->name('edit');
-        Route::put('/{id}', [SparepartController::class, 'update'])->name('update');
-        Route::delete('/{id}', [SparepartController::class, 'destroy'])->name('destroy');
-        Route::get('/{id}/history', [SparepartController::class, 'history'])->name('history');
-        Route::get('/export-sparepart', [SparepartController::class, 'export'])->name('export');
+        Route::get('{id}', [SparepartController::class, 'show'])->name('show');
+        Route::get('{id}/edit', [SparepartController::class, 'edit'])->name('edit');
+        Route::put('{id}', [SparepartController::class, 'update'])->name('update');
+        Route::delete('{id}', [SparepartController::class, 'destroy'])->name('destroy');
+        Route::get('{id}/history', [SparepartController::class, 'history'])->name('history');
     });
+
     /**
      * Transaction Routes
      */
@@ -182,5 +179,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/export-service/{category}', [ServiceReportController::class, 'export'])->name('export.service');
     Route::get('/export-transactions', [TransactionController::class, 'export'])->name('transactions.export');
     Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
+    Route::get('/services/{id}/export-pkb', [ServiceController::class, 'exportPkb'])->name('services.exportPkb');
 
 });

@@ -220,7 +220,7 @@ class ServiceController extends Controller
             'complaint' => 'required|string|max:255',
             'current_mileage' => 'required|numeric',
             'service_date' => 'required|date',
-            'service_type' => 'required|string|in:light,medium,heavy',
+            'service_type' => 'required|string',
             'technician_name' => 'required|string|max:255',
             'sparepart_id' => 'nullable|array',
             'sparepart_id.*' => 'exists:spareparts,id_sparepart',
