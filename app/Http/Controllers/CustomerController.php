@@ -71,7 +71,7 @@ class CustomerController extends Controller
                 'vehicles.*.color' => 'nullable|string|max:255',
                 'vehicles.*.production_year' => 'nullable|integer|lte:' . Carbon::now()->year,
                 'vehicles.*.engine_code' => 'nullable|string|max:255',
-                'vehicles.*.image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                // 'vehicles.*.image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'jurusan' => 'required'
             ],
             [
@@ -95,7 +95,7 @@ class CustomerController extends Controller
                 'vehicles.*.engine_code.max' => 'Kode mesin tidak boleh lebih dari 255 karakter.',
                 'vehicles.*.image.image' => 'File harus berupa gambar.',
                 'vehicles.*.image.mimes' => 'Format gambar harus jpeg, png, jpg, atau gif.',
-                'vehicles.*.image.max' => 'Ukuran gambar tidak boleh melebihi 2MB.',
+                // 'vehicles.*.image.max' => 'Ukuran gambar tidak boleh melebihi 2MB.',
                 'jurusan.required' => 'Jurusan wajib diisi.'
             ]
         );

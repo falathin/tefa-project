@@ -154,4 +154,41 @@ class SparepartController extends Controller
             
         return view('sparepart.history', compact('data', 'sparepart'));
     }    
+    public function export(): StreamedResponse
+    {
+        $filename = 'spareparts_' . now()->format('Y-m-d_H-i-s') . '.csv';
+
+        $headers = [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        $callback = function () {
+            $file = fopen('php://output', 'w');
+            // Header kolom
+            fputcsv($file, ['Nama Sparepart', 'Jumlah', 'Spesifikasi', 'Harga Beli', 'Harga Jual', 'Keuntungan', 'Tanggal Masuk', 'Jurusan']);
+
+            $spareparts = Sparepart::all();
+
+            foreach ($spareparts as $sparepart) {
+                fputcsv($file, [
+                    $sparepart->nama_sparepart,
+                    $sparepart->jumlah,
+                    $sparepart->spek,
+                    $sparepart->harga_beli,
+                    $sparepart->harga_jual,
+                    $sparepart->keuntungan,
+                    $sparepart->tanggal_masuk,
+                    $sparepart->jurusan
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
 }

@@ -402,43 +402,35 @@
                         </thead>
                         <tbody>
                             @php $total = 0; @endphp
-                            @if ($service->status == false)
-                                @forelse($service->serviceSpareparts as $serviceSparepart)
-                                    @php
-                                        $subtotal = $serviceSparepart->quantity * $serviceSparepart->harga_jual;
-                                        $total += $subtotal;
-                                    @endphp
-                                    <tr class="animate_animated animate_flipInX">
-                                        <td>{{ $serviceSparepart->sparepart->nama_sparepart }}
-                                            {{ $serviceSparepart->sparepart->spek }}</td>
-                                        <td>{{ $serviceSparepart->quantity }}</td>
-                                        <td>Rp. {{ number_format($serviceSparepart->sparepart->harga_jual, 0, ',', '.') }}
-                                        </td>
-                                        <td>Rp. {{ number_format($subtotal, 0, ',', '.') }}</td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="4" class="text-center">Tidak ada sparepart yang digunakan.</td>
-                                    </tr>
-                                @endforelse
-                            @else
-                                @forelse($service->serviceSpareparts as $serviceSparepart)
-                                    @php
-                                        $subtotal = $serviceSparepart->quantity * $serviceSparepart->harga_jual;
-                                        $total += $subtotal;
-                                    @endphp
-                                    <tr class="animate_animated animate_flipInX">
-                                        <td>{{ $serviceSparepart->nama_sparepart }} {{ $serviceSparepart->spek }}</td>
-                                        <td>{{ $serviceSparepart->quantity }}</td>
-                                        <td>Rp. {{ number_format($serviceSparepart->harga_jual, 0, ',', '.') }}</td>
-                                        <td>Rp. {{ number_format($subtotal, 0, ',', '.') }}</td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="4" class="text-center">Tidak ada sparepart yang digunakan.</td>
-                                    </tr>
-                                @endforelse
-                            @endif
+                            @forelse ($service->serviceSpareparts as $serviceSparepart)
+                                @php
+                                    // Cek apakah service selesai atau belum
+                                    $namaSparepart = $service->status == false
+                                        ? ($serviceSparepart->sparepart->nama_sparepart ?? '-')
+                                        : ($serviceSparepart->nama_sparepart ?? '-');
+
+                                    $spek = $service->status == false
+                                        ? ($serviceSparepart->sparepart->spek ?? '-')
+                                        : ($serviceSparepart->spek ?? '-');
+
+                                    $harga = $service->status == false
+                                        ? ($serviceSparepart->sparepart->harga_jual ?? 0)
+                                        : ($serviceSparepart->harga_jual ?? 0);
+
+                                    $subtotal = $serviceSparepart->quantity * $harga;
+                                    $total += $subtotal;
+                                @endphp
+                                <tr class="animate_animated animate_flipInX">
+                                    <td>{{ $namaSparepart }} {{ $spek }}</td>
+                                    <td>{{ $serviceSparepart->quantity }}</td>
+                                    <td>Rp. {{ number_format($harga, 0, ',', '.') }}</td>
+                                    <td>Rp. {{ number_format($subtotal, 0, ',', '.') }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="text-center">Tidak ada sparepart yang digunakan.</td>
+                                </tr>
+                            @endforelse
                         </tbody>
                         @if ($total > 0)
                             <tfoot>
@@ -719,26 +711,53 @@
                         @endif
                     </div>
 
-                    <!-- Tombol untuk menyelesaikan servis di kanan -->
+                    <!-- Tombol dan Form -->
                     @if (!$service->status)
                         <div class="action-buttons-right ms-auto">
                             <form id="completeServiceForm" action="{{ route('service.complete', $service->id) }}"
                                 method="POST" style="display: inline;">
                                 @csrf
                                 @method('PUT')
-                                <button type="button" id="completeServiceButton" class="btn btn-success conbtn-sm mt-2"
-                                    onclick="confirmCompletion()" disabled>
+                                <button type="button" id="completeServiceButton"
+                                        class="btn btn-success btn-sm mt-2">
                                     <i class="fas fa-check-circle"></i> Selesaikan Servis
                                 </button>
                             </form>
                         </div>
                     @else
                         <div class="action-buttons-right ms-auto">
-                            <button type="button" class="btn btn-success conbtn-sm mt-2" disabled>
+                            <button type="button" class="btn btn-success btn-sm mt-2" disabled>
                                 <i class="fas fa-check-circle"></i>&nbsp;&nbsp;&nbsp;Servis selesai
                             </button>
                         </div>
                     @endif
+
+                    {{-- di bagian bawah halaman, sebelum penutup </body> --}}
+                    <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                    const btn = document.getElementById('completeServiceButton');
+                    const form = document.getElementById('completeServiceForm');
+
+                    if (!btn || !form) return;
+
+                    btn.addEventListener('click', function() {
+                        Swal.fire({
+                        title: 'Yakin menyelesaikan servis?',
+                        text: "Setelah dikonfirmasi, status akan berubah menjadi selesai.",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Ya, selesaikan!',
+                        cancelButtonText: 'Batal'
+                        }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                        });
+                    });
+                    });
+                    </script>
                 </div>
 
             </div>

@@ -30,7 +30,7 @@ class VehicleController extends Controller
             'engine_code' => 'nullable|string|max:255',
             'color' => 'nullable|string|max:255',
             'year' => 'nullable|integer|min:1900|max:' . date('Y'),
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            // 'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'customer_id' => 'required|exists:customers,id',
             'jurusan' => 'required'
         ], [
@@ -104,7 +104,7 @@ class VehicleController extends Controller
             'engine_code' => 'nullable|string|max:255',
             'color' => 'nullable|string|max:255',
             'year' => 'nullable|integer|min:1900|max:' . date('Y'),
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            // 'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ], [
             'license_plate.required' => 'Plat nomor kendaraan wajib diisi.',
             'license_plate.unique' => 'Plat nomor kendaraan sudah terdaftar.',

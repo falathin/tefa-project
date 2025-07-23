@@ -180,6 +180,7 @@ class ServiceController extends Controller
         $service->update([
             'service_fee' => $request->service_fee,
             'total_cost' => $request->total_cost,
+            
             'diskon' => $diskon,
             'payment_received' => $request->payment_received,
             'change' => $request->change,
