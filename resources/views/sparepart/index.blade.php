@@ -34,43 +34,67 @@
             @endif
 
             {{-- Export Form --}}
-            <div class="mb-4">
-                <form method="GET" action="{{ route('spareparts.export') }}" class="row g-3 align-items-end">
-                    @php
-                        $userJurusan = auth()->user()->jurusan;
-                    @endphp
+            <div class="container-fluid px-0 mb-4">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body">
+                        <form method="GET" action="{{ route('spareparts.export') }}" class="row g-3 align-items-end">
+                            @php
+                                $userJurusan = auth()->user()->jurusan;
+                            @endphp
 
-                    <div class="col-md-4">
-                        <label for="from_date" class="form-label">Dari Tanggal</label>
-                        {{-- default kosong -> berarti semua tanggal --}}
-                        <input type="date" name="from_date" id="from_date" class="form-control"
-                            value="{{ request('from_date', '') }}">
+                            {{-- Header --}}
+                            <div class="col-12 mb-2">
+                                <h5 class="mb-0">Export Data Sparepart</h5>
+                                <small class="text-muted">Sesuaikan filter sebelum export</small>
+                            </div>
+
+                            {{-- Dari Tanggal --}}
+                            <div class="col-12 col-md-4">
+                                <label for="from_date" class="form-label small fw-semibold">Dari</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+                                    <input type="date" name="from_date" id="from_date" class="form-control"
+                                        value="{{ request('from_date', '') }}">
+                                </div>
+                            </div>
+
+                            {{-- Sampai Tanggal --}}
+                            <div class="col-12 col-md-4">
+                                <label for="to_date" class="form-label small fw-semibold">Sampai</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-calendar-event-fill"></i></span>
+                                    <input type="date" name="to_date" id="to_date" class="form-control"
+                                        value="{{ request('to_date', '') }}">
+                                </div>
+                            </div>
+
+                            {{-- Pilih Jurusan --}}
+                            @if ($userJurusan === 'General')
+                                <div class="col-12 col-md-3">
+                                    <label for="jurusan" class="form-label small fw-semibold">Jurusan</label>
+                                    <select name="jurusan" id="jurusan" class="form-select">
+                                        <option value="">Semua</option>
+                                        <option value="TKRO" {{ request('jurusan') === 'TKRO' ? 'selected' : '' }}>TKRO</option>
+                                        <option value="TSM" {{ request('jurusan') === 'TSM' ? 'selected' : '' }}>TSM</option>
+                                    </select>
+                                </div>
+                            @else
+                                <div class="col-12 col-md-3">
+                                    <label class="form-label small fw-semibold d-block">Jurusan</label>
+                                    <span class="badge bg-primary">{{ $userJurusan }}</span>
+                                    <input type="hidden" name="jurusan" value="{{ $userJurusan }}">
+                                </div>
+                            @endif
+
+                            {{-- Tombol Export --}}
+                            <div class="col-12 col-md-1 d-grid">
+                                <button type="submit" class="btn btn-success w-100" title="Export ke Excel">
+                                    <i class="bi bi-file-earmark-excel"></i>
+                                </button>
+                            </div>
+                        </form>
                     </div>
-
-                    <div class="col-md-4">
-                        <label for="to_date" class="form-label">Sampai Tanggal</label>
-                        <input type="date" name="to_date" id="to_date" class="form-control"
-                            value="{{ request('to_date', '') }}">
-                    </div>
-
-                    {{-- Hanya tampilkan dropdown jurusan kalau user General --}}
-                    @if ($userJurusan === 'General')
-                        <div class="col-md-3">
-                            <label for="jurusan" class="form-label">Pilih Jurusan</label>
-                            <select name="jurusan" class="form-select">
-                                <option value="">Semua Jurusan</option>
-                                <option value="TKRO" {{ request('jurusan') === 'TKRO' ? 'selected' : '' }}>TKRO</option>
-                                <option value="TSM" {{ request('jurusan') === 'TSM' ? 'selected' : '' }}>TSM</option>
-                            </select>
-                        </div>
-                    @endif
-
-                    <div class="col-md-1">
-                        <button type="submit" class="btn btn-success w-100" title="Export ke Excel">
-                            <i class="bi bi-file-earmark-excel"></i>
-                        </button>
-                    </div>
-                </form>
+                </div>
             </div>
 
             {{-- Table --}}

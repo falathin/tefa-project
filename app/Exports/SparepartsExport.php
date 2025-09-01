@@ -11,6 +11,7 @@ use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use Maatwebsite\Excel\Events\AfterSheet;
 
+use PhpOffice\PhpSpreadsheet\Shared\Date as ExcelDate;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
@@ -54,35 +55,48 @@ class SparepartsExport implements FromQuery, WithHeadings, WithMapping, ShouldAu
 
     /**
      * Map model to row
+     *
+     * Important: return native types (numbers for numeric columns)
+     * and Excel date serial numbers for date columns using ExcelDate::stringToExcel.
      */
     public function map($sparepart): array
     {
-        // pastikan format tanggal: Y-m-d atau kosong
-        $tanggalMasuk = $sparepart->tanggal_masuk ? date('Y-m-d', strtotime($sparepart->tanggal_masuk)) : '';
-        $tanggalKeluar = $sparepart->tanggal_keluar ? date('Y-m-d', strtotime($sparepart->tanggal_keluar)) : '';
+        $tanggalMasuk = null;
+        $tanggalKeluar = null;
+
+        if ($sparepart->tanggal_masuk) {
+            $d = date('Y-m-d', strtotime($sparepart->tanggal_masuk));
+            $tanggalMasuk = ExcelDate::stringToExcel($d);
+        }
+
+        if ($sparepart->tanggal_keluar) {
+            $d2 = date('Y-m-d', strtotime($sparepart->tanggal_keluar));
+            $tanggalKeluar = ExcelDate::stringToExcel($d2);
+        }
+
+        $keuntungan = $sparepart->keuntungan ?? ($sparepart->harga_jual - $sparepart->harga_beli);
 
         return [
-            $sparepart->id_sparepart,
-            $sparepart->nama_sparepart,
-            $sparepart->spek,
-            $sparepart->jumlah,
-            $sparepart->harga_beli,
-            $sparepart->harga_jual,
-            // gunakan accessor jika ada, atau hitung manual
-            $sparepart->keuntungan ?? ($sparepart->harga_jual - $sparepart->harga_beli),
-            $tanggalMasuk,
-            $tanggalKeluar,
-            $sparepart->deskripsi,
-            $sparepart->jurusan,
+            (int) $sparepart->id_sparepart,                                    // A
+            $sparepart->nama_sparepart,                                        // B
+            $sparepart->spek,                                                  // C
+            (int) $sparepart->jumlah,                                          // D
+            is_numeric($sparepart->harga_beli) ? (float) $sparepart->harga_beli : 0, // E
+            is_numeric($sparepart->harga_jual) ? (float) $sparepart->harga_jual : 0, // F
+            is_numeric($keuntungan) ? (float) $keuntungan : 0,                 // G
+            $tanggalMasuk,                                                     // H (Excel date serial)
+            $tanggalKeluar,                                                    // I (Excel date serial)
+            $sparepart->deskripsi,                                             // J
+            $sparepart->jurusan,                                               // K
         ];
     }
 
     /**
-     * Headings for excel
+     * Headings for excel — returned uppercase for emphasis.
      */
     public function headings(): array
     {
-        return [
+        $heads = [
             'ID Sparepart',
             'Nama Sparepart',
             'Spek',
@@ -95,24 +109,32 @@ class SparepartsExport implements FromQuery, WithHeadings, WithMapping, ShouldAu
             'Deskripsi',
             'Jurusan',
         ];
+
+        // return uppercase headings to mimic previous intent without using non-existent font method
+        return array_map('strtoupper', $heads);
     }
 
     /**
-     * Column formatting (D = jumlah, E/F/G currency)
+     * Column formatting:
+     * - D = jumlah integer
+     * - E/F/G = currency / number with thousand separator
+     * - H/I = date format (Excel date)
      */
     public function columnFormats(): array
     {
         return [
-            'D' => NumberFormat::FORMAT_NUMBER, // jumlah (integer)
+            'D' => NumberFormat::FORMAT_NUMBER, // jumlah
             'E' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1, // harga beli
             'F' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1, // harga jual
             'G' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1, // keuntungan
+            'H' => NumberFormat::FORMAT_DATE_YYYYMMDD2, // tanggal masuk
+            'I' => NumberFormat::FORMAT_DATE_YYYYMMDD2, // tanggal keluar
         ];
     }
 
     /**
      * Register events to style the sheet (AfterSheet)
-     * NOTE: This must be an instance method (not static).
+     * This is an instance method (required).
      */
     public function registerEvents(): array
     {
@@ -120,78 +142,115 @@ class SparepartsExport implements FromQuery, WithHeadings, WithMapping, ShouldAu
             AfterSheet::class => function (AfterSheet $event) {
                 $sheet = $event->sheet->getDelegate();
 
-                // header range (A1:K1)
-                $headerRange = 'A1:K1';
-                // determine highest row
-                $highestRow = $sheet->getHighestRow(); // numeric
-                $dataRange = 'A1:K' . $highestRow;
+                // Insert a title row above the headings for a nicer look
+                $sheet->insertNewRowBefore(1, 1);
 
-                // Header style: dark green background, white bold text
+                // Determine last column and last row
+                $lastColumn = 'K'; // we know we have 11 columns A..K
+                $highestRow = $sheet->getHighestRow(); // includes the inserted row
+
+                // Title (row 1) — merged across A:K
+                $sheet->setCellValue('A1', 'LAPORAN SPAREPART');
+                $sheet->mergeCells("A1:{$lastColumn}1");
+
+                // Style title
+                $sheet->getStyle('A1')->applyFromArray([
+                    'font' => [
+                        'bold' => true,
+                        'size' => 16,
+                        'color' => ['rgb' => 'FFFFFF'],
+                    ],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
+                    ],
+                    'fill' => [
+                        'fillType' => Fill::FILL_SOLID,
+                        'startColor' => ['rgb' => '0D6EFD'], // bootstrap primary blue
+                    ],
+                ]);
+                $sheet->getRowDimension(1)->setRowHeight(36);
+
+                // Headings are now at row 2 (after insertion)
+                $headerRange = "A2:{$lastColumn}2";
+
+                // Header style: dark navy with white text, slightly bigger
                 $sheet->getStyle($headerRange)->applyFromArray([
                     'font' => [
                         'bold' => true,
                         'color' => ['rgb' => 'FFFFFF'],
-                        'size' => 12,
+                        'size' => 11,
                     ],
                     'fill' => [
                         'fillType' => Fill::FILL_SOLID,
-                        'startColor' => ['rgb' => '2E7D32'], // material green 700
+                        'startColor' => ['rgb' => '1E3A8A'], // deep indigo
                     ],
                     'alignment' => [
                         'horizontal' => Alignment::HORIZONTAL_CENTER,
                         'vertical' => Alignment::VERTICAL_CENTER,
                     ],
                 ]);
+                $sheet->getRowDimension(2)->setRowHeight(26);
 
-                // Freeze header row
-                $sheet->freezePane('A2');
+                // Freeze panes (freeze title+header rows so data scrolls under)
+                $sheet->freezePane('A3');
 
-                // Auto filter
-                $sheet->setAutoFilter($sheet->calculateWorksheetDimension());
+                // Auto filter on header row
+                $sheet->setAutoFilter("A2:{$lastColumn}{$highestRow}");
 
-                // Borders for all data
+                // Full-data border
+                $dataRange = "A2:{$lastColumn}{$highestRow}";
                 $sheet->getStyle($dataRange)->applyFromArray([
                     'borders' => [
                         'allBorders' => [
                             'borderStyle' => Border::BORDER_THIN,
-                            'color' => ['rgb' => 'DDDDDD'],
+                            'color' => ['rgb' => 'E5E7EB'], // light gray border
                         ],
                     ],
                 ]);
 
-                // Alternate row coloring (start from row 2)
-                for ($row = 2; $row <= $highestRow; $row++) {
-                    if ($row % 2 == 0) {
-                        // even row -> light gray fill
-                        $sheet->getStyle("A{$row}:K{$row}")->getFill()->setFillType(Fill::FILL_SOLID)
-                            ->getStartColor()->setRGB('F5F5F5');
+                // Alternating row colors starting from row 3 (data)
+                for ($row = 3; $row <= $highestRow; $row++) {
+                    if ($row % 2 === 0) {
+                        // even -> very light blue tint
+                        $sheet->getStyle("A{$row}:{$lastColumn}{$row}")->getFill()->setFillType(Fill::FILL_SOLID)
+                            ->getStartColor()->setRGB('F8FAFF');
                     } else {
-                        // odd row -> white (ensure no leftover)
-                        $sheet->getStyle("A{$row}:K{$row}")->getFill()->setFillType(Fill::FILL_SOLID)
+                        // odd -> white
+                        $sheet->getStyle("A{$row}:{$lastColumn}{$row}")->getFill()->setFillType(Fill::FILL_SOLID)
                             ->getStartColor()->setRGB('FFFFFF');
                     }
                 }
 
-                // Alignment: center numeric columns D (Jumlah) and currency columns E,F,G
-                $sheet->getStyle("D2:D{$highestRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-                $sheet->getStyle("E2:G{$highestRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+                // Alignment for specific columns
+                $sheet->getStyle("A3:A{$highestRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER); // ID
+                $sheet->getStyle("D3:D{$highestRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER); // Jumlah
+                $sheet->getStyle("E3:G{$highestRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT); // Currency
+                $sheet->getStyle("H3:I{$highestRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER); // Dates
+                $sheet->getStyle("J3:J{$highestRow}")->getAlignment()->setWrapText(true); // Deskripsi wrap
 
-                // Center ID column
-                $sheet->getStyle("A2:A{$highestRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                // Column widths (baseline; ShouldAutoSize also applied)
+                $sheet->getColumnDimension('A')->setWidth(10);  // ID
+                $sheet->getColumnDimension('B')->setWidth(32);  // Nama Sparepart
+                $sheet->getColumnDimension('C')->setWidth(28);  // Spek
+                $sheet->getColumnDimension('D')->setWidth(10);  // Jumlah
+                $sheet->getColumnDimension('E')->setWidth(16);  // Harga Beli
+                $sheet->getColumnDimension('F')->setWidth(16);  // Harga Jual
+                $sheet->getColumnDimension('G')->setWidth(16);  // Keuntungan
+                $sheet->getColumnDimension('H')->setWidth(14);  // Tgl Masuk
+                $sheet->getColumnDimension('I')->setWidth(14);  // Tgl Keluar
+                $sheet->getColumnDimension('J')->setWidth(50);  // Deskripsi
+                $sheet->getColumnDimension('K')->setWidth(14);  // Jurusan
 
-                // Dates (H/I) center
-                $sheet->getStyle("H2:I{$highestRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-
-                // Wrap text for Deskripsi (column J)
-                $sheet->getStyle("J2:J{$highestRow}")->getAlignment()->setWrapText(true);
-
-                // Make header row height a bit taller
-                $sheet->getRowDimension(1)->setRowHeight(26);
-
-                // Optional: set minimum column widths for nicer look (auto-size already enabled, but set a baseline)
-                $sheet->getColumnDimension('B')->setWidth(30); // Nama Sparepart
-                $sheet->getColumnDimension('C')->setWidth(25); // Spek
-                $sheet->getColumnDimension('J')->setWidth(40); // Deskripsi
+                // Emphasize header top border thicker
+                $sheet->getStyle($headerRange)->applyFromArray([
+                    'borders' => [
+                        'top' => [
+                            'borderStyle' => Border::BORDER_MEDIUM,
+                            'color' => ['rgb' => '0B5ED7'],
+                        ],
+                    ],
+                ]);
             },
         ];
     }
