@@ -18,6 +18,7 @@ use App\Http\Controllers\{
     hapusAkunUserController,
     NewForgotPasswordController,
     ProfileController,
+    SparepartExportController
 };
 
 // Dashboard
@@ -180,5 +181,5 @@ Route::middleware('auth')->group(function () {
     Route::get('/export-transactions', [TransactionController::class, 'export'])->name('transactions.export');
     Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
     Route::get('/services/{id}/export-pkb', [ServiceController::class, 'exportPkb'])->name('services.exportPkb');
-
+    Route::get('/spareparts/export', [SparepartExportController::class, 'export'])->name('spareparts.export');
 });

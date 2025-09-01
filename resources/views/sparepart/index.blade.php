@@ -35,29 +35,38 @@
 
             {{-- Export Form --}}
             <div class="mb-4">
-                <form method="GET" action="{{ route('sparepart.export') }}" class="row g-3 align-items-end">
+                <form method="GET" action="{{ route('spareparts.export') }}" class="row g-3 align-items-end">
                     @php
-                        $today = \Carbon\Carbon::today()->format('Y-m-d');
-                        $tomorrow = \Carbon\Carbon::tomorrow()->format('Y-m-d');
+                        $userJurusan = auth()->user()->jurusan;
                     @endphp
+
                     <div class="col-md-4">
                         <label for="from_date" class="form-label">Dari Tanggal</label>
-                        <input type="date" name="from_date" id="from_date" class="form-control" value="{{ $today }}" required>
+                        {{-- default kosong -> berarti semua tanggal --}}
+                        <input type="date" name="from_date" id="from_date" class="form-control"
+                            value="{{ request('from_date', '') }}">
                     </div>
+
                     <div class="col-md-4">
                         <label for="to_date" class="form-label">Sampai Tanggal</label>
-                        <input type="date" name="to_date" id="to_date" class="form-control" value="{{ $tomorrow }}" required>
+                        <input type="date" name="to_date" id="to_date" class="form-control"
+                            value="{{ request('to_date', '') }}">
                     </div>
-                    <div class="col-md-3">
-                        <label for="jurusan" class="form-label">Pilih Jurusan</label>
-                        <select name="jurusan" class="form-select">
-                            <option value="">Semua Jurusan</option>
-                            <option value="TKRO">TKRO</option>
-                            <option value="TBSM">TBSM</option>
-                        </select>
-                    </div>
+
+                    {{-- Hanya tampilkan dropdown jurusan kalau user General --}}
+                    @if ($userJurusan === 'General')
+                        <div class="col-md-3">
+                            <label for="jurusan" class="form-label">Pilih Jurusan</label>
+                            <select name="jurusan" class="form-select">
+                                <option value="">Semua Jurusan</option>
+                                <option value="TKRO" {{ request('jurusan') === 'TKRO' ? 'selected' : '' }}>TKRO</option>
+                                <option value="TSM" {{ request('jurusan') === 'TSM' ? 'selected' : '' }}>TSM</option>
+                            </select>
+                        </div>
+                    @endif
+
                     <div class="col-md-1">
-                        <button type="submit" class="btn btn-success w-100">
+                        <button type="submit" class="btn btn-success w-100" title="Export ke Excel">
                             <i class="bi bi-file-earmark-excel"></i>
                         </button>
                     </div>
