@@ -23,7 +23,7 @@
                                 <td>
                                     <input type="text" name="nama_sparepart" id="nama_sparepart"
                                         class="form-control @error('nama_sparepart') is-invalid @enderror"
-                                        value="{{ old('nama_sparepart', $sparepart->nama_sparepart) }}">
+                                        value="{{ old('nama_sparepart', $sparepart->nama_sparepart ?? '') }}">
                                     @error('nama_sparepart')
                                         <div class="alert alert-danger mt-2">
                                             <strong>Error:</strong> Nama sparepart harus diisi dan tidak boleh melebihi 255
@@ -36,24 +36,27 @@
                             <tr>
                                 <td><label for="spek"><i class="bi bi-stack"></i>&nbsp; Spesifikasi:</label></td>
                                 <td>
+                                    <!-- KEMBALIKAN jadi text karena spek adalah string -->
                                     <input type="text" name="spek" id="spek"
                                         class="form-control @error('spek') is-invalid @enderror"
-                                        value="{{ old('spek', $sparepart->spek) }}" min="1">
+                                        value="{{ old('spek', $sparepart->spek ?? '') }}" maxlength="255" placeholder="Contoh: OEM, Tipe A, 12V, dll.">
                                     @error('spek')
                                         <div class="alert alert-danger mt-2">
-                                            <strong>Error:</strong> Spesifikasi harus berupa angka dan minimal bernilai 1.
+                                            <strong>Error:</strong> Spesifikasi harus diisi (string).
                                         </div>
                                     @enderror
                                 </td>
                             </tr>
 
                             <tr>
-                                <td><label for="jumlah"><i class="bi bi-stack"></i>&nbsp; Jumlah:</label></td>
+                                <td><label for="jumlah_display"><i class="bi bi-stack"></i>&nbsp; Jumlah:</label></td>
                                 <td>
-                                    <input type="text" name="jumlah" id="jumlah"
+                                    <!-- Display field (untuk format ribuan) -->
+                                    <input type="text" id="jumlah_display"
                                         class="form-control @error('jumlah') is-invalid @enderror"
-                                        value="{{ old('jumlah', $sparepart->jumlah) }}" min="1">
-                                    <input type="hidden" name="jumlah" id="jumlah_asli">
+                                        value="{{ number_format(old('jumlah', $sparepart->jumlah ?? 0), 0, ',', '.') }}">
+                                    <!-- Hidden field yang dikirim ke server -->
+                                    <input type="hidden" name="jumlah" id="jumlah" value="{{ old('jumlah', $sparepart->jumlah ?? 0) }}">
                                     @error('jumlah')
                                         <div class="alert alert-danger mt-2">
                                             <strong>Error:</strong> Jumlah harus berupa angka dan minimal bernilai 1.
@@ -63,12 +66,14 @@
                             </tr>
 
                             <tr>
-                                <td><label for="harga_beli"><i class="bi bi-cash-stack"></i>&nbsp; Harga Beli :</label></td>
+                                <td><label for="harga_beli_display"><i class="bi bi-cash-stack"></i>&nbsp; Harga Beli :</label></td>
                                 <td>
-                                    <input type="text" id="harga_beli"
+                                    <!-- display -->
+                                    <input type="text" id="harga_beli_display"
                                         class="form-control @error('harga_beli') is-invalid @enderror"
-                                        value="{{ old('harga_beli', $sparepart->harga_beli) }}" step="0.01">
-                                    <input type="hidden" name="harga_beli" id="harga_beli_asli">
+                                        value="{{ number_format(old('harga_beli', $sparepart->harga_beli ?? 0), 0, ',', '.') }}">
+                                    <!-- hidden untuk dikirim -->
+                                    <input type="hidden" name="harga_beli" id="harga_beli" value="{{ old('harga_beli', $sparepart->harga_beli ?? 0) }}">
                                     @error('harga_beli')
                                         <div class="alert alert-danger mt-2">
                                             <strong>Error:</strong> Harga beli harus berupa angka dan tidak boleh kosong.
@@ -78,12 +83,14 @@
                             </tr>
 
                             <tr>
-                                <td><label for="harga_jual"><i class="bi bi-tag"></i>&nbsp; Harga Jual:</label></td>
+                                <td><label for="harga_jual_display"><i class="bi bi-tag"></i>&nbsp; Harga Jual:</label></td>
                                 <td>
-                                    <input type="text" id="harga_jual"
+                                    <!-- display -->
+                                    <input type="text" id="harga_jual_display"
                                         class="form-control @error('harga_jual') is-invalid @enderror"
-                                        value="{{ old('harga_jual', $sparepart->harga_jual) }}">
-                                    <input type="hidden" name="harga_jual" id="harga_jual_asli">
+                                        value="{{ number_format(old('harga_jual', $sparepart->harga_jual ?? 0), 0, ',', '.') }}">
+                                    <!-- hidden untuk dikirim -->
+                                    <input type="hidden" name="harga_jual" id="harga_jual" value="{{ old('harga_jual', $sparepart->harga_jual ?? 0) }}">
                                     @error('harga_jual')
                                         <div class="alert alert-danger mt-2">
                                             <strong>Error:</strong> Harga jual harus berupa angka dan tidak boleh kosong.
@@ -114,7 +121,7 @@
                                 <td>
                                     <input type="date" name="tanggal_masuk" id="tanggal_masuk"
                                         class="form-control @error('tanggal_masuk') is-invalid @enderror"
-                                        value="{{ old('tanggal_masuk', $sparepart->tanggal_masuk) }}">
+                                        value="{{ old('tanggal_masuk', $sparepart->tanggal_masuk ?? '') }}">
                                     @error('tanggal_masuk')
                                         <div class="alert alert-danger mt-2">
                                             <strong>Error:</strong> Tanggal masuk harus diisi dengan format tanggal yang valid.
@@ -126,7 +133,7 @@
                             <tr>
                                 <td><label for="deskripsi"><i class="bi bi-info-circle"></i>&nbsp; Deskripsi:</label></td>
                                 <td>
-                                    <textarea name="deskripsi" id="deskripsi" class="form-control" rows="3">{{ old('deskripsi', $sparepart->deskripsi) }}</textarea>
+                                    <textarea name="deskripsi" id="deskripsi" class="form-control" rows="3">{{ old('deskripsi', $sparepart->deskripsi ?? '') }}</textarea>
                                 </td>
                             </tr>
                         </tbody>
@@ -143,58 +150,82 @@
     </div>
 
     <script>
-        // Menjalankan fungsi saat halaman pertama kali dimuat
-        document.addEventListener('DOMContentLoaded', function() {
-            let jumlah = document.getElementById('jumlah');
-            let harga_beli = document.getElementById('harga_beli');
-            let harga_jual = document.getElementById('harga_jual');
-
-            jumlah.value = formatRibuan(jumlah.value.replace(/\D/g, ""));
-            harga_beli.value = formatRibuan(harga_beli.value.replace(/\D/g, ""));
-            harga_jual.value = formatRibuan(harga_jual.value.replace(/\D/g, ""));
-            
-            document.getElementById("jumlah_asli").value = unformat(jumlah.value);
-            document.getElementById("harga_beli_asli").value = unformat(harga_beli.value);
-            document.getElementById("harga_jual_asli").value = unformat(harga_jual.value);
-        });
-
-        function unformat(angka) {
-            return parseInt(angka.replace(/\D/g, "")) || 0;
+        // Utility: unformat string like "1.234.567" => number 1234567
+        function unformatToInt(str) {
+            if (str === undefined || str === null) return 0;
+            // remove non-digit characters
+            const cleaned = String(str).replace(/\./g, '').replace(/,/g, '.').replace(/[^0-9\-\.]/g, '');
+            const n = parseFloat(cleaned);
+            return isNaN(n) ? 0 : Math.round(n);
         }
 
+        // Utility: format integer to "1.234.567"
         function formatRibuan(angka) {
-            return new Intl.NumberFormat("id-ID").format(angka);
+            if (angka === '' || angka === null || angka === undefined) return '';
+            const n = Number(angka) || 0;
+            return new Intl.NumberFormat('id-ID').format(n);
         }
 
+        // Lakukan update keuntungan berdasarkan hidden numeric values
         function updateKeuntungan() {
-
-            const hargaBeli = parseFloat(document.getElementById('harga_beli_asli').value) || 0;
-            const hargaJual = parseFloat(document.getElementById('harga_jual_asli').value) || 0;
-            const jumlah = parseInt(document.getElementById('jumlah_asli').value) || 0;
+            const hargaBeli = unformatToInt(document.getElementById('harga_beli').value);
+            const hargaJual = unformatToInt(document.getElementById('harga_jual').value);
+            const jumlah = unformatToInt(document.getElementById('jumlah').value);
 
             const keuntungan = hargaJual - hargaBeli;
-            document.getElementById('keuntungan').value = keuntungan.toLocaleString('id-ID');
-
             const totalKeuntungan = keuntungan * jumlah;
-            document.getElementById('total_keuntungan').value = totalKeuntungan.toLocaleString('id-ID');
+
+            document.getElementById('keuntungan').value = formatRibuan(keuntungan);
+            document.getElementById('total_keuntungan').value = formatRibuan(totalKeuntungan);
         }
 
-        document.getElementById('harga_beli').addEventListener('input', function() {
-            this.value = formatRibuan(this.value.replace(/\D/g, ""));
-            document.getElementById("harga_beli_asli").value = unformat(this.value);
-            updateKeuntungan()
-        });
-        document.getElementById('harga_jual').addEventListener('input', function() {
-            this.value = formatRibuan(this.value.replace(/\D/g, ""));
-            document.getElementById("harga_jual_asli").value = unformat(this.value);
-            updateKeuntungan()
-        });
-        document.getElementById('jumlah').addEventListener('input', function() {
-            this.value = formatRibuan(this.value.replace(/\D/g, ""));
-            document.getElementById("jumlah_asli").value = unformat(this.value);
-            updateKeuntungan()
-        });
+        // Sinkronisasi: ketika user mengetik di display field, update hidden numeric field + hitung ulang
+        function attachSyncListeners() {
+            const pairs = [
+                { displayId: 'harga_beli_display', hiddenId: 'harga_beli' },
+                { displayId: 'harga_jual_display', hiddenId: 'harga_jual' },
+                { displayId: 'jumlah_display', hiddenId: 'jumlah' }
+            ];
 
-        updateKeuntungan();
+            pairs.forEach(pair => {
+                const display = document.getElementById(pair.displayId);
+                const hidden = document.getElementById(pair.hiddenId);
+
+                // on input: keep only digits, format display, fill hidden
+                display.addEventListener('input', function (e) {
+                    // ambil angka (hilangkan semua selain digits)
+                    const onlyDigits = this.value.replace(/[^0-9]/g, '');
+                    // update display dengan format
+                    this.value = formatRibuan(onlyDigits);
+                    // update hidden (numeric)
+                    hidden.value = unformatToInt(this.value);
+                    // hitung ulang
+                    updateKeuntungan();
+                });
+
+                // juga support paste
+                display.addEventListener('paste', function (e) {
+                    setTimeout(() => {
+                        const onlyDigits = this.value.replace(/[^0-9]/g, '');
+                        this.value = formatRibuan(onlyDigits);
+                        hidden.value = unformatToInt(this.value);
+                        updateKeuntungan();
+                    }, 0);
+                });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Pastikan nilai hidden sudah ada (di-set oleh blade dengan old/model).
+            // Isi display field sesuai dengan hidden (agar konsisten)
+            document.getElementById('jumlah_display').value = formatRibuan(document.getElementById('jumlah').value || 0);
+            document.getElementById('harga_beli_display').value = formatRibuan(document.getElementById('harga_beli').value || 0);
+            document.getElementById('harga_jual_display').value = formatRibuan(document.getElementById('harga_jual').value || 0);
+
+            attachSyncListeners();
+
+            // Hitung pertama kali tanpa menunggu interaksi user
+            updateKeuntungan();
+        });
     </script>
 @endsection

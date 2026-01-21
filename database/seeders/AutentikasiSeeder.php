@@ -16,7 +16,7 @@ class AutentikasiSeeder extends Seeder
     {
         $userData = [
             [
-                'name' => 'Annida',
+                'name' => 'Service Advisor',
                 'email' => 'sa@gmail.com',
                 'level' => 'service advisor',
                 'jurusan' => 'TKRO',
@@ -24,35 +24,35 @@ class AutentikasiSeeder extends Seeder
                 'password' => bcrypt('admin123')
             ],
             [
-                'name' => 'Ibrahim',
+                'name' => 'Admin',
                 'email' => 'admin@gmail.com',
                 'level' => 'admin',
                 'jurusan' => 'TKRO',
-                'phone_number' => '087712134885',
+                'phone_number' => '085883533001',
                 'password' => bcrypt('admin123')
             ],
             [
-                'name' => 'Bayu',
+                'name' => 'Bendahara',
                 'email' => 'bendahara@gmail.com',
                 'level' => 'bendahara',
                 'jurusan' => 'General',
-                'phone_number' => '086656789002',
+                'phone_number' => '085883533001',
                 'password' => bcrypt('admin123')
             ],
             [
-                'name' => 'Seno',
+                'name' => 'Kasir',
                 'email' => 'kasir@gmail.com',
                 'level' => 'kasir',
                 'jurusan' => 'TKRO',
-                'phone_number' => '086543320087',
+                'phone_number' => '085883533001',
                 'password' => bcrypt('admin123')
             ],
             [
-                'name' => 'Yani',
+                'name' => 'Admin TSM',
                 'email' => 'adminTbsm@gmail.com',
                 'level' => 'admin',
                 'jurusan' => 'TSM',
-                'phone_number' => '087544346666',
+                'phone_number' => '085883533001',
                 'password' => bcrypt('admin123')
             ],
         ];

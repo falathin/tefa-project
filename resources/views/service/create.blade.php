@@ -56,32 +56,42 @@
 
                         <div class="col-md-6 mb-3">
                             <label for="service_type" class="form-label text-dark">Jenis Service</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-danger text-white"><i class="fas fa-tools"></i></span>
-                                <select name="service_type" class="form-control border-danger" required>
-                                    @if (Auth::user()->jurusan == 'TSM')
-                                        <option value="light" {{ old('service_type') == 'light' ? 'selected' : '' }}>
-                                            Ringan</option>
-                                        <option value="medium" {{ old('service_type') == 'medium' ? 'selected' : '' }}>
-                                            Sedang</option>
-                                        <option value="heavy" {{ old('service_type') == 'heavy' ? 'selected' : '' }}>
-                                            Berat</option>
-                                    @elseif (Auth::user()->jurusan == 'TKRO')
-                                        <option value="Baru" {{ old('service_type') == 'light' ? 'selected' : '' }}>
-                                            1.000 KM (Baru)</option>
-                                        <option value="Ringan" {{ old('service_type') == 'light' ? 'selected' : '' }}>
-                                            5.000 KM (Ringan)</option>
-                                        <option value="Sedang" {{ old('service_type') == 'light' ? 'selected' : '' }}>
-                                            10.000 KM (Sedang)</option>
-                                        <option value="Semi-berat" {{ old('service_type') == 'light' ? 'selected' : '' }}>
-                                            20.000 KM (Semi-berat)</option>
-                                        <option value="Berat" {{ old('service_type') == 'light' ? 'selected' : '' }}>
-                                            40.000 KM (Berat)</option>
-                                        <option value="Super Berat" {{ old('service_type') == 'light' ? 'selected' : '' }}>
-                                            80.000 KM (Super Berat)</option>
-                                    @endif
-                                </select>
-                            </div>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-danger text-white">
+                                        <i class="fas fa-tools"></i>
+                                    </span>
+
+                                    <select name="service_type" class="form-control border-danger" required>
+                                        <option value="">-- Pilih Jenis Service --</option>
+
+                                        @if (Auth::user()->jurusan == 'TSM')
+                                            <option value="light" {{ old('service_type') == 'light' ? 'selected' : '' }}>
+                                                Ringan
+                                            </option>
+
+                                            <option value="medium" {{ old('service_type') == 'medium' ? 'selected' : '' }}>
+                                                Sedang
+                                            </option>
+
+                                            <option value="heavy" {{ old('service_type') == 'heavy' ? 'selected' : '' }}>
+                                                Berat
+                                            </option>
+
+                                        @elseif (Auth::user()->jurusan == 'TKRO')
+                                            <option value="light" {{ old('service_type') == 'light' ? 'selected' : '' }}>
+                                                10.000 KM (Ringan)
+                                            </option>
+
+                                            <option value="medium" {{ old('service_type') == 'medium' ? 'selected' : '' }}>
+                                                30.000 KM (Sedang)
+                                            </option>
+
+                                            <option value="heavy" {{ old('service_type') == 'heavy' ? 'selected' : '' }}>
+                                                50.000 KM (Berat)
+                                            </option>
+                                        @endif
+                                    </select>
+                                </div>
                             @error('service_type')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
